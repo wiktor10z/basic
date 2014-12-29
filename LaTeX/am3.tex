@@ -1,0 +1,145 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+Zadanie 3.
+\newline
+
+
+
+$
+\iint\limits_{y>0,|x+y|\le 1}xe^{-y^{2}}
+=
+\iint\limits_{1\ge y>0,|x+y|\le 1}xe^{-y^{2}}
++
+\iint\limits_{y>1,|x+y|\le 1}xe^{-y^{2}}
+$
+pierwsza funkcja jest całkowalna (ciągła i ograniczona, na ograniczonym przedziale), druga jest nieujemna,
+każda spełnia założenia twierdzenia Fubiniego, możemy więc je rozdzielić na całkowanie w kolejności
+$
+\iint\limits_{1\ge y>0,|x+y|\le 1}xe^{-y^{2}}
++\iint\limits_{y>1,|x+y|\le 1}xe^{-y^{2}}
+=
+\int\limits_{0}^{1}
+\bigl(
+\int\limits_{-y-1}^{-y+1}
+xe^{-y^{2}} dx
+\bigr) dy
++
+\int\limits_{1}^{\infty}
+\bigl(
+\int\limits_{-y-1}^{-y+1}
+xe^{-y^{2}} dx
+\bigr) dy
+=
+\int\limits_{0}^{\infty}
+\bigl(
+\int\limits_{-y-1}^{-y+1}
+xe^{-y^{2}} dx
+\bigr) dy
+=
+\int\limits_{0}^{\infty}
+\bigl[
+\frac{x^2 e^{-y^{2}}}{2}
+\bigr]_{-y-1}^{-y+1} dy
+=
+\int\limits_{0}^{\infty} -2ye^{-y^{2}} dy
+=
+\bigl[
+e^{-y^2}
+\bigr]_{0}^{\infty}
+=
+-1
+$
+\newline
+\newline
+
+
+
+
+Zadanie 4.
+\newline
+
+
+
+
+$
+\iiint\limits_{x>0,y>1,z>1} \frac{x dx dy dz}{1+(xyz)^4}
+$
+funkcja jest nieujemna więc spełnia założenia twierdzenia Fubiniego, można więc rozdzielić całkowanie w kolejności
+\newline
+$
+\iint\limits_{y>1,z>1} \bigl(
+\int\limits_{0}^{\infty} \frac{x dx}{1+(xyz)^4}
+\bigr) dy dz
+$
+podstawiamy
+$
+t=x^2 \quad dt=2xdx
+$
+mamy więc
+$
+\iint\limits_{y>1,z>1} \bigl(
+\frac{1}{2}\int\limits_{0}^{\infty} \frac{dt}{1+t^2 (yz)^4}
+\bigr) dy dz
+=
+\frac{1}{2}\iint\limits_{y>1,z>1}
+\frac{\Pi}{2 (yz)^2} dy dz
+$
+ponowne rozbicie
+$
+\frac{\Pi}{4}
+\int\limits_{1}^{\infty} \bigl(
+\int\limits_{1}^{\infty}
+\frac{dy}{(yz)^2}
+\bigr) dz
+=
+\frac{\Pi}{4}
+\int\limits_{1}^{\infty}
+\frac{dz}{z^2}
+=
+\frac{\Pi}{4}
+$
+\newline
+\newline
+
+
+
+
+Zadanie 5.
+\newline
+
+
+
+$
+\iiint\limits_{0<x<1,0<x+y<1,0<z(x+y+1)<1} \frac{dx dy dz}{(x+y+1)^2}
+$
+funkcja jest nieujemna więc spełnia założenia twierdzenia Fubiniego, można więc rozdzielić całkowanie w kolejności
+$
+\int\limits_{0}^{1} \bigl(
+\int\limits_{-x}^{1-x} \bigl(
+\int\limits_{0}^{\frac{1}{x+y+1}}
+\frac{dz}{(x+y+1)^2}
+\bigr) dy
+\bigr) dx
+=
+\int\limits_{0}^{1} \bigl(
+\int\limits_{-x}^{1-x} \bigl(
+\frac{dy}{(x+y+1)^3}
+\bigr) dx
+=
+\int\limits_{0}^{1} \bigl[
+- \frac{1}{2(x+y+1)^2}
+\bigr]_{y=-x}^{y=1-x} dx
+=
+\int\limits_{0}^{1} (\frac{1}{2}-\frac{1}{8})
+=
+\frac{3}{8}
+$
+
+
+\end{document}

@@ -1,0 +1,189 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 7.1.
+\newline
+\newline
+$
+\int\limits_{(K,+)}(y-x)dx-zdy+(y-z^2)dz\quad K={(x,y,z):x^2+z^2=1,y=x+z^2}
+$ patrząc z $(0,-1,0)$ widzimy okrąg (chyba mamy kiepski wzrok i nie zauważamy, że jest on krzywy (w jednym miejscu na naszej wysokości, a w innym wręcz odwrotnie))
+widzimy obieg przeciwny do ruchu wskazówek zegara, ponieważ K jest prawie całkowicie powyżej nas i patrzymy z dołu,
+to jest to równoważne temu jakbyśmy patrzyli z góry i wiedzieli obieg zgodny z ruchem wskazówek zegara:
+stosujemy podstaweinie $\varphi:x=\cos{\alpha},z=-\sin{\alpha},y=\cos{\alpha}+2\sin{\alpha}\cos{\alpha}d\alpha$
+$dx=-\sin{\alpha}d\alpha,dz=-\cos{\alpha}d\alpha,dy=-\sin{\alpha}+\sin{2\alpha}$ oczywiście dyfeo $C^1$\newline
+$
+\int\limits_{0}^{2\pi}(\sin^2{\alpha})(-\sin{\alpha})-(-\sin{\alpha})(-\sin{\alpha}+2\sin{\alpha}\cos{\alpha})+(\cos{\alpha})(-\cos{\alpha})d\alpha
+=
+\int\limits_{0}^{2\pi}(-\sin^3{\alpha}-\sin^2{\alpha}+2\sin^2{\alpha}\cos{\alpha}-\cos^2{\alpha})d\alpha
+=
+-\int\limits_{0}^{2\pi}d\alpha-\int\limits_{0}^{2\pi}\sin^3{\alpha}d\alpha+\int\limits_{0}^{2\pi}2\sin^2{\alpha}\cos{\alpha}d\alpha
+=
+-2\pi+0+\left[\frac{2}{3}\sin^3{\alpha}\right]_{0}^{2\pi}=\underline{-2\pi}
+$
+\newline
+\newline
+
+Zadanie 7.2.
+\newline
+\newline
+Obliczyć pole obszaru ograniczonego przez krzywą $x^3+y^3=3xy$ $ $ $x,y\ge 0$
+Z twierdzenia Greena
+$\frac{1}{2}\int\limits_{\text{kontur}}xdy-ydx=\int\limits_{\text{obszar}}dl_2=l_2($obszar)
+$
+\int\limits_{x^3+y^3=3xy,x,y\ge0}xdy-ydx
+$
+Stosujemy podstawienie: $x=r(\cos{\alpha})^{\frac{2}{3}},y=r(\sin{\alpha})^{\frac{2}{3}},r^3=3r^2(\sin{\alpha}\cos{\alpha})^{\frac{2}{3}}$ czyli\newline
+$x=3(\sin{\alpha}\cos^2{\alpha})^{\frac{2}{3}},y=3(\sin^2{\alpha}\cos{\alpha})^{\frac{2}{3}},
+dx=(2\sin^{-\frac{1}{3}}{\alpha}\cos^{\frac{7}{3}}{\alpha}-4\sin^{\frac{5}{3}}{\alpha}\cos^{\frac{1}{3}}{\alpha})d\alpha,
+dy=(4\sin^{\frac{1}{3}}{\alpha}\cos^{\frac{5}{3}}{\alpha}-2\sin^{\frac{7}{3}}{\alpha}\cos^{-\frac{1}{3}}{\alpha})d\alpha,
+\alpha\in(0,\frac{\pi}{2})\newline
+\frac{3}{2}\int\limits_{0}^{\frac{\pi}{2}}(4\sin{\alpha}\cos^3{\alpha}-2\sin^3{\alpha}\cos{\alpha}-2\sin{\alpha}\cos^3{\alpha}+4\sin^3{\alpha}\cos{\alpha})d\alpha
+=
+3\int\limits_{0}^{\frac{\pi}{2}}(\sin{\alpha}\cos^3{\alpha}+\sin^3{\alpha}\cos{\alpha})d\alpha
+=
+3\int\limits_{0}^{\frac{\pi}{2}}(\sin^2{\alpha}+\cos^2{\alpha})(\sin{\alpha}\cos{\alpha})d\alpha
+=
+3\int\limits_{0}^{\frac{\pi}{2}}\sin{\alpha}\cos{\alpha}d\alpha
+=
+\frac{3}{2}\left[\sin^2{\alpha}\right]_{0}^{\frac{\pi}{2}}
+=
+\underline{\frac{3}{2}}
+$
+\newline
+\newline
+
+Zadanie 7.3.
+\newline
+\newline
+$r(t)\in C^1([0,2\pi]),r(t)>0,r(0)=r(2\pi)$ 
+Z twierdzenia Greena:
+$\frac{1}{2}\int\limits_{\text{kontur}}xdy-ydx=\int\limits_{\text{obszar}}dl_2=l_2($obszar)
+podstawienie jak w treści:
+$x(t)=r(t)\cos{t},y(t)=r(t)\sin{t},dx=(r(t)\cos{t}+r'(t)\sin{t})dt,dy=(r'(t)\cos{t}-r(t)\sin{t})dt$ (dyfeo $C^1$)\newline
+$
+\frac{1}{2}\int\limits_{0}^{2\pi}(r^2(t)\cos^2{t}+r(t)r'(t)\sin{t}\cos{t}-r(t)r'(t)\sin{t}\cos{t}+r^2(t)\sin^2{t})dt
+=
+\underline{\frac{1}{2}\int\limits_{0}^{2\pi}r^2(t)dt}
+$
+\newline
+\newline
+
+Zadanie 7.4.
+\newline
+\newline
+$
+K=\{(x,y):x^4+y^3=1,x\le0\le y\}
+$, początek (0,1), koniec (-1,0)\newline
+K jest różnowartośicową krzywą $C^1$ leżacą w 2 ćwiartce układu współrzędnych i dotykająca obu osi $\rightarrow$ jeżeli dopełnimy ją odcinkami a (od (-1,0) do (0,0))
+oraz b(od (0,0) do (0,1)) to otrzymana krzywa ogranicza pewien obszar.
+Z twierdzenia Greena:
+$
+\int\limits_{(K\cup a\cup b,+)}(2x+y)dx+(x-2y)dy=\int\limits_{\text{obszar}}(1-1)dl_2=0\newline
+\int\limits_{K,+}(2x+y)dx+(x-2y)dy+\int\limits_{-1}^{0}(2x+y)dx+(x-2y)dy$ $[y\equiv0\equiv dy]$ $
++\int\limits_{0}^{1}(2x+y)dx+(x-2y)dy$ $[x\equiv0\equiv dx]$ $=0\newline
+\int\limits_{K,+}(2x+y)dx+(x-2y)dy=-\int\limits_{-1}^{0}2xdx+\int\limits_{0}^{1}2ydy=-1+1=0
+$
+\newpage
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 7.5.
+\newline
+\newline
+$
+K=\{(x,y):4x^2+y=5,y\ge 1\}$- jest to wykres funkcji $y=5-4x^2$ od x=-1 do x=1,
+możemy tą krzywą uzupełnić odcinkiem a(od (1,1) do (-1,1)), otrzymana krzywa ogranicza pewien obszar(jednospójny bo bez (0,0))\newline
+Z twierdzenai Greena:
+$
+\int\limits_{(K\cup a,+)}\frac{xdy-ydx}{x^2+y^2}=\int\limits_{\text{obszar}}\frac{y^2-x^2}{(x^2+y^2)^2}-\frac{-x^2+y^2}{(x^2+y^2)^2}dl_2
+=\int\limits_{\text{obszar}}0dl_2=0\newline
+\int\limits_{(K,+)}\frac{xdy-ydx}{x^2+y^2}+\int\limits_{1}^{-1}\frac{xdy-ydx}{x^2+y^2}$ $[y\equiv1,dy\equiv0]=0\newline
+\int\limits_{(K,+)}\frac{xdy-ydx}{x^2+y^2}=\int\limits_{-1}^{1}\frac{-1}{x^2+1}dx
+=
+-\left[\arctan{x}\right]_{-1}^{1}=-\frac{\pi}{2}
+$
+\newline
+\newline
+
+Zadanie 7.6.
+\newline
+\newline
+$
+\omega=\frac{ydx-xdy}{x^2+xy+y^2}, G=\mathbb{R}^2\backslash\{(0,0)\}
+$-czy niezależy od drogi całkowania?\quad Scałkujmy dookoła okręgu jednostkowego $\rightarrow$a więc powinno wyjść 0 (gdyż początek=koniec)\newline
+stosujemy podstawienie okrężne
+$
+\int\limits_{0}^{2\pi}\frac{\cos^2{t}+\sin^2{t}}{\cos^2{t}+\sin{t}\cos{t}+\sin^2{t}}dt
+=
+\int\limits_{0}^{2\pi}\frac{1}{1+\frac{1}{2}\sin{2t}}dt
+\ge
+\int\limits_{0}^{2\pi}\frac{1}{\frac{3}{2}}dt
+=
+\underline{\frac{4\pi}{3}\ge 0}
+$
+Czyli całka zależy od drogi gdyż dobór tego okręgu jest kontrprzykładem.
+\newline
+\newline
+
+Zadanie 7.7.
+\newline
+\newline
+$
+\omega=|x+y|(dx+dy), G=\mathbb{R}^2
+$\newline
+szukamy funkcji pierwotnej:
+(dla $x>-y$)$\int(x+y)=\frac{(x+y)^2}{2}$
+(dla $x<-y$)$\int-(x+y)=-\frac{(x+y)^2}{2}$
+(dla x=-y) z równości granic lewo i prawostronnych jest równa 0\newline
+$\underline{\frac{|x+y|(x+y)}{2}}$-po zróżniczkowaniu daje funkcję wyjściową więc jest jej funkcją pierwotną($C^1$), symetryczna ze względu na $x$ i $y$ więc wspólna pierwotna.
+Zarówno funkcja pierwotna jak i jej pochodne istnieją na całym $\mathbb{R}^2$ które jest jednospójne, tak więc całka nie zależy od drogi.
+\newline
+\newline
+
+Zadanie 7.8.
+\newline
+\newline
+$
+\omega=\frac{(x^2-y^2)dx+2xydy}{(x^2+y^2)^2},G=\mathbb{R}^2\backslash\{(0,0)\}
+$
+tu niestety żaden ze sposobów z poprzednich zadań sam nie wystarczy, ale użycie obu powinno załatwić sprawę:\newline
+$
+\int\frac{x^2-y^2}{(x^2+y^2)^2}dx=\frac{-x}{x^2+y^2}=\int\frac{2xy}{(x^2+y^2)^2}dy
+$ a więc funkcja pierwotna istnieje(jest $C^2$), jednak obszar nie jest jednospójny- przeszkadza nam punkt $(0,0)$,
+ale dla dowolnego obszaru nie zawierającego tego punktu całka z $\omega$ po jego konturze jest równa 0, problemem jest tylko to, że w owym punkcie dla każdej z tych
+funkcji (pierwotna i pochodne) mianownik się zeruje, gdybyśmy jednak ów obszar odgraniczyli "od środka" od punktu $(0,0)$ pewnym konturem o przeciwnym indeksie 
+(w sensie indeksu pętli wokół tego punktu (0,0)- w praktyce tylko 1 lub -1), i całka z $\omega$ po tym konturze wewnętrznym była równa 0, to dla owego konturu zewnętrznego też
+a jednocześnie nie musielibyśmy się martwić o to co dzieje się w tym punkcie $(0,0)$.
+Policzmy całkę z $\omega$ po okręgu o promieniu $\varepsilon$ po podstawieniu okrężnym.
+$
+\int\limits_{0}^{2\pi}\frac{\varepsilon^2\cos{2t}(-\varepsilon\sin{t})+\varepsilon^2\sin{2t(\varepsilon\cos{t})}}{\varepsilon^4}dt
+=
+\int\limits_{0}^{2\pi}\frac{1}{\varepsilon}(\sin{2t}\cos{t}-\sin{t}\cos{2t})dt
+=
+\frac{1}{\varepsilon}\int\limits_{0}^{2\pi}\sin{t}dt=0
+$\newline
+Tak więc gdy kontur nie zawiera w swoim wnętrzu(skończonej składowej płaszczyzny) punktu $(0,0)$, to znajduje się on w obszarze jednospójnym $\rightarrow$całka po nim jest równa
+0, a gdy zawiera, to ponieważ nie może przez niego przechodzić z założeń zadania, to musi istnieć taki $\varepsilon$, że koło o środku w tym punkcie i promieniu
+$\varepsilon$ jest całkowicie zawarte w tej spójnej składowej, więc z tego co jest napisane wcześniej całka po konturze jest równa 0
+
+\end{document}
+
+
+
+
+
+
+
+
+
+

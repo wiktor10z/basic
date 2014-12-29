@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+Zadanie 1.
+\newline
+
+
+
+
+
+$
+\lim\limits_{n \to \infty}
+\int\limits_{0}^{n}
+\frac{dx}{n+n^2 \sin{(n^{-2}x)}}
+$
+\newline
+dla każdego n stosujemy podstawienie $y=\frac{x}{n}\quad dx=n\cdot dy$
+\newline
+z twierdzenia o całkowaniu przez podstawianie wynika,że
+\newline
+$
+\forall_{n\in N}
+\int\limits_{0}^{n}
+\frac{dx}{n+n^2 \sin{(n^{-2}x)}}
+=
+\int\limits_{0}^{1}
+\frac{n\cdot dy}{n+n^2 \sin{(n^{-1}y)}}
+$
+co przenosi się na granice
+\newline
+$
+\lim\limits_{n \to \infty}
+\int\limits_{0}^{n}
+\frac{dx}{n+n^2 \sin{(n^{-2}x)}}
+=
+\lim\limits_{n \to \infty}
+\int\limits_{0}^{1}
+\frac{n\cdot dy}{n+n^2 \sin{(n^{-1}y)}}
+=
+\lim\limits_{n \to \infty}
+\int\limits_{0}^{1}
+\frac{dy}{1+n \sin{(n^{-1}y)}}
+$
+\newline
+$\lim\limits_{n \to \infty} \frac{sin(n^{-1}y)}{n^{-1}y}=1 \Rightarrow \lim\limits_{n \to \infty} n\sin{(n^{-1}y)}=y$
+\newline
+granica punktowa tych funkcji podcałkowych$\quad \lim_{n \to \infty} \frac{dy}{1+n \sin{(n^{-1}y)}} =\frac{dy}{1+y}$
+
+
+dla $n>1 \quad n \sin{(n^{-1}y)} > 0$ dla każdego n funkcja jest ograniczona przez funkcje stale równą 1 która jest całkowalna na [0,1]
+spełnione są więc założenia twierdzenia Lebesgue'a o zbieżności zmajoryzowanej, więc zarówno funkcje jak i ich granica są całkowalne oraz 
+\newline
+$\lim\limits_{n \to \infty}
+\int\limits_{0}^{1}
+\frac{dy}{1+n \sin{(n^{-1}y)}}
+=
+\int\limits_{0}^{1}
+\lim\limits_{n \to \infty}
+\frac{dy}{1+n \sin{(n^{-1}y)}}
+=
+\int\limits_{0}^{1}
+\frac{dy}{1+y}
+=
+\biggl[
+\ln{(1+y)}
+\biggr]_{0}^{1}
+=
+\ln{2}
+$
+\end{document}

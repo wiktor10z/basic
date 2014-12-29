@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 4.1.
+\newline
+\newline
+$z^2+dy^2=p\Rightarrow -d=(\frac{x}{y})^2(\text{mod }p)$, gdzie $\frac{x}{y}$ jest całkowite\newline\newline
+Z lematu Thue'go $-4$ jest kwadratem w $\mathbb{Z}_p\Rightarrow \exists_{k\in\{1,2,3,4\},x,y} x^2+4y^2=kp$\newline
+Rozważając przypadki konkretnych $k$:\newline
+dla $k=1$ mamy $x^2+4y^2=p$.\newline
+dla $k=2$ mamy $x^2+4y^2=2p\Rightarrow x^2=2(\text{mod } 4)$, a to jest niemozliwe.\newline
+dla $k=3$ mamy $x^2+4y^2=3p\Rightarrow x^2+y^2=0(\text{mod }3)\Rightarrow ^3\mid x,y\Rightarrow ^3\mid p$, więc sprzeczność z pierwszością $p$.\newline
+dla $k=4$ mamy $x^2+4y^2=4p\Rightarrow x^2=0(\text{mod }4)\Rightarrow x=2x'\Rightarrow x'^2+y^2=p\Rightarrow$
+$x',y$ mają różne parzystości $\Rightarrow 4x"^2+y^2=p$ lub $x'^2+4y'^2=p$.\newline
+Mamy więc $-4$ jest kwadratem w $\mathbb{Z}_p\Rightarrow\exists_{x,y} x^2+4y^2=p$.\newline\newline
+Z lematu Thue'go $-7$ jest kwadratem w $\mathbb{Z}_p\Rightarrow \exists_{k\in\{1,2,3,4,5,6,7\},x,y} x^2+7y^2=kp$\newline
+Rozważając przypadki konkretnych $k$:\newline
+dla $k=1$ mamy $x^2+7y^2=p$.\newline
+dla $k=2$ mamy $x^2+7y^2=2p\Rightarrow x^2+3y^2=2(\text{mod }4)$ Lewa strona przyjmuje wartości $\{0,1\}+\{0,3\}=\{0,1,3\}$, co daje sprzeczność.\newline
+dla $k=3$ mamy $x^2+7y^2=3p\Rightarrow x^2+y^2=0(\text{mod }3)\Rightarrow ^3\mid x,y\Rightarrow ^3\mid p$, co daje sprzeczność z pierwszością $p$.\newline
+dla $k=4$ mamy $x^2+7y^2=4p\Rightarrow x^2+7y^2=4(\text{mod }8)$ dla $^2\nmid x,y$ $x^2=1(\text{mod }8)$ czyli $x^2+7y^2=0(\text{mod }8)\newline
+\Rightarrow ^2\mid x,y\Rightarrow x=2x',y=2y'\Rightarrow x'^2+7y'^2=p$.\newline
+dla $k=5$ mamy $x^2+7y^2=5p\Rightarrow x^2+2y^2=0(\text{mod }5)$ dla $^5\nmid x,$lub $^5\nmid y$ po lewej stronie mamy $1,2,3$ lub $4\newline
+\Rightarrow ^5\mid x,y\Rightarrow ^5\mid p$,
+co daje sprzeczność z pierwszością $p$.\newline
+dla $k=6$ mamy $x^2+7y^2=6p\Rightarrow x^2+3y^2=2(\text{mod }4)$ (sprzeczność jak dla $k=2$).\newline
+dla $k=7$ mamy $x^2+7y^2=7p\Rightarrow x^2=0(\text{mod }7)\Rightarrow x=7x'\Rightarrow 7x'^2+y^2=p$.\newline
+%TODO druga strona
+\newline
+
+Zadanie 4.2.
+\newline
+\newline
+Dla $d=5$ równianie $x^2+5y^2=7$ nie ma rozwiązań (wystarcza sprawdzić $x\in\{0,1,2\},y\in\{0,1\}$), jednak $-5=2=4^2(\text{mod }7)$
+\newline
+
+Zadanie 4.3.
+\newline
+\newline
+$x^2+3y^2=p$ ma rozwiązanie $\Leftrightarrow$ $-3$ jest kwadratem w $\mathbb{Z}_p\Leftrightarrow 1=(\frac{-3}{p})=(\frac{-1}{p})(\frac{3}{p})=
+(-1)^{\frac{p-1}{2}}(-1)^{\frac{p-1}{2}}(\frac{p}{3})=(\frac{p}{3})\Leftrightarrow p=3k+1$.
+\newline
+
+Zadanie 4.4.
+\newline
+\newline
+$1=(\frac{-5}{p})=(-1)^{\frac{p-1}{2}}(\frac{5}{p})=(-1)^{\frac{p-1}{2}}(\frac{p}{5})\Leftrightarrow p=1(\text{mod }4),p=1\vee4(\text{mod }5)$ lub $p=3(\text{mod }4),p=2\vee3(\text{mod }5)
+\Leftrightarrow p=1\vee3\vee7\vee9(\text{mod }20)$
+\end{document}

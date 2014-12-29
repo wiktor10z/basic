@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+Wiktor Zuba 320501 grupa 5
+\newline
+
+Zadanie 3.
+\newline
+\newline
+$
+\{n>0\}\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad \backslash\backslash n\in\mathbb{Z}\newline
+i:=3;\newline
+\{n>0 \cap i=3\}\newline
+ii:=3;\newline
+\{n>0\cap i=3\cap ii=3\}\newline
+ki:=3;\newline
+\{n>0\cap i=3\cap ii=3\cap ki=3\}\newline
+ski:=0;\newline
+\{n>0\cap i=3\cap ii=3\cap ki=3\cap ski=0\}\newline
+si:=0;\newline
+\{n>0\cap i=3\cap ii=3\cap ki=3\cap ski=0\cap si=0\}\quad\quad\quad\quad\backslash\backslash(n>0\cap n\in\mathbb{Z}\Rightarrow n\ge1\Rightarrow 3\cdot n\ge3=i)\newline
+$while$ \{\gamma_1:n>0\cap i\text{mod}3=0\cap 3\cdot n\ge i\cap ii=2\cdot i-3\cap ki=i\cdot(i$ div$3)\cap
+ski=\frac{(i\text{div}3)(i\text{div}3-1)(2\cdot i\text{div}3-1)}{2}\cap si=\frac{i(i\text{div}3-1)}{2}\}\newline
+\indent i<n+n+n$ $do\newline
+\indent(\newline
+\{n>0\cap i\text{mod}3=0\cap 3\cdot n-3\ge i\cap ii=2\cdot i-3\cap ki=i\cdot(i$ div$3)\cap
+ski=\frac{(i\text{div}3)(i\text{div}3-1)(2\cdot i\text{div}3-1)}{2}\cap si=\frac{i(i\text{div}3-1)}{2}\}\newline
+\indent ski:=ski+ki;\newline
+\{n>0\cap i\text{mod}3=0\cap 3\cdot n-3\ge i\cap ii=2\cdot i-3\cap ki=i\cdot(i\text{div}3)\cap si=\frac{i(i\text{div}3-1)}{2}\cap\newline
+ski=\frac{(i\text{div}3)(i\text{div}3-1)(2\cdot i\text{div}3-1)}{2}+i\cdot(i\text{div}3)=\frac{(i\text{div}3)(i\text{div}3+1)(2\cdot i\text{div}3+1)}{2}=
+\frac{((i+3)\text{div}3-1)((i+3)\text{div}3)(2\cdot(i+3)\text{div}3-1)}{2}\}\newline
+\indent ii:=ii+6;\newline
+\{n>0\cap i\text{mod}3=0\cap 3\cdot n-3\ge i\cap ki=i\cdot(i\text{div}3)\cap ski=\frac{((i+3)\text{div}3)((i+3)\text{div}3-1)(2\cdot (i+3)\text{div}3-1)}{2}\cap
+ si=\frac{i(i\text{div}3-1)}{2}\cap\newline ii=2\cdot i-3+6=2\cdot i+3=2\cdot(i+3)-3\}\newline
+\indent ki:=ki+ii;\newline
+\{n>0\cap i\text{mod}3=0\cap 3\cdot n-3\ge i\cap ii=2\cdot(i+3)-3\cap ski=\frac{((i+3)\text{div}3)((i+3)\text{div}3-1)(2\cdot (i+3)\text{div}3-1)}{2}\cap
+ si=\frac{i(i\text{div}3-1)}{2}\cap\newline
+ ki=i\cdot(i\text{div}3)+2\cdot i+3=i\cdot(i\text{div}3+1)+i+3=i\cdot((i+3)\text{div}3)+3\cdot(i+3)\text{div}3=(i+3)((i+3)\text{div}3)\}\newline
+\indent si:=si+i;\newline
+\{n>0\cap i\text{mod}3=0\cap 3\cdot n-3\ge i\cap ii=2\cdot(i+3)-3\cap ki=(i+3)((i+3)\text{div}3)\cap ski=\frac{((i+3)\text{div}3)((i+3)\text{div}3-1)(2\cdot (i+3)\text{div}3-1)}{2}\cap
+ si=\frac{i(i\text{div}3-1)}{2}+i=\frac{i(i\text{div}3-1)+2\cdot i}{2}=\frac{i(i\text{div}3)+3\cdot i\text{div}3}{2}=\frac{(i+3)(i\text{div}3)}{2}=\frac{(i+3)((i+3)\text{div}3-1)}{2}\}\newline
+\indent i:=i+3;\newline
+\{n>0\cap i\text{mod}3=0\cap 3\cdot n\ge i\cap ii=2\cdot i-3\cap ki=i\cdot(i$ div$3)\cap
+ski=\frac{(i\text{div}3)(i\text{div}3-1)(2\cdot i\text{div}3-1)}{2}\cap si=\frac{i(i\text{div}3-1)}{2}\}\newline
+\indent);\newline
+\{n>0\cap i\text{mod}3=0\cap 3\cdot n\ge i\cap ii=2\cdot i-3\cap ki=i\cdot(i$ div$3)\cap
+ski=\frac{(i\text{div}3)(i\text{div}3-1)(2\cdot i\text{div}3-1)}{2}\cap si=\frac{i(i\text{div}3-1)}{2}\cap i\ge3\cdot n\}\newline
+\{n>0\cap i\text{mod}3=0\cap 3\cdot n=i\cap ii=6\cdot n-3\cap ki=3\cdot n\cdot n\cap
+ski=\frac{n(n-1)(2\cdot n-1)}{2}\cap si=\frac{3\cdot n(n-1)}{2}\}\newline
+w:=ski+si+n;\newline
+\{w=n^3\}\newline
+$
+\end{document}

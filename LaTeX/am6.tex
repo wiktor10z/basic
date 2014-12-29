@@ -1,0 +1,276 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\marginsize{2,5cm}{2,5cm}{1cm}{4cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 4.1.
+\newline
+\newline
+$
+\varphi(y)=\int\limits_{y}^{y+1}f(x)dx
+=
+\int\limits_{R}f(x)\cdot\chi_{[y,y+1]}(x)dx
+$
+$
+x\in [y,y+1]\Leftrightarrow y\in [x-1,x]
+$\newline
+Całkowalność:
+$
+\int\limits_{R}\bigl|\int\limits_{R}f(x)\cdot\chi_{[y,y+1]}(x)dx\bigr|dy
+\le
+\int\limits_{R}\int\limits_{R}\bigl|f(x)\cdot\chi_{[y,y+1]}(x)\bigr|dxdy
+$\newline
+funkcja nieujemna więc z Fubiniego:
+$
+\iint\limits_{R^2}\bigl|f(x)\bigr|\cdot\chi_{[y,y+1]}(x)dxdy
+=
+\iint\limits_{R^2}\bigl|f(x)\bigr|\cdot\chi_{[x-1,x]}(y)dxdy
+=
+\int\limits_{R}\bigl|f(x)\bigr|\bigl(\int\limits_{x-1}^{x}dy\bigr)dx
+=
+\int\limits_{R}\bigl|f(x)\bigr|\cdot 1dx
+$ ponieważ f całkowalna to i $\varphi$\newline
+Równość(to samo tylko bez modułu):
+$
+\int\limits_{R}\varphi(y)dy
+=
+\int\limits_{R}\int\limits_{R}f(x)\cdot\chi_{[y,y+1]}(x)dxdy
+=
+\iint\limits_{R^2}f(x)\cdot\chi_{[x-1,x]}(y)dxdy
+=
+\int\limits_{R}f(x)\bigl(\int\limits_{x-1}^{x}dy\bigr)dx
+=
+\int\limits_{R}f(x)dx
+$
+\newline
+\newline
+
+Zadanie 4.2.
+\newline
+\newline
+$
+f(t)$-miara części zbioru A zawartej między płaszczyznami $z=\alpha t$ i $z=\beta t(0<\alpha<\beta),(t,z>0)
+$\newline
+czyli
+$
+f(t)=\iiint\limits_{(x,y,z)\in A,z\in(\alpha t,\beta t)}dxdydz
+=
+\iiint\limits_{A}\chi_{(R^2\times[\alpha t,\beta t])}(x,y,z)dxdydz
+=
+\iiint\limits_{R^3}\chi_{A}(x,y,z)\cdot\chi_{(R^2\times[\alpha t,\beta t])}(x,y,z)dxdydz
+$
+gdy funkcja charakterystyczna względem którejś zmiennej jest dla całego R, to tak naprawdę od tej zmiennej nie zależy(można pominąć przy pisaniu)
+\newline
+$
+\int\limits_{0}^{\infty}f(t)dt
+=
+\int\limits_{0}^{\infty}\bigl(\iiint\limits_{R^3}\chi_{A}(x,y,z)\cdot\chi_{([\alpha t,\beta t])}(z)dxdydz\bigr)dt
+$\newline
+Funkcja nieujemna, więc z Fubiniego
+$
+\iiiint\limits_{R^3\times[0,\infty]}\chi_{A}(x,y,z)\cdot\chi_{([\alpha t,\beta t])}(z)dxdydzdt
+$\newline
+$
+z\in[\alpha t,\beta t] \Leftrightarrow t\in[\frac{z}{\beta},\frac{z}{\alpha}]
+$
+$
+\iiiint\limits_{R^3\times[0,\infty]}\chi_{A}(x,y,z)\cdot\chi_{([\frac{z}{\beta},\frac{z}{\alpha}])}(t)dxdydzdt
+$
+Ponownie Fubini
+$
+\iiint\limits_{R^3}\chi_{A}(x,y,z)\cdot\bigl(\int\limits_{0}^{\infty}\cdot\chi_{([\frac{z}{\beta},\frac{z}{\alpha}])}(t))dt\bigr)dxdydz
+=
+\iiint\limits_{R^3}\chi_{A}\bigl(\int\limits_{0}^{\infty}\chi_{[\frac{z}{\beta},\frac{z}{\alpha}]}dt\bigr)dxdydz
+=
+\iiint\limits_{R^3}\chi_{A}\bigl(\frac{z}{\alpha}-\frac{z}{\beta}\bigr)dxdydz
+=
+\bigl(\frac{1}{\alpha}-\frac{1}{\beta}\bigr)\iiint\limits_{A}zdxdydz
+$
+Wiemy, że wspólrzędna z środka ciężkości zbioru A jest równa c, $l_{3}(A)=m$\quad
+$
+\frac{1}{m}\cdot\iiint\limits_{A}zdxdydz=c
+$
+$
+\bigl(\frac{1}{\alpha}-\frac{1}{\beta}\bigr)\iiint\limits_{A}zdxdydz
+=
+\bigl(\frac{1}{\alpha}-\frac{1}{\beta}\bigr)cm
+$
+\newline
+\newline
+
+Zadanie 4.3.
+\newline
+\newline
+Pole powierzchni
+$
+M=\{(x,y,z):e^x+e^{-x}=z-\sqrt{3}y,0<y<x<1\}\quad
+z=e^x+e^{-x}+\sqrt{3}y
+$
+ więc M jest wykresem funkcji (różniczkowalnej) o argumentach w $R^2$ i wartościach w R-jest więc rozmaitością wymiaru 2
+$
+\iint\limits_{z=e^x+e^{-x}+\sqrt{3}y,0<y<x<1}dS
+$
+ Stosujemy podstawienie 
+$
+x=ln{a},y=\frac{b}{\sqrt{3}},z=a+\frac{1}{a}+b\newline
+G=det\bigl(
+\left[\begin{array}{ccc}
+\frac{1}{a}&0&1-\frac{1}{a^2}\\
+0&\frac{\sqrt{3}}{3}&1
+\end{array}\right]
+\cdot
+\left[\begin{array}{cc}
+\frac{1}{a}&0\\
+0&\frac{\sqrt{3}}{3}\\
+1-\frac{1}{a^2}&1
+\end{array}\right]
+\bigr)
+=
+det\bigl(
+\left[\begin{array}{cc}
+1-\frac{1}{a^2}+\frac{1}{a^4}&1-\frac{1}{a^2}\\
+1-\frac{1}{a^2}&\frac{4}{3}
+\end{array}\right]
+\bigr)
+=
+\frac{1}{3}\bigl(1+\frac{1}{a^2}\bigr)^2
+$\newline
+$
+\frac{\sqrt{3}}{3}\iint\limits_{0<\frac{b}{\sqrt{3}}<ln{a}<1}(1+\frac{1}{a^2})dadb
+$
+funkcja nieujemna (po kilkunastu zadaniach wiadomo co)\newline
+$
+\frac{\sqrt{3}}{3}\int\limits_{1}^{e}da\int\limits_{0}^{\sqrt{3}ln{a}}db(1+\frac{1}{a^2})
+=
+\frac{\sqrt{3}}{3}\int\limits_{1}^{e}\sqrt{3}ln{a}(1+\frac{1}{a^2})da
+=
+\int\limits_{1}^{e}ln{a}(1+\frac{1}{a^2})da
+$
+teraz niejako powrót $a=e^c$
+$
+\int\limits_{0}^{1}c(1+e^{-2c})e^cdc
+=
+\int\limits_{0}^{1}c(e^c+e^{-c})dc
+=
+\bigl[c(e^c-e^{-c})\bigr]_{0}^{1}-\int\limits_{0}^{1}e^c-e^{-c}dc=e-e^{-1}-e-e^{-1}+2=2-\frac{2}{e}
+$
+\newpage
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 4.4.
+\newline
+\newline
+$
+M=\{(x,y,z):2z=x^2+y^2<\sqrt{x}\}
+$
+M jest wykresem funkcji(różniczkowalnej) (od x i y) jest więc rozmaitością
+$
+\iint\limits_{M}\sqrt{\frac{z}{1+2z}}dS
+$
+podstawienie
+$
+x=rcos\alpha,y=rsin\alpha,z=\frac{r^2}{2}
+$\newline
+$
+G=det\bigl(
+\left[\begin{array}{ccc}
+cos\alpha&sin\alpha&r\\
+-rsin\alpha&rcos\alpha&0\\
+\end{array}\right]
+\cdot
+\left[\begin{array}{cc}
+cos\alpha&-rsin\alpha\\
+sin\alpha&rcos\alpha\\
+r&0\\
+\end{array}\right]
+\bigr)
+=
+det\bigl(
+\left[\begin{array}{cc}
+r^2+1&0\\
+0&r^2\\
+\end{array}\right]
+\bigr)
+=r^4+r^2
+$\newline
+$
+\iint\limits_{r^2<\sqrt{rcos\alpha},\alpha\in(-\frac{\Pi}{2},\frac{\Pi}{2})}\sqrt{\frac{\frac{r^2}{2}}{1+r^2}}\sqrt{r^2+r^4}drd\alpha
+=
+\iint\limits_{0<r^\frac{3}{2}<\sqrt{cos\alpha},\alpha\in(-\frac{\Pi}{2},\frac{\Pi}{2})}\sqrt{\frac{r^2}{2}\frac{r^2+r^4}{1+r^2}}drd\alpha
+=
+\frac{\sqrt{2}}{2}\iint\limits_{0<r<\sqrt[3]{cos\alpha},\alpha\in(-\frac{\Pi}{2},\frac{\Pi}{2})}r^2drd\alpha
+$
+funkcja nieujemna...
+$
+\frac{\sqrt{2}}{2}\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}d\alpha\int\limits_{0}^{\sqrt[3]{cos\alpha}}r^2dr
+=
+\frac{\sqrt{2}}{2}\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}\bigl[\frac{r^3}{3}\bigr]_{0}^{\sqrt[3]{cos\alpha}}d\alpha
+=
+\frac{\sqrt{2}}{6}\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}cos\alpha d\alpha
+=
+\frac{\sqrt{2}}{6}
+$
+\newline
+\newline
+
+Zadanie 4.5.
+\newline
+\newline
+M-wykres funkcji $f:A=\{(x,y):0<y<x<1\}\rightarrow R\quad f(x,y)=\frac{y}{x}$\newline
+Jest to funkcja różniczkowalna$(x>0)$, więc M jest rozmaitością różniczkową\newline
+$
+\iint\limits_{z=\frac{y}{x},0<y<x<1}ydS
+=
+\iint\limits_{y=xz,0<z<1,0<x<1}ydS
+$
+podstawienie $x=x, y=xz, z=z$\newline
+$
+G=det\bigl(
+\left[\begin{array}{ccc}
+1&z&0\\
+0&x&1\\
+\end{array}\right]
+\cdot
+\left[\begin{array}{cc}
+1&0\\
+z&x\\
+0&1\\
+\end{array}\right]
+\bigr)
+=
+det\bigl(
+\left[\begin{array}{cc}
+1+z^2&xz\\
+xz&1+x^2\\
+\end{array}\right]
+\bigr)
+=
+1+x^2+z^2
+$\newline
+$
+\iint\limits_{0<x<1,0<z<1}xz\sqrt{1+x^2+z^2}dxdz
+$
+nieujemna-Fubini:
+$
+\int\limits_{0}^{1}z(\int\limits_{0}^{1}x\sqrt{1+z^2+x^2}dx)dz
+=
+\int\limits_{0}^{1}z\bigl[\frac{1}{3}(1+z^2+x^2)^\frac{3}{2}\bigr]_{0}^{1}dz
+=
+\frac{1}{3}\int\limits_{0}^{1}z((2+z^2)^\frac{3}{2}-(1+z^2)^\frac{3}{2})dz
+=
+\frac{1}{3}(\bigl[\frac{1}{5}(2+z^2)^\frac{5}{2}\bigr]_{0}^{1}-\bigl[\frac{1}{5}(1+z^2)^\frac{5}{2}\bigr]_{0}^{1})
+=
+\frac{1}{15}(3^\frac{5}{2}-2^\frac{5}{2}-2^\frac{5}{2}+1^\frac{5}{2})
+=
+\frac{1}{15}(9\sqrt{3}-8\sqrt{2}+1)
+$
+
+\end{document}

@@ -1,0 +1,112 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 9.1.
+\newline
+\newline
+Rozważmy całkę jak w wskazówce $e^{iz^2}$ po łuku okręgu od 0 do $\frac{\pi}{4}$(o promieniu a) wraz z odcinkami łączącymi jego końce z początkiem układu współrzędnych,
+i korzystamy z zadania 5 z poprzedniej serii(8.5), ponieważ $e^{iz^2}$ ma pochodną zespoloną, to ta całka jest równa 0\newline
+$
+0=\int\limits_{\text{kontur}}e^{iz^2}dz=\int\limits_{\text{kontur}}e^{i(x+iy)^2}(dx+idy)=
+\int\limits_{0}^{a}e^{i(x+i0)^2}(dx+i0)+\int\limits_{\frac{a\sqrt{2}}{2}}^{0}e^{i(x+ix)^2}(dx+idx)+\int\limits_{\text{łuk}}e^{iz^2}dz\newline
+$do łuku stosujemy podstawienie okrężne: $z=a(\cos{t}+i\sin{t})=ae^{it}$\newline
+$
+0=\int\limits_{0}^{a}e^{ix^2}dx-(1+i)\int\limits_{0}^{\frac{a\sqrt{2}}{2}}e^{-2x^2}dx+\int\limits_{0}^{\frac{\pi}{4}}e^{ia^2e^{2it}}aie^{it}dt=
+\int\limits_{0}^{a}(\cos{x^2}+i\sin{x^2})dx+\frac{\sqrt{2}}{2}(1+i)\int\limits_{0}^{a}e^{-x^2}dx+\frac{1}{2ia}\left[e^{ia^2e^{2it}}\right]_{0}^{\frac{\pi}{4}}$
+to w nawiasach kwadratowych to $e^{ib}$, gdzie b jest rzeczywiste, więc jest liczbą o module 1, więc cała ta różnica ma moduł $\le2$, niezależnie od wyboru $a>0$
+równośc ze stałą 0 zachodzi, więc przy a dążącym do nieskończoności równość pozostaje (nie potrzeba majoryzacji, kryterium jeszcze z ciągów (AM I.1))\newline
+$
+\int\limits_{0}^{\infty}\cos{x^2}dx+i\int\limits_{0}^{\infty}\sin{x^2}dx
+-\frac{\sqrt{2}}{2}\int\limits_{0}^{\infty}e^{-x^2}dx-\frac{i\sqrt{2}}{2}\int\limits_{0}^{\infty}e^{-x^2}dx+0=0
+$ zarówno części rzeczywiste jak i urojone muszą się zredukować
+$
+\int\limits_{0}^{\infty}\cos{x^2}dx=\frac{\sqrt{2}}{2}\int\limits_{0}^{\infty}e^{-x^2}dx=\int\limits_{0}^{\infty}\sin{x^2}dx=\underline{\frac{\sqrt{2\pi}}{4}}
+$
+\newline
+\newline
+
+Zadanie 9.2.
+\newline
+\newline
+$
+P=\{(x,y,z):1<z<2,z^2=x^2+y^2\}$(dodatnia strona "zewnętrzna")$\quad
+\iint\limits_{(P,+)}\frac{dy\wedge dz}{x}+\frac{dz\wedge dx}{y}+\frac{dx\wedge dy}{z}
+$\newline
+parametryzacja "walcowa": $\varphi=\{x=t\cos{\alpha},y=t\sin{\alpha},z=t\},
+D\varphi=\left[\begin{array}{cc}\cos{\alpha}&-t\sin{\alpha}\\\sin{\alpha}&t\cos{\alpha}\\1&0\\\end{array}\right]\newline
+\iint\limits_{t\in(1,2),\alpha\in(0,2\pi)}\frac{1}{t\cos{\alpha}}\left|\begin{array}{cc}\sin{\alpha}&t\cos{\alpha}\\1&0\\\end{array}\right|+
+\frac{1}{t\sin{\alpha}}\left|\begin{array}{cc}1&0\\\cos{\alpha}&-t\sin{\alpha}\\\end{array}\right|+
+\frac{1}{t}\left|\begin{array}{cc}\cos{\alpha}&-t\sin{\alpha}\\\sin{\alpha}&t\cos{\alpha}\\\end{array}\right|=\newline
+\iint\limits_{t\in(1,2),\alpha\in(0,2\pi)}\frac{-t\cos{\alpha}}{t\cos{\alpha}}+\frac{-t\sin{\alpha}}{t\sin{\alpha}}+\frac{t}{t}dtd\alpha=
+$
+(Fubini oczywisty)
+$
+\int\limits_{1}^{2}dt\int\limits_{0}^{2\pi}d\alpha -1=-2\pi
+$\newline
+Sprawdźmy jeszcze, czy orientacja jest poprawna -weźmy wektor od $(0,0,-2013)$ trafiający w punkt $(\frac{3}{2},0,\frac{3}{2})\newline(t=\frac{3}{2},\alpha=0)
+\Delta_1=-\frac{3}{2},\Delta_2=0,\Delta_3=\frac{3}{2}\quad
+\left[\begin{array}{c}\frac{3}{2}\\0\\\frac{4029}{2}\\\end{array}\right]\cdot\left[\begin{array}{c}-\frac{3}{2}\\0\\\frac{3}{2}\\\end{array}\right]
+=\frac{6039}{2}>0
+$,iloczyn skalarny dodatni czyli orientacja odwrotna, czyli całka równa $\underline{2\pi}$
+\newpage
+
+Zadanie 9.3.
+\newline
+\newline
+Obliczyć całkę po brzegu zbioru ze stroną zewnętrzną jako dodatnią (powierzchnia walcowa i dwa koła- rozmaitości, reszta miary 0),
+spełnia więc założenia twierdzenia o dywergencji\newline
+$
+\overrightarrow{F}=\left[\begin{array}{c}x^3+y^3\\1\\1\\\end{array}\right]
+\iint\limits_{\delta W}\omega=\iiint\limits_{W}div\overrightarrow{F}dl_3=\iiint\limits_{W}3x^2dl_3
+$
+W=walec-współrzędne walcowe,Fubini
+$
+\int\limits_{0}^{2\pi}d\alpha\int\limits_{0}^{1}dr\int\limits_{-1}^{1}dz 3r^3\cos^2{\alpha}
+=
+\pi\cdot\frac{3}{4}\cdot2=\underline{\frac{3}{2}\pi}
+$
+\newline
+\newline
+
+Zadanie 9.4.
+\newline
+\newline
+$
+M=\{(x,y,z):(x-z)^2+4y^2=(1-z^2)\}$- stożek o podstawie elipsy,$\overrightarrow{F}=\left[\begin{array}{c}x\\y-1\\z+1\end{array}\right]
+$\newline
+dopełniamy M elipsą $x^2+4y^2\le1$(dla otwartego($<1$) orientacja dodatnia "od dołu"), punktem $(1,0,1)$, i mamy brzeg stożka z orientacją "zewnętrzną",
+z twierdzenia o dywergencji:\newline
+$
+\iint\limits_{M,+}\omega+\iint\limits_{(x^2+4y^2<1,z=0),+}\omega=\iiint\limits_{(x-z)^2+4y^2<(1-z)^2}div\overrightarrow{F}dl_3=\iiint\limits_{(x-z)^2+4y^2<(1-z)^2}3dl_3\newline
+\iint\limits_{(x^2+4y^2<1,z=0),+}xdy\wedge dz -(y-1)dx\wedge dz+dx\wedge dy=\iint\limits_{x^2+4y^2<1,+}dx\wedge dy\newline
+$ parametryzacja kołowa
+$
+\iint\limits_{r\in(0,1),\alpha\in(0,2\pi)}\left|\begin{array}{cc}\cos{\alpha}&-r\sin{\alpha}\\\frac{1}{2}\sin{\alpha}&\frac{1}{2}r\cos{\alpha}\end{array}\right|drd\alpha
+=\iint\limits_{r\in(0,1),\alpha\in(0,2\pi)}\frac{r}{2}drd\alpha=\frac{\pi}{2}\newline
+$ sprawdźmy orientację wektor $(0,0,1)$ w punkt $(\frac{1}{2},0,0)
+\left[\begin{array}{c}0\\0\\1\\\end{array}\right]\cdot\left[\begin{array}{c}0\\0\\\frac{1}{4}\\\end{array}\right]=\frac{1}{4}>0
+$, więc orientacja odwrotna$\rightarrow-\frac{\pi}{2}$
+$
+\iiint\limits_{(x-z)^2+4y^2<(1-z)^2}3dl_3$= 3 razy objętość stożka o wysokości 1 i podstawie elipsy=$\iint\limits_{x^2+4y^2\le1}dxdy\cdot 1=\frac{\pi}{2}$\newline
+$\iint\limits_{M,+}\omega=\underline{\pi}$
+\end{document}
+
+
+
+
+
+
+
+
+
+

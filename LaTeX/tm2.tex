@@ -1,0 +1,149 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501
+\newline
+
+Zadanie 2.1.
+\newline
+\newline
+(a)\newline
+$
+f_n\rightarrow f $według miary, czyli: $\forall_{\varepsilon>0}\lim\limits_{n\rightarrow\infty}\mu({x:|f(x)-f_n(x)|>\varepsilon})=0\newline
+$Biorąc nierówność: $\forall_{\varepsilon>0}\int\limits_{X}|f-f_n|d\mu\le\mu(X)\cdot\varepsilon+\int\limits_{\{x:|f(x)-f_n(x)|>\varepsilon\}}|f-f_n|d\mu\newline
+$i przechodząc z $n$ do nieskończoności otrzymujemy po prawej stronie nierówności całkowanie po zbiorze miary zero, nierówność przenosi się na granicę:$\newline
+\lim\limits_{n\rightarrow\infty}\int\limits_{X}|f-f_n|d\mu\le\mu(X)\cdot\varepsilon+0\newline$
+ponieważ $\mu(X)<\infty$, oraz z dowolności $\varepsilon$ prawa strona nierówności jest dowolnie mała, więc:\newline
+$\lim\limits_{n\rightarrow\infty}\int\limits_{X}|f-f_n|d\mu=0$ czyli $f_n\rightarrow f$ w $ L_1(X,\mu)\newline\newline$
+(b)\newline
+Kontrprzykład dla $(X,\mu)$ równego $([0,1],l_1([0,1]))$\newline
+$f_{k,l}=1-\chi([\frac{l}{2^k},\frac{l+1}{2^k}])$ tworzące ciąg funkcji w sposób $f_{0,0},f_{1,0},...,f_{k,l},f_{k,l+1},...,f_{k,2^{k}-1},f_{k+1,0},...\newline
+$ czyli ciąg $f_n=f_{k,l}$ dla $n=2^k+l\newline
+f=1$ oczywiście spełnione są warunki: $f_n$ są mierzalne, $0\le f_n(x)\le f(x)$,\newline
+$\forall_{\varepsilon>0}$ $\mu(\{x:|f(x)-f_n(x)|>\varepsilon\})\le\frac{1}{\lfloor\log_2(n)\rfloor+1}\rightarrow 0$, f sumowalna\newline
+Jednak $\forall_{x\in[0,1]}\forall_{N}\exists_{n>N}$ $|f(x)-f_n(x)|=1>0$\newline
+Czyli nie zachodzi zbieżność prawie wszędzie.\newpage
+ 
+Wiktor Zuba 320501
+\newline
+
+Zadanie 2.2.
+\newline
+\newline
+Dla $x\in[0,1]$ zbiór $\{x\}$ jest domknięty więc i $\mu$-mierzalny (borelowski), z przesuwalności $\mu$\newline
+$\mu(\{x\})=\mu(\{y\})$. Tak więc $\mu(\{x\})=0$,\newline
+ponieważ w przeciwnym razie możemy dobrać nieskończenie wiele różnych punktów należących do $[0,1]$ np. $\mathbb{Q}\cap[0,1]$, wtedy z własności zbiorów
+mierzalnych $\mu(\mathbb{Q}\cap[0,1])=\sum\limits_{x\in\mathbb{Q}\cap[0,1]}\mu({x})=\infty>1$.\newline
+Miara przedziałów:\newline
+$1=\mu([0,1])=\mu([0,1))+\mu(\{1\})=\mu([0,1))$, a ponieważ przedziały są borelowskie więc mierzalne to z rozłączności mamy:\newline
+$1=\mu([0,1))=\mu(\bigcup\limits_{k=0}^{n-1}[\frac{k}{n},\frac{k+1}{n}))=\sum\limits_{k=0}^{n-1}\mu([\frac{k}{n},\frac{k+1}{n}))$ (z przesuwalności)
+$=\sum\limits_{k=0}^{n-1}\mu([0,\frac{1}{n}))=n\cdot\mu([0,\frac{1}{n}))$\newline
+czyli $\mu([\frac{k}{n},\frac{k+1}{n}))=\frac{1}{n}$, więc $\mu([a,a+\frac{k}{n}))=\mu([0,\frac{k}{n}))=\frac{k}{n}$, czyli
+$\mu(A)=l_1(A)$, dla dowolnego przedziału $A\subseteq[0,1]$ (ponieważ końce są miary zero)\newline\newline
+P-rodzina wszystkich przedziałów otwartych zawartych w $[0,1]$.\newline
+L=$\{B\subseteq[0,1]:\mu(B)=l_1(B),B$-borelowski$\}$\newline
+Z poprzednich rozważań wynika, że $P\subseteq L$,\newline
+przecięcie dwóch przedziałów jest przedziałem, więc P jest $\pi$-układem\newline
+$[0,1]\in L$\newline
+$A,B\in L$ borelowskie, $A\subseteq B$, więc $B\backslash A$ też borelowskie (wszystkie trzy $\mu$-mierzalne),\newline
+oraz $\mu(B\backslash A)=\mu(B)-\mu(A)=l_1(B)-l_1(A)=l_1(B\backslash A)$ czyli $B\backslash A\in L$\newline
+Dla ciągu $(A_n)\in L$ wstępującego $\bigcup\limits_{n}A_n$ jest borelowska, definiując $B_n=A_n\backslash A_{n-1}$ mamy:\newline
+$\mu(\bigcup\limits_{n}A_n)=\mu(\bigcup\limits_{n}B_n)=\sum\limits_{n=1}^{\infty}\mu(B_n)=\lim\limits_{N\rightarrow\infty}\sum\limits_{n=1}^{N}\mu(B_n)=
+\lim\limits_{N\rightarrow\infty}\mu(\bigcup\limits_{n=1}^{N}B_n)=\lim\limits_{N\rightarrow\infty}\mu(A_N)=\lim\limits_{N\rightarrow\infty}l_1(A_N)=l_1(\bigcup\limits_{n}A_n)$
+więc $\bigcup\limits_{n}A_n\in L$.\newline
+L jest więc $\lambda$-układem zawierającym $\pi$-układ P, więc zawiera też i $\sigma(P)$, czyli rodzinę wszystkich zbiorów borelowskich na [0,1].\newline
+Więc dla dowolnego $A$ borelowskiego $\mu(A)=l_1(A)$, czyli $\mu=l_1$.\newpage
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 2.3.
+\newline
+\newline
+$
+\forall_{x,y\in[0,1]} |f(x)-f(y)|\le L\cdot|x-y|^{\alpha}\quad\quad\quad\quad\quad$(L zamiast H dla braku kolizji oznaczeń)$\newline
+$
+Dowód nierówności: $H^s(f(A))\le L^sH^{s\alpha}(A)$\newline
+Dla zbioru $A$, oraz $k,\delta>0$ wybieramy taką rodzinę zbiorów $(C_j^k)$ aby
+$A\subset\bigcup\limits_{j=1}^{\infty}C_j^k,diam(C_j^k)\le\delta,\newline
+\sum\limits_{j=1}^{\infty}diam(C_j^k)^{s\alpha}\le H^{s\alpha}_{\delta}(A)+\frac{1}{k}$\newline
+$f(A)\subset\bigcup\limits_{j=1}^{\infty}f(C_j^k),diam(f(C_j^k))\le L\cdot(diam(C_j^k))^{\alpha}$\newline
+Więc : $H^s_{L\delta^\alpha}(f(A))\le\sum\limits_{j=1}^{\infty}diam(f(C_j^k))^s\le L^s\cdot\sum\limits_{j=1}^{\infty}diam(C_j^k)^{s\alpha}\le
+L^s\cdot H^{s\alpha}_{\delta}(A)+\frac{L^s}{k}$\newline
+Z dowolności k otrzymujemy $H^s_{L\delta^\alpha}(f(A))\le L^s\cdot H^{s\alpha}_{\delta}(A)$, przy $\delta\rightarrow 0$ mamy $L\cdot\delta^\alpha\rightarrow0$\newline
+Więc z dowolności $\delta$ otrzymujemy $H^s(f(A))\le L^s\cdot H^{s\alpha}(A)$\newline\newline
+Teraz korzystając z udowodnionej nierówności, dla $\alpha>\frac{1}{2}$, oraz $s=2$ otrzymujemy:\newline
+$
+H^2([0,1]\times[0,1])=H^2(f([0,1]))\le L^2\cdot H^{2\alpha}([0,1])=0$, gdyż wymiarem Hausdorffa odcinka jest $1<2\alpha$,
+jednocześnie zaś wymiarem Hausdorffa kwadratu jest 2 i miara 2-wymiarowa Hausdorffa tego kwadratu jest dodatnia$(=\frac{2}{\pi}>0)$ co daje nam sprzeczność.
+Czyli nie istnieje taka funkcja f.\newline\newline\newline\newline
+
+Zadanie 2.5.
+\newline
+\newline
+$
+\mu_n=l^1_{[0,1]}-\frac{1}{n}\sum\limits_{k=1}^n\delta_{\frac{k}{n}}\newline
+\int\limits_{\mathbb{R}}f(x)d\mu_n(x)=\int\limits_{0}^{1}f(x)dl^1(x)-\frac{1}{n}\sum\limits_{k=1}^{n}f(\frac{k}{n})\newline
+$f jest ciągła na zwartym zbiorze $[0,1]$ więc jest jednostajnie ciągła\newline
+(czyli dla dowolnego $\varepsilon>0\exists_N:\forall_{n>N}\forall_{x\in[\frac{k-1}{n},\frac{k+1}{n}]}|f(x)-f(\frac{k}{n})|<\varepsilon)\newline
+\forall_{n>N}|\frac{1}{n}\sum\limits_{k=1}^{n}f(\frac{k}{n})-\int\limits_{0}^{1}f(x)dl^1(x)|<\varepsilon$, z dowolności $\varepsilon$
+$\lim\limits_{n\rightarrow\infty}\frac{1}{n}\sum\limits_{k=1}^{n}f(\frac{k}{n})=\int\limits_{0}^{1}f(x)dl^1(x)$\newline
+czyli $\mu_n\rightharpoonup l^1_{[0,1]}-l^1_{[0,1]}=0\newline\newline
+|\mu_n|(A)\le(l^1_{[0,1]}+\frac{1}{n}\sum\limits_{k=1}^{n}\delta_{\frac{k}{n}})(A)\newline
+|\mu_n|(A)=\sup\{\sum|\mu_n(A_i)|:\bigcup A_i=A,A_i\cap A_j=\emptyset\}\ge|\mu_n(\mathbb{IQ}\cap[0,1]\cap A)|+|\mu_n(\mathbb{Q}\cap[0,1]\cap A)=
+l^1_{[0,1]}(A\cap\mathbb{IQ})+|l^1_{[0,1]}(A\cap\mathbb{Q})-\frac{1}{n}\sum\limits_{k=1}^{n}\delta_{\frac{k}{n}}(A\cap\mathbb{Q})|=l^1_{[0,1]}(A)+\frac{1}{n}\sum\limits_{k=1}^{n}\delta_{\frac{k}{n}}(A)\newline
+|\mu_n|(A)=l^1_{[0,1]}(A)+\frac{1}{n}\sum\limits_{k=1}^{n}\delta_{\frac{k}{n}}(A)\newline
+$W analogiczny sposób jak w pierwszej części wychodzi: $|\mu_n|\rightharpoonup l^1_{[0,1]}+l^1_{[0,1]}=2\cdot l^1_{[0,1]}$\newpage
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 2.6.
+\newline
+\newline
+Przykład dla $\mathbb{R}^k=\mathbb{R}$\newline
+$
+\mu_n=l^1_{[n,\infty)}+\sum\limits_{m=1}^{n}\frac{1}{m}l^1_{[m-1,m)}\quad\quad\quad\quad
+\mu=\sum\limits_{m=1}^{\infty}\frac{1}{m}l^1_{[m-1,m)}\newline
+$Spełnianie założeń:\newline
+$
+\mu_n(\mathbb{R})=\infty=\sum\limits_{m=1}^{\infty}\frac{1}{m}=\mu(\mathbb{R})\newline
+f\in C_c\Rightarrow\exists_N>0\forall_{x>N}f(x)=0,$ dla $n>N$ miary $\mu_n$ i $\mu$ są równe na nośniku funkcji więc $\mu_n\rightharpoonup\mu\newline
+$Teraz $f=\chi_{(-\infty,1)}+\frac{1}{x}\cdot\chi_{[1,\infty)}$-ograniczona, ciągła, nieujemna$\newline
+\int\limits_{-\infty}^{\infty}fd\mu_n\ge\int\limits_{n}^{\infty}fd\mu_n=\int\limits_{n}^{\infty}\frac{1}{x}dl^1=\infty\newline
+\int\limits_{-\infty}^{\infty}fd\mu=1+\int\limits_{1}^{\infty}\frac{1}{x}dl^1=1+\sum\limits_{m=1}^{\infty}\frac{1}{m}\int\limits_{m}^{m+1}\frac{1}{x}dl^1\le
+1+\sum\limits_{m=1}^{\infty}\frac{1}{m}\cdot\frac{1}{m}=1+\frac{\pi^2}{6}$\newline
+Ciąg liczb nieskończonych nie może zbiegać do czegoś skończonego więc $\int\limits_{\mathbb{R}}fd\mu_n\nrightarrow\int\limits_{\mathbb{R}}fd\mu$\newline\newline\newline\newline
+
+
+Zadanie 2.7.
+\newline
+\newline
+Dla miary Radona $\mu$ na $\mathbb{R}^n$ i dowolnego zbioru borelowskiego (więc i dla zwartego $K$)\newline
+$\forall_{\varepsilon>0}\exists_U$ t.że $U$-zbiór otwarty, $K\subset U$ i $\mu(U\backslash K)<\varepsilon$\newline
+Biorąc $B$-kulę zawierającą nasz zbiór $K$ o skończonym promieniu (gdyż $K$-ograniczony), i przecinając ją z otrzymanym wcześniej zbiorem $U$
+otrzymujemy otwarty zbiór ograniczony $O$, $K\subset O$.\newline
+Wybieramy funkcję $f$ ciągłą, która przyjmuje wartość 1 na zbiorze $K$ oraz 0 na $\mathbb{R}^n\backslash O$ (istnienie z Lematu Urysohna),
+o zwartym nośniku ($O$ jest ograniczone). Wtedy też spełnione są nierówności:\newline
+$
+\overline{\lim\limits_{k\rightarrow\infty}}\mu_k(K)\le\overline{\lim\limits_{k\rightarrow\infty}}\int\limits_{\mathbb{R}^n}fd\mu_k=
+\int\limits_{\mathbb{R}^n}fd\mu\le\mu(O)\le\mu(K)+\varepsilon\newline
+$
+Z dowolności $\varepsilon$ otrzymujemy $\overline{\lim\limits_{k\rightarrow\infty}}\mu_k(K)\le\mu(K)$\newline\newline\newline\newline
+
+Zadanie 2.8.
+\newline
+\newline
+$
+\mu=l^1_{[0,1)}+i\cdot l^1_{(1,2]},\quad A=[0,2]\newline
+|\mu|(A)=\sup\{\sum|\mu(A_i)|:\bigcup A_i=A,A_i\cap A_j=\emptyset\}\ge($a nawet =$)|\mu([0,1])|+|\mu((1,2])|=1+1=2\newline
+Re\mu=l^1_{([0,1))},Im\mu=l^1_{((1,2])}\Rightarrow |Re\mu|(A)=Re\mu(A)=l^1_{[0,1)},|Im\mu|(A)=Im\mu(A)=l^1_{(1,2]}\newline
+|Re\mu|([0,2])=1,|Im\mu|([0,2])=1\newline
+[|\mu|(A)]^2\ge4>1+1=[|Re\mu|(A)]^2+[|Im\mu|(A)]^2
+$\newpage
+\end{document}

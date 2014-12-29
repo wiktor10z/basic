@@ -1,0 +1,63 @@
+a\newline
+ą\newline
+b\newline
+c\newline
+ć\newline
+d\newline
+e\newline
+ę\newline
+f\newline
+g\newline
+h\newline
+i\newline
+j\newline
+k\newline
+l\newline
+ł\newline
+m\newline
+n\newline
+ń\newline
+o\newline
+ó\newline
+p\newline
+q\newline
+r\newline
+s\newline
+ś\newline
+t\newline
+u\newline
+v\newline
+w\newline
+x\newline
+y\newline
+z\newline
+ź\newline
+ż\newline
+{\Large
+\begin{tabular}{|c|}\hline
+
+$\emptyset$(brak założeń)\\\hline($3\frac{1}{7},2\frac{5}{7}$),$c^{\top}x=14\frac{3}{7}$ \\\hline\hline
+$x_1\le 3$\\\hline($3,2\frac{7}{9}$),$c^{\top}x=14\frac{1}{3}$ \\\hline\hline
+$x_1\le 3,x_2\le 2$\\\hline($3,2$),$c^{\top}x=12$ \\\hline\hline
+$x_1\le 3,x_2\ge 3$\\\hline($2\frac{1}{2},3$),$c^{\top}x=14$ \\\hline\hline
+$x_1\le 2,x_2\ge 3$\\\hline($2,3\frac{2}{9}$),$c^{\top}x=13\frac{2}{3}$  \\\hline\hline
+$x_1\le 2,3\le x_2\le 3$\\\hline($2,3$),$c^{\top}x=13$  \\\hline\hline
+$x_1\le 2,x_2\ge 4$\\\hline($\frac{1}{4},4$),$c^{\top}x=12\frac{1}{2}$  \\\hline\hline
+$3\le x_1\le 3,x_2\ge 3$\\\hline$\emptyset$(brak rozwiązań) \\\hline\hline
+$x_1\ge 4$\\\hline($4,1$),$c^{\top}x=11$  \\\hline\hline
+\end{tabular}
+}
+      \subsection{Travelling Salesman Problem}
+W grafie z przypisanymi wagami problem komiwojażera jest uogólnieniem problemu cyklu Hamiltona, wyszukującym cykl Hamiltona o najmniejszej wadze.\newline\newline
+%
+Twierdzenie 5.2.3.1. Dla każdej funkcji $\alpha(n)$ obliczalnej w czasie wielomianowym od wielkości grafu nie ma $\alpha(n)$-aproksymacji TSP, o ile $P\neq NP$.\newline\newline
+%
+Szkic dowodu: jeśli istaniała by $\alpha(n)$ aproksymacja wystarczyłoby dla dowolnego grafu G stworzyć graf pełny H o wagach
+$w((u,v))=1$ dla $(u,v)\in E(G)$, $w((u,v))=n\cdot\alpha(n)$ dla $(u,v)\notin E(G)$. Otrzymanie $\alpha$-aproksymacji dla problemu komiwojażera dla grafu H oznaczałoby rozwiązanie
+NP-trudnego problemu grafu Hamiltona dla dowolnego grafu G.\newline\newline
+%
+Metryczny problem komiwojażera zakłada, że wagi krawędzi pomiędzy wierzchołkami spełniają warunek trójkąta
+(założenie to jest spełniane przez większość rzeczywistych zastosowań problemu).\newline
+
+%Programowanie liniowe jest klasą problemów zajmujących się maksymalizacją lub minimalizacją funkcji liniowej wielu zmiennych przy
+%założeniu spełniania przez nie pewnej liczby również liniowych warunków.\newline%TODO

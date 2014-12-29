@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+\marginsize{2,5cm}{2,5cm}{1cm}{4cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+Zadanie 7.
+\newline
+\newline
+Rozważam kilka przypadków:\newline
+1- ścieżka- ma tylko 2 liście więc połączenie w k-cykl nie jest możliwe- nie ma czegoś takiego jak 2-cykl, ale interpretując to jako tylko połączenie tych dwóch
+wierzchołków początkowego i końcowego otrzymujemy z grafu cykl- który jest 3-kolorowalny\newline
+2- gwiazda o parzystej liczbie liści - kolorujemy wierzchołek wewnętrzny na pierwszy kolor,
+a pozostałe w utworzonym cyklu na przemian na drugi i trzeci kolor\newline
+3- dla drzewa po usunięciu liści otrzymujemy ponownie drzewo(zredukowane) w tym przypadku co najmniej dwu wierzchołkowe- w przeciwnym przypadku jest to gwiazda,
+a ten przypadek jest już rozważony.\newline\newline
+Kilka faktów:\newline
+Ponieważ w drzewie pomiędzy każdymi dwoma wierzchołkami istnieje dokładnie jedna ścieżka to jest on 2-kolorowalny(na dokładnie 2 sposoby),
+tak więc w tym przypadku kolorujemy to drzewo zredukowane kolorami \textcolor{Green}{a} i \textcolor{blue}{b} i wybieramy jeden wierzchołek 
+($\widetilde{w}$) który w tym zredukowanym drzewie jest liściem,
+w drzewie pierwotnym odchodzi od niego liść (conajmniej jeden bo inaczej sam byłby liściem i nie znalazłby się w drzewie zredukowanym)
+możemy założyć że jest on pokolorowany na \textcolor{Green}{a} (ponieważ zawsze możemy odwrócić te 2 kolory).\newline
+W narysowanym drzewie by otrzymać ów k-cykl musimy połączyć liście "po kolei"- inaczej istnieje liść zamknięty pomiędzy dwoma niekolejnymi połączonymi ze sobą
+liściami, i drugi odseparowany od niego po drugiej stronie, a jednocześnie te dwa wierchołki muszą się znaleźć na cyklu,
+żeby graf był planarny prowadząc dwie ścieżki po liściach od jednego odseparowanego wierzchołka do drugiego musimy odwiedzić te dwa połączone niekolejne wierzchołki,
+ale to spowoduje zamknięcie cyklu, niezawierającego tego drugiego odseparowanego wierzchołka.\newline
+Ponieważ $\widetilde{w}$ sąsiaduje z tylko jednym nieliściem, to wszystkie liście z nim sąsiadujące(liście $\widetilde{w}$) na rysunku są "po kolei"
+-gdyż ich krawędzie odchodzą "po kolei" z wierzchołka, a więc i z z drzewa zredukowanego. Z tych dwóch uwag wynika, że wszystkie liście
+$\widetilde{w}$ są w tym k-cyklu połączone ścieżkami nie zawierającymi pozostałych liści.\newline\newline
+Ponieważ $\widetilde{w}$ przed pokolorowaniem liści $\widetilde{w}$ sąsiaduje tylko z jednym pokolorowanym wierzchołkiem (na \textcolor{blue}{b}), to
+w razie potrzeby możemy do przemalować na kolor \textcolor{red}{c} bez stwarzenia kolizji.\newline
+Gdy w grafie G(T), z pokolorowanym już drzewem zredukowanym na 2 kolory zaczniemy malować niepokolorowane wierzchołki po kolei, to zawsze mamy conajmniej 1 kolor
+dostępny $\rightarrow$ różny od koloru wierzchołka od którego dany liść odchodzi, i od koloru poprzedniego w kolejności liścia -
+jedyny problem może nam sprawić zakańczanie cykluw którym to momencie kolorujemy wierchołek który sąsiaduje z 3 już pokolorowanymi
+- malujemy tak by zdażyło się to dla liścia $\widetilde{w}$.\newline\newline
+Rozważmy kilka przypadków:\newline
+$\widetilde{w}$ ma parzyście wiele liści:\quad
+Na k- cyklu malujemy na kolor \textcolor{red}{c} pierwszy liść po liściach $\widetilde{w}$,i tak malując przechodzimy cykl aż pomalujemy wszystkie oprócz
+liści $\widetilde{w}$. Jeżeli ostatni pokolorowany wierzchołek ma kolor \textcolor{Green}{a} lub \textcolor{blue}{b}
+to nasze liście kolorujemy na przemian na kolory \textcolor{red}{c} i \textcolor{blue}{b} 
+(ten pokolorowany na \textcolor{Green}{a} lub \textcolor{blue}{b} sąsiaduje z \textcolor{red}{c},
+a z parzystości nasz ostatni pokolorowany na \textcolor{blue}{b} sąsiaduje z pokolorowanym na \textcolor{red}{c}).
+Jeżeli ostatni pokolorowany wierzchołek ma kolor \textcolor{red}{c}, to zmieniamy kolor $\widetilde{w}$ na \textcolor{red}{c}
+i odchodzące od niego liście kolorujemy na przemian na \textcolor{Green}{a} i \textcolor{blue}{b}(jak wyżej)\newline
+$\widetilde{w}$ ma nieparzyście wiele liści:\quad
+Jak dla przypadku parzystego. Jeżeli ostatni pokolorowany wierchołek ma kolor \textcolor{Green}{a} lub \textcolor{red}{c},
+to nasze liście kolorujemy na przemian na \textcolor{blue}{b} i \textcolor{red}{c} -zaczynając i kończąc na \textcolor{blue}{b} z nieparzystości(jak wyżej).
+Jeżeli ostatni pokolorowany wierzchołek ma kolor \textcolor{blue}{b}, to zmieniamy kolor $\widetilde{w}$ na \textcolor{red}{c},
+i odchodzące od niego liście kolorujemy na przemian na \textcolor{Green}{a} i \textcolor{blue}{b} (zaczynając i kończąc na \textcolor{Green}{a})(jak wyżej)\newline
+\end{document}

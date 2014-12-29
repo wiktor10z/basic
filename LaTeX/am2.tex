@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+Zadanie 2.
+\newline
+
+
+$
+a>b>0
+$
+$
+\int\limits_{0}^{\infty}
+\frac{e^{-ax}-e^{-bx}}{x} dx
+$
+\newline
+"pochodna" funkcji podcałkowej względem a : 
+$
+\bigl( \frac{e^{-ax}-e^{-bx}}{x} \bigr)^{\prime}
+=
+\frac{-xe^{-ax}}{x}=-e^{-ax}
+$
+\newline
+mamy funkcję od y 
+$
+-e^{-yx} \quad
+\int\limits_{b}^{a}
+-e^{-yx} dy
+=
+\frac{e^{-ax}-e^{-bx}}{x}
+$
+więc:
+$
+\int\limits_{0}^{\infty}
+\frac{e^{-ax}-e^{-bx}}{x} dx
+=
+\int\limits_{0}^{\infty}
+\bigl(
+\int\limits_{b}^{a}
+-e^{-yx} dy
+\bigr)
+dx
+=
+- \int\limits_{0}^{\infty}
+\bigl(
+\int\limits_{b}^{a}
+e^{-yx} dy
+\bigr)
+dx
+$
+funkcja podcałkowa jest mierzalna i nieujemna więc spełnia założenia twierdzenia Fubiniego:
+\newline
+$
+- \int\limits_{0}^{\infty}
+\bigl(
+\int\limits_{b}^{a}
+e^{-yx} dy
+\bigr)
+dx
+=
+\int\limits_{b}^{a}
+\bigl(
+\int\limits_{0}^{\infty}
+-e^{-yx} dx
+\bigr)
+dy
+=
+\int\limits_{b}^{a}
+\bigl[
+\frac{e^{-yx}}{y}
+\bigr]_{x=0}^{x=\infty} dy
+=
+\int\limits_{b}^{a} -\frac{1}{y} dy
+=
+\bigl[-\ln{y}
+\bigr]_{b}^{a}
+=
+\ln{b}-\ln{a}=
+\ln{\frac{b}{a}}
+$
+
+\end{document}

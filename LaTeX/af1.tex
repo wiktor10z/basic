@@ -1,0 +1,261 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 1.
+\newline
+\newline
+Jako, że dla każdej z przestrzeni mamy daną normę to by wykazać, że są przestrzeniami Banacha\newline
+wystarczy udowodnić zupełność następujących przestrzeni:\newline
+i) $c_0$ z normą supremum:\newline
+$x$-granica ciągu ciągów $x^{(n)}$ (należących do $c_0$), z czego wynika,\newline
+że dla dowolnego $\varepsilon>0$ $\exists_{N_1}\forall_{k>N_1} \lVert x^{(k)}-x\rVert=\sup\limits_{n}|x^{(k)}_n-x_n|<\frac{\varepsilon}{2}$\newline
+Jednocześnie dla dowolnego $\varepsilon>0$ $\exists_{N_2}\forall_{l>N_2} |x^{(k)}_l|<\frac{\varepsilon}{2}$ co daje nam:\newline
+$\forall_{n>\max\{N_1,N_2\}}$ $|x_n|\le|x_n-x^{(k)}_n|+|x^{(k)}_n|<\lVert x-x^{(k)}\rVert+\frac{\varepsilon}{2}<\varepsilon$\newline
+Z dowolności $\varepsilon$ wynika, że $x\in c_0$, co dowodzi zupełności $c_0$\newline\newline
+ii) $c$ z normą supremum:\newline 
+$x$-granica ciągu ciągów $x^{(n)}$ (należących do $c$), z czego wynika,\newline
+że dla dowolnego $\varepsilon>0$ $\exists_{N_1}\forall_{k>N_1} \lVert x^{(k)}-x\rVert=\sup\limits_{n}|x^{(k)}_n-x_n|<\frac{\varepsilon}{2}$\newline
+Jednocześnie dla dowolnego $\varepsilon>0$ $\exists_{N_2}\exists_{a}\forall_{l>N_2} |x^{(k)}_l-a|<\frac{\varepsilon}{2}$ co daje nam:\newline
+$\forall_{n>\max\{N_1,N_2\}}$ $|x_n-a|\le|x_n-x^{(k)}_n|+|x^{(k)}_n-a|<\lVert x-x^{(k)}\rVert+\frac{\varepsilon}{2}<\varepsilon$\newline
+Z dowolności $\varepsilon$ wynika, że $x$ zbiega do a, więc należy do $c$, co dowodzi zupełności $c$\newline\newline
+iii) $l_p$ z normą p-tą:\newline
+$x$-granica ciągu ciągów $x^{(n)}$ (należących do $l_p$), z czego wynika,\newline
+że dla dowolnego $\varepsilon>0$ $\exists_{N_1}\forall_{k>N_1} \lVert x^{(k)}-x\rVert_p<\varepsilon$\newline
+$\lVert x\rVert_p=\lVert x-x^{(k)}+x^{(k)}\rVert_p\le\lVert x-x^{(k)}\rVert_p+\rVert x^{(k)}\rVert_p$ (z nierówności Minkowskiego)\newline
+$\lVert x-x^{(k)}\rVert_p+\rVert x^{(k)}\rVert_p<\varepsilon+\infty=\infty$\newline
+Stąd wynika, że $x\in l_p$, co dowodzi zupełności $l_p$\newline\newline
+iv) $C([0,1])$ z normą supremum:\newline
+$f$-granica ciągu funkcji $f_n$ (należących do $C([0,1])$), z czego wynika,\newline
+że dla dowolnego $\varepsilon>0$ $\exists_{N_1}\forall_{k>N_1} \lVert f_n-f\rVert=\sup\limits_{x\in [0,1]}|f_n(x)-f(x)|<\frac{\varepsilon}{3}$\newline
+z ciągłości $f_n$ wynika, że $\forall_{x\in[0,1]}\forall_{\varepsilon>0}\exists_{\delta>0}$, że $|x-y|<\delta$ mamy $|f_n(x)-f_n(y)|<\frac{\varepsilon}{3}$\newline
+Więc dla $|x-y|<\delta$ mamy $|f(x)-f(y)|=|f(x)-f_n(x)+f_n(x)-f_n(y)+f_n(y)-f(y)|\le\newline
+\le|f(x)-f_n(x)|+|f_n(x)-f_n(y)|+|f_n(y)-f(y)|<3\cdot\frac{\varepsilon}{3}=\varepsilon$\newline
+Z dowolności $x$ oraz $\varepsilon$ wynika, że $f$ jest ciągła na $[0,1]$, więc należy do $C([0,1])$, co dowodzi zupełności $C([0,1])$\newpage
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 2.
+\newline
+\newline
+$
+F=2^{\Omega},\mu$- miara na $F\newline
+\int\limits_{\Omega}|f|^pd\mu<\infty,\int\limits_{\Omega}|f|^qd\mu<\infty\newline
+$
+Udowodnić, że :$\Phi(s)=\ln{\left(\int\limits_{\Omega}|f|^sd\mu\right)}$ jest wypukła\newline
+Funkcja jest wypukła jeśli dla każdych $p\le a\le b\le q$ oraz $t\in(0,1)$ prawdziwa jest nierówność\newline
+$
+\Phi(at+(1-t)b)\le t\Phi(a)+(1-t)\Phi(b)\newline
+\ln{\left(\int\limits_{\Omega}|f|^{(ta+(1-t)b)}d\mu\right)}\le t\cdot\ln{\left(\int\limits_{\Omega}|f|^ad\mu\right)}+(1-t)\cdot\ln{\left(\int\limits_{\Omega}|f|^bd\mu\right)}\newline
+\ln{\left(\int\limits_{\Omega}|f|^{(ta+(1-t)b)}d\mu\right)}\le\ln{\left(\left(\int\limits_{\Omega}|f|^ad\mu\right)^t\cdot\left(\int\limits_{\Omega}|f|^bd\mu\right)^{1-t}\right)}\newline
+$ funkcja exponent jest rosnąca możemy więc zastosować ją do obu stron nierówności bez straty nierówności\newline$
+\int\limits_{\Omega}|f|^{(ta+(1-t)b)}d\mu\le\left(\int\limits_{\Omega}|f|^ad\mu\right)^t\cdot\left(\int\limits_{\Omega}|f|^bd\mu\right)^{1-t}\newline
+\int\limits_{\Omega}\left(||f|^{ta}|\cdot||f|^{(1-t)b}|\right)d\mu\le\left(\int\limits_{\Omega}||f|^{ta}|^{\frac{1}{t}}d\mu\right)^t\cdot\left(\int\limits_{\Omega}||f|^{(1-t)b}|^{\frac{1}{1-t}}d\mu\right)^{1-t}\newline
+$
+A to już wynika z Nierówności H\"{o}ldera zastosowanej dla funkcji $|f|^{ta}$ i $|f|^{(1-t)b}$ oraz dla $p=\frac{1}{t},q=\frac{1}{1-t}$\newpage
+ 
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 3.
+\newline
+\newline
+$F=2^{\Omega},\mu$- miara na $F$ skończona\newline
+Udowodnić nierówność:\newline
+$
+\left(\int\limits_{\Omega}|f|^pd\mu\right)^{\frac{1}{p}}\le\mu{(\Omega)}^{\frac{1}{p}-\frac{1}{q}}\cdot\left(\int\limits_{\Omega}|f|^qd\mu\right)^{\frac{1}{q}}\newline
+\left(\int\limits_{\Omega}(||f|^p|\cdot1)d\mu\right)^{\frac{1}{p}}\le\left(\int\limits_{\Omega}d\mu\right)^{\frac{1}{p}-\frac{1}{q}}\cdot\left(\int\limits_{\Omega}||f|^p|^{\frac{q}{p}}d\mu\right)^{\frac{1}{q}}\newline
+$
+Funkcja potęgowa ($^p$) jest ściśle rosnąca na nieujemnej dziedzinie (więc można zastosować ją do obu stron nierówności bez straty nierówności)\newline
+$
+\left(\int\limits_{\Omega}(||f|^p|\cdot1)d\mu\right)\le\left(\int\limits_{\Omega}|1|^{\frac{q}{q-p}}d\mu\right)^{1-\frac{p}{q}}\cdot\left(\int\limits_{\Omega}||f|^p|^{\frac{q}{p}}d\mu\right)^{\frac{p}{q}}\newline
+$
+A to jest nierówność H\"{o}ldera zastosowana dla funkcji $f$ i $1$ oraz dla $p_2=\frac{q}{q-p},q_2=\frac{q}{p}$
+prawdziwe również dla $p=q$ jeżeli jednak chcemy uniknąć nieskończoności w potęgach możemy rozważyć ten trywialny przypadek osobno:$
+\left(\int\limits_{\Omega}|f|^pd\mu\right)^{\frac{1}{p}}=\mu{(\Omega)}^{0}\cdot\left(\int\limits_{\Omega}|f|^pd\mu\right)^{\frac{1}{p}}$\newpage
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 4.
+\newline
+\newline
+$F=2^{\Omega},\mu$- miara na $F\newline
+\int\limits_{\Omega}|f|^pd\mu<\infty\quad\forall p\in[1,\infty)\newline
+$Udowodnić:\newline 
+$
+\lim\limits_{p\rightarrow\infty}\left(\int\limits_{\Omega}|f|^pd\mu\right)^{\frac{1}{p}}=\text{ess}\sup\limits_{t\in\Omega}|f(t)|\newline
+$
+Oznaczenie: $A=\text{ess}\sup\limits_{t\in\Omega}|f(t)|$\newline
+Dowód poprzez 2 nierówności:\newline
+Jako, że $|f|$ nie jest ograniczona przez $\text{ess}\sup|f|$ tylko na zbiorze miary zero, zachodzi:\newline
+$
+\left(\int\limits_{\Omega}|f|^pd\mu\right)^{\frac{1}{p}}\le\left(\mu(\Omega)\cdot(A)^p\right)^{\frac{1}{p}}=
+\left(\mu(\Omega)\right)^{\frac{1}{p}}\cdot A\quad\forall p\in [1,\infty)$\newline
+Ponieważ nierówność słaba przenosi sie na granicę (oraz, że $0<\mu(\Omega)<\infty$), to:\newline
+$
+\lim\limits_{p\rightarrow\infty}\left(\int\limits_{\Omega}|f|^pd\mu\right)^{\frac{1}{p}}\le
+\lim\limits_{p\rightarrow\infty}\left(\mu(\Omega)\right)^{\frac{1}{p}})\cdot A=A\newline
+$
+W drugą stronę: $\forall \varepsilon>0$ $\mu(\{x:|f(x)|>A-\varepsilon\})=\delta_{\varepsilon}>0$
+- inaczej dla pewnego $\varepsilon>0$ $\text{ess}\sup\limits_{t\in\Omega}|f(t)|<A-\varepsilon$\newline
+Dla dowolnie wybranego $\varepsilon>0$ prawdziwa jest nierówność:\newline
+$
+\left(\int\limits_{\Omega}|f|^pd\mu\right)^{\frac{1}{p}}\ge\left(\int\limits_{\{x:|f(x)|>A-\varepsilon\}}|f|^pd\mu\right)^{\frac{1}{p}}\ge
+\left(\delta_{\varepsilon}\cdot(A-\varepsilon)^p\right)^{\frac{1}{p}}=
+\left(\delta_{\varepsilon}\right)^{\frac{1}{p}}\cdot (A-\varepsilon)\quad\forall p\in [1,\infty)\newline
+$
+Ponieważ nierówność słaba przenosi sie na granicę (oraz, że $0<\delta_{\varepsilon}<\infty$), to:\newline
+$
+\lim\limits_{p\rightarrow\infty}\left(\int\limits_{\Omega}|f|^pd\mu\right)^{\frac{1}{p}}\ge
+\lim\limits_{p\rightarrow\infty}\left(\delta_{\varepsilon}\right)^{\frac{1}{p}}\cdot (A-\varepsilon)=A-\varepsilon\newline
+$
+Z dowolności $\varepsilon$ wynika, że prawdziwa jest również nierówność:\newline$
+\lim\limits_{p\rightarrow\infty}\left(\int\limits_{\Omega}|f|^pd\mu\right)^{\frac{1}{p}}\ge A\newline
+$
+Co kończy dowód.\newpage
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 5.
+\newline
+\newline
+Przy założeniach jak w poleceniu udowodnić, że $\lVert\mu\rVert=|\mu|(X)=\sup\sum\limits_{n=1}^{\infty}|\mu(A_n)|$,\newline
+(gdzie supremum jest po wszystkich przeliczalnych podziałach X na zbiory  $A_n$ rozłączne, borelowskie\newline
+(z borelowskości miary $\mu$ $A_n$ są mierzalne)(da się taki podział otrzymać z lokalnej zwartości i własności $T_2$ przestrzeni X)) jest normą:\newline
+$\lVert\mu\rVert=0$, załóżmy, że istnieje zbiór borelowski $B$, taki, że $\mu(B)\neq0$, wtedy $\lVert\mu\rVert\ge|\mu(B)|+|\mu(X\setminus B)|>0$
+więc miara $\mu$ każdego zbioru borelowskiego musi być równa $0$\newline
+$k\in\mathbb{R}$ $\lVert k\cdot\mu\rVert=\sup\sum\limits_{n=1}^{\infty}|k\cdot\mu(A_n)|=\sup\sum\limits_{n=1}^{\infty}|k|\cdot|\mu(A_n)|=
+|k|\cdot\sup\sum\limits_{n=1}^{\infty}|\mu(A_n)|=|k|\cdot\lVert\mu\rVert\newline
+\lVert\mu+\nu\rVert=\sup\limits_{\cup A_n=X}\sum\limits_{n=1}^{\infty}|\mu(A_n)+\nu(A_n)|\le
+\sup\limits_{\cup A_n=X}\sum\limits_{n=1}^{\infty}(|\mu(A_n)|+|\nu(A_n)|)\le\newline
+\sup\limits_{\cup A_n=X,\cup B_n=X}\sum\limits_{n=1}^{\infty}(|\mu(A_n)|+|\nu(B_n)|)\le
+\sup\limits_{\cup A_n=X}\sum\limits_{n=1}^{\infty}|\mu(A_n)|+\sup\limits_{\cup B_n=X}\sum\limits_{n=1}^{\infty}|\nu(B_n)|=\lVert\mu\rVert+\lVert\nu\rVert$\newpage
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 6.
+\newline
+\newline
+$X$- unormowana przestrzeń, $A\subset X$, $X\setminus A$-liniowa podrzestrzeń $X$ (więc i $X$ liniowa przestrzeń)\newline
+Udowodnić, że $A$ jest albo zbiorem gęstym w $X$, albo zbiorem pustym:\newline
+Dowód przez sprzeczność: $A$ nie jest gęsty w zbiorze $X$ więc z definicji gęstości zbiór $X\setminus A$ zawiera podzbiór otwarty,
+więc i kulę o pewnym dodatnim promieniu $\varepsilon$ w normie przestrzeni $X$ (oznaczanej $\lVert\cdot\rVert$)\newline
+Weźmy środek tej kuli, oznaczmy go przez $s$, oraz pewnien punkt $a$ z niepustego zbioru A\newline
+Bierzemy punkt $b=s+\left(\frac{(a-s)}{\lVert a-s\rVert}\cdot|\frac{\varepsilon}{2}|\right)$, jego odległośc od punktu s jest mniejsza niż $\varepsilon$, więc należy
+do obranej przez nas kuli a więc i do $X\setminus A$\newline
+Jako, że $X\setminus A$ jest przestrzenią liniową to należą do niego również wszystkie kombinacje liniowe jego elementów, w szczególności:\newline
+$\left(1-\frac{2\cdot\lVert a-s\rVert}{\varepsilon}\right)\cdot s+\left(\frac{2\cdot\lVert a-s\rVert}{\varepsilon}\right)\cdot b=
+s-\frac{2\cdot\lVert a-s\rVert}{\varepsilon}\cdot s+\frac{2\cdot\lVert a-s\rVert}{\varepsilon}\cdot s+(a-s)=a\in X\setminus A$\newline
+Tak więc dostaliśmy sprzeczność.\newpage
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 7.
+\newline
+\newline
+$X$- zbiór ciągów z $\mathbb{R}^n$, o zbiegającym ciągu sum częściowych, z funkcją $\lVert x\rVert=\sup\limits_{k\in\mathbb{N}}|\sum\limits_{n=1}^{k}x_n|$\newline
+i) Udowodnić, że $(X,\lVert\cdot\rVert)$ jest przestrzenią Banacha:\newline
+a) $\lVert\cdot\rVert$-norma:\newline
+$\lVert x\rVert=\sup\limits_{k\in\mathbb{N}}|\sum\limits_{n=1}^{k}x_n|=0\Rightarrow\forall_{k}|\sum\limits_{n=1}^{k}x_n|=0$
+- indukcyjnie każdy kolejny wyraz ciągu musi być równy $0$\newline
+$l\in\mathbb{R}$ $\lVert l\cdot x\rVert=\sup\limits_{k\in\mathbb{N}}|\sum\limits_{n=1}^{k}l\cdot x_n|=
+\sup\limits_{k\in\mathbb{N}}(|l|\cdot|\sum\limits_{n=1}^{k}x_n|)=|l|\cdot\sup\limits_{k\in\mathbb{N}}|\sum\limits_{n=1}^{k}x_n|=|l|\cdot\lVert x\rVert\newline
+\lVert x+y\rVert=\sup\limits_{k\in\mathbb{N}}|\sum\limits_{n=1}^{k}x_n+y_n|\le\sup\limits_{k\in\mathbb{N}}(|\sum\limits_{n=1}^{k}x_n|+|\sum\limits_{n=1}^{k}y_n|)\le
+\sup\limits_{k,l\in\mathbb{N}}(|\sum\limits_{n=1}^{k}x_n|+|\sum\limits_{n=1}^{l}y_n|)=\newline
+\sup\limits_{k\in\mathbb{N}}|\sum\limits_{n=1}^{k}x_n|+\sup\limits_{l\in\mathbb{N}}|\sum\limits_{n=1}^{l}y_n|=\lVert x\rVert+\lVert y\rVert$\newline
+b) Zupełność $X$:\newline
+$x$-granica ciągu ciągów $x^{(n)}$ (należących do $X$), z czego wynika,\newline
+że dla dowolnego $\varepsilon>0$ $\exists_{N_1}\forall_{l>N_1}
+\lVert x^{(l)}-x\rVert=\sup\limits_{k\in\mathbb{N}}|\sum\limits_{n=1}^{k}(x^{(l)}_n-x_n)|<\frac{\varepsilon}{2}$\newline
+$\sum\limits_{n=1}^{k}x^{(l)}_n$- zbiega do pewnego $a\in\mathbb{R}^n$, czyli
+dla dowolnego $\varepsilon>0$ $\exists_{N_2}\exists_{a}\forall_{m>N_2} |\sum\limits_{n=1}^{m}x^{(l)}_n-a|<\frac{\varepsilon}{2}$ co daje nam:\newline
+$\forall_{m>\max\{N_1,N_2\}}$ $|\sum\limits_{n=1}^{m}x_n-a|\le|\sum\limits_{n=1}^{m}x_n-\sum\limits_{n=1}^{m}x^{(l)}_n|+|\sum\limits_{n=1}^{m}x^{(l)}_n-a|<
+\sup\limits_{m\in\mathbb{N}}|\sum\limits_{n=1}^{m}(x_n-x^{(l)}_n)|+\frac{\varepsilon}{2}<\varepsilon$\newline
+Z dowolności $\varepsilon$ wynika, że $\sum\limits_{n=1}^{m}x_n$ zbiega do a, więc $x$ należy do $X$, co dowodzi zupełności $(X,\lVert\cdot\rVert)$\newline\newline
+ii) Udowodnić, że $l_1$ jest gęstym podzbiorem $X$:\newline
+$l_1$ zbiór ciągów takich, że $\sum\limits_{n=1}^{\infty}|x_n|<\infty$ - czyli tworzących szeregi zbieżne bezwględnie, a ponieważ szereg zbieżny bezwzględnie jest zbieżny, to
+$l_1\subset X$\newline
+Gęstość( Do udowodnienia:
+$\forall_{x\in X}\forall_{\varepsilon>0}\exists_{y\in l_1}$ t.że $\lVert x-y\rVert=\sup\limits_{k\in\mathbb{N}}|\sum\limits_{n=1}^{k}(x_n-y_n)|\le\varepsilon$):\newline
+Jako, że $\sum\limits_{n=1}^{\infty}x_n$ jest zbieżny, to $\forall_{\varepsilon}\exists_{N}\forall_{k>N}|\sum\limits_{n=k}^{\infty}x_n|<\varepsilon$\newline
+bierzemy $y$ takie, że $y_n=x_n$ dla $n\le N$ oraz $y_n=0$ dla $n>N$, szereg o skończenie wielu wyrazach jest bezwzględnie zbieżny więc $y\in l_p$\newline
+$\lVert x-y\rVert=\sup\limits_{k\in\mathbb{N}}|\sum\limits_{n=1}^{k}(x_n-y_n)|=\sup\limits_{k=N+1}^{\infty}|\sum\limits_{n=N+1}^{k}(x_n-y_n)|=
+\sup\limits_{k=N+1}^{\infty}|\sum\limits_{n=N+1}^{k}x_n|\le\varepsilon$\newline
+Z dowolności $\varepsilon$ wynika, że w każdym otoczeniu ciągu z $X$ znajduje się ciąg z $l_p$, co dowodzi gęstości.\newpage
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 8.
+\newline
+\newline
+$c_{00}$-ciągi skalarne o skończonym nośniku:\newline
+i) $a=\{a_n\}_{n\in\mathbb{N}}$-ciąg skalarów, $\lVert x\rVert_a=\sum\limits_{n=1}^{\infty}|a_n||x_n|$ jest normą $\Leftrightarrow\forall_{n\in\mathbb{N}}a_n\neq0$:\newline
+dla $a$ takiego, że $a_n=0$ bierzemy x takie, że $x_k=0$ dla $k\neq n$, oraz $x_n=1$, wtedy $\lVert x\rVert_a=0$\newline
+(a jednocześnie $x\neq0$), co dowodzi implikacji "$\Rightarrow$"\newline
+dla $a$ jak w założeniu: $0=\lVert x\rVert_a=\sum\limits_{n=1}^{\infty}|a_n||x_n|\ge\sup\limits_{n=1}^{\infty}(|a_n||x_n|)$, co dowodzi, że $x_n=0$ $\forall_n$\newline
+dla k-skalaru: $\lVert k\cdot x\rVert_a=\sum\limits_{n=1}^{\infty}|a_n||k||x_n|=|k|\cdot\sum\limits_{n=1}^{\infty}|a_n||x_n|=|k|\cdot\lVert x\rVert_a\newline
+\lVert x+y\rVert_a=\sum\limits_{n=1}^{\infty}|a_n||x_n+y_n|\le\sum\limits_{n=1}^{\infty}|a_n|(|x_n|+|y_n|)=
+\sum\limits_{n=1}^{\infty}|a_n||x_n|+\sum\limits_{n=1}^{\infty}|a_n||y_n|=\lVert x\rVert_a+\lVert y\rVert_a$\newline
+Co dowodzi implikacji "$\Leftarrow$"\newline
+ii) $a,b$ jak w części pierwszej, dwie normy są równoważne, jeżeli istnieją stałe $0<m\le M<\infty$,\newline
+że $m\lVert x\rVert_b\le\lVert x\rVert_a\le M\lVert x\rVert_b$ dla każdego x spełniającego założenia.\newline
+Weźmy $m=\inf\frac{|a_n|}{|b_n|},M=\sup\frac{|a_n|}{|b_n|}$, wtedy:\newline
+$m\lVert x\rVert_b=\sum\limits_{n=1}^{\infty}(m|b_n|)|x_n|\le\sum\limits_{n=1}^{\infty}|a_n||x_n|\le\sum\limits_{n=1}^{\infty}(M|b_n|)|x_n|=M\lVert x\rVert_b$\newline
+W nierównościach korzystamy z ograniczeń $\forall_n m\le \frac{|a_n|}{|b_n|}\le M$.\newpage
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 9.
+\newline
+\newline
+Znaleźć domknięcie $l_{p}$ w $l_{\infty}$ (czyli zbiorze wszystkich ciągów ograniczonych)\newline
+Pokażę, że $l_{p}$ jest gęsty w $c_0$(zbiór wszystkich ciągów zbieżnych do 0) oraz, że jego dopełnieniem jest całe $c_0$
+(jako, że $l_{p}\subset c_0$ co wynika z warunku koniecznego zbieżności szeregu,\newline
+a $c_0\subset l_{\infty}$ jako, że  każdy ciąg zbieżny jest ograniczony)\newline
+Gęstość jest prawdziwa (dla przestrzeni unormowanych), jeżeli dla każdego elementu $y\in c_0$, oraz dla dowolnego $\varepsilon>0$
+istnieje element $x\in l_{p}$, że $\lVert x-y\rVert_{\infty}<\varepsilon$:\newline
+Dla dowolnego $y\in c_0$ $\exists_{N}\forall_{k>N} |y_k|<\varepsilon$ co wynika ze ze zbieżności $y$ do $0$\newline
+Wybieramy taki ciąg $x$, że: $x_n=y_n$ dla $n\le N$, oraz $x_n=0$ dla $n>N$, wtedy:\newline
+$
+\lVert x-y\rVert_{\infty}=\sup\limits_{n}|x_n-y_n|=\sup\limits_{n>N}|x_n-y_n|=\sup\limits_{n>N}|y_n|<\varepsilon\newline
+\left(\sum\limits_{n=1}^{\infty}|x_n|^p\right)^{\frac{1}{p}}=\left(\sum\limits_{n=1}^{N}|x_n|^p\right)^{\frac{1}{p}}\le
+N^{\frac{1}{p}}\cdot\max\limits_{n=1}^{N}|x_n|<\infty$ (jako, że ciąg jest ograniczony)\newline
+Co dowodzi zawierania $\overline{l_p}\supset c_0$\newline
+Dla ciągu $y$ nie zbiegającego do $0$ i $x$ zbiegającego do $0$:
+Dla pewnego $\varepsilon>0 \forall_{N_1}\exists_{n>N_1}$ t.że $|y_n|>\varepsilon$,\newline
+jednocześnie $\exists_{N_2}\forall_{n>N_2} |x_n|<\frac{\varepsilon}{2}$
+co implikuje $\sup\limits_{n}|x_n-y_n|\ge\sup\limits_{n>\max\{N_1,N_2\}}|x_n|\ge\frac{\varepsilon}{2}$, co daje nam:\newline
+$\overline{l_p}\cap(l_{\infty}\setminus c_0)=\emptyset\Rightarrow\overline{l_p}\subset c_0$\newline
+Tak więc $\overline{l_p}=c_0$\newpage
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie 10.
+\newline
+\newline
+$X$-unormowana przestrzeń liniowa (z normą $\lVert\cdot\rVert$),\newline $L\subset X$ - podprzestrzeń liniowa, zawierająca kulę jednostkową w $X$\newline
+Znaleźć wszystkie takie $L$(rozwiązanie identyczne jak w zadaniu 6)\newline
+załóżmy, że istnieje punkt $a$ nienależący do $L$, przez $s$ oznaczamy środek danej nam kuli:\newline
+Bierzemy punkt $b=s+\frac{(a-s)}{2\lVert a-s\rVert}$, jego odległość od  punktu $s$ wynosi $\frac{1}{2}$, więc należy on do danej nam kuli jednostkowej
+a więc i do zbioru $L$.\newline
+Jako, że $L$ jest przestrzenią liniową to należą do niego również wszystkie kombinacje liniowe jego elementów, w szczególności:\newline
+$\left(1-2\cdot\lVert a-s\rVert\right)\cdot s+\left(2\cdot\lVert a-s\rVert\right)\cdot b=
+s-2\cdot\lVert a-s\rVert\cdot s+2\cdot\lVert a-s\rVert\cdot s+(a-s)=a\in L$\newline
+Tak więc dostajemy sprzeczność, z której wynika, że nie ma takich punktów, które należą do $X$ i nie należą do $L$, więc ponieważ $L\subset X$, to $L=X$.\newpage
+
+\end{document}

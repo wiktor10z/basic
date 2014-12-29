@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501 grupa 1
+\newline
+
+Zadanie 1.
+\newline
+$
+\varphi(\alpha)=\alpha,\varphi'(\alpha)=0,\cdots,\varphi^{(n)}(\alpha)=0,\varphi^{(n+1)}(\alpha)\neq0\newline
+x_{k+1}=\varphi(x_k)\newline\newline
+$
+Rozwijając $\varphi(x_k)$ do wzoru Taylora wokół $\alpha$ otrzymujemy(dla pewnego $\zeta_k$ z przedziału $[\alpha,x_k]$):\newline
+$
+x_{k+1}=\varphi(\alpha)+\varphi'(\alpha)(x_k-\alpha)+\frac{\varphi''(\alpha)(x_k-\alpha)^2}{2}+\cdots+\frac{\varphi^{(n)}(\alpha)(x_k-\alpha)^n}{n!}+\frac{\varphi^{(n+1)}(\zeta_k)(x_k-\alpha)^{n+1}}{(n+1)!}\newline
+x_{k+1}=\alpha+\frac{\varphi^{(n+1)}(\zeta_k)(x_k-\alpha)^{n+1}}{(n+1)!}\newline
+x_{k+1}-\alpha=\frac{\varphi^{(n+1)}(\zeta_k)(x_k-\alpha)^{n+1}}{(n+1)!}\newline
+$
+Zakładając, że $\varphi^{(n+1)}$ jest ciągła na pewnym otoczeniu $\alpha$ (zawierającym $x_k$) możemy przyjąć, że jest ograniczona przez pewne M
+($|\varphi^{(n+1)}(\zeta)|\le M$). Biorąc $\varepsilon_k=x_k-\alpha$ otrzymujemy:\newline
+$
+\varepsilon_{k+1}=\frac{\varphi^{(n+1)}(\zeta_k)}{(n+1)!}(\varepsilon_k)^{n+1}\quad\quad\quad
+|\varepsilon_{k+1}|\le|\frac{M}{(n+1)!}(\varepsilon_k)^{n+1}|=\frac{M}{(n+1)!}(|\varepsilon_k|)^{n+1}\newline
+$
+A więc od pewnego "startowego" $x_k$ dobranego tak, by ciąg $\varepsilon_k$ zbiegał ($\varepsilon_k\le\sqrt[n]{\frac{(n+1)!}{M}}$)
+wykładnik zbieżności dla wyżej zadanej funkcji iteracyjnej jest równy n+1
+(nie większy, ponieważ $\varphi^{(n+1)}(\alpha)\neq0$ to dla pewnego otoczenia $\alpha$ $\varphi^{(n+1)}(x)$ jest również odgrodzona od 0 przez pewne K
+po przecięciu z poprzednim otoczeniem otrzymujemy również, że 
+$
+|\varepsilon_{k+1}|\ge\frac{K}{(n+1)!}(|\varepsilon_k|)^{n+1}
+$).
+\end{document}

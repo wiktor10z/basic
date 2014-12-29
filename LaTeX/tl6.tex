@@ -1,0 +1,88 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{bbm}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 6.1.
+\newline
+\newline
+Dla $A_n=\sum\limits_{k=1}^{n}a_k\Rightarrow a_n=A_n-A_{n-1}$, oraz $\forall_n |A_n|<C$\newline
+$\sum\limits_{n=k}^{K}\frac{a_n}{n^s}=\frac{A_K}{K^s}-\frac{A_k}{k^s}+\sum\limits_{n=k}^{K-1}A_n(\frac{1}{n^s}-\frac{1}{(n+1)^{s}})$\newline
+$|\frac{1}{n^s}-\frac{1}{(n+1)^s}|=\frac{1}{n^x}|1-(\frac{n}{n+1})^s|\le\frac{1}{n^x}|1-\frac{n}{n+1}||1+\frac{n}{n+1}+(\frac{n}{n+1})^2+...|\le\frac{1}{n^{x+1}}|s|$,
+jako że w ostatniej sumie występuje $s$ wyrazów (każdy o wartości niewiększej niż 1).\newline
+$|\sum\limits_{n=k}^{K}\frac{a_n}{n^s}|\le|\frac{A_K}{K^s}|+|\frac{A_k}{k^s}|+\sum\limits_{n=k}^{K-1}|A_n||\frac{1}{n^s}-\frac{1}{(n+1)^{s}}|<
+\frac{C}{|K^s|}+\frac{C}{|k^s|}+C\sum\limits_{n=k}^{K-1}|\frac{1}{n^s}-\frac{1}{(n+1)^{s}}|=
+C(\frac{1}{K^x}+\frac{1}{k^x}+\sum\limits_{n=k}^{K-1}|\frac{1}{n^s}-\frac{1}{(n+1)^{s}}|)\le
+C(\frac{1}{K^x}+\frac{1}{k^x}+|s|\sum\limits_{n=k}^{K-1}\frac{1}{n^{x+1}})\le
+C(1+1+\sum\limits_{n=1}^{\infty}\frac{1}{n^{x+1}})$, a to dla $x>0$ jest ograniczone, a więc dla szeregu $\sum a_n$ spełniony jest warunek Cauchy'ego, więc jest on zbieżny
+\newline
+
+Zadanie 6.2.
+\newline
+\newline
+$2^{1-s}=1\Rightarrow Re(1-s)=0,Im(1-s)=2k\pi\ln2,$ $3^(1-s)=1\Rightarrow Re(1-s)=0,Im(1-s)=2k\pi\ln3\Rightarrow k(2\pi\ln2)=k(2\pi\ln_3)\Rightarrow k=k\log_23\Rightarrow k=0\Rightarrow s=1$
+\newline
+
+Zadanie 6.3.
+\newline
+\newline
+$\frac{\vartheta(x)}{x}\rightarrow 1$\newline
+$\frac{\pi(x)\log(x)}{x}=\frac{\sum\limits_{p\le x}\log(x)}{x}\ge\frac{\sum\limits_{p\le x}\log(p)}{x}=\frac{\vartheta(x)}{x}\ge
+\frac{\sum\limits_{(1-\varepsilon)x\le p\le x}\log(p)}{x}\ge \frac{(1-\varepsilon)\log(x)(\pi(x)-\pi(x^{1-\varepsilon}))}{x}=(1-\varepsilon)\frac{\log(x)\pi(x)}{x}+\frac{O(x)}{x}$,\newline
+tak więc $1\le\lim_{x\rightarrow\infty}\frac{\pi(x)\log(x)}{x}\le\frac{1}{1-\varepsilon}$ dla dowolnego $\varepsilon>0$, czyli $\frac{\pi(x)\log(x)}{x}\rightarrow 1$
+\newline
+
+Zadanie 6.5.
+\newline
+\newline
+dla $Re(s)>1$\newline
+$-\frac{\zeta'(s)}{\zeta(s)}=-\frac{(\prod\limits_{p}(1-\frac{1}{1-p^{-s}}))'}{\prod\limits_{p}(1-\frac{1}{1-p^{-s}})}=
+-\sum\limits_{p}\frac{(\frac{1}{1-p^{-s}})'}{\frac{1}{1-p^{-s}}}=-\sum\limits_{p}(1-p^{-s})\frac{\log(p)p^{-s}}{(1-p^{-s})^2}=
+\sum\limits_{p}\frac{\log(p)}{p^s-1}=\sum\limits_{p}\frac{\log(p)}{p^s}+\sum\limits_{p}\frac{\log(p)}{p^{s}(p^{s}-1)}$\newline
+$(\sum\limits_{p}\frac{\log(p)}{p^{s}(p^{s}-1)})'=\sum\limits_{p}\log(p)(\frac{1}{p^s(p^s-1)})'=\sum\limits_{p}\log(p)(-\frac{\log(p)}{p^s(p^s-1)}-\frac{\log(p)}{(p^s-1)^2})=
+-\sum\limits_{p}\frac{\log^2(p)(2p^s-1)}{p^s(p^s-1)^2}$\newline
+sumy $h(s)$ i $h'(s)$ są zbieżne dla $Re(s)>\frac{1}{2}$, tak więc funkcja $h(s)$ jest holomorficzna na $Re(s)>\frac{1}{2}$\newline
+(nie udowodniłem, że i dla $Re(s)>0$, ale to wystarcza do zadania 6.7.).
+\newline
+
+Zadanie 6.6.
+\newline
+\newline
+$\int\limits_{0}^{\infty}(\vartheta(e^x)e^{-(1+s)x}-e^{-sx})dx=\int\limits_{0}^{\infty}(\sum\limits_{p\le e^x}\log(p)e^{-(1+s)x})dx-\frac{1}{s}=
+\int\limits_{0}^{\infty}(\sum\limits_{p}\log(p)e^{-(1+s)x}\mathbbm{1}_{(\log(p)\le x)})dx-\frac{1}{s}$\newline
+Z twierdzenia Fubiniego $\sum\limits_{p}\log(p)\int\limits_{0}^{\infty}e^{-(1+s)x}\mathbbm{1}_{(x\ge\log(p))})dx-\frac{1}{s}=
+\sum\limits_{p}\log(p)\int\limits_{\log(p)}^{\infty}e^{-(1+s)x}dx-\frac{1}{s}=
+\sum\limits_{p}\log(p)\frac{e^{-(1+s)\log(p)}}{s+1}-\frac{1}{s}=\frac{1}{s+1}\sum\limits_{p}\frac{\log(p)}{p^{s+1}}-\frac{1}{s}=
+\frac{\Phi(s+1)}{s+1}-\frac{1}{s}$
+\newline
+
+Zadanie 6.7.
+\newline
+\newline
+(Przy trochę zmienionych równościach z podpowiedzi -- tamte chyba nieprawdziwe)\newline
+$\zeta(\overline{s})=\sum\limits_{n=1}^{\infty}\frac{1}{n^{\overline{s}}}=\sum\limits_{n=1}^{\infty}\overline{\frac{1}{n^{s}}}=\overline{\zeta(s)}$,
+tak więc jeżeli $\zeta(s)$ ma w $1+ai$ zero stopnia $k$, to $\overline{\zeta(s)}$ ma zero stopnia $k$ w $1-ai$, a sprzężenie zachowuje stopnień zera.\newline
+Korzystając z holomorficzności $h$,$g_{\pm}$ (brak bieguna dla $h,g_{\pm}'$ w $1\pm ai$) oraz tego, że $g_{\pm}(1\pm ai)\neq 0$\newline
+$\lim\limits_{\epsilon\rightarrow0}\Phi(1+\epsilon\pm ai)=
+\lim\limits_{\epsilon\rightarrow0}\epsilon\frac{-\zeta'(1+\epsilon\pm ai)}{\zeta(1+\epsilon \pm ai)}-\lim\limits_{\epsilon\rightarrow0}\epsilon h(1+\epsilon\pm ai)=
+\lim\limits_{\epsilon\rightarrow0}\frac{(-\epsilon^kg_{\pm}(1+\epsilon\pm ai))'}{\epsilon^{k-1}g_{\pm}(1+\epsilon\pm ai)}-0=
+\lim\limits_{\epsilon\rightarrow0}\frac{-k\epsilon^{k-1}g_{\pm}(1+\epsilon\pm ai)-\epsilon^kg_{\pm}'(1+\epsilon\pm ai)}{\epsilon^{k-1}g_{\pm}(1+\epsilon\pm ai)}=
+\lim\limits_{\epsilon\rightarrow0}(-k-\epsilon\frac{g_{\pm}'(1+\epsilon\pm ai)}{g_{\pm}(1+\epsilon\pm ai)})=-k$ (dla $1\pm 2ai$ analogicznie)\newline
+$\Phi(1+\epsilon+lai)=\sum\limits_{p}\frac{\log(p)}{p^{1+\epsilon+lai}}=\sum\limits_{p}\frac{\log(p)}{p^{1+\epsilon}}p^{(2-l)ai/2}\cdot p^{-(l+2)ai/2}$\newline
+$\sum\limits_{l=-2}^{2}{4 \choose 2+l}\Phi(1+\epsilon+ila)=\sum\limits_{p}\frac{\log(p)}{p^{1+\epsilon}}(p^{ia/2}+p^{-ia/2})^4$\newline
+$\zeta(s-1)=(s-1)^{-1}g_0(s)$, gdzie $g_0(s)$ jest holomorficzna w okolicach $1$ (jako, że $\sum\frac{1}{n}$ rośnie jak $\ln{n}$, czyli mamy biegun stopnia 1),
+daje nam to granicę $\lim\limits_{\epsilon\rightarrow 0}\epsilon\Phi(1+\epsilon)=1$\newline
+Po przemnożeniu tej równości przez $\epsilon$ i przechodząc do granicy $\epsilon\rightarrow 0$ po $\epsilon\in\mathbb{R}$ otrzymujemy:\newline
+$6-8k-2m\ge0$ (lewa strona na podstawie granic obliczonych wyżej, zaś po prawej mamy sumę po wyrazach nieujemnych --
+gdyż $p^{ai/2}+p^{-ai/2}=2Re(p^{ai/2})$, a więc $4$ potęga jest nieujemna), tak więc ponieważ $k,m\in\mathbb{N}$ otrzymujemy $k=0$,
+a więc dla kazdego $1+ai$ mamy zero conajwyżej zerowego stopnia, czyli $\zeta(s)$ nie ma zer na $Re(s)=1$.
+\end{document}

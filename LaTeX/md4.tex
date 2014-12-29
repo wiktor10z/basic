@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\marginsize{2,5cm}{2,5cm}{1cm}{4cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+Zadanie 4.
+\newline
+\newline
+$
+\langle a_n \rangle_{n=0}^{\infty}=?\quad \sum\limits_{(i,j,k\ge0),(i+j+k=n)}a_ia_ja_k=(n+1)^{\overline{5}}\quad $dla $n\ge0
+$\newline\newline
+dodajmy po obu stronach $x^n$ i sumujemy po n\newline
+$
+\sum\limits_{n=0}^{\infty}\bigl(\sum\limits_{(i,j,k\ge0),(i+j+k=n)}a_ia_ja_k\bigr)x^n=\sum\limits_{n=0}^{\infty}(n+1)^{\overline{5}}x^n
+$\newline
+Po lewej stronie mamy splot 3 (identycznych) szergów formalnych, które jednak możemy potraktować jako wielomiany(a właściwie funkcje tworzące),
+jako że interesuje nas jakie wyrazy stoją przy
+x w odpowiednich potęgach, a nie suma (promień zbieżności $1>0$).\newline
+Po prawej natomiast mamy szereg formalny którego wyrazy przy x w n-tych potęgach są równe $(n+1)^{\overline{5}}$,
+co oznacza, że szereg ten jest piątą pochodną szeregu o wyrazach przy x w n-tej potędze równych 1, czyli:\newline
+$
+\sum\limits_{n=0}^{\infty}(n+1)^{\overline{5}}x^n
+=
+\bigl(\sum\limits_{n=0}^{\infty}x^n\bigr)^{(5)}
+=$(w obszarze zbieżności)$=
+\bigl(\frac{1}{1-x}\bigr)^{(5)}
+=
+\bigl(\frac{1}{(1-x)^2}\bigr)^{(4)}
+=\cdots=
+5!\cdot\frac{1}{(1-x)^6}
+$\newline
+$
+\sum\limits_{n=0}^{\infty}\bigl(\sum\limits_{(i,j,k\ge0),(i+j+k=n)}a_ia_ja_k\bigr)x^n=5!\cdot\frac{1}{(1-x)^6}
+$\newline
+Korzystając ze wzoru wyjściowego $a_0^3=5!$
+żeby pozbyć się niecałkowitości definiujemy nowy ciąg $b_n=\frac{a_n}{a_0}$\newline
+$
+\sum\limits_{n=0}^{\infty}\bigl(\sum\limits_{(i,j,k\ge0),(i+j+k=n)}a_ia_ja_k\bigr)x^n
+=
+5!\sum\limits_{n=0}^{\infty}\bigl(\sum\limits_{(i,j,k\ge0),(i+j+k=n)}b_ib_jb_k\bigr)x^n
+=
+$\newline
+(jako splot 3 identycznych funkcji)
+$
+=
+5!\bigl(\sum\limits_{n=0}^{\infty}b_n\bigr)^3
+=
+5!\frac{1}{(1-x)^6}
+$\quad\quad\quad
+$
+\bigl(\sum\limits_{n=0}^{\infty}b_n\bigr)^3=\frac{1}{(1-x)^6}
+$\newline
+$
+\sum\limits_{n=0}^{\infty}b_n=\frac{1}{(1-x)^2}=\bigl(\frac{1}{1-x}\bigr)'=\bigl(\sum\limits_{n=0}^{\infty}x^n\bigr)'=\sum\limits_{n=0}^{\infty}(n+1)x^n
+$\newline
+Z tego wynika, że $b_n=n+1\Rightarrow a_n=(n+1)a_0=(n+1)\sqrt[3]{5!}=2(n+1)\sqrt[3]{15}$
+\end{document}

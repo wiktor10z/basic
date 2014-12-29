@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{bbm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 8.1.
+\newline
+\newline
+a) $\mathbb{P}(X_n=\pm2^n)=\frac{1}{2}$. $s_n^2=\sum\limits_{k=1}^{n}2^{2k}=\frac{4}{3}(2^{2n}-1)$,\newline
+$\mathbb{P}(|\sum\limits_{k=1}^{n}X_n|>2^{n+1})=0$ (gdyż $\sum\limits_{k=1}^{n}2^k=2^{n+1}-1$),\newline
+tak więc $\mathbb{P}(|\frac{\sum\limits_{k=1}^{n}X_n}{\sqrt{s_n^2}}|>2)=0$ (jako, że $2>\frac{2^{n+1}}{\sqrt{\frac{4}{3}(2^{2n}-1)}}\approx\sqrt{3}$),
+a ponieważ rozkład graniczny również zachowa tę cechę, to nie może być równy rozkładowi normalnemu standardowemu (CTG nie zachodzi), a więc nie spełnia również warunku Lindeberga.\newline
+b) $X_n\sim N(0,\frac{1}{2^n})$. $s_n^2=\sum\limits_{k=1}^{n}\frac{1}{2^k}=1-\frac{1}{2^n}$.\newline
+$\sum\limits_{k=1}^{n}\mathbb{E}(|\frac{X_k}{s_n}|^2\mathbbm{1}_{(|\frac{X_n}{s_n}|>\varepsilon)})\ge\mathbb{E}(\frac{X_1}{s_n}|^2\mathbbm{1}_{(|\frac{X_1}{s_n}|>\varepsilon)})\ge
+\mathbb{E}(\frac{X_1}{2}|\mathbbm{1}_{(|\frac{X_1}{1}|>\varepsilon)})=\frac{1}{4}\mathbb{E}(X_1|\mathbbm{1}_{(|X_1|>\varepsilon)})$ a to zadaje odgraniczenie od 0 dla kazdego $\varepsilon$,
+a więc warunek Lindeberga nie jest spełniony.\newline
+Jednocześnie z addytywności rozkładów Normalnych $\sum\limits_{k=1}^{n}X_k=Y_n\sim N(0,\sum\limits_{k=1}^{n}\frac{1}{2^k})\sim N(0,1-\frac{1}{2^n})$.\newline
+$\frac{Y_n}{s_n}=\frac{Y_n}{\sqrt{Var(Y_n)}}\sim N(0,1)$, tak więc występuje nie tylko zbieżność do rozkładu normalnego standardowego, ale i równość dla każdego $n$
+(CTG jest spełnione ponieważ jego teza zachodzi).
+\newline
+
+Zadanie 8.2.
+\newline
+\newline
+Warunkiem koniecznym i dostatecznym dla rozkładu $X\sim N(m,\Sigma)$ jest to ayb mas=cierz $\Sigma$ była nieosobliwa:\newline
+Jeżeli macierz $\Sigma$ jest osobliwa, to istnieje takie przekształcenie afiniczne, które przekształca tę macierz na posiadającą same zera w ostatnim wierszu
+(z symetryczności również w kolumnie), wtedy to też rozkład ten jest rozkładem normalnym o wymiarze o jeden mniejszym (czyli jednym z przekrojów jest rozkład jednopunktowy),
+a więc rozklad ten jest skupiony na podprzestrzeni afinicznej, a więc nie posiada gęstości.\newline
+Jeżeli macierz $\Sigma$ nie jest osobiwa, to dla dowolnego przekształcenia afinicznego pozostaje to prawdą -- możemy wziąć takie izomorficzne przekształcenie afiniczne,
+aby otrzymana macierz była diagonalna, wtedy też rozkład ten posiada gęstość będącą iloczynem gęstości nieskorelowanych (a więc w przypadku rozkładu gaussowskiego niezależnych)
+zmiennych losowych normalnych, a więc wyrażoną wzorem
+$g= \frac{1}{(2\pi)^{\frac{n}{2}}|D|^{\frac{1}{2}}}e^{-\frac{1}{2}(x-\mu)^{\top}D^{-1}(x-\mu)}=
+\frac{1}{(2\pi)^{\frac{n}{2}}|D|^{\frac{1}{2}}}e^{-\frac{1}{2}(D^{-\frac{1}{2}}(x-\mu))^{\top}(D^{-\frac{1}{2}}(x-\mu))}$ dla ustalenia uwagi możemy przyjąć, że $m=0$,
+w ostatecznym wzorze wystarczy wstawić $x-m$ zamiast $x$, wtedy to też wzór na gęstość rozkładu po dokonaniu przekształcenia (teraz już liniowego)
+możemy wyrazić przez $\frac{1}{(2\pi)^{\frac{n}{2}}|D|^{\frac{1}{2}}}e^{-\frac{1}{2}<D^{-\frac{1}{2}}x,D^{-\frac{1}{2}}x>}$, po dokonaniu przekształcenia odwrotnego jako, ze jest ono izometrią,
+to $|D|=|\Sigma|$, oraz ponieważ funkcja $exp(A)$ zachowuje przekształcenia liniowe, to otrzymana gęstość ma postać
+$\frac{1}{(2\pi)^{\frac{n}{2}}|D|^{\frac{1}{2}}}e^{-\frac{1}{2}<\Sigma^{-\frac{1}{2}}x,\Sigma^{-\frac{1}{2}}x>}=
+\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}e^{-\frac{1}{2}x^{\top}\Sigma^{-1}x},$ a po uwzględnieniu $m$\newline
+$\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}e^{-\frac{1}{2}(x-m)^{\top}\Sigma^{-1}(x-m)}$, tak więc rozkład posiada gęstość.
+
+\end{document}

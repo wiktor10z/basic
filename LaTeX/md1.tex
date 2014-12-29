@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+Zadanie 1.
+\newline
+
+
+$A_{n,k}-$
+liczba różnych trójkątów o boku długości k w trójkącie dużym o boku długości n, takich że ustawione są wierzchołkiem do góry.
+\newline
+$B_{n,k}-$
+liczba różnych trójkątów o boku długości k w trójkącie dużym o boku długości n, takich że ustawione są wierzchołkiem do dołu.
+\newline
+$A_{n}-$
+suma obwodów wszystkich różnych trójkątów w trójkącie dużym o boku długości n, takich że ustawione są wierzchołkiem do góry.
+\newline
+$B_{n}-$
+analogicznie.
+\newline
+Każdy trójkąt ustawiony wierzchołkiem do góry jest jednoznacznie wyznaczony poprzez wybranie trójkąta o boku 1 jako szczytowego
+i wybranie długości boku, przy czym dla boku długości k trójkąt szczytowy musi się znajdować conajmniej o k-1 rzędów powyżej podstawy dużego trójkąta,
+z każdego takiego rzędu można wybrać i trójkątów, gdzie i to numer wiersz licząc od góry.
+\newline
+$A_{n}=3\sum\limits_{k=1}^{n} k\cdot A_{n,k}
+=3\sum\limits_{k=1}^{n} k\cdot \bigl( \sum\limits_{i=1}^{n-k+1} i\bigr)
+=3\sum\limits_{k=1}^{n} k\cdot\frac{(n-k+1)(n-k+2)}{2}=
+\frac{3}{2}\sum\limits_{k=1}^{n}k\cdot(n^2-2nk+k^2+3n-3k+2)
+=\frac{3}{2}\bigl( \sum\limits_{k=1}^{n}k^3-(2n+3)\sum\limits_{k=1}^{n}k^2+(n^2+3n+2)\sum\limits_{k=1}^{n}k\bigr)
+=\frac{3}{2}\frac{n(n+1)}{2}\bigl(\frac{(n+1)n}{2}-(2n+3)\frac{2n+1}{3}+(n^2+3n+2)\bigr)
+=\frac{n(n+1)}{8}\bigl(3n^2+3n-8n^2-16n-6+6n^2+18n+12 \bigr)
+=\frac{n(n+1)}{8}\bigl(n^2+5n+6\bigr)
+=\frac{n(n+1)(n+2)(n+3)}{8}
+$
+\newline
+Każdy trójkąt ustawiony wierzchołkiem do dołu jest jednoznacznie wyznaczony poprzez wybranie podstawy (górnej)
+i wybranie długości boku, przy czym dla boku długości k podstawa musi się znajdować powyżej rzędu n-k (żeby zmieściła się reszta trójkąta)
+dla wyboru podstawy z pomiędzy rzędów i oraz i+1 możemy wybrać$ i-k+1 (i\le k) $takich podstaw,( $k \le \frac{n}{2}$
+bo podstawa musi być conajmniej k rzędów poniżej szczytu i k powyżej podstawy dużego trójkąta).
+\newline
+$B_{n}=3\sum\limits_{k=1}^{\lfloor \frac{n}{2}\rfloor} k\cdot B_{n,k}
+=3\sum\limits_{k=1}^{\lfloor \frac{n}{2}\rfloor} k\cdot \bigl( \sum\limits_{i=k}^{n-k} i-k+1\bigr)
+=3\sum\limits_{k=1}^{\lfloor \frac{n}{2}\rfloor} k\cdot \bigl( \sum\limits_{i=1}^{n-2k+1} i\bigr)
+=\frac{3}{2}\sum\limits_{k=1}^{\lfloor \frac{n}{2}\rfloor} k(n-2k+1)(n-2k+2)
+=\frac{3}{2}\sum\limits_{k=1}^{\lfloor \frac{n}{2}\rfloor} k(n^2-4nk+4k^2+3n-6k+2)
+=\frac{3}{2}\bigl(4\sum\limits_{k=1}^{\lfloor \frac{n}{2}\rfloor}k^3-(4n+6)\sum\limits_{k=1}^{\lfloor \frac{n}{2}\rfloor}k^2
++(n^2+3n+2)\sum\limits_{k=1}^{\lfloor \frac{n}{2}\rfloor}k \bigr) 
+=\frac{3}{2}\frac{\lfloor \frac{n}{2}\rfloor(\lfloor \frac{n}{2}\rfloor+1)}{2}(2\lfloor \frac{n}{2}\rfloor(\lfloor \frac{n}{2}\rfloor+1)
+-(4n+6)(\frac{2\lfloor \frac{n}{2}\rfloor+1}{3}+n^2+3n+2))
+=\frac{\lfloor \frac{n}{2}\rfloor(\lfloor \frac{n}{2}\rfloor+1)}{4}(6\lfloor \frac{n}{2}\rfloor(\lfloor \frac{n}{2}\rfloor+1)
+-(4n+6)(2\lfloor \frac{n}{2}\rfloor+1)+3n^2+9n+6)
+$
+\newline
+Dla n parzystego
+$B_{n}=\frac{n(n+2)}{32}(3n(n+2)-(8n+12)(n+1)+6n^2+18n+12)=\frac{n(n+2)}{32}(n^2+4n)=\frac{n^2(n+2)(n+4)}{32}
+\newline
+A_{n}+B_{n}=\frac{n(n+2)}{32}(4n^2+16n+12+n^2+4n)=\frac{n(n+2)(5n^2+20n+12)}{32}$
+\newline
+Dla n niepatrzystego
+$B_{n}=\frac{(n-1)(n+1)}{32}(3(n-1)(n+1)-(8n+12)(n)+6n^2+18n+12)=\frac{(n-1)(n+1)}{32}(n^2+6n+9)=\frac{(n-1)(n+1)(n+3)^2}{32}
+\newline
+A_{n}+B_{n}=\frac{(n+1)(n+3)}{32}(4n^2+8n+n^2+2n-3)=\frac{(n+1)(n+3)(5n^2+10n-3)}{32}$
+\newline
+Tak więc końcowy wynik to $\frac{n(n+2)(5n^2+20n+12)}{32}$ dla n parzystego i $\frac{(n+1)(n+3)(5n^2+10n-3)}{32}$ dl n nieparzystego.
+
+\end{document}

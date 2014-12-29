@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\marginsize{2,5cm}{2,5cm}{1cm}{4cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+Zadanie 6.
+\newline
+\newline
+Dla dowolnego k$>$1 znaleźć rozpinający k-dzielny podgraf H grafu G t.że $\forall_{v\in V[G]}\deg_H(v)\ge\frac{k-1}{k}\deg_G(v)$\newline\newline
+Dla k $\ge|V[G]|$ H=G.\newline\newline
+Dla k $\in(1,|V[G]|)$:\newline
+Dzielimy wszystkie wierchołki grafu G na k podzbiorów (dowolnie ale niepustych), w każdej takiej otrzymanej grupce wierchołków
+(grupki rozpatruje jako podzbiory, a nie grupy algebraiczne)
+niektóre są ze sobą połączone krawędziami z grafu G, są też one połączone z niektórymi wierchołkami z poza grupki (liczby te mogą oczywiście wynosić 0).\newline
+Niech m oznacza łączną liczbę krawędzi pomiędzy wierzhołkami należącymi do tej samej grupki.\newline\newline
+Następnie indukcyjnie:\newline
+Jeżeli dla pewnego wierzchołka istnieje taka grupka, w której znajduje się mniej wierchołków z nim sąsiadujących niż w jego własnej, to przenosimy go do tej grupki.\newline
+Po takiej operacji liczba krawędzi "wewnątrz grupkowych" zmniejszy się o conajmniej 1 (w nowej grupce przenoszonego wierzchołka przybędzie mniej krawędzi wewnętrznych
+niż ubędzie w starej, gdyż z założenia przeniesiony wierzchołek ma w niej mniej sąsiadów), po takiej akcji liczba grupek pozostanie taka sama,
+ponieważ jeżeli stara grupa była złożona wyłącznie z jednego wierzchołka, to miał on w niej 0 sąsiadów, więc nie może w żadnej grupce mieć ich mniej.\newline
+Ponieważ po takim kroku liczba m zmniejsza się, a jednocześnie musi pozostać nieujemna tak więc takich akcji wykonamy conajwyżej 
+m$_0$(czyli m dla podziału startowego) tak więc indukcja kiedyś się skończy.\newline\newline
+Po wykonaniu tych przenoszeń otrzymany podział grafu na k części ma taką właściwość, że dla dowolnego wierzhołka $v$ liczba jego sąsiadów ze swojej grupy
+jest niewiększa niż liczba sąsiadów w dowolnej z pozostałych (k-1) grup, czyli:\newline
+(k-1)$\cdot$(liczba sąsiadów $v$ w grupie)$\le$(liczba sąsiadów $v$ z poza grupy)\newline
+k$\cdot$(liczba sąsiadów $v$ w grupie)$\le$(liczba wszystkich sąsiadów $v$)=$\deg_G(v)$\newline
+(liczba sąsiadów $v$ w grupie)$\le\frac{1}{k}\deg_G(v)$\newline
+Oznacza to, że jeżeli usuniemy wszystkie krawędzie pomiędzy wierzchołkami z tej samej grupy, to otrzymamy
+graf k-dzielny, zawierający wszystkie wierzchołki grafu G i jednocześnie dla dowolnego wierchołka $v$,
+usuniemy $\le\frac{1}{k}\deg_G(v)$ jego krawędzi, czyli w otrzymanym grafie zostanie mu $\ge\frac{k-1}{k}\deg_G(v)$ krawędzi.\newline
+Zatem ten graf k-dzielny spełnia wszystkie założenia zadania.
+\end{document}

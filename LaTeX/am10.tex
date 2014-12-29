@@ -1,0 +1,150 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 8.1.
+\newline
+\newline
+$
+\begin{cases}x=t^3-3t\\y=t^4-2t^2\end{cases} t\in\mathbb{R}
+$ szukając punktów samoprzecięcia rozwiązujemy równania:\newline
+$
+\begin{cases}t_1^3-3t_1=t_2^3-3t_2\\t_1^4-2t_1^2=t_2^4-2t_2^2\end{cases}\Rightarrow
+\begin{cases}(t_1-t_2)(t_1^2+t_1t_2+t_2^2)=3(t_1-t_2)\\(t_1^2-t_2^2)(t_1^2+t_2^2)=2(t_2^2-t_2^2)\end{cases}\Rightarrow
+(t_1=t_2)\vee(t_1=-t_2=\pm\sqrt{3})
+$a więc występuje jedno samoprzecięcie (dla $t=-\sqrt{3}$ i $\sqrt{3}$)- dzieli to całą krzywą na 3 obszary z których tylko jedne jest ograniczony(i domknięty),
+więc to on ogranicza skończoną składową $\mathbb{R}^2$,\newline liczymy $\int\limits_{t\in (-\sqrt{3},\sqrt{3})}xdy$
+(z twierdzenia Greena), parametryzacja jak w treści
+(wielomianowa-spełnia założenia (czasem lepiej wyłączyć punkt dla t=0))
+$
+\int\limits_{-\sqrt{3}}^{\sqrt{3}}(t^3-3t)(4t^3-4t)dt=\left[\frac{4t^7}{7}-\frac{16t^5}{5}+4t^3\right]_{-\sqrt{3}}^{\sqrt{3}}
+=
+\frac{216\sqrt{3}}{7}-\frac{288\sqrt{3}}{5}+24\sqrt{3}=-\frac{96\sqrt{3}}{35}
+$ wyszło ujemne więc zwrot całkowania powinien być odwrotny więc miara płaska ograniczonego obszaru $=\underline{\frac{96\sqrt{3}}{35}}$
+\newline
+\newline
+
+Zadanie 8.2.
+\newline
+\newline
+Udowodnić, że istnieje takie c, że $\omega-c\omega_{0}$ posiada funkcję pierwotną\newline
+Z twierdzenia z wykładu jeśli dla każdych dowolnie wybranych końców należących do dziedziny całka z formy nie zależy od drogi
+to forma ta posiada funkcję pierwotną\newline
+Weżmy c takie, żeby całka po okręgu jednostkowym była równa 0 (całka z $\omega_0$ po okręgu jest równa $2\pi$), czyli
+$
+c=\frac{1}{2\pi}\int\limits_{(x^2+y^2=1,+)}\omega
+$
+Nowa forma $\omega_1=\omega-c\omega_0$ dalej jest zamknięta (pochodne różnic są równe różnicom pochodnych)\newline
+Teraz (jak na ćwiczeniach) $\omega_1$ ma funkcję pierwotną $u$ na $R^2\backslash\{(x,0):x>0\}$, oraz $v$ na $R^2\backslash\{(x,0):x<0\}$,
+które na $\{(x,y):y>0\}$ oraz $\{(x,y):y<0\}$ róznią się o stałe, ale te stałe są sobie równe, gdyż całka po okręgu z tej formy jest równa różnicy tych stałych=0
+a skoro tak to wystarczy dodać do $v$ tę różnicę $u-v$, aby $u$ była również zdefiniowana na półprostej bez 0. Ta $u$ jest właśnie szukaną funkcją pierwotną $\omega_1$.
+\newline
+\newline
+
+Zadanie 8.3.
+\newline
+\newline
+Obliczyć całkę formy $\omega=\frac{\sinh{x}dy-\sin{y}dx}{\cosh{x}-\cos{y}}$ po okręgu jednostkowym\newline
+$
+\frac{\delta}{\delta x}(\frac{\sinh{x}}{\cosh{x}-\cos{y}})
+=
+\frac{1-\cosh{x}\cos{y}}{(\cosh{x}-\cos{y})^2}=\frac{\delta}{\delta y}(\frac{-\sin{y}}{\cosh{x}-\cos{y}})
+$
+Tak więc forma $\omega$ spełnia warunki poprzedniego zadania - więc istnieje takie $c$, że $\omega=c\omega_0+du$, przy oznaczeniach jak z poprzedniego zadania,
+całka po okregu jest więc równa $2c\pi$ - pozostaje tylko znaleźć to $c$\newline
+ponieważ całka z formy $\omega_0$ po okręgu nie zależy od jego promienia, to tak samo jest też z formą $\omega$, obliczmy więc całkę po okręgu o promieniu $\varepsilon$
+stosując parametryzację okręgową:\newline
+$
+\int\limits_{0}^{2\pi}\frac{\varepsilon\cos{t}\sinh{(\varepsilon\cos{t})}+\varepsilon\sin{t}\sin{(\varepsilon\sin{t})}}
+{\cosh{(\varepsilon\cos{t})}-\cos{(\varepsilon\sin{t})}}dt
+=
+\int\limits_{0}^{2\pi}
+\frac{\varepsilon\cos{t}\sum_{n=1}^{\infty}(\frac{(\varepsilon\cos{t})^{2n-1}}{(2n-1)!})-\varepsilon\sin{t}\sum_{n=1}^{\infty}((-1)^n\frac{(\varepsilon\sin{t})^{2n-1}}{(2n-1)!})}
+{\sum_{n=0}^{\infty}(\frac{(\varepsilon\cos{t})^{2n}}{(2n)!})-\sum_{n=0}^{\infty}((-1)^n\frac{(\varepsilon\sin{t})^{2n}}{(2n)!})}dt
+=\newline
+\int\limits_{0}^{2\pi}
+\frac{\sum_{n=1}^{\infty}(\frac{(\varepsilon\cos{t})^{2n}}{(2n-1)!})-\sum_{n=1}^{\infty}((-1)^n\frac{(\varepsilon\sin{t})^{2n}}{(2n-1)!})}
+{\sum_{n=1}^{\infty}(\frac{(\varepsilon\cos{t})^{2n}}{(2n)!})+1-\sum_{n=1}^{\infty}((-1)^n\frac{(\varepsilon\sin{t})^{2n}}{(2n)!})-1}dt
+$\quad
+z sum wyodręniamy po pierwszym wyrazie (pozostałe w każdej sumie  osobno są łącznie mniejsze co do modułu niż $\varepsilon^4e^x$)
+$
+\int\limits_{0}^{2\pi}\frac{\varepsilon^2(\sin^2{t}+\cos^2{t})+\varepsilon^4A_{\varepsilon}}{\frac{\varepsilon^2}{2}(\sin^2{t}+\cos^2{t})+\varepsilon^4B_{\varepsilon}}dt
+=
+\int\limits_{0}^{2\pi}\frac{\varepsilon^2+\varepsilon^4A_{\varepsilon}}{\frac{\varepsilon^2}{2}+\varepsilon^4B_{\varepsilon}}dt
+=
+\int\limits_{0}^{2\pi}\frac{1+\varepsilon^2A_{\varepsilon}}{\frac{1}{2}+\varepsilon^2B_{\varepsilon}}dt
+$\newline
+(gdzie $|A_{\varepsilon}|,|B_{\varepsilon}|\le2e^x$)
+Ponieważ całka nie zależy od $\varepsilon$, to musi być równa całce granicy przy $\varepsilon\rightarrow 0$ czyli $\underline{4\pi}$
+\newpage
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 8.4.
+\newline
+\newline
+$f(z):\mathbb{C}\rightarrow\mathbb{C}$ definiujemy jako $f(x+iy)=u(x,y)+iv(x,y)$ $u,v:\mathbb{R}^2\rightarrow\mathbb{R}$,
+$f$ posiada pochodną zespoloną w $z_0=x_0+iy_0$\newline
+$
+\lim\limits_{z\rightarrow z_0}\frac{f(z)-f(z_0)}{z-z_0}=f'(z_0)=a=a_1+ia_2$ gdzie $a_1,a_2\in\mathbb{R}
+$
+Weźmy $h=z-z_0$
+$
+a=\lim\limits_{h\rightarrow 0}\frac{f(z_0+h)-f(z_0)}{h}\Rightarrow$\newline
+istnieje taka funkcja $\delta(h)$,że $\lim\limits_{h\rightarrow 0}\delta(h)=0$ oraz
+$
+\frac{f(z_0+h)-f(z_0)}{h}=a+\delta(h)\Rightarrow\newline f(z_0+h)-f(z_0)=a\cdot h + \delta(h)\cdot h=a_1h_1-a_2h_2+i(a_1h_2+a_2h_1)+r(h)
+$\newline\newline
+$
+u(x_0+h_1,y_0+h_2)-u(x_0+y_0)=Re(f(z_0+h))-Re(f(z_0))=Re(f(z_0+h)-f(z_0))=Re(a_1h_1-a_2h_2+i(a_1h_2+a_2h_1)+r(h))=a_1h_1-a_2h_2+r_1(h)
+=
+\left[\begin{array}{cc}a_1&-a_2\\\end{array}\right]\cdot h+r_1(h)\newline\newline
+v(x_0+h_1,y_0+h_2)-u(x_0+y_0)=Im(f(z_0+h))-Im(f(z_0))=Im(f(z_0+h)-f(z_0))=Im(a_1h_1-a_2h_2+i(a_1h_2+a_2h_1)+r(h))=a_1h_2+a_2h_1+r_2(h)
+=
+\left[\begin{array}{cc}a_2&a_1\\\end{array}\right]\cdot h+r_2(h)
+$\quad
+gdzie $r_1(h),r_2(h)$ spełniają warunki bycia resztami,\newline\newline z definicji $u,v$ są różniczkowalne, oraz $u'(x_0,y_0)=\left[\begin{array}{cc}Re(f'(z_0))&-Im(f'(z_0))\\\end{array}\right],
+v'(x_0,y_0)=\left[\begin{array}{cc}Im(f'(z_0))&Re(f'(z_0))\\\end{array}\right]$,\newline
+z tego już widać, że $\underline{u'_x(x_0,y_0)=a_1=v'_y(x_0,y_0),v'_x(x_0,y_0)=a_2=-u'_y(x_0,y_0)}$
+\newline
+\newline
+
+Zadanie 8.5.
+\newline
+\newline
+$f$ ma pochodną zespoloną w każdym punkcie $G,$z zadania 8.4. wynika, że $u,v$ są różniczkowalne w punktach $(x,y) :x+iy\in G$.
+$
+\int\limits_{C,+}f(z)dz=\int\limits_{C,+}(u+iv)(dx+idy)=\int\limits_{C,+}(u+iv)dx+(-v+iu)dy$ (z twierdzenia Greena (stosowalność w założeniach zadania))$
+=\int\limits_{\text{składowa ograniczona }\mathbb{C}\backslash C}\frac{\delta(-v+iu)}{\delta x}-\frac{\delta(u+iv)}{\delta y}dl_2
+=\int\limits_{\text{składowa ograniczona }\mathbb{C}\backslash C}-v'_x+iu_x-u'_y-iv'_ydl_2$ (z zadania 8.4.) $
+=\int\limits_{\text{składowa ograniczona }\mathbb{C}\backslash C}0dl_2=\underline{0}
+$
+\newline
+\newline
+
+Komentarz:
+\newline
+\newline
+W zadaniach 8.3.,8.5. korzystam z lematów udowodnionych w poprzednich zadaniach, oczywiście na egzaminie nie będę tego robił, ale ponieważ te zadania z których korzystam
+znajdują się na tych samych kartkach uznałem, że nie trzeba ponownie dowodzić użytych faktów (zresztą forma i kolejność zadań sugeruje takie właśnie rozwiązanie)
+\end{document}
+
+
+
+
+
+
+
+
+
+

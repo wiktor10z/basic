@@ -1,0 +1,122 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 5.1.
+\newline
+\newline
+Jeśli nieosobliwa forma kwadratowa przedstawia $0$, to mając rozwiązanie $\alpha\neq 0$ $f(\alpha)=0$ możemy założyć, że $a_1,\alpha_1\neq0$ (po ewentualnym przenumerowaniu)
+wtedy dla $\beta_1=(1-t)\alpha_1$, $\beta_i=(1+t)\alpha_i$ (dla $i=2,...,n$) $f(\beta)=f(\alpha)+2tf(\alpha)+t^2f(\alpha)-4ta_1\alpha_1^2=t(-4a_1\alpha_1^2)$,
+gdzie $-4a_1\alpha_1^2$ jest elementem odwracalnym (niezerowym), więc aby otrzymać rozwiązanie o wartości $k$ wystarczy dobrać $t=k\cdot(-4a_1\alpha_1^2)^{-1}$.
+\newline
+
+Zadanie 5.2.
+\newline
+\newline
+$"\Rightarrow"$ dobierając wartości $x_1,...,x_n$ tak, by $f(x)=a$, oraz $x_0=1$ otrymujemy $-ax_0^2+f(x)=-a+a=0$\newline
+$"\Leftarrow"$ a) Jeśli isnieje niezerowe rozwiązanie $f(\alpha)=0$, wtedy istnieje też rozwiazanie $-ax(0)^2+f(\alpha)=0$, oraz z zadania 5.1. rozwiązanie $f(\beta)=a$\newline
+b) Jeśli nie istnieje takie rozwiazanie, to istnieje rozwiązanie $-a\alpha_0^2+f(\alpha)=0$, takie że $\alpha_0\neq0$, wtedy wystarczy wziąć rozwiązanie przeskalowane,
+takie że $\beta_0=1$, $-a+f(\beta)=0\Rightarrow f(\beta)=a$ 
+\newline
+
+Zadanie 5.3.
+\newline
+\newline
+$ax^2+by^2-z^2$  przedstawia $0$ w $\mathbb{Q}(O_p)$ $(-bz^2+x^2-ay^2)\Leftrightarrow b$ jest przedstawialne przez $x^2-ay^2$\newline
+wynika to bezpośrednio z zadania 5.2. $(dla x_0=z,x_1=x,x_2=y,a_1=1,a_2=-a)$
+\newline
+
+Zadanie 5.4.
+\newline
+\newline
+$H_a$ jest podzbiorem $K^*$, wystarczy wuęc ugowodnić, ze jest grupą:\newline
+jeżeli $k_1=x_1^2-ay_1^2,k_2=x_2^2-ay_2^2$, to $k_1k_2=(x_1x_2+ay_1y_2)^2-a(x_1y_2+x_2y_1)^2$, więc też jest przedstawialne.\newline
+jeżeli $k_1=x_1^2-ay_1^2$, to $k_1^{-1}=(x_1k_1^{-1})^2-a(y_1k_1^{-1})^2$, a więc wykonalne są działania grupowe, co implikuje, ze $H_a$ jest podgrupą $K^*$
+\newline
+
+Zadanie 5.5. (uzupełnione)
+\newline
+\newline
+a) dla $k\in K^*$ $k^2$ jest wyrażalne przez $x^2-ay^2$ $(x=k,y=0)$\newline
+b) $a=b^2$, wtedy $x^2-ay^2=x^2-b^2y^2$ wyraża $0$ ($x=b,y=1$), a więc z zadania 5.1. przedstawia wszystkie elementy ciała $K$, więc z zadania 5.4. $H_a=K^*$\newline
+c) dla $K=\mathbb{Q}(O_p)$ jeśli $a\notin K^{*2}$ jeśli $-a=0^2-a\cdot1^2\in H_a$ nie jest kwadratem to $H_a\neq K^{*2}$.\newline
+Jeśli $-a$ jest kwadratem, wtedy $-\frac{1}{a}$ jest kwadratem, więc $-1$ nie jest kwadratem $\Rightarrow$\newline
+$x^2-ay^2\sim x^2+y^2$ (równoważne dla dowolnego $e\in O_p^*$),
+wtedy forma $x^2+y^2=ez^2$ z twierdzenia Chevaleya ma nietrywialne $0$(mod $p$), i z twierdzenia o przedłużaniu ma nietrywialne $0$ w $O_p$ (przy założeniu $p\neq2$).\newline
+Wobec tego $e$ jest przedstawialne przez formę $x^2+y^2$ (więc też przez $x^2-ay^2$),
+ale wtedy wystarczy by $e$(mod $p$) nie było kwadratem by $e\in H_a,e\notin K^{*2}$ (a można dobrać takie $e$).\newline
+W przypadku ogólnym gdyby $H_a=K^*$, wtedy $\forall b\in K^*$ byłoby przedstawialne, czyli $\forall b\in K*$ forma $x^2-ay^2-bz^2$ miałaby nietrywialne $0$.
+Ponieważ $a=e\cdot p^k$ nie jest kwadratem (gdzie $e$ to element odwracalny w $O_p^*$, który nie jest kwadratem), to wystarczy rozważyć 4 przypadki $a=1,e,p,pe$:\newline
+$a=1\Rightarrow$ $a$ jest kwadratem - sprzeczność\newline
+$a=e$ $b=p$ $ey^2+pz^2-x^2$ = $ey^2-x^2$(mod $p$) , ale ta forma nie ma nietyrwialnego $0$\newline
+$a=p$ $b=e$ $py^2+ez^2-x^2$ = $ez^2-x^2$(mod $p$) , ale ta forma nie ma nietyrwialnego $0$\newline
+$a=pe$ $b=e$ $pey^2+ez^2-x^2$ = $ez^2-x^2$(mod $p$) , ale ta forma nie ma nietyrwialnego $0$\newline
+d) z 5.5.b) wynika, że jeśli $a\in k^{*2}$, to $[K^*:H_a]=1$, w przeciwnym przypadku (z 5.5.a),c)) $K^{*2}\subsetneq H_a\subsetneq K^{*}$,
+więc $1<[K^*:H_a]<4$ i dzieli $4$, więc $[K^*:H_a]=2$
+\newline
+
+Zadanie 5.6.
+\newline
+\newline
+$f(b)=(\frac{a,b}{p})$ jest homomorfizmem w $\{1,-1\}$\newline
+dla $a\in \mathbb{Q}(O_p)^2$ mamy $H_a=\mathbb{Q}(O_p)\Rightarrow f\equiv1$, a więc jest homomorfizmem.\newline
+w przeciwnym przypadku $H_a$ jest podgrupą $\mathbb{Q}(O_p)$ rzędu 2, dlatego też dla $b\in H_a$ $f(b)=1$, zaś dla $c\notin H_a$ $f(c)=-1$\newline
+podgrupa rzędu 2 jest podgrupą normalną, więc $\mathbb{Q}(O_p)$ jest podzielone na dwie warstwy, oraz podział ten jest homomorfizmem.
+\newline
+
+Zadanie 5.7.
+\newline
+\newline
+Z zadania 5.6. $(\frac{a,bp}{p})=(\frac{a,b}{p})\cdot(\frac{a,p}{p})$\newline
+$c=ap^k,d=bp^l$ gdzie $(a,p)=1,(b,p)=1$. wtedy:\newline
+$(\frac{c,d}{p})=(\frac{ap^k,bp^l}{p})=(\frac{ap^k,bp^{l-1}}{p})\cdot(\frac{ap^k,p}{p})=...=(\frac{ap^k,b}{p})\cdot(\frac{ap^k,p}{p})^l=$ (z symetryczności definicji)
+$(\frac{b,ap^k}{p})\cdot(\frac{p,ap^k}{p})^l=...=(\frac{a,b}{p})\cdot(\frac{b,p}{p})^k\cdot(\frac{a,p}{p})^l\cdot(\frac{p,p}{p})^{kl}$ co należało udowodnić.
+\newline
+
+Zadanie 5.8.
+\newline
+\newline
+$(a,p)=1,(b,p)=1$ jeśli $a$ (równoważnie $b$) jest kwadratem w $O_p^*$ , to z zadania 5.5.b)($H_a=O_p^*$) oraz 5.3.($(\frac{a,b}{p})=1\Leftrightarrow b\in H_a$) wynika, że $(\frac{a,b}{p})=1$.\newline
+W przeciwnym przypadku $a\cdot b$ jest kwadratem. Dobieramy $e\in O_p^*$ t.że $e$ jest kwadratem, ale $e+1$ już nie ($(e+1)b$ jest kwadratem).
+Wtedy biorąc $x=\sqrt{ab}, y=a\sqrt{e},z=a\sqrt{(e+1)b}$ otrzymujemy $a^2(e+1)b-a^2(e+1)b=0$\newline 
+$(\frac{a,p}{p})=(\frac{a}{p})$ ($ax^2+py^2-z^2=0\Leftrightarrow$ a jest kwadratem w $\mathbb{Z}_p$) $"\Leftarrow"$ z zadania 5.5.b), $"\Rightarrow"$ z zadania 5.5.c).\newline
+\newline
+
+Zadanie 5.10.
+\newline
+\newline
+Rozpatrując zaproponowane przypadki:\newline
+1) $(\frac{-1,-1}{p})=1$ dla $p\neq 2,\infty$ z zadania 5.8., dla $p=\infty$ równanie $-x^2-y^2-z^2=0$ nie ma nietrywialnych rozwiązań, dla $p=2$ $(\frac{-1,-1}{2})=-1$ z zadania 5.9.,
+mamy więc iloczyn dwóch $-1$.\newline
+2) $q=2$ wtedy $(\frac{2,-1}{p})=1$ dla $p\neq2,\infty$ z zadania 5.8., dla $p=\infty$ rówanie $2x^2-y^2-z^2=0$ ma rozwiązanie $(1,1,1)$, dla $p=2$ $(\frac{2,-1}{2})=(-1)^{0}=1$ z zadania 5.9.,
+więc mamy iloczyn samych $1$.\newline
+$q\neq2$ wtedy dla $(\frac{q,-1}{p})=1$ dla $p\neq2,q,\infty$ z zadania 5.8., dla $p=2$ mamy $(\frac{q,-1}{2})=(-1)^{-\frac{q-1}{2}}$ z zadania 5.9., 
+dla $p=q$ mamy $(\frac{q,-1}{q})=(\frac{-1}{q})=(-1)^{\frac{q-1}{2}}$ z zadania 5.8. i QRL, więc oba przypadki dają w iloczynie 1, dla $p=\infty$ równanie $qx^2-y^2-z^2=0$
+ma w $\mathbb{R}$ rozwiazanie $(1,\sqrt{q},0)$.\newline
+3) dla $p\neq 2,q_1,q,\infty$ mamy 1, rozważając przypadki:\newline
+$q=2$ $(\frac{2,q_1}{2})=(-1)^{\frac{q_1^2-1}{8}}=(\frac{2}{q_1})=(\frac{q_1,2}{q_1})$ z QRL i zadań 5.8., 5.9. (więc oba przypadki dają w iloczynie 1). Dla $p=\infty$ równanie $qx^2+2y^2-z^2=0$
+ma w $\mathbb{R}$ rozwiazanie $(1,0,\sqrt{q})$.\newline
+dla $q\neq2$ mamy $(\frac{q,q_1}{2})=(-1)^{\frac{q-1}{2}\frac{q_1-1}{2}}$ z zadania 5.9.,
+$({q,q_1}{q_1})\cdot(\frac{q,q_1}{q})=(\frac{q}{q_1})(\frac{q_1}{q})=(-1)^{\frac{q-1}{2}\frac{q_1-1}{2}}$ z zadania 5.8 oraz QRL, więc przypadki skończone dają w iloczynie 1,
+dla $p=\infty$ równie $qx^2+q_1y^2-z^2=0$ ma w $\mathbb{R}$ rozwiązanie $(1,0,\sqrt{q})$.\newline
+Sprowadzenie do tych przypadków polega na skorzystaniu z homomorficzności symbolu Hilberta, dzięki czemu możemy tak rozdzielać symbol Hilberta jak w zadaniu 5.7.
+(tylko tym razem po rozbiciu $a$ i $b$ na czynniki pierwsze).\newline
+\newline
+
+Zadanie 5.11.
+\newline
+\newline
+W przypadkach 2) i 3) w dowodzie zadania 5.10 skorzystałem dokładnie 1 raz (dla każdego podprzypadku), można więc skorzystać z równoważności obu twierdzeń w poszczególnych przypadkach:\newline
+QRL 1) $(\frac{-1}{p})=(-1)^{\frac{p-1}{2}}$ jest to odwrócenie dowodu przypadku 2) z zadania 5.10. ($q=p$)\newline
+QRL 2) $(\frac{2}{p})=(-1)^{\frac{p^2-1}{8}}$ jest to odwrócenie dowodu przypadku 3) z zadania 5.10. ($q_1=p,q=2$)\newline
+QRL 3) $(\frac{p}{q})(\frac{q}{p})=(-1)^{\frac{p-1}{2}\frac{q-1}{2}}$ jest to odwrócenie dowodu przypadku 3) z zadania 5.10 ($q_1=p,q=q$)\newline
+\end{document}

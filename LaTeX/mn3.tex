@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501 grupa 1
+\newline
+
+Zadanie 3.
+\newline
+$
+A=[a_{ij}]_{i,j=1..n}\quad x=[x_1,\cdots,x_n]^{\top}\newline
+\lVert A\rVert_1=\sup\limits_{\lVert x\rVert_1\le1}\frac{\lVert Ax\rVert_1}{\lVert x\rVert_1}=
+\sup\limits_{\lVert x\rVert_1=1}\frac{\lVert Ax\rVert_1}{\lVert x\rVert_1}$ definicja normy operatora$\newline
+Ax=[\sum\limits_{j=1}^{n}a_{1j}x_j,\cdots,\sum\limits_{j=1}^{n}a_{nj}x_j]^{\top}$ klasyczne mnożenie macierzy$\newline
+\lVert Ax\rVert_1=\sum\limits_{i=1}^{n}\left(\sum\limits_{j=1}^{n}|a_{ij}x_j|\right)=\sum\limits_{j=1}^{n}|x_j|\left(\sum\limits_{i=1}^{n}|a_{ij}|\right)
+$ zmiana kolejności sumowania dla sumy skończonej$\newline
+\le\sum\limits_{j=1}^{n}\left(|x_j|(\max\limits_{k}\sum\limits_{i=1}^{n}|a_{ik}|)\right)=
+(\max\limits_{k}\sum\limits_{i=1}^{n}|a_{ik}|)\cdot\sum\limits_{j=1}^{n}|x_j|$ ograniczenie sumy przez sumę ograniczeń, oraz wyłączenie stałej$\newline
+=(\max\limits_{k}\sum\limits_{i=1}^{n}|a_{ik}|)\cdot\lVert x\rVert_1\newline
+$
+Z tego wynika, że:
+$
+\frac{\lVert Ax\rVert_1}{\lVert x\rVert_1}\le\max\limits_{k}\sum\limits_{i=1}^{n}|a_{ik}|
+$ dla każdego $x\neq0$ (nierówność słaba jest zachowywana przy przejściu granicznym)
+$\Rightarrow \lVert A\rVert_1\le\max\limits_{k}\sum\limits_{i=1}^{n}|a_{ik}|$\newline
+Maksimum po skończonym zbiorze jest przyjmowane dla pewnego jego elementu więc istnieje takie\newline $1\le l\le n$, że
+$\sum\limits_{i=1}^{n}|a_{il}|=\max\limits_{k}\sum\limits_{i=1}^{n}|a_{ik}|$\newline
+Weźmy x takie, że $x_l=1$, oraz $x_i=0$ dla $i\neq l\newline
+\frac{\lVert Ax\rVert_1}{\lVert x\rVert_1}=\frac{\sum\limits_{i=1}^{n}|a_{il}|}{1}$
+więc równość jest osiągana dla pewnego x $\Rightarrow \lVert A\rVert_1=\max\limits_{k}\sum\limits_{i=1}^{n}|a_{ik}|$
+jako, że ta norma jest supremum po zbiorze obejmującym tą wartość.
+\end{document}
+
+
+
+
+
+dla dowolnego $B$ $\mu(D)=\mu(D)-\mu(E)=\mu(D\backslash E)\le\mu((D\backslash E)\cap B)+\mu((D\backslash E)\backslash B)=\newline
+=\mu((D\backslash E)\cap B)+\mu(D\backslash(E\cup B))=\mu((D\backslash E)\cap B)+\mu(D)-\mu(D\cap(E\cup B))\le\mu(D)\newline
+$ ostatnia nierówność wynika z : $D\cap(E\cup B)=(D\cap E)\cup(D\cap B)\supset D\cap B\supset (D\cap B)\backslash E=(D\backslash E)\cap B$\newline
+Otrzymujemy więc równości, więc i mierzalność $D\backslash E$, oraz rozłącznej sumy $(D\backslash E)\cup F$\newline
+W szczególności dla miary Lebesgue'a która jest borelowska.\newline

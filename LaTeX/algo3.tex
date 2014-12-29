@@ -1,0 +1,24 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501 group 1.
+\newline\newline
+1.Colouring:\newline
+Having n sets, we paint them to k colours randomly so that for every colour there are about $\frac{n}{k}$ sets having it (for example random permutation and x -th set colour is (x mod k) + 1.\newline
+2.Dynamic programing:\newline
+We build an array T of booleans with cells for every set from C times k where $T[C_i][l]=$ true if we can choose such sets from colours 1 to l
+such that they are pairwise disjoint with and disjoint with $C_i$, false otherwise.\newline
+We build the table by giving $\forall_{i=1..n} T[C_i][0]=$ true\newline
+for $l=0..k-2$ $T[C_i][l]=(T[C_i][l-1]==\text{true})\wedge(\bigvee_{C_j\text{ of colour } l}(C_i\wedge C_j=\emptyset\,T[C_j][l-1]==\text{true})$\newline
+3.If there exist such $C_i$ of colour k that $T[C_i][k-1]==$true then return true else return false.\newline\newline
+
+Proof of correctness:\newline
+Step 2: if $T[C_i][l-1]==$ true then if we could choose such $C_j$ that $T[C_j][l-1]==$true of colour C_l than the c 
+
+
+\end{document}

@@ -1,0 +1,22 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+Ze wzoru Stirlinga, którego wyprowadzenie jest krótsze od tych dwóch stron przedstawionych przez Panią\newline
+$
+n!=\sqrt{2\Pi n}\left(\frac{n}{e}\right)^n\cdot e^{\lambda_n}
+$, gdzie $\frac{1}{12n+1}<\lambda_n<\frac{1}{12n}$\newline
+$
+\log_2\frac{n!}{\left(\frac{n}{k}\right)!^k}=\log_2n!-k\cdot\log_2\left(\frac{n}{k}\right)!=
+\log_2\left(\sqrt{2\Pi n}(\frac{n}{e})^n\cdot e^{\lambda_n}\right)-k\cdot\log_2\left(\sqrt{2\Pi \frac{n}{k}}(\frac{n}{ke})^{\frac{n}{k}}\cdot e^{\lambda_{n/k}}\right)=\newline
+=\frac{1}{2}\log_2(2\Pi)+\frac{1}{2}\log_2n+n\cdot(\log_2n-\log_2e)+\lambda_n\cdot\log_2e-\newline
+-\frac{k}{2}(\log_2(2\Pi)+\log_2n-\log_2k)-k\cdot\frac{n}{k}(\log_2n-\log_2k-\log_2e)-k\cdot\lambda_{n/k}\log_2e=\newline
+\frac{1-k}{2}\log_2(2\Pi)+\frac{1-k}{2}\log_2n+\frac{k}{2}\log_2k+n\log_2k+\log_2e(\lambda_n-k\lambda_{n/k})>\newline
+>n\log_2k-\frac{k-1}{2}\log_2(2\Pi n)+\frac{k}{2}\log_2k+\log_2e(\frac{1}{12n+1}-\frac{k^2}{12n})>
+n\log_2k-\frac{k}{2}\log_2n-\log_2(2\Pi)k-\frac{\log_2e}{12}n>\frac{1}{2}n\log_2k-\Theta
+$
+
+\end{document}

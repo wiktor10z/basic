@@ -1,0 +1,85 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501 grupa 1
+\newline
+
+Zadanie 2.
+\newline
+$
+cond_{f}x=\sup\limits_{\lVert \overline{x}-x\rVert\le\varepsilon\lVert x\rVert}
+\left(\frac{\lVert f(\overline{x})-f(x)\rVert}{\lVert f(x)\rVert}:\frac{\lVert \overline{x}-x\rVert}{\lVert x\rVert}\right)
+\newline
+cond_{a+b}a=\sup\limits_{\lVert \overline{a}-a\rVert\le\varepsilon\lVert a\rVert}
+\left(\frac{\lVert \overline{a}+b-a-b\rVert}{\lVert a+b\rVert}:\frac{\lVert \overline{a}-a\rVert}{\lVert a\rVert}\right)=
+\sup\limits_{\lVert \overline{a}-a\rVert\le\varepsilon\lVert a\rVert}
+\left(\frac{\lVert \overline{a}-a\rVert}{\lVert a+b\rVert}:\frac{\lVert \overline{a}-a\rVert}{\lVert a\rVert}\right)=
+\frac{\lVert a\rVert}{\lVert a+b\rVert}\newline
+$
+Czyli było by dobrze uwarunkowane dla dużego $a+b$, jednak dla $b\approx-a $ zadanie jest bardzo źle uwarunkowane\newline
+$
+cond_{a+b}b=\sup\limits_{\lVert \overline{b}-b\rVert\le\varepsilon\lVert b\rVert}
+\left(\frac{\lVert a+\overline{b}-a-b\rVert}{\lVert a+b\rVert}:\frac{\lVert \overline{b}-b\rVert}{\lVert b\rVert}\right)=
+\sup\limits_{\lVert \overline{b}-b\rVert\le\varepsilon\lVert b\rVert}
+\left(\frac{\lVert \overline{b}-b\rVert}{\lVert a+b\rVert}:\frac{\lVert \overline{b}-b\rVert}{\lVert b\rVert}\right)=
+\frac{\lVert b\rVert}{\lVert a+b\rVert}\newline
+$
+To samo co wyżej\newline
+$
+cond_{a-b}a=\sup\limits_{\lVert \overline{a}-a\rVert\le\varepsilon\lVert a\rVert}
+\left(\frac{\lVert \overline{a}-b-a+b\rVert}{\lVert a-b\rVert}:\frac{\lVert \overline{a}-a\rVert}{\lVert a\rVert}\right)=
+\sup\limits_{\lVert \overline{a}-a\rVert\le\varepsilon\lVert a\rVert}
+\left(\frac{\lVert \overline{a}-a\rVert}{\lVert a-b\rVert}:\frac{\lVert \overline{a}-a\rVert}{\lVert a\rVert}\right)=
+\frac{\lVert a\rVert}{\lVert a-b\rVert}\newline
+$
+Źle uwarunkowane dla $b\approx a$\newline
+$
+cond_{a-b}b=\sup\limits_{\lVert \overline{b}-b\rVert\le\varepsilon\lVert b\rVert}
+\left(\frac{\lVert a-\overline{b}-a+b\rVert}{\lVert a-b\rVert}:\frac{\lVert \overline{b}-b\rVert}{\lVert b\rVert}\right)=
+\sup\limits_{\lVert \overline{b}-b\rVert\le\varepsilon\lVert b\rVert}
+\left(\frac{\lVert -\overline{b}+b\rVert}{\lVert a-b\rVert}:\frac{\lVert \overline{b}-b\rVert}{\lVert b\rVert}\right)=
+\frac{\lVert b\rVert}{\lVert a-b\rVert}\newline
+$
+Jak wyżej\newline
+$
+cond_{a\cdot b}a=\sup\limits_{\lVert \overline{a}-a\rVert\le\varepsilon\lVert a\rVert}
+\left(\frac{\lVert \overline{a}\cdot b-a\cdot b\rVert}{\lVert a\cdot b\rVert}:\frac{\lVert \overline{a}-a\rVert}{\lVert a\rVert}\right)=
+\sup\limits_{\lVert \overline{a}-a\rVert\le\varepsilon\lVert a\rVert}
+\left(\frac{\lVert \overline{a}-a\rVert\cdot\lVert b\rVert}{\lVert a\rVert\cdot\lVert b\rVert}:\frac{\lVert \overline{a}-a\rVert}{\lVert a\rVert}\right)
+=1\newline
+$
+A więc zadanie jest bardzo dobrze uwarunkowane\newline
+$
+cond_{a\cdot b}b=\sup\limits_{\lVert \overline{b}-b\rVert\le\varepsilon\lVert b\rVert}
+\left(\frac{\lVert a\cdot \overline{b}-a\cdot b\rVert}{\lVert a\cdot b\rVert}:\frac{\lVert \overline{b}-b\rVert}{\lVert b\rVert}\right)=
+\sup\limits_{\lVert \overline{b}-b\rVert\le\varepsilon\lVert b\rVert}
+\left(\frac{\lVert a\rVert\cdot\lVert \overline{b}-b\rVert}{\lVert a\rVert\cdot\lVert b\rVert}:\frac{\lVert \overline{b}-b\rVert}{\lVert b\rVert}\right)
+=1\newline
+$
+Jak wyżej\newline
+$
+cond_{\frac{a}{b}}a=\sup\limits_{\lVert \overline{a}-a\rVert\le\varepsilon\lVert a\rVert}
+\left(\frac{\lVert \frac{\overline{a}}{b}-\frac{a}{b}\rVert}{\lVert\frac{a}{b}\rVert}:\frac{\lVert \overline{a}-a\rVert}{\lVert a\rVert}\right)=
+\sup\limits_{\lVert \overline{a}-a\rVert\le\varepsilon\lVert a\rVert}
+\left(\frac{\lVert (\overline{a}-a)\cdot\frac{1}{b}\rVert}{\lVert a\cdot\frac{1}{b}\rVert}:\frac{\lVert \overline{a}-a\rVert}{\lVert a\rVert}\right)=
+\sup\limits_{\lVert \overline{a}-a\rVert\le\varepsilon\lVert a\rVert}
+\left(\frac{\frac{\lVert\overline{a}-a\rVert}{\lVert b\rVert}}{\frac{\lVert a\rVert}{\lVert b\rVert}}:\frac{\lVert \overline{a}-a\rVert}{\lVert a\rVert}\right)=1\newline
+$
+dla b niezerowego zadanie jest bardzo dobrze uwarunkowane\newline
+$
+cond_{\frac{a}{b}}b$ inną metodą (pochodnych)\newline$
+cond_{\frac{a}{b}}b=\left|\frac{-a}{b^2}\cdot \frac{b}{\frac{a}{b}}\right|=
+|-1|=1
+$
+Tak więc ten przypadek jest również bardzo dobrze uwarunkowany\newline
+Uwaga na temat przejść norma iloczynu - iloczyn norm. Dla liczb rzeczywistych nie ma żadnego problemu, natomiast dla wektorów i iloczynu wektorowego
+supremum wyraża się właśnie tym, że zaburzenie jest takie aby wektory mnożone były prostopadłe (dla iloczynu skalarnego równoległe), w przypadku
+innych norm wektorowych też nie ma problemu wystarczy w przejściu wziąć "$\le$" zamiast "="
+
+
+\end{document}

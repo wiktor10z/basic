@@ -1,0 +1,30 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{bbm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 9.
+\newline
+\newline
+Gęstość $X$ wyraż się wzorem $g_X(x)=e^{-x}\mathbbm{1}_{\{x\ge0\}}$.\newline
+Pod warunkiem $X=x$ gęstość $Y$ wyraża się wzorem $g_{Y|X}(y|x)=xe^{-xy}\mathbbm{1}_{\{y\ge0\}}$.\newline
+Rozkład łączny $X,Y$ ma gęstość $g_{X,Y}(x,y)=g_X(x)\cdot g_{Y|X}(y|x)=xe^{-(y+1)x}\mathbbm{1}_{\{x,y\ge0\}}$.\newline
+Rozkład $Y$ ma gęstość $\int\limits_{\mathbb{R}}g_{X,Y}(x,y)dx=\mathbbm{1}_{\{y\ge0\}}\int\limits_{0}^{\infty}xe^{-(y+1)x}dx=
+\frac{1}{y+1}\mathbbm{1}_{\{y\ge0\}}\mathbb{E}Z$ (gdzie $Z\sim Exp(y+1))$ =$\frac{1}{(y+1)^2}\mathbbm{1}_{\{y\ge0\}}$\newline
+Z twierdzenia z wykładu (V.11.) $\mathbb{P}(X\in A|Y)=\int\limits_{A}g_{X|Y}(x|Y)dx$ p.n.\newline
+W przypadku z zadania $\mathbb{P}(X>a|Y)=\int\limits_{a}^{\infty}g_{X|Y}(x|Y)dx=\int\limits_{a}^{\infty}\frac{g_{X,Y}(x,Y)}{g_{Y}(Y)}dx=
+\int\limits_{a}^{\infty}(Y+1)^2xe^{-(Y+1)x}\mathbbm{1}_{\{x>0\}}dx=\left[-((Y+1)x+1)e^{-(Y+1)x}\mathbbm{1}_{\{x>0\}}\right]_{a}^{\infty}$\newline
+$=\left\{
+\begin{array}{ccc}
+((Y+1)a+1)e^{-(Y+1)a}&\text{dla}&a>0\\
+1&\text{dla}&a\le0
+\end{array}\right.$ p.n.
+
+\end{document}

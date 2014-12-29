@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501 grupa 1
+\newline
+
+Zadanie 6.
+\newline
+\newline
+Sprawdzenie dla macierzy $m\times n$ 4 warunków pseudoodwrotności\newline
+($AA^+=(AA^+)^{\top},A^+A=(A^+A)^{\top},AA^+A=A,A^+AA^+=A^+$)
+w dwóch przypadkach:\newline\newline
+$\text{rz} A=n,A^+=(A^{\top}A)^{-1}A^{\top}:\newline
+(AA^+)^{\top}=(A(A^{\top}A)^{-1}A^{\top})^{\top}=A((A^{\top}A)^{\top})^{-1}A^{\top}=A(A^{\top}A)^{-1}A^{\top}=AA^+\newline
+(A^+A)^{\top}=((A^{\top}A)^{-1}A^{\top}A)^{\top}=(A^{\top}A)(A^{\top}A)^{-1}=I_n=(A^{\top}A)^{-1}(A^{\top}A)=A^+A\newline
+AA^+A=A(A^{\top}A)^{-1}A^{\top}A=A(A^{\top}A)^{-1}(A^{\top}A)=A\cdot I_n=A\newline
+A^+AA^+=(A^{\top}A)^{-1}A^{\top}A(A^{\top}A)^{-1}A^{\top}=(A^{\top}A)^{-1}(A^{\top}A)(A^{\top}A)^{-1}A^{\top}=(A^{\top}A)^{-1}A^{\top}=A^+\newline\newline
+\text{rz} A=m,A^+=A^{\top}(AA^{\top})^{-1}:\newline
+(AA^+)^{\top}=(AA^{\top}(AA^{\top})^{-1})^{\top}=((AA^{\top})^{\top})^{-1}AA^{\top}=(AA^{\top})^{-1}AA^{\top}=I_m=AA^{\top}(AA^{\top})^{-1}=AA^+\newline
+(A^+A)^{\top}=(A^{\top}(AA^{\top})^{-1}A)^{\top}=A^{\top}(AA^{\top})^{-1}A=A^+A\newline
+AA^+A=AA^{\top}(AA^{\top})^{-1}A=(AA^{\top})(AA^{\top})^{-1}A=A\newline
+A^+AA^+=A^{\top}(AA^{\top})^{-1}AA^{\top}(AA^{\top})^{-1}=A^{\top}(AA^{\top})^{-1}(AA^{\top})(AA^{\top})^{-1}=A^{\top}(AA^{\top})^{-1}=A^+\newline\newline
+$
+Przy przejściach z identycznością korzystam z maksymalności rzędu odpowiednich macierzy.
+
+\end{document}

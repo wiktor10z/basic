@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 3*
+\newline
+\newline
+$
+s\circ f\circ s (s(q))=s^{-1}\circ f\circ s (s^{-1}(q))\quad
+\bigl[$z zadania 2.4 d) które mówi, że symetria jest inwolucją$\bigr]\newline
+s=h^{-1}\circ s_2 \circ h\newline
+\bigl[$z zadania 2.4 c) gdzie h jest homografią która przekształca okrąg T na prostą rzeczywistą\newline
+(istnieje z zadania 2.3 ii)) natomiast $s_2$ symetrią względem tej prostej czyli funkcją $\overline{z}\bigr]\newline
+$każda homografia (w tym h) jest złożeniem przesunięć, jednokładności i funkcji $\frac{1}{z}$ (z zadania 2.2)\newline\newline
+Teraz udowodnie zadanie poprzez indukcję po złożeniach:\newline $f'(q)$ istnieje $\Rightarrow g^{-1}\circ f\circ g (g^{-1}(q))$ istnieje \newline\newline
+$
+1^{\circ}$ $g$-przesunięcie o a :$\newline
+\lim\limits_{h\rightarrow 0}\frac{(f((g^{-1}(q)+h)+a)-a)-(f(q)-a)}{h}=\lim\limits_{h\rightarrow 0}\frac{f((q-a+h)+a)-a-f(q)+a}{h}=
+\lim\limits_{h\rightarrow 0}\frac{f(q+h)-f(q)}{h}=f'(q)\newline
+2^{\circ}$ $g$-jednokładność o skali a$\neq0$ :$\newline
+\lim\limits_{h\rightarrow 0}\frac{\frac{1}{a}(f((g^{-1}(q)+h)\cdot a))-\frac{f(q)}{a}}{h}=\lim\limits_{h\rightarrow 0}\frac{\frac{1}{a}(f(q+ah))-\frac{f(q)}{a}}{h}=
+\lim\limits_{h\rightarrow 0}\frac{(f(q+ah))-f(q)}{ah}=f'(q)\newline
+3^{\circ}$ $g=\frac{1}{z} :\newline
+\frac{1}{f(\frac{1}{g^{-1}(q)+h})}-\frac{1}{f(q)}=\frac{1}{f(\frac{q}{1+qh})}-\frac{1}{f(q)}=
+\frac{1}{f(q)}\cdot\frac{f(q)-f(\frac{q}{1+qh})}{f(\frac{q}{1+qh})}\newline
+\lim\limits_{h\rightarrow 0}\frac{\frac{1}{f(q)}\cdot\frac{f(q)-f(\frac{q}{1+qh})}{f(\frac{q}{1+qh})}}{h}=
+\frac{1}{f(q)}\cdot\lim\limits_{h\rightarrow 0}\frac{f(q)-f(\frac{q}{1+qh})}{f(\frac{q}{1+qh})\cdot h}=
+\frac{1}{f(q)}\cdot\lim\limits_{h\rightarrow 0}\frac{f(q)-f(q-\frac{q^2h}{1+qh})}{f(\frac{q}{1+qh})\cdot h}=\newline
+\frac{1}{f(q)}\cdot\lim\limits_{h\rightarrow 0}(\frac{1}{f(\frac{q}{1+qh})})(\frac{q^2}{1+qh})(\frac{f(q)-f(q-\frac{q^2h}{1+qh})}{\frac{q^2h}{1+qh}})=
+\frac{1}{f(q)}\cdot\frac{1}{f(q)}\cdot q^2\cdot f'(q)=\frac{q^2\cdot f'(q)}{(f(q))^2}\newline
+$
+przedostatnia równość z podstawowych własności granic i funkcji ciągłych w otoczeniu q\newline$
+4^{\circ}$ $g=\overline{z}$ istnieje z zadania 1.0\newline\newline
+Mając $h=g_1\circ g_2\circ\cdots\circ g_n$ (gdzie $g_i$ jest jednym z 4 powyższych przypadków) otrzymujemy:\newline
+$f'(q)$ istnieje $\Rightarrow g_1^{-1}\circ f\circ g_1(g_1^{-1}(q))$ istnieje $\Rightarrow g_2^{-1}\circ g_1^{-1}\circ f\circ g_1\circ g_2(g_2^{-1}(g_1^{-1}(q)))$ istnieje
+$\cdots \Rightarrow h^{-1}\circ f \circ h (h^{-1}(q))$ istnieje.
+\newline\newline
+Tak więc jako, że każde (bijektywne) ogólne przekształcenie M\"{o}biusa h można przedstawić jako złożenie pewnej kombinacji powyższych czterech funkcji
+to jest dla niego prawdziwe, że jeśli $f'(q)$ istnieje to istnieje też $h^{-1}\circ f \circ h (h^{-1}(q))$\newline
+W przypadku symetrii otrzymujemy $s\circ f\circ s (s(q))$ istnieje. 
+
+\end{document}

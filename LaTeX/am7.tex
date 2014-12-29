@@ -1,0 +1,302 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\marginsize{2,5cm}{2,5cm}{1cm}{4cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 5.1.
+\newline
+\newline
+Udowodnić, że
+$
+\xi=\left\{f\in L^1(R^k):f(x)=e^{-a\lVert x\rVert^2},a>0\right\}$jest zamknięte ze względu na splot$
+$\newline
+Czyli
+$
+f,g\in\xi\Rightarrow f*g\in\xi$\quad(,weźmy $f=e^{-a\lVert x\rVert^2},g=e^{-b\lVert x\rVert^2})
+$\newline
+Twierdzenie w tej postaci \underline{NIE JEST PRAWDZIWE}:
+Zakładam, że norma $\lVert.\rVert$ jest normą stopnia 2,
+w szczególności w przypadku dowolności normy $e^{-a\lVert x\rVert^2}$ może nawet nie być całkowalne na $R^k$
+na przykład dla normy $\sqrt{\ln{(1+\lVert x\rVert_2)}}$ mamy $e^{-a\lVert x\rVert^2}=\frac{1}{1+\lVert x\rVert_2}$
+(i wtedy splot nie istnieje dla k$\ge$2)
+\newline
+Tak więc przy założeniu, że $\lVert.\rVert=\lVert.\rVert_2$
+mamy:\newline
+$f*g=\int\limits_{R^k}e^{-a\lVert x-y\rVert^2}\cdot e^{-b\lVert y\rVert^2}dl_k(y)
+=
+\int\limits_{R^k}e^{-a\sum\limits_{i=1}^{k}(x_i-y_i)^2}\cdot e^{-b\sum\limits_{i=1}^{k}(y_i)^2}dl_k(y)
+$
+Funkcja nieujemna, z twierdzenia Fubiniego:
+$
+\prod\limits_{i=1}^{k}\left(\int\limits_{-\infty}^{\infty}e^{-a(x_i-y_i)^2}\cdot e^{-b(y_i)^2}dy_i\right)
+=
+\prod\limits_{i=1}^{k}\left(\int\limits_{-\infty}^{\infty}e^{-(a+b)y_i^2+2ax_iy_i-ax_i^2}dy_i\right)
+=\newline
+\prod\limits_{i=1}^{k}\left(\int\limits_{-\infty}^{\infty}e^{-(a+b)(y_i-\frac{a}{a+b}x_i)^2+\frac{a^2}{a+b}x_i^2-ax_i^2}dy_i\right)
+=
+\prod\limits_{i=1}^{k}\left(e^{-\frac{ab}{a+b}x_i^2}\int\limits_{-\infty}^{\infty}e^{-(a+b)(y_i-\frac{a}{a+b}x_i)^2}dy_i\right)
+=
+\prod\limits_{i=1}^{k}\left(e^{-\frac{ab}{a+b}x_i^2}\right)\cdot\newline
+\prod\limits_{i=1}^{k}\left(\int\limits_{-\infty}^{\infty}e^{-(a+b)(y_i-\frac{a}{a+b}x_i)^2}dy_i\right)
+$
+Pierwsza część to Fubini w drugą stronę, a druga po podstawieniu $z_i=y_i-\frac{a}{a+b}x_i$($x_i$ to w tym dziuałaniu stała):\quad
+$
+e^{-\frac{ab}{a+b}\sum\limits_{i=1}^kx_i^2}\cdot\prod\limits_{i=1}^{k}\left(\int\limits_{-\infty}^{\infty}e^{-(a+b)(z_i)^2}dz_i\right)
+$
+Kolejne podstawienie $w_i=\frac{z_i}{\sqrt{a+b}}$\quad
+$
+e^{-\frac{ab}{a+b}\lVert x\rVert^2}\cdot\prod\limits_{i=1}^{k}\left(\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{a+b}}e^{-(w_i)^2}dw_i\right)
+=
+e^{-\frac{ab}{a+b}\lVert x\rVert^2}\cdot\prod\limits_{i=1}^{k}\left(\frac{\sqrt{\pi}}{\sqrt{a+b}}\right)
+=
+\underline{(\frac{\sqrt{\pi}}{\sqrt{a+b}})^k\cdot e^{-\frac{ab}{a+b}\lVert x\rVert^2}}
+$\newline
+Co już wystarcza jako kontrprzykład, ale jednocześnie dowodzi, że gdybyśmy lekko przedefiniowali $\xi$ na \newline
+$\xi=\left\{f\in L^1(R^k):f(x)=Ce^{-a\lVert x\rVert^2},a>0\right\}$, gdzie $C$ jest stałą dowolną lub nieujemną (jak wygodniej),
+to $\xi$ byłoby zamknięte ze względu na splot (stałe wyszły by przed całkę na początku), i wyszło by 
+$C_1C_2(\frac{\sqrt{\pi}}{\sqrt{a+b}})^k\cdot e^{-\frac{ab}{a+b}\lVert x\rVert^2}$ (dla $C_1,C_2\ge0$ stała nieujemna).
+\newline
+\newline
+
+Zadanie 5.2.
+\newline
+\newline
+$
+\iint\limits_{M}xdS\quad M=\{(x,y,z):2z=\ln{(x^2+y^2)},x>y>e^{3z}\}
+$\newline
+Stosujemy podstawienie kołowe:
+$
+x=r\cos{\alpha},y=r\sin{\alpha},z=\ln{r}
+$\newline
+$
+G=det\left(
+\left[\begin{array}{ccc}
+\cos{\alpha}&\sin{\alpha}&\frac{1}{r}\\
+-r\sin{\alpha}&r\cos{\alpha}&0\\
+\end{array}\right]
+\cdot
+\left[\begin{array}{cc}
+\cos{\alpha}&-r\sin{\alpha}\\
+\sin{\alpha}&r\cos{\alpha}\\
+\frac{1}{r}&0\\
+\end{array}\right]
+\right)
+=
+det\left(
+\left[\begin{array}{cc}
+1+\frac{1}{r^2}&0\\
+0&r^2\\
+\end{array}\right]
+\right)
+=
+r^2+1
+$\newline
+$
+x>y>e^{3z}\Rightarrow\cos{\alpha}>\sin{\alpha}>r^2\Rightarrow\alpha\in([(0,\frac{\pi}{4})\cup(\frac{5\pi}{4},2\pi)]\cap(0,\pi))=(0,\frac{\pi}{4})
+$\newline
+$
+\iint\limits_{0<\alpha<\frac{\pi}{4},0<r<\sqrt{\sin{\alpha}}}r\cos{\alpha}\sqrt{r^2+1}drd\alpha
+$Funkcja nieujemna więc z twierdzenia Fubiniego
+$
+\int\limits_{0}^{\frac{\pi}{4}}\cos{\alpha}\left(\int\limits_{0}^{\sqrt{\sin{\alpha}}}r\sqrt{r^2+1}dr\right)d\alpha
+=
+\int\limits_{0}^{\frac{\pi}{4}}\cos{\alpha}\left[\frac{1}{3}(r^2+1)^{\frac{3}{2}}\right]_{0}^{\sqrt{\sin{\alpha}}}d\alpha
+=
+\frac{1}{3}\int\limits_{0}^{\frac{\pi}{4}}\cos{\alpha}[(\sin{\alpha}+1)^{\frac{3}{2}}-1]d\alpha
+=
+\frac{1}{3}\left[\frac{2}{5}(\sin{\alpha}+1)^{\frac{5}{2}}-\sin{\alpha}\right]_{0}^{\frac{\pi}{4}}
+=
+\frac{2}{15}[(\frac{2+\sqrt{2}}{2})^{\frac{5}{2}}-1]-\frac{\sqrt{2}}{6}
+=
+\underline{\frac{(\sqrt{2+\sqrt{2}})(3\sqrt{2}+4)-4-5\sqrt{2}}{30}}
+$
+\newpage
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 5.3.
+\newline
+\newline
+$
+E=\{(x,y,z):x^2+y^2=1,x+z=1\}\quad
+M=\left\{t\left(
+\begin{array}{c}
+x\\y\\z
+\end{array}
+\right)+(1-t)\left(
+\begin{array}{c}
+0\\0\\0
+\end{array}
+\right)
+:t\in(0,1),(x,y,z)\in E
+\right\}
+$\newline
+Policzyć
+$
+\iint\limits_{M}|y|dS
+$\newline
+Stosujemy podstawienie (kołowe ze względu na x i y):
+bierzemy $(\cos{\alpha},\sin{\alpha},1-\cos{\alpha})\in E$
+$\newline
+\forall(x,y,z)\in M:x=t\cos{\alpha},y=t\sin{\alpha},z=t(1-\cos{\alpha})$[to nie te same x,y,z co w definicjach początkowych]$
+$\newline
+$
+G=det\left(
+\left[\begin{array}{ccc}
+\cos{\alpha}&\sin{\alpha}&1-\cos{\alpha}\\
+-t\sin{\alpha}&t\cos{\alpha}&t\sin{\alpha}\\
+\end{array}\right]
+\cdot
+\left[\begin{array}{cc}
+\cos{\alpha}&-t\sin{\alpha}\\
+\sin{\alpha}&t\cos{\alpha}\\
+1-\cos{\alpha}&t\sin{\alpha}\\
+\end{array}\right]
+\right)
+=
+det\left(
+\left[\begin{array}{cc}
+1+(1-\cos{\alpha})^2&t\sin{\alpha}(1-\cos{\alpha})\\
+t\sin{\alpha}(1-\cos{\alpha})&t^2(1+\sin^2{\alpha})
+\end{array}\right]
+\right)
+=
+t^2(1+\sin^2{\alpha}+(1-\cos{\alpha})^2[(1+\sin^2{\alpha})-\sin^2{\alpha}])
+=
+t^2(1+\sin^2{\alpha}+1-2\cos{\alpha}+\cos^2{\alpha})
+=
+t^2(3-2\cos{\alpha})
+$\newline
+$
+\iint\limits_{\alpha\in(0,2\pi),t\in(0,1)}|\sin{\alpha}|t\sqrt{3-2\cos{\alpha}}dtd\alpha=
+\iint\limits_{\alpha\in(0,\pi),t\in(0,1)}\sin{\alpha}\cdots+\iint\limits_{\alpha\in(\pi,2\pi),t\in(0,1)}-\sin{\alpha}\cdots
+=\newline
+2\iint\limits_{\alpha\in(0,\pi),t\in(0,1)}\sin{\alpha}t\sqrt{3-2\cos{\alpha}}dtd\alpha
+$
+Funkcja nieujemna więc z twierdzenia Fubiniego:
+$
+(2\int\limits_{0}^{1}t^2dt)\cdot(\int\limits_{0}^{\pi}\sqrt{3-2\cos{\alpha}}\sin{\alpha}d\alpha)
+=
+\frac{2}{3}\cdot\left[\frac{1}{3}(3-2\cos{\alpha})^{\frac{3}{2}}\right]_{0}^{\pi}
+=
+\underline{\frac{2}{9}(5\sqrt{5}-1)}
+$
+\newline
+\newline
+
+Zadanie 5.4.
+\newline
+\newline
+Miara części sfery trójwymiarowej($0<a<1$)
+$
+\iiint\limits_{M}=\iiint\limits_{(x,y,z,\text{ź}):x^2+y^2+z^2+\text{ź}^2=1,\text{ź}>a}
+$\newline
+Podstawienie hipersferyczne (r=1)\quad
+$
+x=\cos{\alpha}\cos{\beta}\cos{\gamma},
+y=\sin{\alpha}\cos{\beta}\cos{\gamma},
+z=\sin{\beta}\cos{\gamma},
+\text{ź}=\sin{\gamma}
+$\newline
+$
+G=det\left(
+\left[\begin{array}{cccc}
+-\sin{\alpha}\cos{\beta}\cos{\gamma}&\cos{\alpha}\cos{\beta}\cos{\gamma}&0&0\\
+-\cos{\alpha}\sin{\beta}\cos{\gamma}&-\sin{\alpha}\sin{\beta}\cos{\gamma}&\cos{\beta}\cos{\gamma}&0\\
+-\cos{\alpha}\cos{\beta}\sin{\gamma}&-\sin{\alpha}\cos{\beta}\sin{\gamma}&-\sin{\beta}\sin{\gamma}&\cos{\gamma}\\
+\end{array}\right]\right.
+\cdot\newline\cdot\left.
+\left[\begin{array}{ccc}
+-\sin{\alpha}\cos{\beta}\cos{\gamma}&-\cos{\alpha}\sin{\beta}\cos{\gamma}&-\cos{\alpha}\cos{\beta}\sin{\gamma}\\
+\cos{\alpha}\cos{\beta}\cos{\gamma}&-\sin{\alpha}\sin{\beta}\cos{\gamma}&-\sin{\alpha}\cos{\beta}\sin{\gamma}\\
+0&\cos{\beta}\cos{\gamma}&-\sin{\beta}\sin{\gamma}\\
+0&0&\cos{\gamma}\\
+\end{array}\right]
+\right)
+=
+det\left(
+\left[\begin{array}{ccc}
+\cos^2{\beta}\cos^2{\gamma}&0&0\\
+0&\cos^2{\gamma}&0\\
+0&0&1\\
+\end{array}\right]
+\right)
+=
+\cos^2{\beta}\cos^4{\gamma}\quad\quad
+\sqrt{G}=\cos{\beta}\cos^2{\gamma}
+$\newline
+$
+\iiint\limits_{\sin{\gamma}>a}\cos{\beta}\cos^2{\gamma}d\alpha d\beta d\gamma
+$ funkcja nieujemna więc z twierdzenia Fubiniego:
+$
+\bigl(\int\limits_{0}^{2\pi}d\alpha\bigr)\cdot\bigl(\int\limits_{-\frac{\pi}{2}}^{\frac{\pi}{2}}\cos{\beta}d\beta\bigr)\cdot\bigl(\int\limits_{\arcsin{a}}^{\frac{\pi}{2}}\cos^2{\gamma}d\gamma\bigr)
+=2\pi\cdot2\cdot\frac{1}{2}\int\limits_{\arcsin{a}}^{\frac{\pi}{2}}\bigl(\cos{2\gamma}+1\bigr)d\gamma
+=
+2\pi(\frac{\pi}{2}-\arcsin(a)+\bigl[\frac{2\sin{\gamma}\cos{\gamma}}{2}\bigr]_{\arcsin(a)}^{\frac{\pi}{2}})
+=
+2\pi(\arccos(a)+1\sqrt{1-1}-a\sqrt{1-a^2})
+=
+\underline{2\pi(\arccos(a)-a\sqrt{1-a^2})}
+$
+\newpage
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 5.5.
+\newline
+\newline
+$
+S=\{(x,y,z):x^2+y^2+z^2=a^2\},g(x,y,z)=a+z
+$
+obliczyć środek masy\newline
+Jako, że gęstość nie zależy od x ani y więc te współrzędne środka masy pokrywają się ze współrzędnymi środka ciężkości sfery
+(są równe 0 gdyż części z ujemnymi wartościami tych zmiennych są równe(symetryczne) do tych z dodatnimi).\newline
+$
+z_0=\left(\iint\limits_{S}(a+z)dS\right)^{-1}\cdot\iint\limits_{S}x(a+z)dS
+$\newline
+Stosujemy podstawienie sferyczne:
+$
+x=a\cos{\alpha}\cos{\beta},y=a\sin{\alpha}\cos{\beta},z=a\sin{\beta}
+$\newline
+$
+G=det\left(
+\left[\begin{array}{ccc}
+-a\sin{\alpha}\cos{\beta}&a\cos{\alpha}\cos{\beta}&0\\
+-a\cos{\alpha}\sin{\beta}&-a\sin{\alpha}\sin{\beta}&a\cos{\beta}\\
+\end{array}\right]
+\cdot
+\left[\begin{array}{cc}
+-a\sin{\alpha}\cos{\beta}&-a\cos{\alpha}\sin{\beta}\\
+\cos{\alpha}\cos{\beta}&-a\sin{\alpha}\sin{\beta}\\
+0&a\cos{\beta}\\
+\end{array}\right]
+\right)
+=
+a^2\cos^2{\beta}
+$\newline
+$
+z_0=\left(\iint\limits_{\alpha\in(0,2\pi),\beta\in(-\frac{\pi}{2},\frac{\pi}{2})}a^2\cos{\beta}(1+\sin{\beta})d\alpha d\beta\right)^{-1}
+\iint\limits_{\alpha\in(0,2\pi),\beta\in(-\frac{\pi}{2},\frac{\pi}{2})}a^3\sin{\beta}\cos{\beta}(1+\sin{\beta})d\alpha d\beta
+$\newline
+Pierwsza funkcja nieujemna, druga ciągła, ograniczona(przez $\pm a^3$) na ograniczonym przedziale(całkowalna) więc z twierdzenia Fubiniego:
+$\newline
+\left(a^2\int\limits_{0}^{2\pi}d\alpha\right)^{-1}\cdot a^3\int\limits_{0}^{2\pi}d\alpha
+\cdot\left(\int\limits_{-\frac{\pi}{2}}^{\frac{\pi}{2}}(\cos{\beta}+\frac{\sin{2\beta}}{2})d\beta\right)^{-1}\cdot\int\limits_{-\frac{\pi}{2}}^{\frac{\pi}{2}}(\frac{\sin{2\beta}}{2}+\sin^2{\beta}\cos{\beta})d\beta
+=
+a\cdot(2)^{-1}\cdot\int\limits_{-\frac{\pi}{2}}^{\frac{\pi}{2}}\sin^2{\beta}\cos{\beta}d\beta
+=
+\frac{a}{2}\left[\frac{1}{3}\sin^3{\beta}\right]_{-\frac{\pi}{2}}^{\frac{\pi}{2}}
+=
+\frac{a}{2}\cdot\frac{2}{3}
+=
+\underline{\frac{a}{3}}
+$
+\end{document}

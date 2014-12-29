@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 7.
+\newline
+\newline
+Lemat: (Nie jestem pewien, czy to jest oczywiste)\newline
+$\alpha,\beta\ge0\Rightarrow 2\Phi(\frac{\alpha+\beta}{2})\ge\Phi(\alpha)+\Phi(\beta)$.\newline
+Dowód lematu: Bez straty ogólności zakładam, że $\alpha\le\beta$. Przekształcam nierówność:\newline
+$2\int\limits_{-\infty}^{\frac{\alpha+\beta}{2}}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}dx\ge
+\int\limits_{-\infty}^{\alpha}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}dx
++\int\limits_{-\infty}^{\beta}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}dx$\newline
+$
+\int\limits_{\alpha}^{\frac{\alpha+\beta}{2}}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}dx\ge
+\int\limits_{\frac{\alpha+\beta}{2}}^{\beta}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}dx$\newline
+Otrzymujemy całki z funkcji malejącej (dla dodatnich $x$) po przedziałach równej długości (a więc oczywiście nierówność jest prawdziwa).\newline\newline
+%
+Dla danych ogólnych : szukamy najkrótszego przedziału $(\alpha,\beta)$ takiego, że z prawdopodobieństwem $c$ suma $n$ niezależnych zmiennych losowych $U_i$ o rozkładzie $U(-k,k)$
+(wartość oczekiwana $0$, wariancja $\frac{k^2}{3}$) należy do niego.\newline
+$\mathbb{P}(\alpha\le\sum_{i=1}^{n}U_i\le\beta)=\mathbb{P}\left(\frac{\alpha\sqrt{3}}{k\sqrt{n}}\le\frac{\sqrt{3}\sum\limits_{i=1}^{n}U_i}{k\sqrt{n}}\le\frac{\beta\sqrt{3}}{k\sqrt{n}}\right)\ge c$
+korzystając z centralnego twierdzenia granicznego możemy środkowy wyraz zastąpić przez zmienną losową $Y\sim N(0,1)$ aby otrzymać:\newline
+$\mathbb{P}(\frac{\alpha\sqrt{3}}{k\sqrt{n}}\le Y\le\frac{\beta\sqrt{3}}{k\sqrt{n}})=\Phi(\frac{\beta\sqrt{3}}{k\sqrt{n}})-\Phi(\frac{\alpha\sqrt{3}}{k\sqrt{n}})=
+\Phi(\frac{\beta\sqrt{3}}{k\sqrt{n}})+\Phi(\frac{-\alpha\sqrt{3}}{k\sqrt{n}})-1\ge c\newline
+\Phi(\frac{\beta\sqrt{3}}{k\sqrt{n}})+\Phi(\frac{-\alpha\sqrt{3}}{k\sqrt{n}})\ge 1+c$\newline
+$1+c>\frac{3}{2}\Rightarrow \frac{\beta\sqrt{3}}{k\sqrt{n}},\frac{-\alpha\sqrt{3}}{k\sqrt{n}}>0$ a więc z lematu
+$2\Phi(\frac{(\beta-\alpha)\sqrt{3}}{2k\sqrt{n}})\ge\Phi(\frac{\beta\sqrt{3}}{k\sqrt{n}})+\Phi(\frac{-\alpha\sqrt{3}}{k\sqrt{n}})\ge 1+c$,
+co oznacza, że jeżeli znajdziemy przedział pewnej długości spełniający nierówność, to przedział tej samej długości symetryczny względem zera również ją spełnia
+(a więc możemy się ograniczyć do szukania przedziału symetrycznego względem zera ($\alpha=-\beta$))\newline
+$2\Phi(\frac{\beta\sqrt{3}}{k\sqrt{n}})\ge\frac{1+c}{2}\Rightarrow \beta\ge \frac{k\sqrt{n}}{\sqrt{3}}\Phi^{-1}(\frac{1+c}{2})$ (gdzie $\Phi^{-1}$ to odwrotność różnowartościowej funkcji $\Phi(x)$).\newline
+Teraz możemy podstawić dane $n=10^4,k=\frac{2}{10^m}$ (jeśli pracujemy z prawdziwym zaokrąglaniem to powinno być raczej $\frac{1}{2\cdot10^m}$), $c=0,95$: $\Phi^{-1}(0,975)\approx1,96$
+$\beta\ge \frac{200\sqrt{3}}{3}\cdot 10^{-m}\cdot 1,96\approx 226\cdot10^{-m}$.\newline
+Najkrótszym przedziałem zawierającym sumę zmiennych $U_i$ z prawdopodobieństwem $\ge0,95$ jest\newline
+$(-\frac{200\sqrt{3}}{3\cdot10^m}\Phi^{-1}(0,975),\frac{200\sqrt{3}}{3\cdot10^m}\Phi^{-1}(0,975))\approx(-226\cdot10^{-m},226\cdot10^{-m})$\newline
+(lub jeśli przyjąć $k=\frac{1}{2\cdot 10^m}$ przedział $\approx(-56,5\cdot10^{-m};56,5\cdot10^{-m})$)
+
+\end{document}

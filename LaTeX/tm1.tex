@@ -1,0 +1,168 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501
+\newline
+
+Zadanie 1.
+\newline
+\newline
+(a)\newline
+$\mu(\emptyset)=0$-oczywiste (pusta suma $\varepsilon_i^{n-1}\gamma_{n-1}$)\newline
+dla $A\subset\bigcup\limits_{j=1}^{\infty}A_j$ dla dowolnego $\delta>0$ możemy dobrać takie $D_{\varepsilon_{j,i}}$,
+że $A_j\subset\bigcup\limits_{i=1}^{\infty}D_{\varepsilon_{j,i}}$, oraz:\newline
+$\sum\limits_{i=1}^{\infty}\varepsilon_{j,i}^{n-1}\gamma_{n-1}<\mu(A_j)+\frac{\delta}{2^j}$\newline
+$A\subset\bigcup\limits_{j=1}^{\infty}\left(\bigcup\limits_{i=1}^{\infty}D_{\varepsilon_{j,i}}\right)$\quad
+$\mu(A)\le\sum\limits_{j=1}^{\infty}\left(\sum\limits_{i=1}^{\infty}\varepsilon_{j,i}^{n-1}\gamma_{n-1}\right)<\sum\limits_{j=1}^{\infty}\mu(A_j)+\delta$\newline
+Z dowolności $\delta$ otrzymujemy nierówność $\mu(A)\le\sum\limits_{j=1}^{\infty}\mu(A_j)$\newline\newline
+(b)\newline
+Dla $A$ pustego lub jednopunktowego problem z dzieleniem 0 przez 0\newline
+Dla $\text{diam}(A)=\infty(l^{n}(A)<\infty$ mamy $\mu(A)\ge0$- zawsze spełnione\newline
+Dla $\text{diam}(A)=\infty(l^{n}(A)=\infty$ mamy dzielenie $\infty$ przez $\infty$ (zakładając możliwość pomnożenia obu stron przez $\text{diam}(A)$ prawda)\newline
+Dla $0<\text{diam}(A)<\infty\Rightarrow l^n(A)<\infty$ jako zbior ograniczony w $\mathbb{R}^n$:\newline
+Miara Lebesgue'a- czyli infimum po kostkach i infimum po kulach pokrywajacych są sobie równe\newline
+(kostkę możemy z dokładnością do dowolnego $\varepsilon$ pokryć kulami i odwrotnie, suma po $\frac{\varepsilon}{2^n}$...)\newline
+Dla dowolnie wybranej $\delta>0$ dobieramy pewne pokrycie $A$ tubkami, takie że\newline
+$\mu(A)\ge\sum\limits_{i=1}^{\infty}\varepsilon_{i}^{n-1}\gamma_{n-1}-\frac{\delta}{\text{diam}(A)}$\quad\quad\quad\quad
+$\mu(A)\cdot\text{diam}(A)\ge\sum\limits_{i=1}^{\infty}(\varepsilon_{i}^{n-1}\gamma_{n-1}\text{diam}(A))-\delta$\newline
+Jeśli podstawa walca $D_{\varepsilon_i}$ pokrywa pewną część rzutu zbioru $A$ wzdłuż którejś osi na podprzestrzeń $\mathbb{R}^n$(czyli $\mathbb{R}^{n-1}$),
+to ponieważ diam($A$) jest niemniejsza niż rozpiętość zbioru $A$ w tym kierunku, to walec o takiej podstawie i wysokości diam$(A)$
+(odpowiednio wycięty z walca $D_{\varepsilon_i}$ pokrywa taką samą część zbioru $A$ co cały ten walec). Co oznacza, że suma takich walców skończonych pokrywa $A$,
+więc $\mu(A)\cdot\text{diam}(A)\ge\sum\limits_{i=1}^{\infty}(\varepsilon_{i}^{n-1}\gamma_{n-1}\text{diam}(A))-\delta\ge l^n(A)-\delta$\newline
+z dowolności $\delta$ zachodzi nierówność $\mu(A)\cdot\text{diam}(A)\ge l^n(A)$\newline\newline
+(c)\newline
+nierówność $\mu(E\times\mathbb{R})\le l^{n-1}(E)$ jest oczywista (infimum po pokryciach walcami jest niewiększe od infimum po pokryciach walcami z wysokością w kierunku n-tym)\newline
+nierówność przeciwna poprzez:
+dla dowolnej $\delta>0$ istnieje pokrycie $E\times\mathbb{R}$ tubkami, takie że\newline
+$\mu(E\times\mathbb{R})\ge\sum\limits_{i=1}^{\infty}\varepsilon_i^{n-1}\gamma_{n-1}+\delta$\newline
+Z pośród tych tubek wyróżniamy te, których wysokość jest w kierunku n-tym, i pokrywamy ich podstawami część zbioru $E$, zostawiając niepokryty zbiór $F\subset E$,
+jeżeli $l^{n-1}(F)=0$ (na przykład $F$ może być pusty), to nierówność $\mu(E\times\mathbb{R})\ge l^1(E)+\delta$ jest oczywista (bo pokrycie $E$ tamtymi walcami można dopełnić nie zmieniając wartości sumy)\newline
+jeżeli natomiast $l^{n-1}(F)>0$, to (rzut $F$ w kierunku (n-1)-szym, $\times\mathbb{R}$) jest rzutem($F\times\mathbb{R}$) w tym samym kierunku.\newline
+Miara $l^{n-2}$ rzutu F jest dodatnia (inaczej miara $F$ zerowa), więc miara  $l^{n-1}$ (rzut$\times\mathbb{R}$) jest nieskończona, więc wyciągając z sumy
+te walce których wysokość jest w kierunku (n-1)-szym nie możemy pokryć całego (a nawet nieskończonej części) zbioru (rzut$\times\mathbb{R}$),
+to co pozostanie po wyjęciu tych walców jest jednocześnie miary dodatniej oraz rzutem tego co zostanie z $F\times\mathbb{R}$ po wyjęciu tych walców, więc miara
+pozostałego nam zbioru $G\subset F$ (rzut tego co zostało wdłuż n-tego kierunku) jest znowu dodatnia i tak indukcyjnie po skończonej ilości kierunków.\newline
+Po zabraniu wszystkich walców z obranego pokrycia $E\times\mathbb{R}$ wychodzi, że pewna część została niepokryta, więc ten przypadek($l^{n-1}(F)>0$) jest niemożliwy.\newpage
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 2.
+\newline
+\newline
+Z własności podaddytywności miary zewnętrznej mamy:\newline
+$
+\mu{(A\cup B)}\le\mu{(A)}+\mu{(B)}
+$\newline
+Jako, że $\text{dist}(A,B)=\inf\limits_{a\in A,b\in B}{(d(a,b))}>0$, to istnieje taki $\varepsilon>0$, że $\text{dist}(A,B)>\varepsilon>0$\newline
+Zdefiniujmy zbiory $C=\bigcup\limits_{a\in A}B(a,\frac{\varepsilon}{2})$ oraz $D=\bigcup\limits_{b\in B}B(b,\frac{\varepsilon}{2})$,\newline
+gdzie $B(a,r)$ to kula o środku w $a$ i promieniu $r$ w metryce $d$\newline
+Oba zbiory są otwarte jako sumy zbiorów otwartych, a więc borelowskie, więc i mierzalne z założeń zadania.
+Są one też rozłączne ($\text{dist}(C,D)>0$ z nierówności trójkąta), oraz $A\subset C,B\subset D$.\newline
+Teraz korzystając z własności zbiorów mierzalnych:\newline
+$
+\mu(C\cup D)=\mu(C)+\mu(D)=\mu(C\cap A)+\mu(C\backslash A)+\mu(D\cap B)+\mu(D\backslash B)=\mu(A)+\mu(C\backslash A)+\mu(B)+\mu(D\backslash B)\newline
+\mu(C\cup D)=\mu((C\cup D)\cap(A\cup B))+\mu((C\cup D)\backslash(A\cup B))=\mu(A\cup B)+\mu((C\backslash A)\cup(D\backslash B))\newline
+$Czyli otrzymujemy:\newline
+$
+\mu(A\cup B)+\mu((C\backslash A)\cup(D\backslash B))=\mu(A)+\mu(B)+\mu(C\backslash A)+\mu(D\backslash B)\newline $ oraz z podaddytywności:\quad$
+\mu((C\backslash A)\cup(D\backslash B))\le\mu(C\backslash A)+\mu(D\backslash B)\newline $ czyli:$\quad\quad\quad\quad\quad\quad\quad\quad\quad
+\mu(A\cup B)\ge\mu(A)+\mu(B)$\newline
+Co wraz z poprzednią nierównością daje nam równość.\newpage
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 3.
+\newline
+\newline
+Dla $A$ takiego, że $\mu(A)<\infty$ stosujemy twierdzenie Łuzina (miara Radona jest regularna borelowska,działamy na $\mathbb{R}^n$),
+z którego wynika, że dla każdego $\varepsilon>0$ istnieje taki zbiór zwarty $F\subset A$, że $\mu(A\backslash F)<\varepsilon$, a w $\mathbb{R}^n$
+zwarty jest równoważne domknięty i ograniczony.\newline
+Dla $\mu(A)=\infty$:\quad Definiujemy $R_n=\{x:n-1\le\lVert x\rVert<n\}$\quad $\overline{R_n}$ jest domknięty i ograniczony czyli zwarty więc:
+$\infty>\mu(\overline{R_n})\ge\mu(R_n)\ge\mu(R_n\cap A)$ z podaddytywności miary tego, że $\mu$ jest miarą Radona\newline
+$A=\bigcup\limits_{n=1}^{\infty}(A\cap R_n)$, $R_n$ są borelowskie, więc mierzalne (jak i sumy  ich przecięcięć z $A$), więc z pierwszej części zadania
+możemy dla każdego $A\cap R_n$ dobrać takie domknięte $F_n\subset A\cap R_n$, że $\mu((A\cap R_n)\backslash F_n)<\frac{\varepsilon}{2^n}$, 
+Zbiory $F_n$ są domknięte i rozłączne ($F_n\subset R_n$), $\bigcup\limits_{n=1}^{\infty} F_n=F$ jest zbiorem domkniętym,
+ponieważ gdy weźmiemy dowolny punkt z dopełnienia $F$, to jego $\varepsilon$ otoczenie dla $\varepsilon<\frac{1}{2}$ znajduje się w conajwyżej dwóch sąsiednich
+zbiorach $R_n\cup R_{n+1}$, a ponieważ $F_n\cup F_{n+1}$ jest domknięty, to dla dostatecznie małego $\varepsilon$ to otoczenie jest rozłączne z $F_n\cup F_{n+1}$
+więc i z $F$.\newline
+$\mu(A\backslash F)\le\sum\limits_{n=1}^{\infty}((A\cap R_n)\backslash F)=\sum\limits_{n=1}^{\infty}((A\cap R_n)\backslash F_n)<
+\sum\limits_{n=1}^{\infty}\frac{\varepsilon}{2^n}=\varepsilon$\newpage
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 4.
+\newline
+\newline
+Dla zbioru borelowskiego $A\subset [0,1]$ t.że $|A|=\frac{1}{4}$ możemy dobrać dwa rozłączne z nim i ze sobą wzajemnie 
+zbiory borelowskie $B\subset[0,1]$ i $C\subset[0,1]$ t.że $|B|=|C|=\frac{1}{4}$ ($B,C$- podzbiory $[0,1]\backslash A$)\newline
+$A,B,C$  $\mu$ mierzalne (borelowskie) i rozłaczne więc ich sumy też mierzalne.\newline
+$\mu(A\cup B\cup C)=\mu(A)+\mu(B\cup C)=\mu(A)+\frac{1}{2}=\mu(A\cup B)+\mu(C)=\frac{1}{2}+\mu(C)$\quad wynika z tego, że:\newline
+$\mu(A)=\mu(C)$ i $\frac{1}{2}=\mu(A\cup C)=\mu(A)+\mu(C)=2\mu(A)\Rightarrow \mu(A)=\frac{1}{4}$,\quad co dowodzi, że :\newline
+dla dowolnego zbioru borelowskiego $A$ miary Lebesgue'a $\frac{1}{4}$ jego miara $\mu$ też jest tyle równa.\newline
+Indukcyjnie dowodzimy powyższej własności dla $|A|=\frac{1}{2^n}$ (w dowodzie pierwszego kroku $\frac{1}{2^{n-1}}$ zamiast $\frac{1}{2}$).\newline
+Zeby nie bawić się w przejścia graniczne po dowolnych zbiorach borelowskich korzystamy z tego, że zbiory $[0,a)$ generują ciało zbiorów borelowskich na $[0,1]$,
+więc wystarczy udowodnić, że $\mu([0,a))=|[0,a)|=a$.\newline
+Dla dowolnego $n$ i $k\le2^n$\newline
+$\frac{k}{2^n}=|[0,\frac{k}{2^n})|=|\bigcup\limits_{i=1}^{k}[\frac{i-1}{2^n},\frac{i}{2^n})|$\quad\quad a ponieważ te zbiory są rozłączne to:\newline
+$=\sum\limits_{i=1}^{k}|[\frac{i-1}{2^n},\frac{i}{2^n})|$\quad\quad\quad\quad (zbiory miary Lebesgue'a $\frac{1}{2^n}$ z pierwszej części dowodu)\newline
+$=\sum\limits_{i=1}^{k}\mu(\frac{i-1}{2^n},\frac{i}{2^n}))=
+\mu(\bigcup\limits_{i=1}^{k}[\frac{i-1}{2^n},\frac{i}{2^n}))=\mu([0,\frac{k}{2^n}))$\newline
+Chcemy udowodnić, że dla dowolnego $\varepsilon>0$ $|\mu([0,a))-a|<\varepsilon$\newline
+wybierając $\varepsilon$ dla  pewnego $n>\log_2(\frac{1}{\varepsilon})+1$ dobieramy $k$ takie, że $\frac{k}{2^n}\le a<\frac{k+1}{2^n}\Rightarrow\newline
+\Rightarrow[0,\frac{k}{2^n})\subset[0,a)\subset[0,\frac{k+1}{2^n})\Rightarrow
+\frac{k}{2^n}=\mu([0,\frac{k}{2^n}))\le\mu([0,a))<\mu([0,\frac{k+1}{2^n}))=\frac{k+1}{2^n}\newline
+|\mu([0,a))-a|\le|\mu([0,a))-\frac{k}{2^n}|+|\frac{k}{2^n}-a|<\frac{2}{2^n}<\varepsilon$\newpage
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 5.
+\newline
+\newline
+(a)\newline
+$
+f:\mathbb{R}\rightarrow\mathbb{R}$ ciągła poza zbiorem miary Lebesgue'a zero, czyli dla dowolnego zbioru otwartego $A$ $f^{-1}(A)=(D\backslash E)\cup F.
+$ gdzie $D$ - zbiór otwarty, $E$ - zbiór miary zero $E\subset D$, dla $e\in E$ $f(e)\notin A$,\newline
+oraz $F$ -zbiór miary zero $D\cap F=\emptyset$, dla $g\in F$ $f(g)\in A$\newline
+$D$ mierzalny jako borelowski, $E,F$ mierzalne jako zbiory miary zero\newline
+$D\backslash E=D\cap(\mathbb{R}\backslash E)$- mierzalne jako przecięcie mierzalnych, $(D\backslash E)\cup F$ mierzalne jako suma mierzalnych\newline\newline
+(b)\newline
+$\mathbb(R)=\bigcup\limits_{i=-\infty}^{\infty}[i,i+\frac{3}{2}]$ (nakładka w postaci $\frac{1}{2}$ aby uniknąć nieciągłości pomiędzy krańcami przedziałów,\newline
+w tym konkretnym przypadku niepotrzebne, lecz ułatwia rozumowanie)\newline
+Dla dowolnego $i$ z twierdzenia Łuzina istnieje taki zbiór zwarty $F_i$, że $l^1([i,i+\frac{3}{2}]\backslash F_i)<\frac{\varepsilon}{3\cdot 2^{|i|}}$\newline
+taki, że $f_{|F_i}$ jest ciągła, z tego wynika, że dla $F=\bigcup\limits_{i=-\infty}^{\infty}F_i$ $f_{|F}$ też jest ciągła ponieważ w tym konkretnym przypadku
+zbiór takich punktów, że funkcja $f$ przyjmuje wartość inną niż $0$ (czyli $1$) jest miary Lebesgue'a zero, więc ciągłośc oznacza przyjmowanie tylko wartości $0$,
+a zbiory $F_i$ muszą się "przeplatać" ($\exists f_i\in F_i,f_{i+1}\in F_{i+1}$ t. że $f_{i+1}<f_i$), więc ciągłość zachodzi.\newline
+$l^1(\mathbb{R}\backslash F)\le\sum\limits_{i=-\infty}^{\infty}l^1([i,i+\frac{3}{2}]\backslash F_i)<\frac{1}{3}(\varepsilon+2\cdot\sum_{i=1}^{\infty}\frac{\varepsilon}{2^i})=\varepsilon\newline
+$ Pozostaje udowodnić domkniętość $F$: dla każdego $i$ $F_i$ jest domknięty (bo zwarty i w $\mathbb{R}$),\newline
+dla dowolnego $x\notin F$ i dla $\varepsilon<\frac{1}{4}$
+odcinek (otoczka) $[x-\varepsilon,x+\varepsilon]$ należy do conajwyżej dwóch, sąsiednich $[i,i+\frac{3}{2}],[i+1,i+\frac{5}{2}]$,
+a ponieważ skończona suma zbiorów domkniętych jest zbiorem domkniętym, to $F_i\cup F_{i+1}$ jest domknięte, więc dla dostatecznie małego $\varepsilon$
+$[x-\varepsilon,x+\varepsilon]\cap F=[x-\varepsilon,x+\varepsilon]\cap (F_i\cup F_{i+1})=\emptyset$\newpage
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 6.
+\newline
+\newline
+Zbiory borelowskie są mierzalne wystarczy więc pokazać, że przeciwobraz dowolnego zbioru borelowskiego przy funkcji $\overline{f}$ jest borelowski, a ponieważ
+zbiory $(-\infty,t)$ generują $\sigma$-ciało zbiorów borelowskich, to wystarczy pokazać to dla zbiorów tego typu.\newline
+$\overline{f}^{-1}((-\infty,t))=\overline{f}^{-1}([0,t))=\{x:\overline{B(x,r)}<t\}$\newline
+dla dowolnego $x\in\overline{f}^{-1}([0,t))$ $ $ $\overline{B(x,r)}=\bigcap\limits_{n=1}^{\infty}\overline{B(x,r+\frac{R-r}{n})}$, gdzie $R$ jak w treści zadania.\newline
+$\lim\limits_{n\rightarrow\infty}\mu(\overline{B(x,r+\frac{R-r}{n})})=\mu(\overline{B(x,r)})<t$ (ciąg zstępujący, dla $n=1$ $\mu(\overline{B(x,R)})<\infty$ z warunku (1))\newline
+Z tego wynika, że istnieje $n_x$ takie że $\mu(\overline{B(x,r+\frac{R-r}{n_x})})<t$ dla $|x-y|<\frac{R-r}{n_x}$ $\overline{B(y,r)}\subset\overline{B(x,r+\frac{R-r}{n_x})}$,
+więc $\mu(\overline{B(y,r)})<t\Rightarrow y\in\overline{f}^{-1}([0,t))$, z czego wynika, że dla każdego $x\in\overline{f}^{-1}([0,t))$ możemy dobrać takie $\varepsilon$
+(=$\frac{R_x-r}{n_x}$), że dla $|x-y|<\varepsilon$ $y$ też należy do tego przeciwobrazu, więc jest on otwarty, więc i borelowski, co kończy dowód.
+
+
+
+\end{document}

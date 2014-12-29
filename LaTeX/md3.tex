@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\marginsize{2,5cm}{2,5cm}{1cm}{4cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+Zadanie 3.
+\newline
+$
+Parzyste(2n)=(2n-1)\cdot(2n-2+1)\cdot Parzyste(2n-2)
+$\newline
+Wytłumaczenie kombinatoryczne:\newline
+bierzemy element $a_{2n}$, ponieważ wszystkie cykle mają być parzystej długości, więc z $a_{2n}$ musi wystąpić w cyklu inny wyraz: 
+$a_{k}$ - wyraz w zapisie cyklowym występujący przed $a_{2n}$,przy usunięciu wyrazów $a_k,a_{2n}$ pozostałe wyrazy dalej tworzą tylko cykle parzyste, 
+takich ustawień cykli jest $Parzyste(2n-2)$, elementów za którymi możemy włożyć wyrazy $a_k,a_{2n}$ - wydłużając istniejący cykl o 2 jest 2n-2,
+możemy też utworzyć nowy cykl długości 2 - wzajemnie jednoznaczne gdyż $a_{2n}$ albo znajduje się w cyklu długości 2 albo dłuższym,
+a wtedy jednoznacznie wyznaczony jest stosunek pomiędzy 2n-2 wyrazami i wyraz występujący 2 miejsca przed $a_{2n}$ -(2n-2+1), możliwości,
+wzajemnie jednoznaczny jest też wybór $a_k$ w końcu dla różnych poprzedników $a_{2n}$ permutacje muszą być różne- (2n-1) możliwości.
+$
+Parzyste(2n)=(2n-1)^2\cdot Parzyste(2n-2)=\prod\limits_{k=1}^{n}(2k-1)^2 \cdot Parzyste(0)=\prod\limits_{k=1}^{n}(2k-1)^2=((2n-1)!!)^2
+$\newline\newline
+$
+Nieparzyste(2n)=(2n-1)\cdot(2n-2)\cdot Nieparzyste(2n-2)+Nieparzyste(2n-1)
+$\newline
+Wytłumaczenie kombinatoryczne:\newline
+bierzemy element $a_{2n}$ załóżmy że występuje on w cyklu długości 1 - reszta bez niego jest permutacją należącą do $Nieparzyste(2n-1)$,
+załóżmy teraz, że jest on w cyklu dłuższym niż 1 - podobnie jak dla "Parzystych" istnieje takie jednoznacznie wyznaczone $a_k$ (na 2n-1 sposobów),
+oraz bez $a_k,a_{2n}$ permutacja należy do $Nieparzyste(2n-2)$, oraz dobór tej permutacji i wyrazu za którym znajduje się w zapisie cyklowym $a_k,a_{2n}$
+jest wzajemnie jednoznaczny (2n-2 miejsc).\newline\newline
+$
+Nieparzyste(2n-1)=(2n-2)\cdot(2n-3)\cdot Nieparzyste(2n-3)+Nieparzyste(2n-2)
+$\newline
+Wytłumaczenie kombinatoryczne:\newline
+Identyczne jak dla $Nieparzyste(2n)$ tylko wyborów $a_k$ i elementów za którm można włożyć $a_k,a_{2n}$ jest po 1 mniej.
+\newline\newline
+$
+Nieparzyste(m)=Nieparzyste(m-1)+(m-1)\cdot(m-2)\cdot Nieparzyste(m-2),\newline Nieparzyste(0)=1,\quad Nieparzyste(1)=1
+$\newline
+Jako, że na wykładzie nie było jeszcze metod rozwiązywania jednorodnych równań liniowych o zmiennych współczynnikach rzędu większego niż 1
+czuje się zupełnie usprawiedliwiony dowiedzenia, że\newline
+$Nieparzyste(2n)=((2n-1)!!)^2,Nieparzyste(2n-1)=((2n-3)!!)^2\cdot(2n-1)$ indukcyjnie:\newline
+Dla 0,1 prawda,(dla 2 też oczywiste - żeby nie liczyć (2n-5)!! ?)\newline\newline
+$
+Nieparzyste(2n-1)=(2n-2)\cdot(2n-3)\cdot Nieparzyste(2n-3)+Nieparzyste(2n-2)
+=
+(2n-2)(2n-3)((2n-5)!!)^2(2n-3)+((2n-3)!!)^2
+=
+(2n-2)((2n-3)!!)^2+((2n-3)!!)^2=(2n-1)((2n-3)!!)^2
+$\newline\newline
+$
+Nieparzyste(2n)=(2n-1)\cdot(2n-2)\cdot Nieparzyste(2n-2)+Nieparzyste(2n-1)
+=
+(2n-1)(2n-2)((2n-3)!!)^2+((2n-3)!!)^2(2n-1)
+=
+(2n-2+1)(2n-1)((2n-3)!!)^2
+=
+((2n-1)!!)^2
+$\newline\newline
+Tak więc:
+$
+Parzyste(2n)=((2n-1)!!)^2=Nieparzyste(2n)
+$\newline
+Czyli:
+$
+Parzyste(2n)-Nieparzyste(2n)=0
+$\newline\newline
+Być może istnieje jakieś bezpośrednie kombinatoryczne wytłumaczenie równości "Parzyste","Nieparzyste", ale żadnego ładnego nie znalazłem. 
+
+\end{document}

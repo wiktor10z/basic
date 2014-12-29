@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 3*
+\newline
+\newline
+$
+f'(q)$ istnieje $\Rightarrow g^{-1}\circ f\circ g (g^{-1}(q))$ istnieje dla:\newline
+$
+1^{\circ}$ $g$-przesunięcia o a :$\newline
+\lim\limits_{h\rightarrow 0}\frac{(f((g^{-1}(q)+h)+a)-a)-(f(q)-a)}{h}=\lim\limits_{h\rightarrow 0}\frac{f((q-a+h)+a)-a-f(q)+a}{h}=
+\lim\limits_{h\rightarrow 0}\frac{f(q+h)-f(q)}{h}=f'(q)\newline
+2^{\circ}$ $g$-jednokładności o skali a$\neq0$ :$\newline
+\lim\limits_{h\rightarrow 0}\frac{\frac{1}{a}(f((g^{-1}(q)+h)\cdot a))-\frac{f(q)}{a}}{h}=\lim\limits_{h\rightarrow 0}\frac{\frac{1}{a}(f(q+ah))-\frac{f(q)}{a}}{h}=
+\lim\limits_{h\rightarrow 0}\frac{(f(q+ah))-f(q)}{ah}=f'(q)\newline
+3^{\circ}$ $g=\frac{1}{z} :\newline
+\frac{1}{f(\frac{1}{g^{-1}(q)+h})}-\frac{1}{f(q)}=\frac{1}{f(\frac{q}{1+qh})}-\frac{1}{f(q)}=
+\frac{1}{f(q)}\cdot\frac{f(q)-f(\frac{q}{1+qh})}{f(\frac{q}{1+qh})}\newline
+\lim\limits_{h\rightarrow 0}\frac{\frac{1}{f(q)}\cdot\frac{f(q)-f(\frac{q}{1+qh})}{f(\frac{q}{1+qh})}}{h}=
+\frac{1}{f(q)}\cdot\lim\limits_{h\rightarrow 0}\frac{f(q)-f(\frac{q}{1+qh})}{f(\frac{q}{1+qh})\cdot h}=
+\frac{1}{f(q)}\cdot\lim\limits_{h\rightarrow 0}\frac{f(q)-f(q-\frac{q^2h}{1+qh})}{f(\frac{q}{1+qh})\cdot h}=\newline
+\frac{1}{f(q)}\cdot\lim\limits_{h\rightarrow 0}(\frac{1}{f(\frac{q}{1+qh})})(\frac{q^2}{1+qh})(\frac{f(q)-f(q-\frac{q^2h}{1+qh})}{\frac{q^2h}{1+qh}})=
+\frac{1}{f(q)}\cdot\frac{1}{f(q)}\cdot q^2\cdot f'(q)=\frac{q^2\cdot f'(q)}{(f(q))^2}\newline
+$
+przedostatnia równość z podstawowych własności granic i funkcji ciągłych w otoczeniu q\newline$
+4^{\circ}$ $g=\overline{z}$ istnieje z zadania 1.0\newline\newline
+Mając $h=g_1\circ g_2$ (gdzie $g_i$ jest jednym z 4 powyższych przypadków) otrzymujemy:\newline
+$f'(q)$ istnieje $\Rightarrow (g_1^{-1}\circ f\circ g_1)'(g_1^{-1}(q))$ istnieje $\Rightarrow (g_2^{-1}\circ g_1^{-1}\circ f\circ g_1\circ g_2)'(g_2^{-1}(g_1^{-1}(q)))=
+(h^{-1}\circ f\circ h)'(h^{-1}(q))$ istnieje. Indukcyjnie dla dowolnych złożeń powyższych funkcji a więc i dla wszystkich (bijektywnych) ogólnych przekształceń M\"{o}biusa
+(z zadania 2.2).\newline
+Jako, że dowolna symetria jest takim przekształceniem (na mocy zadania 2.3), więc i dla niej\newline
+$(s^{-1}\circ f\circ s)'(s^{-1}(q))$ istnieje a ponieważ jest ona inwolucją
+(z zadania 2.3 d)), to $s\circ f\circ s (s(q))=s^{-1}\circ f\circ s (s^{-1}(q))$ więc funkcja $s\circ f\circ s$ posiada pochodną w punkcie $s(q)$.
+\end{document}

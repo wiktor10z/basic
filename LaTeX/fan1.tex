@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 7 b)
+\newline
+\newline
+$
+z=x+iy\newline
+|\ctg{(\pi z)}|=
+\frac{|\frac{1}{2}(e^{i\pi z}+e^{-i\pi z})|}{|\frac{-i}{2}(e^{i\pi z}-e^{-i\pi z})|}=
+\frac{|e^{i\pi z}+e^{-i\pi z}|}{|e^{i\pi z}-e^{-i\pi z}|}=
+\frac{|e^{i\pi z}+e^{-i\pi z}|}{|e^{i\pi z}-e^{-i\pi z}|}\cdot\frac{|e^{i\pi z}|}{|e^{i\pi z}|}=
+\frac{|e^{2\pi iz}+1|}{|e^{2\pi iz}-1|}=
+\frac{|e^{-2\pi y}e^{2\pi ix}+1|}{|e^{-2\pi y}e^{2\pi ix}-1|}\newline\newline
+$Dla $ x=\pm(N+\frac{1}{2})\newline\newline
+\frac{|e^{-2\pi y}e^{\pm(2N+1)\pi i}+1|}{|e^{-2\pi y}e^{\pm(2N+1)\pi i}-1|}=$[z $2\pi$ okresowości $e^z$]$=
+\frac{|e^{-2\pi y}e^{\pm\pi i}+1|}{|e^{-2\pi y}e^{\pm\pi i}-1|}=
+\frac{|-e^{-2\pi y}+1|}{|-e^{-2\pi y}-1|}=
+\frac{|e^{-2\pi y}-1|}{|e^{-2\pi y}+1|}\le \underline{1}\newline
+$[z własności $e^x\ge0$ dla $x\in \mathbb{R}$]$\newline\newline
+$Dla $ y=\pm(N+\frac{1}{2})\newline\newline
+\frac{|e^{\mp(2N+1)\pi}e^{2\pi ix}+1|}{|e^{\mp(2N+1)\pi}e^{2\pi ix}-1|}\le
+$[z warunku trójkąta(2 razy)]$\le
+\frac{|e^{\mp(2N+1)\pi}e^{2\pi ix}|+1}{||e^{\mp(2N+1)\pi}e^{2\pi ix}|-1|}=
+\frac{e^{\mp(2N+1)\pi}+1}{|e^{\mp(2N+1)\pi}-1|}\newline
+$ Dla $+(2N+1)\pi $ mamy $
+\frac{e^{(2N+1)\pi}+1}{e^{(2N+1)\pi}-1}=
+1+\frac{2}{e^{(2N+1)\pi}-1}\le
+1+\frac{2}{e^{\pi}-1}\le
+1+\frac{2}{23-1}=
+\underline{\frac{12}{11}}\newline
+$ Dla $-(2N+1)\pi $ mamy $
+\frac{e^{-(2N+1)\pi}+1}{|e^{-(2N+1)\pi}-1|}=
+\frac{e^{-(2N+1)\pi}+1}{|e^{-(2N+1)\pi}-1|}\cdot\frac{e^{(2N+1)\pi}}{e^{(2N+1)\pi}}
+=
+\frac{e^{(2N+1)\pi}+1}{e^{(2N+1)\pi}-1}\le\underline{\frac{12}{11}}\newline
+$
+Tak więc całość jest ograniczona przez stałą $\frac{12}{11}$, a właściwie przez $(1+\frac{2}{e^{\pi}-1})$ która to wartość jest przyjmowana np. dla $z=\frac{i}{2}$
+\end{document}

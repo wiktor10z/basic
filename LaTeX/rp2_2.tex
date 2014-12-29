@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 2.
+\newline
+a) $f$ - ograniczona, mierzalna, $\mu_X(D_f)=0$, $X_n\xrightarrow{d} X$\newline
+Rozważmy podzielenie przestrzeni na fragmenty na których funkcja $f$ jest ciągła
+(w topologii przestrzeni $E_2=E\backslash D_f$ istnieje pewna liczba składowych, na każdej z których funkcja $f$ jest ciągła).\newline
+$\mu_X(E_2)=\mu_X(E)$, z lematu Portmantou (jako, że brzegiem zbioru $E_2$ w topologii $E$ jest $D_f$) wynika, że $\lim\mu_{X_n}(E_2)=\mu_X(E_2)=\mu_X(E)$, więc
+$\mathbb{E}f(X_n)=\int\limits_{E}f(x)d\mu_{X_n}(x)=\int\limits_{E_2}f(x)d\mu_{X_n}(x)+\int\limits_{D_f}f(x)d\mu_{X_n}(x)=
+\sum\left(\int\limits_{\text{składowa }E_2}f(x)d\mu_{X_n}(x)\right)+\int\limits_{D_f}f(x)d\mu_{X_n}(x)\rightarrow
+\sum\left(\int\limits_{\text{składowa }E_2}f(x)d\mu_{X}(x)\right)+0=
+\int\limits_{E_2}f(x)d\mu_{X}(x)+0=\int\limits_{E}f(x)d\mu_{X}(x)\mathbb{E}f(X)$
+(Pierwsza część zbiega z definicji słabej zbieżności ($f$ jest ciągła i ograniczona na wszystkich składowych $E_2$), zaś druga z ograniczoności $f$ i "zmniejszaniu się" obszaru całkowania).\newline\newline
+b) $X_n\xrightarrow{d} X$. Ustalamy dowolny $\varepsilon>0$ i korzystamy z lematu Fatou\newline
+$\liminf\mathbb{E}|X_n|\ge\int\liminf|x|d\mu_{X_n}(x)=
+\sum\limits_{k=0}^{\infty}\left(\int\limits_{\{x:|x|\in(k\varepsilon,(k+1)\varepsilon)\}}|x|\liminf d\mu_{X_n}(x)\right)
++\sum\limits_{k=0}^{\infty}\left(\int\limits_{\{x:|x|=k\varepsilon\}}k\liminf d\mu_{X_n}(x)\right)\ge
+\sum\limits_{k=0}^{\infty}\left(\int\limits_{\{x:|x|\in(k\varepsilon,(k+1)\varepsilon)\}}k\liminf d\mu_{X_n}(x)\right)
++\sum\limits_{k=0}^{\infty}\left(\int\limits_{\{x:|x|=k\varepsilon\}}k\varepsilon\liminf d\mu_{X_n}(x)\right)=
+\sum\limits_{k=0}^{\infty}\left(\int\limits_{\{x:|x|\in(k\varepsilon,(k+1)\varepsilon)\}}k\varepsilon\liminf d\mu_{X_n}(x)\right)
++\sum\limits_{k=0}^{\infty}\left(\int\limits_{\{x:|x|=k\varepsilon\}}k\varepsilon d\mu_{X}(x)\right)\ge
+\sum\limits_{k=0}^{\infty}\left(\int\limits_{\{x:|x|\in(k\varepsilon,(k+1)\varepsilon)\}}k\varepsilon d\mu_{X}(x)\right)
++\sum\limits_{k=0}^{\infty}\left(\int\limits_{\{x:|x|=k\varepsilon\}}k\varepsilon d\mu_{X}(x)\right)$ Ostatnia nierówność wynika z lematu Portmantou dla zbiorów otwartych
+$G_k={\{x:|x|\in(k\varepsilon,(k+1)\varepsilon)\}}$ $\liminf\mu_{X_n}(G_k)\ge\mu_X(G_k)$ (czyli dokładnie równe całkom w pierwszej sumie z przeskalowaniem $k\varepsilon$),
+zaś poprzednia równość wynika z definicji zbieżności słabej (dla stałej funkcji $k\varepsilon$). Następnie używając $k\varepsilon\ge|x|-\varepsilon$ (na odpowiadających zbiorach) otrzymujemy\newline
+$\ge\int(|x|-\varepsilon)d\mu_X(x)=\mathbb{E}|X|-\varepsilon\mu_X(E)$. Korzystając z dowolności $\varepsilon$ i skończoności miary otrzymujemy tezę.\newline\newline
+c) Rodzina zmiennych losowych $X_n$ jest jednostajnie całkowalna, czyli $\lim\limits_{C\rightarrow\infty}\sup\limits_{n}\mathbb{E}|X_n|\cdot\chi_{\{|X_n|>C\}}=0$\newline
+Dla dowolnego $\varepsilon>0$ możemy dobrać takie $C$, że $\sup\limits_{n}\mathbb{E}|X_n|\cdot\chi_{\{|X_n|>C\}}\le\varepsilon$. Wybierzmy $\varepsilon=1$, wtedy\newline
+$\forall_{n} \mathbb{E}|X_n|\le C+\mathbb{E}|X_n|\cdot\chi_{\{|X_n|>C\}}\le C+1$.\newline
+Z poprzedniego podpunktu $\mathbb{E}|X|\le\lim\inf\mathbb{E}|X_n|\le\sup\mathbb{E}|X_n|\le C+1<\infty$\newline
+Druga część (tym razem nie zakładając $\varepsilon=1$):
+$|\mathbb{E}X_n-\mathbb{E}X|\le|\mathbb{E}X_n\cdot\chi_{\{|X_n|\le C\}}-\mathbb{E}X\cdot\chi_{\{|X_n\le C\}}|+\mathbb{E}|X_n|\cdot\chi_{\{|X_n|>C\}}+\mathbb{E}|X|\cdot\chi_{\{|X_n|>C\}}
+\le|\mathbb{E}X_n\cdot\chi_{\{|X_n|\le C\}}-\mathbb{E}X\cdot\chi_{\{|X_n\le C\}}|+\varepsilon+\varepsilon$
+(drugi $\varepsilon$ wynika z tego, że rodzina z dołączonym $X$ nadal spełnia założenia, więc można dołożyć do niej $X_0=X$, a wtedy korzystamy z nierówności dla $X_0$)
+ale teraz pierwszy składnik zbiega do $0$, gdyż funkcja $x$ jest na obszarze ${\{|X_n\le C\}}$ ograniczona przez $C$ (jak w definicji wyżej $C$ jest uniwersalne dla każdego $n$, a więc i dla $0$).
+\end{document}

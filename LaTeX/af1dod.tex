@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 2
+\newline
+
+Zadanie dodatkowe.
+\newline
+\newline
+Tylko przypadek gdy $H$ nad $\mathbb{C}$(lub  nad $\mathbb{R}$-jako podprzypadek), ponieważ dla innych ciężko porównywać wartości (tylko równości, brak mniejszy, większy).\newline
+Zacznę od udowodnienia lematu z wykładu (choć był tam częściowo udowodniony, to na ćwiczeniach zadania często polegały na uściślaniu lub tłumaczeniu takich dowodów).\newline
+Lemat:$Re(\langle x-Px,y-Px\rangle)\le0$ $\forall y\in Y$\newline
+Dowód lematu:Z wypukłości $Y$ $(1-t)Px+ty\in Y$ $\forall t\in[0,1]$\newline
+$
+\lVert x-Px\rVert^2\le\lVert x-Px+t(Px-y)\rVert^2=\langle x-Px+t(Px-y),x-Px+t(Px-y)\rangle=\newline
+\lVert x-Px\rVert^2+2Re(\langle x-Px,t(Px-y)\rangle)+\lVert t(Px-y)\rVert^2$ $\forall t\in [0,1]\newline 
+Re(\langle x-Px,y-Px\rangle)\le\frac{t}{2}\lVert Px-y\rVert^2$ $\forall t\in (0,1]$ przechodząc z t do 0 otrzymujemy tezę lematu\newline
+Teraz jako, że $Y$ jest przestrzenią liniową (nad $\mathbb{C}$) to:\newline $Px,z\in Y\Rightarrow (z+Px),(-z+Px),(iz-Px),(-iz+Px)\in Y$, więc:\newline
+$Re(\langle x-Px,z\rangle)\le 0,Re(\langle x-Px,-z\rangle)\le 0,Re(\langle x-Px,iz\rangle)\le 0,Re(\langle x-Px,-iz\rangle)\le 0\newline
+Re(\langle x-Px,z\rangle)=0,Re(i\langle x-Px,z\rangle)=0\Rightarrow Im(\langle x-Px,z\rangle)=0
+\Rightarrow \langle x-Px,z\rangle=0$ $\forall z\in Y\newline$
+(W przypadku $\mathbb{R}$ pomijamy rozważania z $iz$, oraz $Re$ w napisach).
+
+\end{document}

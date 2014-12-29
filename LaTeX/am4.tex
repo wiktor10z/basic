@@ -1,0 +1,221 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+Zadanie 2.1.
+\newline
+
+
+
+Objętość bryły jest równa całce funkcji stale równej 1 po tej bryle.
+$
+\iiint\limits_{4x^2+y^2<4,x>0,x^2>z>0}dxdydz
+$
+funkcja jest oczywiście nieujemna więc z twierdzenia Fubiniego
+$
+\iint\limits_{4x^2+y^2<4,x>0} \bigl(\int\limits_{0}^{x^2} dz \bigr)dxdy
+=\iint\limits_{4x^2+y^2<4,x>0} x^2dxdy
+$
+stosujemy podstawienie t=2x dt=2dx
+$
+\iint\limits_{t^2+y^2<4,t>0} \frac{t^2}{8}dtdy
+$
+całka z funkcji parzystej po półkolu jest równa połowie całki tej funkcji po kole
+$
+\frac{1}{8}\iint\limits_{t^2+y^2<4,t>0} t^2dtdy=
+\frac{1}{16}\iint\limits_{t^2+y^2<4} t^2dtdy
+$
+stosujemy podstawienie biegunowe
+$
+t=r\cos{\alpha},y=r\sin{\alpha}, |J\varphi|=r
+\newline
+\frac{1}{16}\iint\limits_{0<r<2,0<\alpha<2\Pi} r^3\cos{\alpha}^2d rd\alpha
+$
+funkcja jest nieujemna więc z Fubiniego
+$
+\frac{1}{16}\int\limits_{0}^{2}\bigl(\int\limits_{0}^{2\Pi} r^3\cos{\alpha}^2 d\alpha \bigr) dr
+=\frac{1}{16}\int\limits_{0}^{2} r^3 \bigl(\int\limits_{0}^{2\Pi}\cos{\alpha}^2 d\alpha \bigr) dr
+=\frac{1}{16}\bigl(\int\limits_{0}^{2\Pi}\cos{\alpha}^2 d\alpha \bigr)\bigl(\int\limits_{0}^{2} r^3 dr\bigr)
+=\frac{1}{32}\bigl(\int\limits_{0}^{2\Pi}2\cos{\alpha}^2-1+1 d\alpha \bigr) \bigl[ \frac{r^4}{4}\bigr]_{0}^{2}
+=\frac{1}{8}\int\limits_{0}^{2\Pi}(cos{2\alpha}+1)d\alpha
+=\frac{1}{8} \bigl[ \frac{\sin{2\alpha}}{2}+\alpha \bigr]_{0}^{2\Pi}
+=\frac{1}{8}(0-0+2\Pi-0)=\frac{\Pi}{4}
+$
+\newline
+\newline
+
+
+Zadanie 2.2
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+
+$x,y>0$ tylko jeden z obszarów jest ograniczony, aby x i y były ograniczone, to
+$
+2>xy>\frac{1}{2},2x>y>\frac{1}{2}x,
+$
+aby dodatkowo z było ograniczone to$ z>0,yz<1$
+tak więc liczymy całkę z funkcji stale równej 1, po zbiorze spełniającym te równania
+$
+\iiint\limits_{0<z<\frac{1}{y}, \max{(\frac{1}{2y},\frac{y}{2})}<x<\min{(\frac{2}{y},2y})}dxdydz
+$
+funkcja jest nieujemna więc z twierdzenia Fubiniego i rozdzielenia $\frac{1}{2}\le y\le1, 1<y\le2$( dla $y>2$ i $y<\frac{1}{2}$ nie ma takich x)
+$\quad
+\int\limits_{\frac{1}{2}}^{1}dy\int\limits_{\frac{1}{2y}}^{2y}dx\int\limits_{0}^{\frac{1}{y}}dz
++\int\limits_{1}^{2}dy\int\limits_{\frac{y}{2}}^{\frac{2}{y}}dx\int\limits_{0}^{\frac{1}{y}}dz
+=
+\int\limits_{\frac{1}{2}}^{1}(2y-\frac{1}{2y})\frac{1}{y}dy+\int\limits_{1}^{2}(\frac{2}{y}-\frac{y}{2})\frac{1}{y}dy
+=
+\int\limits_{\frac{1}{2}}^{1}(2-\frac{1}{2y^2})dy+\int\limits_{1}^{2}(\frac{2}{y^2}-\frac{1}{2})dy
+=
+1-\frac{1}{2}+\frac{1}{2}\bigl[\frac{1}{y}\bigr]_{\frac{1}{2}}^{1}-2\bigl[\frac{1}{y}\bigr]_{1}^{2}
+=\frac{1}{2}-\frac{1}{2}+1=1
+$
+\newline
+
+
+\newpage
+Wiktor Zuba 320501 grupa 4
+\newline
+Zadanie 2.3
+\newline
+
+
+
+
+Wartość średnia funkcji na zbiorze-całka z tej funkcji po tym zbiorze podzielona przez miarę zbioru.
+Funkcja nieujemna więc będzie można korzystać z twierdzenia Fubiniego(podstawienia tego nie zmienią)
+$
+A_{1}=\iiint\limits_{x^2+y^2+z^2<x+y+z}x^2+y^2+z^2dxdydz \quad
+A_{2}=\iiint\limits_{x^2+y^2+z^2<x+y+z}dxdydz
+$
+dokonujemy przesuniącia $ a=x-\frac{1}{2}\quad b=y-\frac{1}{2}\quad c=z-\frac{1}{2} |J\varphi|=1$
+$
+a^2+b^2+c^2+a+b+c+\frac{3}{4}<a+b+c+\frac{3}{2} \quad
+A_{1}=\iiint\limits_{a^2+b^2+c^2<\frac{3}{4}}(a^2+b^2+c^2+a+b+c+\frac{3}{4}) dadbdc \quad
+A_{2}=\iiint\limits_{a^2+b^2+c^2<\frac{3}{4}}dadbdc=\frac{4}{3}\Pi(\frac{\sqrt{3}}{2})^3=\frac{\sqrt{3}\Pi}{2}
+$
+Podstawienie sferyczne
+$
+A_{1}=\iiint\limits_{0<r<\frac{\sqrt{3}}{2},0<\alpha<2\Pi,-\frac{\Pi}{2}<\beta<\frac{\Pi}{2}}
+(r^4\cos{\beta}+r^3\cos{\beta}(\cos{\alpha}\cos{\beta}+\sin{\alpha}\cos{\beta}+\sin{\beta}))drd\alpha d\beta+(\frac{3}{4}A_{2})
+=\bigl(\int\limits_{0}^{\frac{\sqrt{3}}{2}}r^4dr\bigr)\bigl( \int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}\cos{\beta}d\beta\bigr)\bigl(\int\limits_{0}^{2\Pi}d\alpha\bigr)
++\bigl(\int\limits_{0}^{\frac{\sqrt{3}}{2}}r^3dr\bigr)\bigl( \bigl(\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}\cos^2{\beta}d\beta\bigr)\bigl(\int\limits_{0}^{2\Pi}sin{(\alpha+\frac{\Pi}{4})}d\alpha \bigr)
++\bigl(\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}\frac{1}{2}\cos{2\beta}d\beta\bigr)\bigl(\int\limits_{0}^{2\Pi}d\alpha\bigr)\bigr)
++\frac{3\sqrt{3}\Pi}{8}
+=\frac{9\sqrt{3}}{160}\cdot 2\cdot 2\Pi+\frac{9}{64}\cdot\bigl(\int d\beta\bigr)\cdot 0+\frac{3\sqrt{3}\Pi}{8}
+=\frac{3\sqrt{3}\Pi}{5}
+$więc średnia wartość tej funkcji to
+$
+\frac{6}{5}
+$
+\newline
+
+
+
+Zadanie 2.4 część pierwsza
+\newline
+
+
+
+
+$
+\lim\limits_{n \to \infty}\iint\limits_{\max{(-2x,x-1)}<y<\min{(1-2x,x+1)}}\bigl(\frac{2x+y+n}{n}\bigr)^n dxdy
+$
+funkcja jest nieujemna ponieważ $y>-2x$, możemy więc skorzystać z twierdzenia Fubiniego
+\newline
+$
+\lim\limits_{n \to \infty}\int\limits_{-\infty}^{\infty}\bigl(\int\limits_{\max{(-2x,x-1)}<y<\min{(1-2x,x+1)}}\bigl(\frac{2x+y+n}{n}\bigr)^n dy\bigr)dx
+$
+rozbicie względem min i max ze skończonej addytywności granic i całek
+$
+f_{n}=\bigl(1+\frac{2x+y}{n}\bigr)^n dxdy \quad
+\lim\limits_{n \to \infty}\bigl(\int\limits_{-\infty}^{0}\int\limits_{-2x<y<x+1}f_{n}+\int\limits_{0}^{\frac{1}{3}}\int\limits_{-2x<y<1-2x}f_{n}
++\int\limits_{\frac{1}{3}}^{\infty}\int\limits_{x-1<y<1-2x}f_{n}\bigr)
+$dla $x<-\frac{1}{3} \quad oraz \quad x>\frac{2}{3}$ nie istnieją takie y(nierówności zewnętrzne są w drugą stronę)
+$
+\lim\limits_{n \to \infty}\bigl(\int\limits_{-\frac{1}{3}}^{0}\int\limits_{-2x}^{x+1}f_{n}+\int\limits_{0}^{\frac{1}{3}}\int\limits_{-2x}^{1-2x}f_{n}
++\int\limits_{\frac{1}{3}}^{\frac{2}{3}}\int\limits_{x-1}^{1-2x}f_{n}\bigr)\quad
+0<2x+y<3$, więc funkcja jest ograniczona przez $e^3$ z Twierdzenia o zbieżności zmajoryzowanej
+$
+\int\limits_{-\frac{1}{3}}^{0}\bigl(\int\limits_{-2x}^{x+1}e^{2x+y}dy\bigl)dx
++\int\limits_{0}^{\frac{1}{3}}\bigl(\int\limits_{-2x}^{1-2x}e^{2x+y}dy\bigr)dx
++\int\limits_{\frac{1}{3}}^{\frac{2}{3}}\bigl(\int\limits_{x-1}^{1-2x}e^{2x+y}dy\bigr)dx
+=
+\int\limits_{-\frac{1}{3}}^{0}e^{2x}\bigl[e^ydy\bigl]_{-2x}^{x+1}dx
++\int\limits_{0}^{\frac{1}{3}}e^{2x}\bigl[e^ydy\bigl]_{-2x}^{1-2x}dx
++\int\limits_{\frac{1}{3}}^{\frac{2}{3}}e^{2x}\bigl[e^ydy\bigl]_{x-1}^{1-2x}dx
+=$
+\newpage
+Wiktor Zuba 320501 grupa 4
+\newline
+Zadanie 2.4 ciąg dalszy
+\newline
+$
+\int\limits_{-\frac{1}{3}}^{0}\bigl(e^{3x+1}-1\bigr)dx
++\int\limits_{0}^{\frac{1}{3}}\bigl(e-1\bigr)dx
++\int\limits_{\frac{1}{3}}^{\frac{2}{3}}\bigl(e-e^{3x-1}\bigr)dx
+=
+\int\limits_{-\frac{1}{3}}^{0}e^{3x+1}dx+\int\limits_{0}^{\frac{2}{3}}edx-\int\limits_{\frac{1}{3}}^{\frac{2}{3}}e^{3x-1}dx-\frac{2}{3}
+=
+e\bigl[\frac{e^{3x}}{3}\bigr]_{-\frac{1}{3}}^{0}-e^{-1}\bigl[\frac{e^{3x}}{3}\bigr]_{\frac{1}{3}}^{\frac{2}{3}}-\frac{2}{3}+\frac{2e}{3}
+=
+\frac{e}{3}-\frac{1}{3}-\frac{e}{3}+\frac{1}{3}-\frac{2}{3}+\frac{2e}{3}
+=
+\frac{2}{3}(e-1)
+$
+\newline
+
+
+Zadanie 2.5
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+\newline
+
+
+Ponieważ zbiór jest symetryczny ze względu na y i z, więc środki ciężkości tych wspólrzędnych wypadną w 0,
+szukamy środka ciężkości ze względu na x\newline
+$
+A_{1}=\iiint\limits_{x^2+y^2+z^2<a^2,x>0,-x\tg{\gamma}<y<x\tg{\gamma}}x dxdydz \quad
+A_{2}=\iiint\limits_{x^2+y^2+z^2<a^2,x>0,-x\tg{\gamma}<y<x\tg{\gamma}}dxdydz	\quad
+$
+szukamy $\frac{A_{1}}{A_{2}} \quad$ stosujemy podstawienie sferyczne i twierdzenie Fubiniego
+$
+x=r\cos{\alpha}\cos{\beta}, y=r\sin{\alpha}\cos{\beta}, z=r\sin{\beta}, |J\varphi|=r^2\cos{\beta} \quad$
+zbiór po którym całkujemy
+$0<r<a,\quad -\frac{\Pi}{2}<\beta<\frac{\Pi}{2},\quad \cos{\alpha}>0\quad(-\frac{\Pi}{2}<\alpha<\frac{\Pi}{2}),
+-r\cos{\alpha}\cos{\beta}\tg{\gamma}<r\sin{\alpha}\cos{\beta}<r\cos{\alpha}\cos{\beta}\tg{\gamma}\quad(-\tg{\gamma}<tg{\alpha}<\tg{\gamma}\quad(-\gamma<\alpha<\gamma))\newline
+A_{1}=\int\limits_{-\gamma}^{\gamma}\bigl(\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}\bigl(\int\limits_{0}^{a}r^3\cos^{2}{\beta}\cos{\alpha} dr\bigr)d\beta\bigr)d\alpha\quad
+A_{2}=\int\limits_{-\gamma}^{\gamma}\bigl(\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}\bigl(\int\limits_{0}^{a}r^2\cos{\beta} dr\bigr)d\beta\bigr)d\alpha\newline
+A_{1}=\bigl(\int\limits_{0}^{a}r^3dr\bigr)\bigl(\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}\cos^{2}{\beta}d\beta\bigr)\bigl(\int\limits_{-\gamma}^{\gamma}\cos{\alpha}d\alpha\bigr)
+A_{2}=\bigl(\int\limits_{0}^{a}r^2dr\bigr)\bigl(\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}}\cos{\beta}d\beta\bigr)\bigl(\int\limits_{-\gamma}^{\gamma}d\alpha\bigr)\newline
+A_{1}=\frac{a^4}{4}2\sin{\gamma}\int\limits_{-\frac{\Pi}{2}}^{\frac{\Pi}{2}} (\frac{1}{2} \cos{2\beta}+\frac{1}{2})d\beta\quad
+A_{2}=\frac{a^3}{3}2\cdot2\gamma \newline
+A_{1}=\frac{a^4}{4}2\sin{\gamma}\frac{\Pi}{2}=\frac{a^4\Pi\sin{\gamma}}{4}\quad
+A_{2}=\frac{4a^3\gamma}{3}
+$
+środek ciężkości figury jest więc w punkcie
+$
+\bigl(\frac{3a\Pi\sin{\gamma}}{16\gamma},0,0\bigr),$który jest odległy od środka o $\frac{3a\Pi\sin{\gamma}}{16\gamma}.$
+
+\end{document}

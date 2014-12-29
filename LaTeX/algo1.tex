@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501 group 1.
+\newline\newline
+a) Graph $G=({s,v,t},{(s,v),(v,t)}), c(s,v)=c(v,t)>0$ then both edges are decreasing, but none increasing.\newline\newline
+b)
+Consider residual network, after sending the flow found by the given algorithm. In the network there is no path from $s$ to $t$,
+otherwise we could have sent flow through it and acquired flow of bigger value. If we now build subgraph by sending a BFS from s in residual graph,
+and backward BFS from t (through edges backward), then if the edge leads from the first subgraph to the second then it is "increasing",
+as if we turn its value to $>0$ then there would exist s-t path in the graph. Otherwise increasing capacity of the edge wouldn't give us any s-t path, so the edge is not "increasing".\newline
+Algorithm:\newline
+1.Find max-flow in O(mn).\newline
+2.For every edges capacity subtract the value of the flow sent through the edge in the found flow (and increase of the dual edge) in O(m).\newline
+3.a)send BFS from s over the positive value edges (we set vertexes flag to 1).\newline
+3.b)send BFS backwards from t over positive value edges (we set vertexes flag to 2) sum in O(m+n).\newline
+4.For every edge uv of capacity 0 we check if u's flag is 1 and v's is 2 then the path is increasing otherwise it is not. In O(m).\newline
+Entire algorithm in time O(mn)\newline\newline
+c)
+Now in our residual network (after sending the found flow) the edge is decreasing only if its capacity is 0. Then edge $uv$ is decreasing if and only if there exists no u-v path.\newline
+Proof: If there exist an u-v path then if we decrease the initial capacity of the edge by less then the minimum capacity of the path then we can send this
+amount through that path not decreasing the value of the flow and thus acquiring maximum flow with edge uv of non 0 value in its residual network.\newline
+Now assume there is no such path. In residual network there must be a t-s path which is going through vu (as there must be a part of the flow going from s to t through the uv).
+If uv is not decreasing, then when we send some small(smaller then half of the smallest non 0 edge capacity) flow through this t-s path
+then there would have to exist a s-t path as we would have to send that amount of the flow from s to t (omitting uv) to hold the maximal value of flow.\newline
+Then having those two paths we can start from u on the way back to s till we cross the s-t path then proceed through it until we cross the t-s path again... till we get to v.
+If we have chosen the s-t path shortest possible then there would be no "coming back" in terms of the (reversed) t-s path namely no ... is needed. Consequently we have found an u-v path,
+and we assumed there was no such thus getting contradiction.\newline
+Algorithm:\newline
+1.Find max-flow in O(mn).\newline
+2.For every edges capacity subtract the value of the flow sent through the edge in the found flow (and increase of the dual edge) in O(m).\newline
+3.For every edge uv of capacity 0 we send DFS from u over positive value edges and if we don't get to v in the process then the edge is decreasing in O($m\cdot(m+n)$).\newline
+Assuming n is O(m) we obtain O($m^2$) as a time of entire algorithm.
+
+
+
+
+
+
+
+\end{document}

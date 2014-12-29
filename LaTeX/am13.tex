@@ -1,0 +1,87 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zadanie 11.1.
+\newline
+\newline
+"rozmaitością z kantami" są 4 trójkąty o wierzchołkach w rogach sześcianu jednostkowego, ze stroną zewnętrzną skierowaną na zewnątrz sześcianu,
+z klasycznego twierdzenia Stokesa wynika, że całka z $\overrightarrow{rotF}$ jest równa całce z $F$ po brzegach tej rozmiatości.\newline
+odcinki $AE,BE,CE,DE$ występują przy tym 2 razy , jednocześnie z przeciwnymi kierunkami, ponieważ biorąc 2 wektory - prostopadły do rozmiatości(dodatni),
+należący do rozmiatości prostopadły do brzegu zewnętrzny - patrząc na drugi sąsiadujący trójkąt zamieniają się one rolami
+(ewentualnie z lekkim przesuniąciem, ale nie z zamianą miejsc), więc trzecie wektory(kierunkujące brzeg) muszą zostać dobrane przeciwne
+(aby macierze miały dodatni wyznacznik)- całka po tych odcinkach wynosi 0.\newline
+zostaje tylko cykl ADBC z wcześniejszych rozważań orientacja będzie właśnie cykliczna (ponieważ w każdym trójkącie jest cykliczna ze spójności obszaru i brzegu)
+sprawdźmy więc orientację AD [1,0,0],[0,0,-1],[0,1,0] -wektory jak wyżej, czyli orientacja od A do D.\newline
+$
+\iint\limits_{\text{trójkąty}}\overrightarrow{rotF}=\int\limits_{ADBC}\overrightarrow{F}=\int\limits_{ADBC}xzdx-yzdy+\frac{xyz}{\sqrt{x^2+y^2+z^2}}dz=
+\int\limits_{A}^{D}-0dy+\int\limits_{D}^{B}0dx+\int\limits_{B}^{C}-yzdy+0dz+\int\limits_{C}^{A}xzdx+0dz=
+\int\limits_{0}^{1}(1-z)zdz+\int\limits_{0}^{1}(1-x)xdx=2\int\limits_{0}^{1}(x-x^2)dx=2(\frac{1}{2}-\frac{1}{3})=\underline{\frac{1}{3}}
+$
+\newline
+\newline
+
+Zadanie 11.2.
+\newline
+\newline
+$
+u,v:\mathbb{R}^3\rightarrow\mathbb{R}\quad u,v\in C^{2}\newline
+$
+$
+\iint\limits_{M}(u\cdot\overrightarrow{\nabla v}-v\cdot\overrightarrow{\nabla u})\overrightarrow{\textbf{n}}dS
+=
+\iint\limits_{M}\left(u\cdot\left[\begin{array}{c}v'_x\\v'_y\\v'_z\\\end{array}\right]
+-v\cdot\left[\begin{array}{c}u'_x\\u'_y\\u'_z\\\end{array}\right]\right)\overrightarrow{\textbf{n}}dS\newline
+$ Z praw mnożenia wektora przez skalar i dodawania wektorów:
+$
+\iint\limits_{M}\left(\left[\begin{array}{c}u\cdot v'_x-v\cdot u'_x\\u\cdot v'_y-v\cdot u'_y\\u\cdot v'_z-v\cdot u'_z\\\end{array}\right]\right)
+\overrightarrow{\textbf{n}}dS\newline
+$
+Z twierdzenia o dywergencji:\newline
+$
+=\iiint\limits_{W}\left(\text{div}\left[\begin{array}{c}u\cdot v'_x-v\cdot u'_x\\u\cdot v'_y-v\cdot u'_y\\u\cdot v'_z-v\cdot u'_z\\\end{array}\right]\right)dl_3
+=\iiint\limits_{W}((u\cdot v'_x-v\cdot u'_x)'_x+(u\cdot v'_y-v\cdot u'_y)'_y+(u\cdot v'_z-v\cdot u'_z)'_z)dl_3
+=\iiint\limits_{W}(u'_x\cdot v'_x+u\cdot v''_{x,x}-v'_x\cdot v'_x-v\cdot u''_{x,x}+u'_y\cdot v'_y+u\cdot v''_{y,y}-v'_y\cdot v'_y-v\cdot u''_{y,y}
++u'_z\cdot v'_z+u\cdot v''_{z,z}-v'_z\cdot v'_z-v\cdot u''_{z,z})dl_3
+=\iiint\limits_{W}(u\cdot v''_{x,x}-v\cdot u''_{x,x}+u\cdot v''_{y,y}-v\cdot u''_{y,y}+u\cdot v''_{z,z}-v\cdot u''_{z,z})dl_3
+=\iiint\limits_{W}(u\cdot(v''_{x,x}\cdot v''_{y,y}+u\cdot v''_{z,z})-v\cdot(u''_{x,x}\cdot u''_{y,y}+u\cdot u''_{z,z}))dl_3
+=\iiint\limits_{W}(u\cdot(v''_{x,x}+v''_{y,y}+v''_{z,z})-v\cdot(u''_{x,x}+u''_{y,y}+u''_{z,z}))dl_3
+=\iiint\limits_{W}(u\cdot\Delta v-v\cdot\Delta u)dl_3
+$
+\newline
+\newline
+
+Zadanie 11.3.
+\newline
+\newline
+$
+rot(fdx+gdy+hdz)=\omega_0\quad rot(udx+vdy)_=^? \omega_0\newline
+(\frac{dg}{dx}-\frac{df}{dy})dx\wedge dy+(\frac{dh}{dx}-\frac{df}{dz})dx\wedge dz+(\frac{dh}{dy}-\frac{dg}{dz})dy\wedge dz=
+(\frac{dv}{dx}-\frac{du}{dy})dx\wedge dy-\frac{du}{dz}dx\wedge dz-\frac{dv}{dz}dy\wedge dz\newline
+$
+Weźmy $u=f+a,v=g+b$, otrzymujemy 3 równania:\newline
+$
+\frac{df}{dz}-\frac{dh}{dx}=\frac{df}{dz}+\frac{da}{dz}\quad\quad \frac{dg}{dz}-\frac{dh}{dy}=\frac{dg}{dz}+\frac{db}{dz}\quad\quad
+\frac{dg}{dx}-\frac{df}{dy}=\frac{dg}{dx}+\frac{db}{dx}-\frac{df}{dy}-\frac{da}{dy}\newline
+\frac{da}{dz}=-\frac{dh}{dx}\quad\quad \frac{db}{dz}=-\frac{dh}{dy}\quad\quad \frac{db}{dx}=\frac{da}{dy}\quad\quad
+$
+podstawiamy a i b tak, aby pierwsze dwie równości były spełnione (funkcje klasy $C^1$ posiadają funkcje pierwotne). Sprawdźmy trzecią równość(zróżniczkujmy po z):
+$\newline
+\frac{d^2a}{dydz}=-\frac{d^2h}{dydx}=-\frac{d^2h}{dxdy}=\frac{d^2b}{dxdz}\newline
+$
+czyli dla tak dobranych a i b $\frac{db}{dx},\frac{da}{dy}$ różnią się o stałą niezależną od z -jest to pewna funkcja klasy $C^1$ - posiada pierwotną, odjęcie
+całki z niej po x od b nie wpłynie na $\frac{db}{dz}$.
+\end{document}
+
+
+
+

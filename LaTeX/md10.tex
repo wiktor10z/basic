@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+\marginsize{2,5cm}{2,5cm}{1cm}{4cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+Zadanie 10.
+\newline
+\newline
+Wszędzie zakładam, że obie strony skończone (promień zbieżności jest niezerowy dla $x_k$ rosnącego conajwyżej wykładniczo, w pozostałym przypadku obie strony równe $\infty$
+-niezależnie od y równość zdegenerowana lecz prawdziwa) więc szeregi są zbieżne bezwzględnie, a iloczyny zbieżne bezwzględnie lub rozbieżne do 0,
+czyli poprawne są operacje zmian kolejności dodawania i mnożenia.\newline
+$
+L=1+x_1y+\sum\limits_{n=0}^{\infty}I_{A_n}(x_1,...,x_n)y^n=e^{\sum\limits_{k=1}^{\infty}\frac{x_k}{k}y^k}+e^{\sum\limits_{k=1}^{\infty}\frac{-x_k}{k}(-y)^k}=P\newline
+$dla $n=0$ mamy $I_{A_0}+1=2=\frac{2}{0!}$, dla $n=1$ mamy $I_{A_1}+x_1y=\frac{1}{1}x_1y+x_1y=\frac{2}{1!}x_1y$\newline
+dla $n>1$ mamy $|A_n|=\frac{n!}{2}$, z ćwiczeń mamy ilość n-permutacji o określonej sygnaturze jest równa 
+$\frac{n!}{\prod\limits_{i=1}^{k}\alpha_i!\cdot i^{\alpha_i}}=n!\prod\limits_{i=1}^{k}\frac{1}{\alpha_i!\cdot i^{\alpha_i}}$
+dla zmniejszenia liczby współczynników weźmy k=n, dla $\alpha_i=0$ mnożymy przez 1 więc nic nie zmieniamy. Policzmy $I_{A_n}$ z definicji\newline
+$I_{A_n}(x_1,...,x_n)y^n=\frac{2}{n!}\left(\sum\limits_{\bigl(\sum i\alpha_i=n,^2|\sum\alpha_{(2j)}\bigr)}n!\bigl(\prod\limits_{i=1}^{n}\frac{x_i^{\alpha_i}}{\alpha_i!\cdot i^{\alpha_i}}\bigr)\right)y^n
+=2\sum\limits_{\bigl(\sum i\alpha_i=n,^2|\sum\alpha_{(2j)}\bigr)}\bigl(\prod\limits_{i=1}^{n}\frac{x_i^{\alpha_i}}{\alpha_i!\cdot i^{\alpha_i}}\bigr)y^n\newline
+L=\sum\limits_{n=0}^{\infty}\left(2\sum\limits_{\bigl(\sum i\alpha_i=n,^2|\sum\alpha_{(2j)}\bigr)}\bigl(\prod\limits_{i=1}^{n}\frac{x_i^{\alpha_i}}{\alpha_i!\cdot i^{\alpha_i}}\bigr)y^n\right)\newline
+$ (z własności funkcji Exp) $
+P=\prod\limits_{k=1}^{\infty}e^{\frac{x_k}{k}y^k}+\prod\limits_{k=1}^{\infty}e^{(-1)^{k+1}\frac{x_k}{k}y^k}=
+\prod\limits_{k=1}^{\infty}\bigl(\sum\limits_{l=0}^{\infty}\frac{x_k^l}{l!\cdot k^l}y^{kl}\bigr)+\prod\limits_{k=1}^{\infty}\bigl(\sum\limits_{l=0}^{\infty}(-1)^{l(k+1)}\frac{x_k^l}{l!\cdot k^l}y^{kl}\bigr)
+$\newline
+Aby otrzymać wyrazy z y w pewnej potędze z takiego iloczynu dla każdego k wybieramy jakieś l (dokładnie jedno, gdyż przy wyborze większej ilości otrzymamy y-ki w różnych potęgach)
+(od pewnego k l$\equiv$0), czyli by otrzymać wyraz przy $y^n$ pochodzący z takiego iloczynu dokonujemy wyborów ciągów $(l_k)$ takich, że $\sum k\cdot l_k=n$.\newline
+Dla takiego wyboru $(l_k)$ mamy z pierwszego iloczynu $\prod\limits_{k=1}^{\infty}\bigl(\frac{x_k^{l_k}}{l_k!\cdot k^{l_k}}y^{kl_{k}}\bigr)=\prod\limits_{k=1}^{\infty}\bigl(\frac{x_k^{l_k}}{l_k!\cdot k^{l_k}}\bigr)y^n$\newline
+a z drugiego $\prod\limits_{k=1}^{\infty}\bigl((-1)^{l_k(k+1)}\frac{x_k^{l_k}}{l_k!\cdot k^{l_k}}\bigr)y^n=(-1)^{\sum l_k(k+1)}\prod\limits_{k=1}^{\infty}\bigl(\frac{x_k^{l_k}}{l!\cdot k^{l_k}}\bigr)y^n\newline
+=\prod\limits_{k=1}^{\infty}\bigl(\frac{x_k^{l_k}}{l_k!\cdot k^{l_k}}\bigr)y^n$ dla parzystej ilości nieparzystych $l_k$ takich, że k jest parzyste, czyli $^2|\sum\limits_{^2|k} l_k$\newline
+=$-\prod\limits_{k=1}^{\infty}\bigl(\frac{x_k^{l_k}}{l_k!\cdot k^{l_k}}\bigr)y^n$ wpp.\newline
+Teraz więc $k=i,l_k:=\alpha_i$, i dla permutacji parzystych($^2|\sum \alpha_{(2j)}$) wyrazy po prawej stronie się dodają - stąd ta dwójka po stronie lewej, a dla nieparzystych wyraz "bez minusa"
+z pierwszego iloczynu redukuje się z wyrazem "z minusem" z drugiego iloczynu.\newline
+Tak więc równość w poprawionym zadaniu jest prawdziwa.
+\end{document}

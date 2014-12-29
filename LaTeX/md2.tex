@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+Zadanie 2.
+\newline
+
+Najpierw kilka przekształceń w celu "uzupełnienia" sumy
+\newline
+$
+\sum\limits_{k=0}^{n}{2n\choose k}^2
+=\sum\limits_{k=0}^{2n}{2n\choose k}^2-\sum\limits_{k=n+1}^{2n}{2n\choose k}^2
+=\sum\limits_{k=0}^{2n}{2n\choose k}^2-\sum\limits_{k=n+1}^{2n}{2n\choose 2n-k}^2
+=\newline
+=\sum\limits_{k=0}^{2n}{2n\choose k}^2-\sum\limits_{k=0}^{n-1}{2n\choose k}^2
+=\sum\limits_{k=0}^{2n}{2n\choose k}^2-\sum\limits_{k=0}^{n}{2n\choose k}^2+{2n\choose n}^2
+\newline
+\sum\limits_{k=0}^{n}{2n\choose k}^2=\sum\limits_{k=0}^{2n}{2n\choose k}^2-\sum\limits_{k=0}^{n}{2n\choose k}^2+{2n\choose n}^2
+\newline
+2\bigl(\sum\limits_{k=0}^{n}{2n\choose k}^2\bigr)=\sum\limits_{k=0}^{2n}{2n\choose k}^2+{2n\choose n}^2 \quad\quad
+\sum\limits_{k=0}^{n}{2n\choose k}^2=\frac{1}{2}\bigl({2n\choose n}^2+\sum\limits_{k=0}^{2n}{2n\choose k}^2\bigr)
+$
+\newline
+rozważmy teraz sumę od 0 do 2n
+$
+\sum\limits_{k=0}^{2n}{2n\choose k}^2=\sum\limits_{k=0}^{2n}{2n\choose k}{2n\choose 2n-k}={4n\choose 2n}
+$
+\newline
+Dowód kombinatoryczny ostatniej równości:
+\newline
+Mamy uporządkowany zbiór 4n elementowy i chcemy z niego wybrać 2n elementów - możemy to zrobić na ${4n\choose 2n}$ sposobów.
+\newline
+Możemy jednak zliczać te wybory w inny sposób:
+te uporządkowane 4n elementów dzielimy na dwie części po 2n elementów, następnie ponieważ ze wszystkich 4n elementów 2n ma zostać wyróżnione,
+to pewna ilość musi należeć do jednej, a pozostałe do drugiej części.
+\newline
+Z pierwszej części wybieramy k elementów, możemy to zrobić na ${2n\choose k}$, a pozostałe z drugiej na ${2n\choose 2n-k}$ sposobów,
+i tak dla każdego k od 0 do 2n, bo tyle elementów z pierszej części mogliśmy wyróżnić.
+\newline
+Poprawność: Zliczymy wszystkie kombinacje z 4n po 2n, ponieważ każda ma dokładnie określoną liczbę elementów należących do pierwszej wyróżnionej części pomiędzy 0 i 2n,
+a dla każdego takiego rozkładu zliczamy wszystkie możliwości.
+\newline
+Każda kombinacja zostanie zliczona tylko raz, gdyż dla każdego k wybór 2n po k oraz 2n po 2n-k są jednoznaczne i różne dla różnych k.
+\newline
+Tak więc
+$
+\sum\limits_{k=0}^{n}{2n\choose k}^2=\frac{1}{2}\bigl({4n\choose 2n}+{2n\choose n}^2\bigr)
+$
+\end{document}

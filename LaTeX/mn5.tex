@@ -1,0 +1,27 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+ 
+Wiktor Zuba 320501 grupa 1
+\newline
+
+Zadanie 5.
+\newline
+Liczenie złożoności kolejnych kroków:\newline
+1.Rozkład macierzy $B=LL^{\top}$ metodą Choleskiego - koszt $\frac{n^3}{6}$ (z notatek z wykładu)\newline\newline
+2.Znalezienie $E=L^{-1}C$ poprzez rozwiązanie układu równań liniowych $LE=C$- koszt $n^2$ dla jednego wektora kolumnowego z $E$ z macierzą trójkątną $L$
+pomnożone przez k wektorów=koszt $n^2k$\newline\newline
+3.Rozkład $QR$ macierzy $E$ (interesuje nas tylko R)metodą Householdera -koszt dla macierzy kwadratowej $n\times n$ równy $\frac{2n^3}{3}$
+w przypadku macierzy $k\times n$ (odbicie tylko k razy na k kolumnach i n wierszach) $\frac{2nk^2}{3}$\newline\newline
+4.a)Rozwiązanie $B\cdot f=p$ przy użyciu $B=LL^{\top}$-koszt 2 razy koszt dla wyliczania układu z macierzą trójkątną=$2\cdot n^2$(pomijalny)\newline
+4.b)Znalezienie $g=C^{\top}f-q$-koszt wymnożenia macierzy $n\times k$ przez wektor $1\times n$=$nk$(pomijalny)\newline\newline
+5.Rozwiązanie $S\cdot z=g$ przy uzyciu $S=R_1R_1^{\top}$-koszt 2 razy koszt dla wyliczania układu z macierzą trójkątną=$2\cdot k^2$(pomijalny)\newline\newline
+6.Policzenie $h=p-Cz$-koszt wymnożenia macierzy $k\times n$ przez wektor $1\times k$=$nk$(pomijalny)\newline\newline
+7.Rozwiązanie $B\cdot y=h$ przy użyciu $B=LL^{\top}$-koszt 2 razy koszt dla wyliczania układu z macierzą trójkątną=$2\cdot n^2$(pomijalny)\newline\newline
+W sumie koszt równy $\frac{n^3+6n^2k+4nk^2}{6}$ co przy założeniu, że mamy wyliczyć tylko współczynnik przy $n^3$ i najgorszego przypadku
+(choć w odniesieniu do wymiaru macierzy wyjściowej najlepszego) otrzymujemy złożoność $\frac{11n^3}{6}$.
+\end{document}

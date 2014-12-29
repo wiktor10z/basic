@@ -1,0 +1,63 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{textcomp}
+\begin{document}
+Wiktor Zuba 320501 grupa 5
+\newline
+
+Zadanie 2.
+\newline
+\newline
+Dziedziny semantyczne:\quad\quad\quad\quad\quad\quad\quad\quad                               Funkcje semantyczne:\newline
+$
+n:\mathbb{Z}\quad
+x:I_{dx}\quad
+p:I_{dp}\newline
+E:Env\rightarrow St\rightarrow \mathbb{Z}\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad  \varepsilon:E\rightarrow Env\rightarrow St\rightarrow\mathbb{Z}\newline
+D:Env\rightarrow St\rightarrow Env\times St\quad\quad\quad\quad\quad\quad\quad               \Omega:D\rightarrow Env\rightarrow St\rightarrow(Env\times St)\newline
+I:Env\rightarrow St\rightarrow St\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad          J:I\rightarrow Env\rightarrow St\rightarrow St\newline
+St=Loc\rightarrow\mathbb{Z}\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad      alloc:St\rightarrow St\times Loc\newline   
+Proc=Loc\rightarrow St\rightarrow St\newline
+Env=(x\rightarrow Loc)\cup(p\rightarrow Proc)\newline\newline
+$
+Definicje:\newline
+$
+\varepsilon$\textlbrackdbl$n$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad\underline{n}\newline
+\varepsilon$\textlbrackdbl$x$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad s(\rho(x))\newline
+\varepsilon$\textlbrackdbl$cbr(x)$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad s(\rho(cbr(x)))\newline
+\varepsilon$\textlbrackdbl$cio(x)$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad s(\rho(cio(x)))\newline
+\varepsilon$\textlbrackdbl$E_1+E_2$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad
+\varepsilon$\textlbrackdbl$E_1$\textrbrackdbl$\rho s +\varepsilon$\textlbrackdbl$E_2$\textrbrackdbl$\rho s\newline\newline
+\Omega$\textlbrackdbl$int$ $x:=E$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad
+\rho[x\rightarrow l],s'[l\rightarrow\varepsilon$\textlbrackdbl$E$\textrbrackdbl$\rho s]$ where $(s',l)=alloc(s)\newline
+\Omega$\textlbrackdbl$D_1;D_2$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad
+\Omega$\textlbrackdbl$D_2$\textrbrackdbl$\rho's'$ where $ (\rho',s')=\Omega$\textlbrackdbl$D_1$\textrbrackdbl$\rho s\newline
+\Omega$\textlbrackdbl$proc$ $p(x)\{ I\}$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad
+\rho[p\rightarrow F],s'''$\newline
+where $s'''=s[l\rightarrow s''(l_1)]\quad F=fix\varphi$
+where $ \varphi=\lambda F\in Loc\rightarrow St\rightarrow S\quad \lambda l\in Loc.\lambda s\in St\quad s'' $\newline
+where $ s''=J$\textlbrackdbl$I$\textrbrackdbl$\rho's'$\newline
+where $\rho'=\rho[p\rightarrow F][x\rightarrow l_2][cbr(x)\rightarrow l][cio(x)\rightarrow l_1]\quad s'=s[l\rightarrow s(l)][l_1\rightarrow s(l)][l_2\rightarrow s(l)]\newline\newline
+J$\textlbrackdbl$x:=E$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad s[\rho(x)\rightarrow \varepsilon$\textlbrackdbl$E$\textrbrackdbl$\rho s]\newline
+J$\textlbrackdbl$cbr(x):=E$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad s[\rho(cbr(x))\rightarrow \varepsilon$\textlbrackdbl$E$\textrbrackdbl$\rho s]\newline
+J$\textlbrackdbl$cio(x):=E$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad s[\rho(cio(x))\rightarrow \varepsilon$\textlbrackdbl$E$\textrbrackdbl$\rho s]\newline
+J$\textlbrackdbl$I_1;I_2$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad
+J$\textlbrackdbl$I_2$\textrbrackdbl$\rho s'$ where $s'=J$\textlbrackdbl$I_1$\textrbrackdbl$\rho s\newline
+J$\textlbrackdbl$skip$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad s\newline
+J$\textlbrackdbl$if$ $E=0$ $then$ $I_1$ $else$ $I_2$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad
+ite(\varepsilon$\textlbrackdbl$E$\textrbrackdbl$\rho s,J$\textlbrackdbl$I_2$\textrbrackdbl$\rho s,J$\textlbrackdbl$I_1$\textrbrackdbl$\rho s)\newline
+J$\textlbrackdbl$call$ $p(x)$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad \rho p(\rho x)s\newline
+J$\textlbrackdbl$begin$ $D;I$ $end$\textrbrackdbl$=\lambda\rho\in Env.\lambda s\in St\quad
+J$\textlbrackdbl$I$\textrbrackdbl$\rho' s'$ where $(\rho',s')=\Omega$\textlbrackdbl$D$\textrbrackdbl$\rho s\newline\newline
+$
+Komentarz:\newline
+Wszystkie definicje standardowe poza $proc$ $p(x)\{I\}$ na którą to spadł cały trud obsługi różnych typów przekazywania zmiennych.\newline
+Z tego powodu $cbr(x)$ oraz $cio(x)$ są traktowane jak zwyczajne zmienne w procedurze (są one alokowane przed początkiem $I$), dlatego też
+wyliczanie ich wartości jak i przypisywanie na nie odbywa się jak w przypadku innych zmiennych.\newline
+Zmienne $cbr(x)$ i $cio(x)$ posiadają wartości startowe co nie jest wymagane lecz okazuje się przydatne w przypadku nieużycia $cio(x)$ w procedurze.\newline
+Semantyka nie jest kontynuacyjna, użycie tego typu semantyki nie było potrzebne dzięki zastosowaniu obejścia, nie było to też wymagane w zadaniu.\newline
+\end{document}

@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+\marginsize{2,5cm}{2,5cm}{1cm}{4cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+Zadanie 9.
+\newline
+\newline
+$
+20!=2^{10+5+2+1}\cdot3^{6+2}\cdot5^{4}\cdot7^{2}\cdot11\cdot13\cdot17\cdot19\quad n=\prod\limits_{i=1}^{m} p_i^{a_i}(p_i$ - pierwsze, $a_i\ge1$)$\newline
+k\equiv 1\mod{(\prod\limits_{i=1}^{m} p_i^{a_i})}\Leftrightarrow \forall_{0\le i\le m} k\equiv 1\mod{(p_i^{a_i})}\newline
+"\Rightarrow"$ oczywiste$ "\Leftarrow"$ z twierdzenia chińskiego o resztach $\exists!_{0\le k<\prod\limits_{i=1}^{m} p_i^{a_i}}$, że k spełnia,\newline a ponieważ 1 spełnia, więc
+$k=1+l\cdot \prod\limits_{i=1}^{m} p_i^{a_i}\Rightarrow k\equiv1\mod{(\prod\limits_{i=1}^{m} p_i^{a_i})}$\newline
+Szukając $x^2\equiv1\mod{(p^a)}$ rozpatrzmy 2 przypadki:\newline
+$p>2:\newline
+x^2\equiv 1\mod{(p^a)}\Rightarrow x^2-1\equiv 0\mod{(p^a)}\Rightarrow (x+1)(x-1)\equiv 0\mod{(p^a)}\newline
+(x\pm1\equiv0\mod{(p)}\Rightarrow x\mp1\equiv\mp2\mod{(p)}$ czyli nie mogą być naraz podzielne przez p$)\Rightarrow\newline
+x+1\equiv0\mod{(p^a)}\vee x-1\equiv0\mod{(p^a)}\Rightarrow x\equiv\pm1\mod{(p^a)}\newline\newline
+p=2:\newline
+a=1 : x\equiv1\mod{(2)}\quad
+a=2 : x\equiv\pm1\mod{(4)}\newline
+a>2 : x^2\equiv 1\mod{(2^a)}(\Rightarrow x=\pm1\mod{(4)}), x^2=(4k\pm1)^2\equiv1\mod{(2^a)}\Rightarrow\newline 16k^2\pm8k\equiv0\mod{(2^a)}\Rightarrow
+8k(2k\pm1)\equiv0\mod{(2^a)}(2k+1\neq 0\mod{(2^a)})\Rightarrow 8k\equiv0\mod{(2^a)}\Rightarrow x\equiv\pm1\mod{(2^a)}\vee x\equiv2^{a-1}\pm1\mod{(2^a)}$\newline\newline
+Tak więc dla każdej liczby pierwszej występującej w rozkładzie możemy dokonać wyboru reszty z dzielenia na 2 sposoby (dla dwójki na 1,2 lub 4), i dla każdego takiego wyboru
+z twierdzenia chińskiego o resztach istnieje dokładnie jedno takie $x< \prod\limits_{i=1}^{m} p_i^{a_i}$(oczywiście dla różnych wyborów reszt x są różne).\newline
+Tak więc udowodniłem coś znacznie silniejszego: dla dowolnej liczby n (gdzie n dzieli się przez k różnych liczb pierwszych innych niż 2)
+ilość takich $x$, że $x^2\equiv1\mod{(n)}$
+jest równa:\newline $2^k$ dla n niepodzielnego przez 4,\newline $2^{k+1}$ dla n podzielnego przez 4, ale nie przez 8,\newline $2^{k+2}$ dla n podzielnego przez 8.\newline
+Dla n=20! mamy: ilość takich x jest równa $2^{7+2}=512$
+\end{document}

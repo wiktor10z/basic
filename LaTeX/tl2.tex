@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 2.1.
+\newline
+\newline
+Stosując indukcję po $r$:\newline
+Dla $r\le 2d+1$ rozwiązanie $(a_1,\cdots,a_n)$ jest rozwiązaniem równania (mod $p^{2d+1}$) a więc i (mod $p^{r}$).\newline
+Mając rozwiązanie $b=(b_1,\cdots, b_n)$ dla $r$ spełniające założenia o pochodnych poszukujemy rozwiązania dla $r+1$:\newline
+Nowe rozwiązanie przyjmie postać $c=(b_1,\cdots,b_i+tp^{r-d},\cdots,b_n)$\newline
+Stosując wzór Taylora\newline
+$f(c)=f(b+t_ip^{r-d})=f(b)+\frac{\partial f}{\partial x_i}(b)\cdot tp^{r-d}+\frac{\partial^2 f}{\partial x_i^2}(b)t^2p^{2r-2d}+\cdots=
+f(b)+\frac{\partial f}{\partial x_i}(b)\cdot tp^{r-d}(\text{mod } p^{r+1})\newline
+=p^r\cdot\text{coś}+p^r\cdot\text{coś2}\cdot tp^{r-d}=p^r\cdot(\text{coś}+t\cdot\text{coś2})$\newline
+Dobierając $t=\frac{\text{coś}}{\text{coś2}}$ (jako, że coś2$\neq0$ (mod $p$) i $\mathbb{Z}_p$ nie zawiera dzielników zera) otrzymujemy $f(c)=0$.\newline
+$tp^{r-d}=0 (\text{mod }p^{d+1})$,
+jako wielomian $\frac{\partial f}{\partial x_i}(c)=\frac{\partial f}{\partial x_i}(b)+\text{coś3}\cdot tp^{r-d}=\frac{\partial f}{\partial x_i}(b)(\text{mod }p^{d+1})$\newline
+więc pozostałe założenia również są dalej spełniane.
+\newline
+
+Zadanie 2.2.
+\newline
+\newline
+Zgodnie ze wskazówką $h=1-f^{p-1}=0(\text{mod }p)$ dla $f\neq0$ (czyli $b\neq a$) i $1$ dla $f=0$ (czyli $b=a$) również $(x_i-a_i)^{p-1}=0(\text{mod }p)$ dla $x_i=a_i$ i $1$ dla $x_i\neq a_i$
+więc drugi wielomian również przyjmuje podane wartości. Korzystając z zadania 6 z poprzedniej serii jako, że w drugim wielomianie potęga przy każdej zmiennej $x_i$ jest mniejsza od $p$, to
+albo wielomian $h$ ma wyższy stopień niż drugi wielomian, albo są równe.\newline
+$\deg(h)=(p-1)\cdot\deg(f), \deg(\text{drugiego})=(p-1)\cdot n\Rightarrow \deg(f)\ge n$ co daje nam sprzeczność z założeniami. 
+\newline
+
+Zadanie 2.3.
+\newline
+\newline
+Forma $n$ zmiennych stopnia $r<n$ spełnia założenia poprzedniego zadania, oznacza to, że nie może posoadać dokładnie jednego rozwiązania.
+Jako, że forma z definicji posiada miejsce zerowe w zerze, to równanie posiada przynajmniej jedno rozwiązanie (mod $p$),
+ale w takim razie z poprzedniego zadania posiada przynajmniej jeszcze jedno niezerowe rozwiązanie.
+\newline
+
+Zadanie 2.5.
+\newline
+\newline
+a) Weźmy równanie $a\cdot b=c=0$ i załóżmy, że $a\neq 0\Rightarrow \exists_n:a_1=0,\cdots,a_{n-1}=0,a_n\neq0$\newline
+Wtedy $0=c_n=0+\cdots+0+a_nb_1\Rightarrow b_1=0$.\newline
+Indukcyjnie $b_1,\cdots,b_m=0\Rightarrow 0=c_{n+m}=0+\cdots+0+a_nb_{m+1}+0+\cdots+0\Rightarrow b_{m+1}=0$\newline
+W takim razie $a\neq0\Rightarrow b=0$, a więc pierścień nie ma dzielników zera, więc jest dziedziną.\newline\newline
+b) Jedynką w pierścieniu jest ciąg $(1,0,0,\cdots)$.\newline
+Rozważmy iloczyn $a\cdot b=c=1$ wtedy $1=c_1=a_1b_1$ jeśli $a_1=0$ to $c_1=0\neq 1$.\newline
+W przeciwnym przypadku $a_1$ posiada odwrotność w $\mathbb{Z}_p$, jako $b_1$ wybieramy włąśnie tę odwrotność i wtedy ze wzoru $0=c_n=a_1b_n+\cdots+a_nb_1$ wyciągamy
+$b_n=(a_2b_{n-1}+\cdots+a_nb_1)b_1$, a więc istniejący element w $\mathbb{Z}_p$.\newline\newline
+c) $I=\{(a_1,a_2,\cdots)\in O_p:a_1=0)\}$ jest ideałem w $O_p$, gdyż $\forall b\in O_p$ $a_1b_1=0\Rightarrow a\cdot b\in I$.\newline
+Załóżmy, że istnieje ideał $J\varsupsetneq I$, wtedy $J$ zawiera element $(c_1,c_2,\cdots)$ taki, że $c_1\neq0$, ale wtedy $\exists d\in O_p:c\cdot d=1$ co wynika z poprzedniego podpunktu.
+$1=c\cdot d\in J\Rightarrow\forall a\in \mathbb{Z}_p (a,0,0,\cdots)\in J, (0,a_2,a_3,\cdots)\in J\Rightarrow (a,a_2,\cdots)\in J\Rightarrow J=O_p$, więc $I$ jest maksymalny.\newline\newline
+d) Generatorem ideału $I$ z poprzedniego podpunktu jest element $(0,1,0,0,\cdots)$, który przesuwa ciąg będący elementem $O_p$ o jedno miejsce, tworząc jednoznaczne dopasowanie elementów
+z $O_p$ i $I$ wyrażone przez mnożenie elementu z $O_p$ przez ten element. 
+\end{document}

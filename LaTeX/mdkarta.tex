@@ -1,0 +1,228 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\marginsize{0cm}{0cm}{0cm}{0,4cm}
+\newcommand{\stirlinga}[2]{\left[\begin{array}{c}{#1}\\{#2}\\\end{array}\right]}
+\newcommand{\stirlingb}[2]{\left\{\begin{array}{c}{#1}\\{#2}\\\end{array}\right\}}
+
+\begin{document}
+\small{
+Wiktor Zuba 320501 - karta "wzorów" z MD\newline
+
+Dolne i górne silnie:$\newline
+x^{\underline{n}}=x(x-1)\cdots(x-n+1)\quad
+x^{\overline{n}}=x(x+1)\cdots(x+n-1)\quad
+x^{\overline{n}}=(x+n-1)^{\underline{n}}=\frac{(x+n-1)!}{(x-1)!}\quad
+x^{\underline{-n}}=((x+1)^{\overline{n}})^{-1}\quad
+x^{\underline{m+n}}=x^{\underline{m}}(x-m)^{\underline{n}}\newline
+x^{\underline{i}}=(-1)^{i}(i-1-x)^{\underline{i}}$\newline
+
+Rachunek różnicowy(Dyskretne pochodne i całki):$\newline
+\Delta f(x)=f(x+1)-f(x)$ - operator różnicowy$\quad
+Sf=g\Leftrightarrow\Delta g=f$ - sumowanie nieoznaczone (oba liniowe)$\quad
+g(n)=g(0)+\sum_{i=0}^{n-1}f(i)\newline
+S_{a}^{b}f=g|_{a}^{b}=\sum_{k=a}^{b-1}f(k)\quad
+\Delta(fg)=f\Delta g+Ef\Delta f\quad
+$gdzie $Ef(x)=f(x+1)\quad
+S_{a}^{b}f\Delta g=(fg)|_{a}^{b}-S_{a}^{b}Eg\Delta f\quad
+\Delta x^{\underline{n}}=nx^{\underline{n-1}}\quad
+\Delta 2^{x}=2^{x}$\newline
+
+Symbol Newtona:$\newline
+{n\choose k}=\frac{n!}{k!(n-k)!}=\frac{n^{\underline{k}}}{k!}={n\choose n-k}
+={n-1\choose k-1}+{n-1\choose k}\quad
+\sum_{k=0}^{n}{n\choose k}=2^n\quad
+\sum_{k=0}^{n}{n\choose k}^2={2n\choose n}\quad
+\sum_{k=0}^{n}(-1)^{k}{n\choose k}=0\quad
+\sum_{i=0}^{k}(-1)^{i}{n\choose i}=(-1)^{k}{n-1\choose k}\newline
+\sum_{k=0}^{n}k{n\choose k}=n2^{n-1}\quad
+\sum_{i=0}^{k}{r+i\choose i}={r+k+1\choose k}\quad
+{r\choose k}=\frac{r}{k}{r-1\choose k-1}\quad
+(r-k){r\choose k}=r{r-1\choose k}\quad
+\sum_{k=0}^{n}{r\choose m+k}{s\choose n-k}={r+s\choose m+n}\quad
+(-1)^{i}{x\choose i}={i-1-x\choose i}\newline
+(x+y)^{n}=\sum_{i\ge0}{n\choose i}x^{i}y^{n-i}\quad
+(1+x)^r=\sum_{i\ge0}{r\choose i}x^{i} ($dla $|x|<1)\quad
+p$-pierwsza $\Rightarrow ^{p}|{p\choose k}\newline
+$Wzór na odwracanie: $a_{n}=\sum_{i}{n\choose i}(-1)^{i}b_{i}\Leftrightarrow b_{n}=\sum_{i}{n\choose i}(-1)^{i}a_{i}\quad
+$Nieporządki: $(n-1)(D_{n-1}+D_{n-2})=D_{n}=!n=n!\sum_{i=0}^{n}\frac{(-1)^{i}}{i!}$\newline
+
+Liczby Stirlinga:$\newline
+$Permutacje: zapisy: lista$\langle a,b,c\rangle f(a)=1,f(b)=2,f(c)=3,$ tabelka ${1, 2, 3\choose a, b, c},$ cyklowy$\quad
+$Sygnatura(typ) $ 1^{\lambda_{1}}2^{\lambda_{2}}\cdots n^{\lambda_{n}}$ $\lambda_{k}$-ilość cykli dł. k$\quad
+$Inwersja(i,j): (w zapisie listowym)$\Leftrightarrow$ dla $i<j,a_i>a_j\quad
+$Znak: $sgn(\pi)=(-1)^{I(\pi)}($gdzie $I(\pi)-$liczba inwersji$)\quad
+sgn(f\circ g)=sgn(f)\cdot sgn(g)$ $
+sgn(\pi)=(-1)^{\sum_{i}\lambda_{2i}}\newline
+$Liczba Stirlinga 1 rodzaju: $\stirlinga{n}{k}$-liczba n-permutacji o k cyklach$\quad
+$Liczba Stirlinga 2 rodzaju: $\stirlingb{n}{k}$-liczba podziałów n zbioru na k bloków$\newline
+\stirlinga{n}{0}=\stirlingb{n}{0}=[n=0]\quad
+\stirlinga{n}{n}=\stirlingb{n}{1}=1\quad
+\stirlinga{n}{1}=(n-1)!\quad
+\sum_{k}\stirlinga{n}{k}=n!\quad
+\stirlinga{n}{k}=(n-1)\stirlinga{n-1}{k}+\stirlinga{n-1}{k-1}\newline
+\stirlingb{n}{k}=k\stirlingb{n-1}{k}+\stirlingb{n-1}{k-1}\quad
+$Zmiany baz: $
+x^{\overline{n}}=\sum_{k}\stirlinga{n}{k}x^k\quad
+x^{n}=\sum_{k}\stirlingb{n}{k}x^{\underline{k}}\quad
+x^{n}=\sum_{k}\stirlingb{n}{k}(-1)^{n-k}x^{\overline{k}}\newline
+x^{\underline{n}}=\sum_{k}\stirlinga{n}{k}(-1)^{n-k}x^k\quad
+\sum_{i}\stirlingb{n}{i}\stirlinga{i}{k}(-1)^{n-i}=\sum_{i}\stirlinga{n}{i}\stirlingb{i}{k}(-1)^{n-i}=[n=k]\quad
+$Wzór na odwracanie(2-L.S):\newline$a_{n}=\sum_{i}\stirlingb{n}{i}(-1)^{i}b_{i}\Leftrightarrow b_{n}=\sum_{i}\stirlinga{n}{i}(-1)^{i}a_{i}\quad
+\sum_{n=0}^{max\{j,k\}}(-1)^{n+1}\stirlinga{n}{j}\stirlingb{k}{n}=\sum_{n=0}^{max\{j,k\}}(-1)^{n+1}\stirlingb{n}{j}\stirlinga{k}{n}=\delta_{jk}
+$\newline
+
+Funkcje tworzące:$\newline
+$Dla ciągu$\langle a_n\rangle_{n=0}^{\infty}:A(x)=\sum_{n\ge0}a_nx^n\quad
+$Liniowe,przesuwanie w prawo(nowe wyrazy- 0) i lewo$\quad
+$Splot: $A(x)\cdot B(x)=\sum_{n}(\sum_{k}a_kb_{n-k})x^n$ $
+A(B(x))=a_0+a_1B(x)+a_2B^2(x)\cdots\quad
+$Wykładnicze funkcje tworzące: $A_e(x)=\sum_{n}a_n\frac{z^n}{n!}\quad
+$Splot dwumianowy: $A_e(x)\cdot B_e(x)=\sum_{n}(\sum_{k}{n\choose k}a_kb_{n-k})\frac{z^n}{n!}\newline
+$Równanie rekurencyjne liniowe$\rightarrow$sumowanie po wszystkich n(funkcje tworzące)$\rightarrow$ $ $funkcja wymierna$\rightarrow$rozbicie mianownika $
+\frac{\alpha}{1-ax}\rightarrow\sum \alpha a^nx^n\newline
+$(różnice np. kwadratowe-sploty,różniczkowe-wykładnicze f.t.)$\quad
+$Liczby Catalana(liczba dróg "$\backslash$","$/$"od (0,0) do (0,2n),\newline lub monotoniczne drogi"\_","$|$"od(0,0)do(n,n)pod przekątną, 
+rozstawienie nawiasów w wyrażeniu dł n+1):\newline
+$C_n=\sum_{k}(C_kC_{n-1-k}+[n=0])={2n\choose n}-{2n\choose n-1}\quad
+$Liczby Bella(podział n zbioru na podzbiory): $B_{n+1}=\sum_k{n\choose k}B_k(B'(x)=e^xB(x))$\newline
+
+Enumeratory:$\newline
+$Kombinacji: ($\prod_{\text{po rodzajach}}(\sum_{i-\text{dostępna krotność rzeczy tego rodzaju}}t^i))=\sum_{n}a_nt^n(a_n$-ilość kombinacji tej długości$)\newline
+$Permutacji: ($\prod_{\text{po rodzajach}}(\sum_{i-\text{dostępna krotność rzeczy tego rodzaju}}\frac{t^i}{i!}))=\sum_n\frac{a_n}{n!}t^n(a_n$-ilość permutacji tej długości$)
+$\newline
+
+Zasada włączeń i wyłączeń:$\newline
+$Zasada sumy(A,B rozłączne zdarzenia)$|A+B|=|A|+|B|\newline
+$Zasada iloczynu(wybór pary$\langle x,y\rangle,x\in A,y\in B)|A\times B|=|A|\cdot|B|\newline
+A_i$ dla $i=1..n$ -różne możliwe własności(podzbiory X-uniwersum)$\quad
+S_r=\sum_{1\le i_1<\cdots< i_r\le n}\left|A_{i_1}\cap\cdots\cap A_{i_r}\right|\quad
+$Liczba elementów posiadających dokładnie k własności: $D(k)=\sum_{r\ge k}{r\choose k}(-1)^{r-k}S_r\quad
+$\newline
+
+Wieżomiany(Wielomiany wieżowe)(czyli enumeratory rozstawień nie atakujących się wież na szachownicy):$\newline
+B\subseteq Z_n\times Z_m,$skojarzenie:$M\subseteq Z_n\times Z_m$ t.że$\langle p,q\rangle,\langle r,s\rangle\in M\Rightarrow p\neq r,q\neq s\quad
+S_k(B)$ -zbiór k skojarzeń zawartych w B$,r_k(B)=|S_k(B)|\quad
+R_B(x)=\sum_{k=0}^{\infty}r_k(B)x^k$ -wieżomian dla B$\quad
+$Permutacje wierszy i kolumn nie zmieniają wieżomianu$\quad
+B=B_1\oplus B_2\Leftrightarrow (B=B_1\cup B_2),(\forall \langle p,q\rangle\in B_1,\forall \langle r,s\rangle\in B_2 \Rightarrow p\neq r,q\neq s)\quad
+B=B_1\oplus B_2\Rightarrow R_B(x)=R_{B_1}(x)\cdot R_{B_2}(x)\quad
+$dla $\alpha=\langle p,q\rangle\in B\quad B_\alpha^-$ -B bez $\alpha,B_{\alpha}^{\text{\textborn}}$ -B bez p-tego wiersza i bez q- tej kolumny$\newline
+\alpha\in B\Rightarrow R_B(x)=R_{B_\alpha^-}(x)+xR_{B_\alpha^\text{\textborn}}(x)\quad
+C=Z_n\times Z_m\backslash B$,to $r_k(B)=\frac{1}{(m-k)!}\sum_{i=0}^{k}(-1)^i{n-i\choose k-i}(m-i)!r_i(C)\newline
+($dla k=m=n mamy$)r_n(B)=\sum_{i=0}^{n}(-1)^i(n-i)!r_i(C)
+$\newline
+
+Rozmieszczenia kul:$\newline
+$kule i komórki rozr.$\leftrightsquigarrow$funkcje$|$ kule rozr.,kom nierozr.$\leftrightsquigarrow$kombinacje z powtórzeniami$|$
+kule nierozr.,kom rozr.$\leftrightsquigarrow$podziały zbioru$|$kule i komórki nierozr.$\leftrightsquigarrow$podziały liczb$\quad
+$P(n)-Podziały liczb:przedstawienie n jako sumy dodatnich składników w kolejności nierosnącej(reprezentacja graficzna-diagram Ferrersa)$\quad
+$l. podziałów n na $\le k$ składników=l. podziałów n+k na k składników$\newline
+$Enumerator:$(1+x+\cdots)(1+x^2+\cdots)\cdots(1+x^k+x^{2k}+\cdots)=\frac{1}{(1-x)(1-x^2)\cdots(1-x^k)\cdots}\newline
+$podz. na $\le$ k składników$=\frac{1}{(1-x)\cdots(1-x^k)},$podz. na różne skł. $r(x)=(1+x)(1+x^2)(1+x^3)\cdots,
+$podz. o niep. skł. $n(x)=\frac{1}{(1-x)(1-x^3)(1-x^5)\cdots}\quad r(x)=n(x)\newline
+$Tożsamość Eulera: $nP(n)=\sum_{k=0}^{n-1}\sigma(n-k)P(k)$, gdzie $\sigma(n)=\sum_{^k|n}k$ (dowód z podziałów z wyróżnionym elementem)\newpage
+
+Grafy:$\newline
+$nieskierowany:para$\langle V,E\rangle,V$-zbiór wierzchołków,$E$-zbiór krawędzi(nieuporządkowanych par wierzchołków)$\quad
+$skierowany:\newline$E$-zbiór uporządkowanych par wierzchołków$\quad
+$multigraf:dopuszczone powtórzenia krawędzi$\quad
+deg(v)$-ilość krawędzi wychodzących,$\sum_{v\in V}deg(v)=2|E|,$dla skierowanych $deg_{in},deg_{out}\quad
+$Podgraf:$H<G\Leftrightarrow V[H]\subseteq V[G],E[H]\subseteq E[G]\newline
+$indukowany:$\forall u,v\in V[H] {u,v}\in E[G]\Rightarrow{u,v}\in E[H]\quad
+$Marszruta:$\langle v_0,\cdots,v_k\rangle:{v_i,v_i+1}\in E[G],$długość=k\newline
+Droga:marszruta bez powtórzeń krawędzi\quad
+Ścieżka:droga bez powtórzeń wierzchołków\quad
+Cykl:droga zamknięta\newline
+Cykl prosty:cykl t.że $|i-j|=(0\cup k) \cup v_i\neq v_j\quad
+$Spójność:każde dwa wierzchołki łączy droga\newline
+(skierowane) silna-$-||-$,słaba-odpowiadający nieskierowany jest spójny\newline
+dwuspójność:usunięcie jednego wierzchołka nie rozspójnia\quad
+dwuspójna składowa-maksymalny podgraf dwuspójny\quad
+drzewo-graf spójny bez cykli\quad
+las-graf bez cykli\quad
+drzewo rozpinające G-drzewo H będące podgrafem G,$V[H]=V[G]$\quad
+G jest drzewem$\Leftrightarrow$G minimalny spójny$\Leftrightarrow$ G maksymalny acykliczny$\Leftrightarrow$każde 2 wierzchołki połączone dokładni 1 drogą\quad
+Graf dwudzielny G $V[G]=V_1\oplus V_2,\forall \langle u,v\rangle\in E[G] u\in V_i\Rightarrow v \notin V_i$\quad
+graf k regularny-$\forall v\in V[G]$ $deg(v)=k$\newline
+graf pełny-graf ($|V[G]|-1$) regularny\newline
+cykl Eulera- każda krawędź dokładnie raz(graf spójny ma go$\Leftrightarrow\forall_v\in V[G] 2|\deg(v)$)\quad
+(silnie spójny ma c.E$\Leftrightarrow\deg_{in}(v)=\deg_{out}v)$\newline
+cykl Hamiltona-każdy wierchołek dokładnie raz(istnieje gdy po usunięciu dowolnych k wierchołków graf rozpada się na co najwyżej k spójnych składowych)\quad
+graf dwudzielny jest hamiltonowski$\Rightarrow|V_1|=|V_2|$\quad
+turniej-skierowana klika (jest półhamiltonowski, silnie spójny jest hamiltonowski)\quad
+tw.Ore $|V[G]|\ge 3$ i $\forall\{v,w\}\notin E[G] \deg(v)+\deg(w)\ge|V[G]|\Rightarrow$Gjest hamiltonowski\newline
+hiperkostka k-wym - dwie hiperkostki k-1 wym z połączonymi odpowiadającymi wierzchołkami\newline
+kod Graya- cykliczna lista podzbiorów k-zbioru w porządku minimalnych zmian(wstawienie/usunięcie 1 elementu)\newline
+graf planarny - istnieje włożnie w płaszczyzne, że krawędzie się nie przecinają\newline
+ściana- maksymalny spójny obszar rozłączny z grafem(w tym nieograniczony)\quad
+wzór Eulera (n-$|$wierzchołki$|$,m-$|$krawędzie$|$,f-$|$ściany$|$)n-m+f=2\newline
+g. planarny, $n\ge3\Rightarrow m\le3n-6$(dla k=min(obwód ściany)$\Rightarrow m\le\frac{k}{k-2}(n-2)$)\quad
+grafy $K_{5}$ oraz $K_{3,3}$ są nieplanarne\newline
+grafy G,H są homeomorficzne jeśli można z nich uczynić izomorficzne poprzez dodawanie wierzchołków na krawędzich\newline
+tw.(Kuratowski)Graf jest nieplanarny$\Leftrightarrow$zawiera podgraf homeomorficzny z $K_5$ lub $K_{3,3}$\quad
+tw. każdy graf planarny zawiera wierzchołki $\deg\le5$\quad
+kolorowanie- funkcja $f:V[G]\rightarrow\{1..k\}$, że $f(u)\neq f(v)$ dla ${u,v}\in E(G)$\quad
+liczba chromatyczna $\chi(G)$=min(k: istnieje k kolorowanie)\newline
+$\chi(G)\le2\Leftrightarrow G$ jest dwudzielny\quad
+$\chi(G)\le k\Leftrightarrow\forall$(B-dwuspójna składowa G)$\chi(B)\le k$\quad
+tw(o 4 barwach) G-planarny$\Rightarrow\chi(G)\le 4$\newline
+$\Delta$-max(deg(wierzchołków))$\chi(G)\le\Delta+1$\quad
+tw(Brooks)G(nie cykl niep. ani klika)$\chi(G)\le\Delta$\newline
+$f_G(t)$-liczba kolorowań G za pomocą t kolorów (wielomian chromatyczny)\newline
+tw. $e=\{v,w\}\notin E[G]$,to $f_G(t)=f_{G\cup e}(t)+f_{G/e}(t)$ $(G\cup e$-G z dodaną krawędzią e,$G/e$-G po utożsamieniu v i w)\newline
+kolorowanie krawędziowe $f:E[G]\rightarrow\{1..k\}$\quad
+indeks chromatyczny $\chi_e(G)$=min(k:istnieje k-kolorowanie krawędziowe)($\chi_e(G)\le\Delta(G)$)\newline
+tw(Vizing)$\chi_e(G)\le\Delta(G)+1$\quad
+tw(K$\ddot{\text{o}}$nig)G-dwudzielny, to $\chi_e(G)=\Delta(G)$\newline
+System Różnych Reprezentantów(SRR)-dla rodziny zbiorów $(A_i)_{i\in I}$-ciąg elementów $(a_i)_{i\in I}$, że $\forall_{i\in I}a_i\in A_i,a_i\neq a_j$\newline
+skojarzenie w grafie-zbiór krawędzi niezależnych (każde dwie różne końce),pełne skojarzenie-każdy wierzchołek należy do krawędzi(SRR- $V_1$-zbiory, $V_2$-elementy)(problem par małżeńskich)\newline
+tw(Hall)SRR dla skończonej rodziny zbiorów skończonych $(A_i)_{i\in I}$istnieje $\Leftrightarrow\forall J\subseteq I |\bigcup_{j\in J}A_j|\ge|J|$\quad
+graf dwudzielny r-regularny (spełnia war Halla) jest r-kolorowalny krawędziowo\newline
+Wspólny SRR $(A_i)_{i\in I},(B_i)_{i\in I}$- ciąg $(a_i)$ SRR dla $(A_i)$, że $(a_{\sigma(i)})$jest SRR dla $(B_i)$ dla pewnej perm. $\sigma$\newline
+Podziały $(A_i),(B_i)$ mają wspólny SRR$\Leftrightarrow\forall J\subseteq I |\bigcup_{j\in J}\{i:A_j\cap B_i\neq \emptyset\}|\ge |J|$\quad
+Rodziny $-||-\Leftrightarrow\bigcup A_i=\bigcup B_i,|A_i|=|B_i|$\newline
+Sieć komunikacyjna Closa-przełączniki (permutacje sąsiednich el.),rekurencyjnie\newline
+
+Teoria Liczb:\newline
+NWD(a,b)=$\min_{x,z\in\mathbb{Z}}(ax+by)$\quad
+$a\equiv b (mod n),c\equiv_n c\Rightarrow a+c\equiv_n b+d,a\cdot c\equiv_n b\cdot d$\quad
+$d\bot n,ad\equiv_n bd\Rightarrow a\equiv_n b$\quad
+$ad\equiv_{nd}bd\Leftrightarrow a\equiv_n b$\quad
+$a\equiv_{n_1}b,a\equiv_{n_2}b\Rightarrow a\equiv_{n_1n_2}b$\newline
+Chińskie twierdzenie o resztach: $n=n_1\cdot...\cdot n_k$, dla dowolnych $a_1,...a_k\exists!_{a<n}\forall_i a\equiv_{n_i}a_i$\quad\quad
+p-pierwsza,$p\nmid a\Rightarrow a^{p-1}\equiv_{p}1$\newline
+$\mathbb{Z}^*_n=\{1\le k\le n:k\bot n\},\phi(n)=|\mathbb{Z}^*_n|$\quad
+p-pierwsza $\phi(p^k)=p^k-p^{k-1}$\quad
+$m\bot n\Rightarrow\phi(mn)=\phi(m)\phi(n)$\quad
+$\phi(n)=n\prod_{p\mid n}(1-\frac{1}{p})$\newline
+Tw(Euler)$a\bot n\Rightarrow a^{\phi{n}}\equiv_n 1$
+\newline
+
+Ważne równości:\newline
+Liczby Fibbonaciego $\frac{1}{\sqrt{5}}((\frac{1+\sqrt{5}}{2})^n-(\frac{1-\sqrt{5}}{2})^n)$\quad
+k kombinacje z n zbioru z powtórzeniami$\overline{C^k_n}={n+k-1\choose k}$\quad
+Podział tortu płaszczyznowego $\frac{n(n+1)}{2}+1$\newline
+Liczba funkcji (z [n] do [m])"na" $\sum_j(-1)^j{m\choose j}(m-j)^n=\stirlingb{n}{m}m!$\newline
+Liczby pierwsze:1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,
+181,191,193,197,199,211,223,227,229,233,239,241,251,257,263,269,271,277,281,283,293,307,311,313,317,331,337,347,349,353,359,367,373,379,383,389,397,
+401,409,419,421,431,433,439,443,449,457,461,463,467,479,487,491,499,503,509,521,523,541,547,557,563,569,571,577,587,593,599,601,607,613,617,619,631,
+641,643,647,653,659,661,673,677,683,691,701,709,719,727,733,739,743,751,757,761,769,773,787,797,809,811,821,823,827,829,839,853,857,859,863,877,881,
+883,887,907,911,919,929,937,941,947,953,967,971,977,983,991,997,1009,1013,1019,1021,1031,1033,1039,1049,1051,1061,1063,1069,1087,1091,1093,1097,
+1103,1109,1117,1123,1129,1151,1153,1163,1171,1181,1187,1193,1201,1213,1217,1223,1229,1231,1237,1249,1259,1277,1279,1283,1289,1291,1297,1301,1303,
+1307,1319,1321,1327,1361,1367,1373,1381,1399,1409,1423,1427,1429,1433,1439,1447,1451,1453,1459,1471,1481,1483,1487,1489,1493,1499,1511,1523,1531,
+1543,1549,1553,1559,1567,1571,1579,1583,1597,1601,1607,1609,1613,1619,1621,1627,1637,	1657,1663,1667,1669,1693,1697,1699,1709,1721,1723,1733,1741,
+1747,1753,1759,1777,1783,1787,1789,1801,1811,1823,1831,1847,1861,1867,1871,1873,1877,1879,1889,1901,1907,1913,1931,1933,1949,1951,1973,1979,1987,
+1993,1997,1999,\newline
+2001=3$\cdot$23$\cdot$29,2002=2$\cdot$7$\cdot$11$\cdot$13,2003,2004=$2^2\cdot$3$\cdot$167,2005=5$\cdot$401,2006=2$\cdot$17$\cdot$59,2007=$3^2\cdot$223,
+2008=$2^3\cdot$251,2009=$7^2\cdot$41,2010=2$\cdot$3$\cdot$5$\cdot$67,2011,2012=$2^2\cdot$503,\newline 2013=3$\cdot$11$\cdot$61,2014=2$\cdot$19$\cdot$53,
+2015=5$\cdot$13$\cdot$31,2016=$2^5\cdot3^2\cdot$7,2017,2018=2$\cdot$1009,2019=3$\cdot$673,2020=$2^2\cdot$5$\cdot$101\newline\newline
+Cechy podzielności:(7):mod(100)$\cdot$4+div(100);mod(10)$\cdot$5+div(10);grupy 6-cyfrowe dodać do siebie;potrakt. jako zapis trójkowy zamiast dziesiętnego
+(11):suma na parzystych odjąć suma na nieparzystych =0 mod(11);(13):mod(1000)-div(1000);mod(10)$\cdot$4+div(10);(17):div(10)-mod(10)$\cdot$5;\newline
+(19):mod(10)$\cdot$2+div(10)
+}
+\end{document}

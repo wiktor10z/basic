@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{bbm}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 7.7.
+\newline
+\newline
+$\mathbb{Z}_{K}=\mathbb{Z}[\sqrt{p}]=\{a+b\sqrt{p}:a,b\in\mathbb{Z}\}$ dla $p=4k+3$ lub $p=2$ oraz $\mathbb{Z}[\frac{1+\sqrt{p}}{2}]$ dla $p=4k+1$\newline
+Dowód:$(x-a-b\sqrt{p})(x-a+b\sqrt{p})=x^2-2ax+a^2+b^2p$ jest wielomianem monicznym nad $\mathbb{Z}$ o pierwiastku $a+b\sqrt{p}\Rightarrow\mathbb{Z}[\sqrt{p}]\subset\mathbb{Z}_{K}$\newline
+W drugą stronę $z=\frac{a}{m}+\frac{b}{n}\sqrt{p}\in\mathbb{Q}[\sqrt{p}]\backslash\mathbb{Z}[\sqrt{p}]$ (ułamki nieskracalne, $m>1$ lub $n>1$)
+jeśli $z=\frac{a}{m}+\frac{b}{n}\sqrt{p}\in\mathbb{Z}_{K}$, to albo $m\neq n$ ($NWD=1$) (można załozyć, że $m<n$), wtedy $a+\frac{m}{n}\sqrt{p}\in\mathbb{Z}_{K}\Rightarrow\frac{m^2p}{n^2}\in\mathbb{Z}_{K}$,
+a to należy do $\mathbb{Q}\backslash\mathbb{Z}$, albo $z=\frac{a+b\sqrt{p}}{n}$, który jest pierwiastkiem wielomianu $nx-a-b\sqrt{p}$, który nie jest moniczny, ale jest minimalny,
+więc każdy wielomian który ma ten element za pierwiastek musi go zawierać jako czynnik (a więc nie może być moniczny), co daje sprzeczność.
+\newline
+
+Zadanie 7.8,9.
+\newline
+\newline
+Dla $K=\mathbb{Q}[\sqrt{-p}]$ mamy $\mathbb{Z}_{K}=\mathbb{Z}[\sqrt{-p}]$ -- dowód identyczny jak w zadaniu 7.7.\newline
+chcemy znaleźć takie $a,b,c,d\in\mathbb{Z}$, że $(a+b\sqrt{\pm p})(c+d\sqrt{\pm p})=1$, daje nam to równania:\newline
+$ac\pm3bd=1,ad+bc=0\Rightarrow ac\pm3bd=1, b=-\frac{-ad}{c}\Rightarrow ac\mp 3\frac{ad^2}{c}=1\Leftrightarrow c^2\mp3d^2=e$ (gdzie $^e|c$)\newline
+Dla $\sqrt{3}$ mamy $x^2-3y^2=1$ posiada nieskończenie wiele rozwiązań:\newline
+($x=\pm\frac{1}{2}(a^n+b^n), y=\pm\frac{1}{2\sqrt{3}}(a^n-b^n)$, gdzie $a=2+\sqrt{3},b=2-\sqrt{3}$)\newline
+Dla $\sqrt{-3}$ mamy $x^2+3y^2=e$, gdzie $|e|\le |x|\Rightarrow x^2\le |x|,3y^2\le |x|\Rightarrow x=\pm1,y=0$ lub $x=0,y=0$, a więc istenieją tylko 2 rozwiązania (1,-1).
+\end{document}

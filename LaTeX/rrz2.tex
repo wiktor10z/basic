@@ -1,0 +1,155 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage[pdftex]{graphicx}
+\usepackage{setspace}
+\marginsize{2,5cm}{2,5cm}{1cm}{4cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline
+
+Zad.2.1.
+\newline
+\newline
+Ponieważ siła działająca od sprężyny jest liniowa ze względu na odchylenie pionowe od punktu równowagi to siłę grawitacji możemy pominąć,
+jako że jest ona stała i wpływa tylko na położenie punktu równowagi.\newline
+Mamy równanie $m\ddot{x}=-\alpha x-\beta\dot{x}$, do którego wstawiamy $m=1kg,\beta=2\frac{Ns}{m},\alpha=2\frac{N}{s}$
+oraz sprowadzamy do postaci $\ddot{x}+2k\dot{x}+\omega_0^2x=0\rightarrow\ddot{x}+\frac{2}{s}\dot{x}+\frac{2}{s^2}x=0$ (pomińmy jednostki-wszystko w SI)\newline
+rozpatrzmy równanie $\lambda^2+2\lambda+2=(\lambda+1+i)(\lambda+1-i)=0$\newline
+Tak więc rozwiązania równania $\ddot{x}+2\dot{x}+2x=0$ są postaci $e^{-t}(c_1\cos{t}+c_2\sin{t})$\newline
+uwzględniając warunki początkowe $x(0)=\frac{1}{4}, \dot{x}(0)=-1$ otrzymujemy:
+$
+e^{0}(c_1+0)=\frac{1}{4}\Rightarrow c_1=\frac{1}{4},\newline-e^0(\frac{1}{4}+0)+e^{0}(0+c_2)=-1\Rightarrow c_2=-1+\frac{1}{4}=-\frac{3}{4}\newline
+$
+Czyli rozwiązaniem zagadnienia Cauchy'ego jest $x=\frac{1}{4}e^{-t}(\cos{t}-3\sin{t})$\newline
+Więc ciężarek powróci do stanu równowagi jednak oscylując wokół niego, a nie jak w treści zadania minąwszy raz wracać powoli. 
+\newline
+\newline
+
+Zad.2.2
+\newline
+\newline
+$
+y''+y'+4y=t^2+(2t+3)(1+\cos{t})
+$, szukamy rozwiązań równania jednorodnego\newline
+$
+\lambda^2+\lambda+4=0\Rightarrow (\lambda+\frac{1-i\sqrt{15}}{2})(\lambda+\frac{1+i\sqrt{15}}{2})=0\newline
+y=c_1\cdot e^{-\frac{t}{2}}\cos{\frac{\sqrt{15}}{2}t}+c_2\cdot e^{-\frac{t}{2}}\sin{\frac{\sqrt{15}}{2}t}+y_c
+$\quad $y_c$ -rozwiązanie szczególne:
+$
+y_c=y_a+y_b\newline y_a''+y_a'+4y_a=t^2+2t+3,\quad y_b''+y_b+4y_b=2t\cos{t}+3\cos{t}
+$ zgadujemy, że $y_a$ jest postaci $at^2+bt+c$, a $y_b$ postaci $et\cos{t}+ft\sin{t}+g\cos{t}+h\sin{t}$\quad
+$\begin{cases}4a=1\\2a+4b=2\\2a+b+4c=3\end{cases}
+\begin{cases}4e+f-e=2\\4f-e-f=0\\4g+e+h+2f-g=3\\4h+f-g-2e-h=0\end{cases}\newline
+\begin{cases}a=\frac{1}{4}\\b=\frac{3}{8}\\c=\frac{17}{32}\end{cases}
+\begin{cases}e=\frac{3}{5}\\f=\frac{1}{5}\\3g+h=2\\3h-g=1\end{cases}
+\begin{cases}y_a=\frac{1}{4}t^2+\frac{3}{8}t+\frac{17}{32}\\y_b=\frac{1}{5}t\sin{t}+\frac{3}{5}t\cos{t}+\frac{1}{2}(\sin{t}+\cos{t})\end{cases}
+$
+Równanie ma rozwiązania postaci:\newline
+$\underline{
+c_1\cdot e^{-\frac{t}{2}}\cos{\frac{\sqrt{15}}{2}t}+c_2\cdot e^{-\frac{t}{2}}\sin{\frac{\sqrt{15}}{2}t}+
+\frac{1}{4}t^2+\frac{3}{8}t+\frac{17}{32}+\frac{1}{5}t(\sin{t}+3\cos{t})+\frac{1}{2}(\sin{t}+\cos{t})}
+$\newline dla $c_1$ i $c_2$ stałych rzeczywistych
+\newpage
+
+Zad.2.3.
+\newline
+\newline
+$
+\dot{x}=f(t)-x
+$
+\quad rozwiązując metodą czynnika całkującego otrzymujemy:\newline
+$
+\dot{x}e^{t}+xe^t=f(t)e^t\Rightarrow (xe^t)'=f(t)e^t,x_0=x(t_0)\newline
+x(t)=x_0e^{-t+t_0}+\int\limits_{t_0}^{t}f(s)e^{s-t}ds,F(t):=\int\limits_{-\infty}^{t}f(s)e^sds,$ponieważ $\exists R: |f(s)|<R$, to F(t) istnieje,$F(t)\le Re^t\newline
+x(t)=x_0e^{-t+t_0}+e^{-t}F(t)-e^{-t}F(t_0)=e^{-t}F(t)+e^{-t}(const(t_0))\quad (|e^{-t}F(t)|\le R)\Rightarrow const(t_0)=0$
+inaczej dąży do $\pm\infty$ dla t dążącego do $-\infty$\newline
+$
+x(t_0)=F(t_0)e^(-t_0)\Rightarrow x(t)=e^{-t}F(t)=e^{-t}\int\limits_{-\infty}^{t}f(s)e^sds$
+-jest to rozwiązanie ograniczone i jednoznaczne co widać rozwiązując równanie wyjściowe metodą uzmienniania stałej(i ogólne rozwiązanie)
+$
+x(t)=e^{-t}\int\limits f(t)e^t=e^{-t}=e^{-t}(F(t)+c)\Rightarrow c=0\newline
+$
+Dla $f$ okresowej o okresie $T$ mamy:\newline
+$
+x(t+T)=e^{-t-T}\int\limits_{-\infty}^{t+T}f(s)e^sds=e^{-t}\int\limits_{-\infty}^{t+T}f(s)e^{s-T}ds$ (podstawienie s=y+T) $
+e^{-t}\int\limits_{-\infty}^{t}f(y+T)e^{y}dy=e^{-t}\int\limits_{-\infty}^{t}f(y)e^{y}dy=x(t)
+$
+\newline
+\newline
+
+Zad.2.4.
+\newline
+\newline
+$
+\dot{x}=-x-y+1,\dot{y}=-4y-z+t,\dot{z}=5z+e^t$(rozumiem, że $\dot{z}$ to $z'(t)$, a nie litera alfabetu jeszcze o dwa dalsza)
+\begin{spacing}{1.3}
+$
+\dot{z}=5z+e^t$ metodą uzmienniania stałej $z=e^{5t}(\int e^{t})=-\frac{1}{4}e^t+c_1e^{5t}\newline
+\dot{y}=-4y+\frac{1}{4}e^t-c_1e^{5t}+t$ znowu $y=e^{-4t}(\int e^{4t}(\frac{1}{4}e^t-c_1e^{5t}+t))\newline
+=e^{-4t}(\frac{1}{20}e^5t-\frac{c_1}{9}e^{9t}+\frac{4t-1}{16}e^{4t}+c_2)=\frac{1}{20}e^t-\frac{c_1}{9}e^{5t}+\frac{4t-1}{16}+c_2e^{-4t}\newline
+\dot{x}=-x-\frac{1}{20}e^t+\frac{c_1}{9}e^{5t}-\frac{t}{4}-c_2e^{-4t}+\frac{17}{16}$ znowu(dobrze, że nie ma więcej)\newline
+$x=e^{-t}(\int e^t(-\frac{1}{20}e^t+\frac{c_1}{9}e^{5t}-\frac{t}{4}-c_2e^{-4t}+\frac{17}{16}))
+=
+e^{-t}(\int-\frac{1}{20}e^{2t}+\frac{c_1}{9}e^{6t}-\frac{t}{4}e^t-c_2e^{-3t}+\frac{17}{16}e^t)\newline
+=
+e^{-t}(-\frac{1}{40}e^{2t}+\frac{c_1}{54}e^{6t}-\frac{t-1}{4}e^t+\frac{c_2}{3}e^{-3t}+\frac{17}{16}e^t+c_3)
+=
+-\frac{1}{40}e^{t}+\frac{c_1}{54}e^{5t}-\frac{t}{4}+\frac{c_2}{3}e^{-4t}+\frac{21}{16}+c_3e^{-t}\newline
+$
+\end{spacing}
+Czyli rozwiązaniami są:
+$
+\begin{cases}
+x=-\frac{1}{40}e^{t}+\frac{c_1}{54}e^{5t}-\frac{t}{4}+\frac{c_2}{3}e^{-4t}+\frac{21}{16}+c_3e^{-t}\\
+y=\frac{1}{20}e^t-\frac{c_1}{9}e^{5t}+\frac{4t-1}{16}+c_2e^{-4t}\\
+z=-\frac{1}{4}e^t+c_1e^{5t}\\
+\end{cases}\newline
+$ dla $c_1,c_2,c_3$ stałych rzeczywistych 
+\newline
+\newline
+
+Zad.2.5.
+\newline
+\newline
+$
+\dot{x_3}=-3x_3\Rightarrow x_3=c_3e^{-3t}\newline
+x=-3x+ac_3e^{-3t}\quad(a\in\{-2,1,2\})$ metoda uzmienniania stałej $x=e^{-3t}(\int ac_3e^{-3t}e^{3t})=e^{-3t}\int ac_3=(ac_3t+d)e^{-3t}\newline
+\begin{cases}
+x_1=(c_3t+c_1)e^{-3t}\\x_2=(2c_3t+c_2)e^{-3t}\\x_3=c_3e^{-3t}\\x_4=(-2c_3t+c_4)e^{-3t}\\
+\end{cases}
+$\quad dla $c_1,c_2,c_3,c_4$ stałych rzeczywistych
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

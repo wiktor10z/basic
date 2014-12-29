@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 3.
+\newline
+$F_n,F$ -- dystrybuanty, $\forall x F_n(x)\rightarrow F(x), F$ -- ciągła $\Rightarrow F_n\rightrightarrows F$\newline
+Zakładająć $x\in\mathbb{R}$ wybieramy $\varepsilon>0,k=\lceil\frac{1}{\varepsilon}\rceil$, oraz dobieramy do nich punkty $x_l\in\mathbb{R}$ dla $l=1,...,k-1$ t.że
+$F(x_l)=\frac{l}{k}$ -- takie istnieją, gdyż funkcja $F$ jest ciągła oraz $\forall_l x_l<x_{l+1}$ gdyż funkcja jest rosnąca.\newline
+Następnie mając $\forall x_l,\forall\varepsilon>0\exists n_l:\forall N>n_l |F_n(x_l)-F(x_l)|<\varepsilon$ wybieramy $n=\max\{n_1,...,n_{k-1}\}$\newline
+Dla dowolnych $N>n,x\in[x_l,x_{l+1}]$ (gdzie $x_0=-\infty,x_k=\infty$) mamy: \newline
+$F_N(x_l)\le F_N(x)\le F_N(x_{l+1})$, oraz $F(x_l)\le F(x)\le F(x_l+1)=F(x_l)+\frac{1}{k}$, co daje nam:\newline
+$F(x)-2\varepsilon\le (F(x)-\frac{1}{k})-\varepsilon\le F(x_l)-\varepsilon\le F_N(x_l)\le F_N(x)\le F_N(x_{l+1})\le F(x_{l+1})+\varepsilon\le (F(x)+\frac{1}{k})+\varepsilon\le F(x)+2\varepsilon$\newline
+Czyli : $\forall_{\varepsilon_2}\exists_n\forall_{N>n}\forall_x |F_N(x)-F(x)|\le\varepsilon_2$,
+co jest definicją jednostajnej zbieżonści (z dowolności $\varepsilon$ wybieramy $\varepsilon=\frac{\varepsilon_2}{2}$).\newline\newline
+Dla $x\in\mathbb{R}^d:d>1$ dowód przeprowadzony jest poprzez indukcję ze względu na wymiar:\newline
+mając $\forall_{\varepsilon>0}\forall_{x_d\in\mathbb{R}}\exists_n\forall_{N>n}\forall_{x_1,...,x_{d-1}\in\mathbb{R}} |F_N(x_1,...,x_d)-F(x_1,...,x_d)|<\varepsilon$
+zamiast punktów $x_l$ używamy hiperprzestrzenie wymiaru $d-1$ o analogicznej własności (wartość $F=\frac{1}{k}$)
+i powtarzamy nierówność z przypadku $d=1$ traktując $x_1,...,x_{d-1}$ jako ustalone parametry funkcji.\newline\newline
+Uwaga: gdy w którejś z nierówności pojawia się $x_0$ lub $x_k$, żeby uniknąć wyliczeń $F(\pm\infty)$ definiujemy $F(x_0)=0,F(x_k)=1,\forall_n F_n(x_0)=0,F_n(x_k)=1$
+-- nierówności zostają zachowane.
+
+\end{document}

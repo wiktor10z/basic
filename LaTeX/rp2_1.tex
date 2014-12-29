@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 1.
+\newline
+a) Przykład $X_n\xrightarrow{d} X$, $\forall_n X_n$ -- rozkład ciągły, $X$ -- rozkład dyskretny\newline\newline
+Weźmy $X_n=n\cdot U([0,\frac{1}{n}])$ -- rozkład jednostajny na odcinku $[0,\frac{1}{n}]$ o wartości $n$.\newline
+Wtedy $\mu_{X_n}=n\cdot L([0,\frac{1}{n}])$ -- $n$ razy miara Lebesgua na odcinku $[0,\frac{1}{n}]$.\newline
+Mamy wtedy dla dowolnego $f\in C_0$ $\lim\limits_{n\rightarrow\infty}\mathbb{E}f(X_n)=\lim\limits_{n\rightarrow\infty}\int\limits_{-\infty}^{\infty}f(x)d\mu_{X_n}(x)=
+\lim\limits_{n\rightarrow\infty}\int\limits_{0}^{\frac{1}{n}}n\cdot f(x)dx$\newline
+po zamianie zmiennych ($y=\frac{1}{n}x$) otrzymujemy:
+$\lim\limits_{n\rightarrow\infty}\int\limits_{0}^{1}f(\frac{1}{n}y)dy$ (z założenia $f\in C_0$ -- korzystamy z twierdzenia o zbieżności zmajoryzowanej (majoranta np. $g=\lVert f\rVert_\infty$)
+$\int\limits_{0}^{1}(\lim\limits_{n\rightarrow\infty}f(\frac{1}{n}y))dy=\int\limits_{0}^{1}f(0)dy=f(0)=\mathbb{E}f(\delta_0)$.\newline
+A więc ciąg $X_n$ posiada granicę według rozkładu, jest nią dyskretny rozkład jednopunktowy w zerze.
+\newline\newline
+b) Przykład $X_n\xrightarrow{d} X$, $\forall_n X_n$ -- rozkład dyskretny, $X$ -- rozkład ciągły\newline
+Weźmy $X_n=\frac{1}{2^n}\sum\limits_{k=1}^{2^n}\delta_{\frac{k}{2^n}}$ -- rozkład $2^n$ punktowy na odcinku $[0,1]$.\newline\newline
+Mamy wtedy dla dowolnego $f\in C_0$ $\mathbb{E}f(X_n)=\frac{1}{2^n}\sum\limits_{k=1}^{2^n}f(\frac{k}{2^n})$.\newline
+Ciągła funkcja $f$ jest jednostajnie ciągła na odcinku zwartym $[0,1]$, a więc $\forall_{\varepsilon>0}\exists_{\delta>0}:|x-y|<\delta\Rightarrow|f(x)-f(y)|<\varepsilon$\newline
+Dla dowolnego $\varepsilon>0$ możemy dobrać takie $n$ ($2^n>\frac{1}{\delta}$), że $\forall_{N>n}$ $|f(x)-f(\frac{k}{2^N})|<\varepsilon$ dla $x\in[\frac{k-1}{2^N},\frac{k+1}{2^N}]$\newline
+Daje nam to $\varepsilon>|\int\limits_{0}^{1}f(x)dx-\frac{1}{2^n}\sum\limits_{k=1}^{2^n}f(\frac{k}{2^n})|=|\mathbb{E}f(U)-\mathbb{E}f(X_n)|$,
+gdzie $U=U([0,1])$ -- rozkład jednostajny na odcinku $[0,1]$.
+\newline\newline
+c) Przykład $\nu_n$ t.że $\forall f\in C_0 \lim\limits_{n}\int fd\nu_n$ isnieje, ale $\nu_n$ nie zbiega słabo.\newline\newline
+Weźmy $\nu_n=L([n,n+1])$ -- miara Lebesgua na odcinku $[n,n+1]$\newline
+Oczywiście $\int\limits_{-\infty}^{\infty}f(x)d\nu_n(x)=\int\limits_{n}^{n+1}f(x)dx$ istnieje (funkcja ciągła, ograniczona jest całkowalna na odcinku).\newline
+Dla każdej funkcji $f$ o zwartym nośniku możemy dobrać $n$ większe od górnego ograniczenia nośnika
+(jako zbioru zwartego czyli domkniętego ograniczonego w przestrzeni Euklidesowej $\mathbb{R}$). Wtedy też $\mathbb{E}f(X_{\nu_n})=0$, co oznacza, że jedyną możliwą granicą miar jest
+miara zerowa, jednak równocześnie dla ograniczonej funkcji $f=1$ $\mathbb{E}f(X_{\nu_n})=1$ dla każdego $n$, co wyklucza zbieżność do miary zerowej.
+\end{document}

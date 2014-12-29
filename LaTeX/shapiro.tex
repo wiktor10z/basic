@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+Zadanie: Czy $\frac{a_1}{a_2+a_3}+\frac{a_2}{a_3+a_4}+\cdots+\frac{a_{n-1}}{a_n+a_1}+\frac{a_n}{a_1+a_2}\ge\frac{n}{2}\newline
+$dla $\forall n\ge3,0\le a_1\le\cdots\le a_n$\newline\newline
+Rozwiązanie indukcyjne poprzez dostawianie najmniejszego elementu: zakładamy:\newline
+$
+\frac{a_1}{a_2+a_3}+\frac{a_2}{a_3+a_4}+\cdots+\frac{a_{n-1}}{a_n+a_1}+\frac{a_n}{a_1+a_2}=g\ge\frac{n}{2}\newline
+$czy 
+$
+\frac{a_0}{a_1+a_2}+\frac{a_1}{a_2+a_3}+\frac{a_2}{a_3+a_4}+\cdots+\frac{a_{n-1}}{a_n+a_0}+\frac{a_n}{a_0+a_1}\ge\frac{n+1}{2}\newline\newline
+$
+dla n=3 już rozwiązane, dla n+1:\newline
+$
+\frac{a_0}{a_1+a_2}+\frac{a_1}{a_2+a_3}+\frac{a_2}{a_3+a_4}+\cdots+\frac{a_{n-1}}{a_n+a_0}+\frac{a_n}{a_0+a_1}=
+g+\frac{a_0}{a_1+a_2}+\frac{a_{n-1}}{a_n+a_0}+\frac{a_n}{a_0+a_1}-\frac{a_{n-1}}{a_n+a_1}-\frac{a_n}{a_1+a_2}\newline
+\frac{a_0}{a_1+a_2}+\frac{a_1}{a_2+a_3}+\frac{a_2}{a_3+a_4}+\cdots+\frac{a_{n-1}}{a_n+a_0}+\frac{a_n}{a_0+a_1}-\frac{n+1}{2}\ge
+\frac{a_0}{a_1+a_2}+\frac{a_{n-1}}{a_n+a_0}+\frac{a_n}{a_0+a_1}-\frac{a_{n-1}}{a_n+a_1}-\frac{a_n}{a_1+a_2}-\frac{1}{2}??\ge??0\newline
+a:=a_0,b:=a_1,c:=a_2,d:=a_{n-1},e:=a_n,0\le a\le b\le c\le d\le e\newline
+\frac{a}{b+c}+\frac{d}{a+e}+\frac{e}{a+b}-\frac{d}{b+e}-\frac{e}{b+c}-\frac{1}{2}\newline\newline
+$ dla $a=b\newline
+\frac{a}{a+c}+\frac{d}{a+e}+\frac{e}{2a}-\frac{d}{a+e}-\frac{e}{a+c}-\frac{1}{2}\ge 0\newline
+\frac{a}{a+c}+\frac{e}{2a}-\frac{e}{a+c}-\frac{1}{2}\ge0\quad |*2a(a+c)\newline
+2a^2+ae+ce-2ae-a^2-ac\ge0\newline
+a^2-ac-ae+ce\ge0\newline
+(c-a)(e-a)\ge0\newline\newline
+$
+Teraz definiujemy $a=b-x,\quad 0\le x\le b, $ oraz $f(x)=\frac{b-x}{b+c}+\frac{d}{b-x+e}+\frac{e}{2b-x}-\frac{d}{b+e}-\frac{e}{b+c}-\frac{1}{2}$\newline
+czy $\forall 0\le x\le b\quad f(x)\ge0$?\newline
+$f(0)\ge0$\quad $f'(x)=\frac{d}{(b+e-x)^2}+\frac{e}{(2b-x)^2}-\frac{1}{b+c}$\newline
+jeśli pochodna będzie nieujemna to i sama funkcja musi być nieujemna, stosujemy uproszczenia (najgorszy przypadek)- zmniejszanie c spowoduje zmniejszenie pochodnej
+więc $c=b$\quad $f'(x)\ge\frac{d}{(b+e-x)^2}+\frac{e}{(2b-x)^2}-\frac{1}{2b}$,\newline
+to samo z d\quad $f'(x)\ge\frac{b}{(b+e-x)^2}+\frac{e}{(2b-x)^2}-\frac{1}{2b}$\newline
+czy
+$
+\frac{b}{(b+e-x)^2}+\frac{e}{(2b-x)^2}-\frac{1}{2b}\ge 0$(teraz już liczenie "ręczne")$\newline
+%8b^4-8b^3x+2b^2x^2+2b^3e+4b^2e^2-4b^2ex+2be^3-4be^2x+2bex^2\newline
+%-4b^4-8b^3e+12b^3x-4b^2e^2+16b^2ex-13b^2x^2+4be^2x-10bex^2+6bx^3-e^2x^2+2ex^3-x^4=\newline
+%4b^4+4b^3x-11b^2x^2+2be^3-6b^3e-8bex^2+12b^2ex+6bx^3-x^4+2ex^3-e^2x^2\newline
+%b=x+y,e=b+z\newline
+%3x^4+16x^3y+4x^3z+28x^2y^2+14x^2yz+5x^2z^2+16xy^3+12xy^2z+12xyz^2+2xz^3+6y^2z^2+2yz^3\ge0
+b=x+y,e=b+z\quad x,y,z>0$(jak któreś 0 to przypadki trywialne)$\newline\newline
+\frac{x+y}{(x+2y+z)^2}+\frac{x+y+z}{(x+2y)^2}-\frac{1}{2x+2y}?\ge ?0\quad |*2(x+y)(x+2y)^2(x+2y+z)^2\newline
+2x^4+12x^3y+26x^2y^2+24xy^3+8y^4\newline
++2x^4+12x^3y+6x^3z+26x^2y^2+26x^2yz+6x^2z^2+24xy^3+36xy^2z+16xyz^2+2xz^3+8y^4+16y^3z+10y^2z^2+2yz^3\newline
+-x^4-8x^3y-2x^3z-24x^2y^2-12x^2yz-x^2z^2-32xy^3-24xy^2z-4xyz^2-16y^3z-4y^2z^2=\newline
+3x^4+16x^3y+4x^3z+28x^2y^2+14x^2yz+5x^2z^2+16xy^3+12xy^2z+12xyz^2+2xz^3+6y^2z^2+2yz^3\ge0
+$
+\end{document}

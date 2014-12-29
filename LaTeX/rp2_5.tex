@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 5.1.(Niepełne)
+\newline
+\newline
+$\varphi_{XY}(t)=\mathbb{E}e^{itXY}=\int\limits_{\mathbb{R}^2}\frac{1}{2\pi}e^{itxy}e^{-\frac{x^2}{2}}e^{-\frac{y^2}{2}}d(x,y)$ (z twierdzenie Fubiniego)
+$\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}\left(\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{i(xt)y}e^{-\frac{y^2}{2}}dy\right)e^{-\frac{x^2}{2}}dx
+=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}\varphi_{Y}(xt)e^{-\frac{x^2}{2}}dx
+=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2t^2}{2}-\frac{x^2}{2}}dx
+=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}(1+t^2)}dx$ (zamiana zmiennych)
+$=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{1+t^2}}\frac{1}{\sqrt{2\pi}}e^{-\frac{z^2}{2}}dz
+=\frac{1}{\sqrt{1+t^2}}$\newline
+Gęstość rozkładu może być wyrażona przez całkę $C\cdot\int\limits_{-\infty}^{\infty}e^{-itx}\frac{1}{\sqrt{1+x^2}}dx$ (gdzie $C$ to stała normalizująca).\newline
+$\varphi_{X^2}(t)=\mathbb{E}e^{itX^2}
+=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{itx^2}e^{-\frac{x^2}{2}}dx
+=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}(1-2it)}dx$ (zamiana zmiennych)
+$\frac{1}{\sqrt{1-2t}}\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-\frac{z^2}{2}}dz=\frac{1}{\sqrt{1-2t}}$\newline
+Dla rozkładu $\chi$ kwadrat $Z\sim \chi_1^2$ mamy:\newline
+$\varphi_{Z}(t)=\int\limits_{-\infty}^{\infty}e^{itx}\frac{1}{\sqrt{2\pi}}x^{-\frac{1}{2}}e^{-\frac{x}{2}}dx
+=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}x^{-\frac{1}{2}}e^{-\frac{x}{2}(1-2it)}dx=\frac{1}{\sqrt{1-2it}}$\newline
+Z jednoznaczności funkcji charakterystycznej względem rozkładu $X^2\sim \chi_1^2$\newline
+$\varphi_{X/Y}(t)=\mathbb{E}e^{itX/Y}=
+\int\limits_{\mathbb{R}^2}\frac{1}{2\pi}e^{it\frac{x}{y}}e^{-\frac{x^2}{2}}e^{-\frac{y^2}{2}}d(x,y)$ (z twierdzenie Fubiniego)
+$\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}\left(\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{i\frac{t}{y}x}e^{-\frac{x^2}{2}}dx\right)e^{-\frac{y^2}{2}}dy
+=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}\varphi_{X}(\frac{t}{y})e^{-\frac{x^2}{2}}dx
+=\int\limits_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}}e^{-\frac{t^2+x^4}{2x^2}}dx=e^{-|t|}$\newline
+Dla rozkładu Cauchy'ego $C\sim C(0,1)$ mamy:\newline
+$\varphi_{C}(t)=\int\limits_{-\infty}^{\infty}e^{itx}\frac{1}{\pi(1+x^2)}dx=e^{-|t|}$\newline
+Z jednoznaczności funkcji charakterystycznej względem rozkładu $X/Y\sim C(0,1)$\newline
+$\varphi_{X^2-Y^2}(t)=\mathbb{E}e^{itX^2-Y^2}$ (z niezależności $X,Y$)
+$\varphi_{X^2}(t)\cdot\overline{\varphi_{Y^2}(t)}=\frac{1}{\sqrt{1-2it}}\cdot\overline{\frac{1}{\sqrt{1-2it}}}=\left|\frac{1}{1-2it}\right|dx$\newline
+Gęstość rozkładu $X^2-Y^2$ może być wyrażona przez całkę $C\cdot\int\limits_{-\infty}^{\infty}e^{-itx}\left|\frac{1}{1-2ix}\right|dx$ (gdzie $C$ to stała normalizująca),
+zaś podzielenie przez 2 powoduje "zwężenie" rozkładu względem 0.\newline
+$\varphi_{XY+UV}(t)=\mathbb{E}e^{it(XY+UV)}$ (z niezależności $XY,UV$)
+$(\varphi_{XY}(t))^2=\frac{1}{1+t^2}$ wyliczając całkę $C\cdot\int\limits_{-\infty}^{\infty}e^{-itx}\frac{1}{1+x^2}dx$ (odwrócenie całki z rozkładu Cauchy'ego)
+otrzymujemy $Ce^{-|t|}\Rightarrow XY+UV$ ma rozkład o gęstości $\frac{e^{-|x|}}{2}$
+\end{document} 

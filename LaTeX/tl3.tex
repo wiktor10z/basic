@@ -1,0 +1,101 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\newcommand{\sgn}{\operatorname{sgn}}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 2.4.
+\newline
+\newline
+$f(x)=(x^2-13)(x^2-17)(x^2-13\cdot 17)\newline
+\frac{\partial f}{\partial x}(x)=2x((x^2-13)(x^2-17)+(x^2-13)(x^2-13\cdot 17)+(x^2-17)(x^2-13\cdot 17))\newline$
+$f$ jest wielomianem 6 stopnia posiadającym 6 pierwiastków w $\mathbb{R}$ ($\pm\sqrt{13},\pm\sqrt{17},\pm\sqrt{13\cdot 17}$), z których żaden nie należy do $\mathbb{Q}$,
+a więc wielomian nie posiada rozwiązań w $\mathbb{Q}$.\newline
+Dla $p\notin\{2,3,13,17\}$ w grupie cyklicznej $\mathbb{Z}_p$ jeden z trzech czynników $13,17,13\cdot 17$ musi być kwadratem, co oznacza, że równanie $f(x)=0$ posiada (mod $p$) rozwiązanie $a$.\newline
+Jednocześnie w $\frac{\partial f}{\partial x}$ znikają dwa spośród składników, trzeci składnik nie może być równy $0$,
+ponieważ wszystkie możliwe czynniki trzeciego składnika należą do zbioru $\{\pm4,\pm 12\cdot 17,\pm 13\cdot 16\}$,
+to cały czynnik nie jest podzielny przez $p$, a więc $\frac{\partial f}{\partial x}(a)$ jest różne od $0$, a więc spełnione są założenia uogólnionego lematu Hensela (zad 2.1.).\newline
+$f(1)=0$ (mod $3$), $\frac{\partial f}{\partial x}(1)=2\cdot1\cdot2\cdot2=2$ (mod $3$).\newline
+$f(2)=0$ (mod $13$), $\frac{\partial f}{\partial x}(2)=2\cdot2\cdot4\cdot4=12$ (mod $13$).\newline
+$f(8)=0$ (mod $17$), $\frac{\partial f}{\partial x}(8)=2\cdot8\cdot13\cdot13=1$ (mod $17$).\newline
+$f(41)=0)$ (mod $2^11$), $\frac{\partial f}{\partial x}(41)=k\cdot 2^5$, $2\nmid k$.\newline
+A więc i w tych 4 przypadkach spełnione są założenia uogólnionego lematu Hensela, czyli dla dowolnych $p$ pierwszego i $r$ naturalnego $f(x)=0$ (mod $p^r$).
+\newline
+
+Zadanie 3.1.
+\newline
+\newline
+$f(x)=(x^2-2)(x^2-17)(x^2-2\cdot 17)\newline
+\frac{\partial f}{\partial x}(x)=2x((x^2-2)(x^2-17)+(x^2-2)(x^2-2\cdot 17)+(x^2-17)(x^2-2\cdot 17))\newline$
+Stosujemy identyczne rozumowanie jak w zadaniu 2.4. dla $p\notin\{2,17\}$.
+$f(6)=0$ (mod $17$), $\frac{\partial f}{\partial x}(6)=2\cdot6\cdot2\cdot2=14$ (mod $17$).\newline
+$f(1)=0$ (mod $2^3$), $\frac{\partial f}{\partial x}(1)=2\cdot 1\cdot3\cdot3=2$ (mod $2^2$).\newline
+A więc i w tych 2 przypadkach spełnione są założenia uogólnionego lematu Hensela, czyli dla dowolnych $p$ pierwszego i $r$ naturalnego $f(x)=0$ (mod $p^r$),
+stąd też na mocy twierdzenia z wykładu (mod $m$) dla dowolnego $m$ naturalnego.
+\newline
+
+Zadanie 3.2.
+\newline
+\newline
+$\mathbb{Z}[i]=\{m+ni:m,n\in\mathbb{Z}\}$ ze zwykłą normą $\lVert m+ni\rVert=\sqrt{m^2+n^2}$:\newline
+Dla dowolnych $a,b\in\mathbb{Z}[i]$, $b\neq 0$ rozważamy $\frac{a}{b}=c+di$ w $\mathbb{C}$
+a następnie wybieramy takie $m,n\in\mathbb{Z}$, że $\lVert c-m\rVert\le\frac{1}{2},\lVert d-n\rVert\le\frac{1}{2}$.
+$q=m+ni$, $|\frac{a}{b}-q|\le\sqrt{\frac{1}{2}}\Rightarrow$ istnieje rozkład $a=qb+r$, gdzie $\lVert r\rVert\le\frac{\sqrt{2}}{2}\lVert b\rVert<\lVert b\rVert$.\newline
+$\mathbb{Z}[\sqrt{-2}]=\{m+n\sqrt{-2}:m,n\in\mathbb{Z}\}$ ze zwykłą normą $\lVert m+n\sqrt{-2}\rVert=\sqrt{m^2+2n^2}$:\newline
+Dla dowolnych $a,b\in\mathbb{Z}[\sqrt{-2}]$, $b\neq 0$ rozważamy $\frac{a}{b}=c+d\sqrt{-2}$ w $\mathbb{C}$
+a następnie wybieramy takie $m,n\in\mathbb{Z}$, że $\lVert c-m\rVert\le\frac{1}{2},\lVert d-n\rVert\le\frac{1}{2}$.
+$q=m+n\sqrt{-2}$, $|\frac{a}{b}-q|\le\sqrt{\frac{1}{4}+\frac{2}{4}}\Rightarrow$ istnieje rozkład $a=qb+r$, gdzie $\lVert r\rVert\le\frac{\sqrt{3}}{2}\lVert b\rVert<\lVert b\rVert$.\newline
+Więc obie dziedziny całkowitości są dziedzinami Euklidesa.
+\newline
+
+Zadanie 3.3.
+\newline
+\newline
+W $\mathbb{Z}[i]$ norma $\lVert m+ni\rVert\ge 1$ dla $m+ni\neq0$, tak więc skoro dla $a,b\in\mathbb{Z}[i]$ $\lVert ab\rVert=\lVert a\rVert\cdot\lVert b\rVert$,
+to aby $ab=1$ normy obu muszą być równe $1$, a jedyne takie elementy to takie dla których $m=\pm1,n=0$ lub $m=0,n=\pm1$, są nimi $1,-1,i,-i$.
+\newpage
+
+Zadanie 3.4.
+\newline
+\newline
+1) liczba pierwsza $p$ jest rozkładalne w $\mathbb{Z}[i]\Leftrightarrow$ 2) $p=x^2+y^2\Leftrightarrow$ 3) $p=4k+1$\newline
+Dow: 1)"$\Rightarrow$" 2) $\mathbb{R}\ni p=(a+bi)(c+di)=ab-cd+i(ad+bc)\Rightarrow ad+bc=0$ załóżmy, że NWD($c,d$)=1 (inaczej możemy wyciągnąć czynnik przed nawias),$d\neq0$
+$\Rightarrow a=c\cdot(-\frac{b}{d})\Rightarrow \frac{b}{d}\in\mathbb{Z}\Rightarrow$ p rozpadło się na czynniki sprzeżone z dokładnością do przemnożenia przez czynnik całkowity.
+$\Rightarrow$ $p=k\cdot(x^2+y^2)$, ale $k\mid p\Rightarrow k=1$\newline
+2)"$\Rightarrow$" 3) załóżmy, że $p=4k+3$ (nie jest $4k+1$, ani $2$), wtedy równanie $x^2+y^2=p=4k+3$ mod 4 przedstawia się $x^2+y^2=3$, więc mamy sprzeczność.\newline
+3)"$\Rightarrow$" 1) $p=4k+1\Rightarrow$ rząd $\mathbb{Z}^*_{p-1}$ jest podzielny przez 4 $\Rightarrow$ -1 jest kwadratem (mod $p$) $\Rightarrow$ $x^2+1=(x+i)(x-i)=lp$ dla pewnych $0<x,l<p$
+jeżeli $p$ nierozkładalne, to musi dzielić conajmniej jeden z czynników, ale $\lVert x\pm i\rVert=\sqrt{lp}<p$.
+\newline
+
+Zadanie 3.5.
+\newline
+\newline
+$2=(1+i)(1-i)$ -- normy obu równe są $\sqrt{2}$, więc są nierozkładalne.\newline
+$3$ jest nierozkładalne (inaczej musiałoby istnieć $x\mid 3$, t.że $\lVert x\rVert\le\sqrt{3}\Rightarrow x=m+ni:-1\le m,n\le 1$, a takie nieodwracalne liczby nie dzielą 3)\newline
+$5=(2+i)(2-i)$, oba są nierozkładalne z tego samego powodu co 3
+\newline
+
+Zadanie 3.6.
+\newline
+\newline
+$x^3=y^2+1=(y+i)(y-i)$. Działamy w $\mathbb{Z}[i]$\newline
+Załóżmy, że $(y+i),(y-i)$ są sześcianami $\Rightarrow (y+\pm i)=(a+bi)^3\Rightarrow 3a^2b-b^3=\pm 1\Rightarrow 3a^2-1=\pm 1\Rightarrow 3a^2=0$ lub $3a^2=2\Rightarrow a=0,b=\pm1\Rightarrow x=1,y=0$.\newline
+Załóżmy, że $(y+i),(y-i)$ nie są sześcianami $\Rightarrow\exists p\mid x$ ($w \mathbb{Z}$), t.że $p^3\nmid (y+i),p\mid (y+i)$ (lub symetryczne $y-i$), ale wtedy $y\pm i=p\cdot(a+bi)\Rightarrow p\mid\pm1$ a więc sprzeczność.
+\newline
+
+Zadanie 3.7.
+\newline
+\newline
+$x^3=y^2+1=(y+\sqrt{-2})(y-\sqrt{-2})$. Działamy w $\mathbb{Z}[\sqrt{-2}]$\newline
+Załóżmy, że $(y+\sqrt{-2}),(y-\sqrt{-2})$ są sześcianami $\Rightarrow (y+\pm\sqrt{-2})=(a+b\sqrt{-2})^3\Rightarrow 3a^2b-2b^3=\pm 1\Rightarrow 3a^2-2=\pm 1
+\Rightarrow 3a^2=3$ lub $3a^2=1\Rightarrow a=1,b=\pm1\Rightarrow (y+\sqrt{-2})=(1+\sqrt{-2})^3\Rightarrow y=-5\Rightarrow (x=3,y=\pm 5)$ są jedynymi rozwiązaniami tego przypadku.\newline
+Załóżmy, że $(y+\sqrt{-2}),(y-\sqrt{-2})$ nie są sześcianami $\Rightarrow\exists p\mid x$ ($w \mathbb{Z}$), t.że $p^3\nmid (y+\sqrt{-2}),p\mid (y+\sqrt{-2})$ (lub symetryczne $y-\sqrt{-2}$),
+ale wtedy $y\pm \sqrt{-2}=p\cdot(a+b\sqrt{-2})\Rightarrow p\mid\pm1$ a więc sprzeczność.
+\end{document}

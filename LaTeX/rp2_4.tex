@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 3
+\newline
+
+Zadanie 4.1.
+\newline
+\newline
+Dla $\varphi_1(t)=\cos(t)$ mamy $\cos(t)=\frac{e^{it}}{2}+\frac{e^{-it}}{2}=\sum\limits_{k\in\{-1,1\}}e^{itk}\cdot\frac{1}{2}$,
+a więc jest to funkcja charakterystyczna rozkładu $Y=\frac{1}{2}(\delta_{-1}+\delta_{1})$.\newline
+Dla $\varphi=\cos^2(t)=\cos(t)\cdot\cos(t)$ mamy $X=Y_1+Y_2$, gdzie $Y,Y_1,Y_2$ i.i.d.\newline
+Skoro więc obie składowe przyjmują z prawdopodobieństwami $\frac{1}{2}$ wartości $-1$ i $1$, oraz są niezależne,
+to ich suma będzie przyjmować wartości $-2,2$ z prawdopodobieństwami $\frac{1}{4}$, oraz $0$ z prawdopodobieństwem $\frac{1}{2}$.\newline
+$X=\frac{1}{4}\delta_{-2}+\frac{1}{2}\delta_{0}+\frac{1}{4}\delta_{2}$.
+\newline
+
+Zadanie 4.2.
+\newline
+\newline
+$\{N(\mu_\alpha,\sigma^2_\alpha):\alpha\in I\}$ -- równoważne ciasności jest spełnianie równocześnie dwóch kryteriów:\newline
+$A.$ $\sup_{\alpha\in I}\lVert\mu_\alpha\rVert<\infty$,\newline
+$B.$ $\sup_{\alpha\in I}\lVert\sigma^2_\alpha\rVert<\infty$.\newline
+(działając w $\mathbb{R}^d$ (chociaż zapis $\sigma^2$ sugeruje $d=1$ -- zastępuję $\sigma^2_\alpha$ przez $D_\alpha$)
+badanie zbiorów zwartych ograniczam do kul o środku w 0 (każdy zbiór zwarty w $\mathbb{R}^d$ można zawrzeć w takiej kuli),
+korzystam również z równoważności norm indukujących przestrzenie $l_p$):\newline
+Konieczność -- przez sprzeczność :\newline
+A. $\sup_{\alpha\in I}\lVert\mu_\alpha\rVert=\infty\Rightarrow\forall_R>0\exists_{\alpha\in I}:\lVert\mu_\alpha\rVert>R\Rightarrow
+\forall_{\overline{B}(0,R)}\exists_{\alpha\in I}:\mu_\alpha\notin \overline{B}(0,R)$
+czyli dla $X\sim N(\mu_{\alpha},D_\alpha)$ $\mathbb{P}(X\in\overline{B}(0,R))<\frac{1}{2}<1-\varepsilon$ (dla $\varepsilon<\frac{1}{2}$) jako, że rozkład normalny jest symetryczny a kula wypukła.\newline
+B. $\sup_{\alpha\in I}\lVert D_\alpha\rVert=\infty\Rightarrow\forall_R>0\exists_{\alpha\in I}:\lVert D_\alpha\rVert>R\Rightarrow$
+(z równoważności norm)\newline
+$\forall_{R_2}>0\exists_{\alpha\in I},\exists_{i\in\{1,...,d\}}:\lVert D_{\alpha,i}\rVert>R_2\Rightarrow
+\mathbb{P}(\lVert X_{\alpha,i}-\mu_{\alpha,i}\rVert\ge\varepsilon)>$
+($\int\limits_{\frac{\varepsilon}{2R_2}}\frac{1}{\sqrt{2\Pi}}e^{-\frac{x^2}{2}}dx$=kwantyl rozkładu normalnego standardowego dla $1-\frac{\varepsilon}{2R_2})\approx\frac{1}{2}$ dla dostatecznie dużego $R_2$\newline
+Nie możemy więc dla $\varepsilon$ dobrać kuli o środku w $\mu_\alpha$, dla której spełnione byłyby założenia ciasności, a więc i takiej o środku w $0$ (zawieranie kul).\newline\newline
+Wystarczalność: supremum $\lVert\mu_\alpha\rVert$ jest skończone $\Rightarrow$ jeśli dla każdego rozkładu postaci $N(0,D_\alpha)$ uda się dobrać promień kuli,
+to wystarczy dodać wartość $\sup_{\alpha\in I}\lVert\mu_\alpha\rVert$ do supremum z tych promieni, aby otrzymać zbiór z definicji ciasności dla wyjściowej rodziny.\newline
+Dla kanonicznego rozkładu Gaussowskiego prawdopodobieństwo, że $X$ należy do kostki $[-R,R]^d$, gdzie $R$ jest kwantylem rozkładu normalnego standardowego dla $1-\frac{\varepsilon_2}{2}$
+jest niemniejsza niż $(1-\varepsilon_2)^d\ge1-d\varepsilon_2$, wystarczy więc wybrać $\varepsilon_2>\frac{1}{d}\varepsilon$, aby prawdopodobieństwo leżenia poza kostką było mniejsze od $\varepsilon$.
+Ogólny rozkład Gaussowski jest z definicji afinicznym przekształceniem rozkładu kanonicznego, więc to samo afiniczne przekształcenie kostki pozwala nam otrzymać zbiór zwarty $C_\alpha$
+spełniający założenie $\mathbb{P}(X_\alpha\notin C_\alpha)<\varepsilon$. Jako, że $\sup\lVert D_\alpha\rVert<\infty\Rightarrow \sup\lVert A_\alpha\rVert<\infty$ (gdzie $A_\alpha$ -- macierze przekształceń afinicznych)
+oraz skoro dla każdego takiego zbioru $C_\alpha$ można dobrać kulę go zawierającą o promieniu ograniczonym przez $d\cdot 2R\cdot \lVert A_\alpha\rVert$, to wybierając promień
+$d\cdot 2R\cdot\sup\lVert A_\alpha\rVert$ otrzymujemy kulę pasującą do pierwszej części dowodu.\newline\newline
+Uwaga: dla $d=1$ wystarczy wybrać odcinek $[-R,R]$, gdzie $R=\sup|\mu_\alpha|+k_{1-\frac{\varepsilon}{2\sup\sigma^2_\alpha}}$ (gdzie $k$ jest kwantylem rozkłądu normalnego standardowego) 
+co pozwala skrócić dowód jeżeli chcemy się ograniczyć do tego przypadku.
+
+\end{document} 

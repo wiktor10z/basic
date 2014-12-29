@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\marginsize{1,5cm}{2cm}{1cm}{3cm}
+\begin{document}
+
+Wiktor Zuba 320501 grupa 4
+\newline\newline
+(OR) Spowodowanie błędu w startowaniu systemu operacyjnego za pomocą protokołu TFTP
+\begin{enumerate}[label*=\arabic*.]
+  \item (OR) Przesłanie dodatkowego datagramu służącego do przerwania poprawnej komunikacji
+  \begin{enumerate}[label*=\arabic*.]
+    \item Sprawienie by któryś z komputerów uruchamiający lub uruchamiany wysłał dodatkową wiadomość
+    \item (AND) Podszycie się pod któryś z komputerów
+    \begin{enumerate}[label*=\arabic*.]
+      \item (OR) Zdobycie numeru TID jednego z komputerów
+      \begin{enumerate}[label*=\arabic*.]
+	\item Otrzymanie takiego samego numeru TID przy pomocy analizy programu losującego te numery
+	\item Otrzymanie numeru bezpośrednio z jednego z komputerów
+	\item (AND) Otrzymanie numeru z datagramu wychodzącego
+	\end{enumerate}
+	  1.2.1.3.1 Podsłuchanie datagramu TFTP\newline
+	  1.2.1.3.2 Wyekstraktowanie numeru TID z podsłuchanego datagramu
+      \item (OR)Wysłanie wiadomości do drugiego z komputerów
+      \begin{enumerate}[label*=\arabic*.]
+	\item Wysłanie potwierdzenia odbioru paczki podczas gdy nie została odczytana przez właściwy protokół
+	\item Wysłanie komunikatu o błędzie
+      \end{enumerate}
+    \end{enumerate}
+  \end{enumerate}
+  \item (OR) Zablokowanie przepływu datagramów między stronami
+    \begin{enumerate}[label*=\arabic*.]
+      \item Zablokowanie dostępu do sieci jednego z komputerów
+      \item Spowodowanie braku wychodzenia datagramów z jednego z komputerów
+      \item Spowodowanie braku odbioru datagramów w jednym z komputerów
+      \item Zablokowanie przepływu w "wąskim gardle"  - na przykład na ruterze jednego z komputerów
+    \end{enumerate}
+  \item (OR) Wywołanie błędu protokołu TFTP (error)
+  \begin{enumerate}[label*=\arabic*.]
+    \item (OR) Wywołanie sytuacji w której nie można wykonać żądania TFTP
+    \begin{enumerate}[label*=\arabic*.]
+      \item Usunięcie lub zmiana nazwy któregoś pliku konfiguracyjnego
+      \item Usnunięcie lub zmiana nazwy użytkownika
+    \end{enumerate}
+    \item (OR) Przesłanie dodatkowej złej (składniowo) paczki z informacjami
+    \begin{enumerate}[label*=\arabic*.]
+      \item Wysłanie paczki z innego komputera
+      \item Spowodowanie w komputerze uruchamiajacym wysłania złej paczki
+    \end{enumerate}
+    \item (OR) Spowodowanie braku dostępnych surowców
+    \begin{enumerate}[label*=\arabic*.]
+      \item (OR) Spowodowanie przepełnienia dysku
+      \begin{enumerate}[label*=\arabic*.]
+	\item Wysłanie do komputera uruchamiającego lub uruchamianego dużej liczby danych zapychających dysk
+	\item Zmniejszenie wielkości całkowitej dysku poprzez wywołanie błędu w odczycie jego wielkości lub zabranie części pamięci z komputera
+      \end{enumerate}
+      \item (OR) Spowodowanie odmowy dostępu w trakcie uruchamiania
+      \begin{enumerate}[label*=\arabic*.]
+	\item Wysłanie sztucznego sygnału odmowy dostępu z innego komputera
+	\item Zmiana uprawnień w którymś z potrzebnych plików
+      \end{enumerate}    
+    \end{enumerate}
+  \end{enumerate}
+  \item (AND) Spowodowanie wystartowania systemu operacyjnego z pewnymi zmianami (aby stworzyć luki bezpieczeństwa lub utrudnić korzystanie z systemu)
+  \begin{enumerate}[label*=\arabic*.]
+    \item Znalezienie miejsc w plikach bootujących które odpowiadają za ważne pod względem ochrony informacje (jak ustawienie haseł)
+    \item (OR) Wprowadzenie zmian zgodnie z wygenerowanymi "poprawkami"
+    \begin{enumerate}[label*=\arabic*.]
+      \item Nadpisanie plików lub protokołu startowania systemu na serwerze (komputerze uruchamiającym)
+      \item (AND) Przejęcie komunikacji i przesłanie zmienionych danych (rozgałęzienie jak w 1.2.)
+    \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
+
+
+
+
+\end{document}

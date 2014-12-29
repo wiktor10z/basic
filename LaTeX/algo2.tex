@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501 group 1.
+\newline\newline
+1.\newline
+belonging to NP\newline
+certificate$\rightarrow$ coordinates of corners of rectangles (enough to have top left and bottom right).\newline
+verifier$\rightarrow$ for every rectangle check if the coordinates are within bounds of the floor and for every pair check whether the rectangles coincide.
+If all coordinates are valid and there is no such pair, then return true, otherwise false.\newline
+%
+NP-hardness(by reduction of Set Partition)\newline
+Having a set of integers $S$ if $\sum\limits_{s_i\in S}s_i$ is even then for every such integer we take a rectangle with dimensions $(3\cdot s_i)\times 1$, and we take the floor of dimensions 
+$(\frac{3}{2}\sum\limits_{s_i\in S}s_i)\times 2$. If the sum was even we return the result of our floor problem, otherwise we return false.
+Rectangles must be "laid horizonatally", because their first dimension is $\ge3>2=$second dimension of the floor, therefore every tile must lay in exacly one row which denotes the partition.
+Problem is NP- hard as it belonging to P would induce belonging of other (known to be NP-complete) problem to P.\newline\newline
+%
+2.a)\newline
+$S_{i,j}=${set of all vertices of subtree of i-th tree with $v_j$ as root}\newline
+Program:
+minimalize $\sum\limits_{i=1}^{2}\sum\limits_{j=1}^{n}x_{i,j}$\newline
+constraints:\newline
+for $i\in\{1,2\},\forall_{j=1..n}\sum\limits_{v_k\in S_{i,j}}x_{i,k}\ge b_i(v_j)$\newline
+for $i\in\{1,2\},\forall_{j=1..n}$ $0\le x_{i,j}\le 1,$ $x_{i,j}\in\mathbb{Z}$\newline
+b) Proof of total unimodularity of the matrix.\newline
+By induction: submatrices of size 1 contain either 0 or 1, and the same determinant, and matrices of size $2\times 2$ contains only 0's and 1's, and so they can only have determinant of -1,0 or 1\newline
+The big matrix A has n columns -one for every vertex and 2n rows n for first tree, and n for the second, each having one for every vertex.
+If in the small $k\times k$ matrix there are two rows coresponding to thetwo vertices of the same tree, of which one is ancestor of the second one, then in every column in which first has 0's the second also has 0's
+and where second has 1's first has 1's also.
+Using the Laplace's formula over the row of the ancestor, and the columns in which descedant has 1's for every such two columns (and the choosen before two rows) we have the same submatrix which is used once in the formula
+multiplied by 1, and once multiplied by -1, which means, that sum over all the products of the Laplace's formula containing those elements from the ancestor's row is equal to 0, which means, that changing those elements from
+1 to 0 wouldn't change the determinant of the matrix repeating that untill there is no such pair of vertices from the same tree in which both have 1 in the same column we aquire a matrix, where every column contains
+at most two 1's (one for every tree). If there exists such a column (or row), where there is only one from Laplace's formula by induction we get that the determinant is ok, if there exist such which has no 1's then the determinant is 0.
+No assuming, there are no such columns, which means that the matric is lineary dependent (as sum over rows from first tree and rows from the second tree multiplied by -1 is equal to 0-vector).
+Because the matrix of the linear program is totally unimodular, then from the theorem from the exercises (by the Kramer's Rule) every vertex of the polytope from the program's relaxation have all the coefficients integral.
+\end{document}
