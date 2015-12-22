@@ -1,0 +1,5 @@
+filenamewp="${1%.*}"
+filename="${filenamewe##*/}"
+path="${1%/*}"
+./Latc_frontend $1
+
