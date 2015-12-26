@@ -13,8 +13,6 @@ import Latte.Lex
 import Latte.Par
 import Latte.ErrM
 
-
-
 type Val = Maybe (Either (Either String Bool) Integer)
 
 type Env = Map.Map String ((Int,Int),Integer,Int)

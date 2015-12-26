@@ -1,4 +1,4 @@
-module Main(main) where
+module Latc_frontend where
 
 import Data.Maybe
 import Control.Monad.Reader
@@ -86,14 +86,14 @@ checkArgs [] = ask
 	 
 	 
 
-insertVar :: Type -> Val -> ((Int,Int),String,Int) -> [Item]-> StEnv Env
+insertVar :: Type -> Val -> ((Int,Int),String,Int) -> [Item]-> StEnv (Env,[Item])
 insertVar t val (l,name,level) its = do
 	st <- getSt	
 	loc <- newLoc
 	let s = Map.insert loc (t,val) st
 	putSt s
-	env2 <- (local (Map.insert name (l,loc,level)) (checkDecl t its level))
-	return env2
+	(local (Map.insert name (l,loc,level)) (checkDecl t its level))
+	
 
 
 
@@ -118,7 +118,7 @@ duplicateAndAssVar name val newlevel b= do
 
 
 
-checkDecl :: Type -> [Item] -> Int -> StEnv Env
+checkDecl :: Type -> [Item] -> Int -> StEnv (Env,[Item])
 
 checkDecl t ((Init (PIdent ((x,y),name)) exp):its) level = do
 	env <- ask
@@ -126,13 +126,17 @@ checkDecl t ((Init (PIdent ((x,y),name)) exp):its) level = do
 	case t of 
 		Void -> error ("error in line "++show(x)++", column "++show(y)++" variable cannot be of void type")
 		_ -> do
-			(type2,val,_) <- checkExpTypeVal exp
+			(type2,val,nexp) <- checkExpTypeVal exp
 			if type2==t
 				then case (Map.lookup name env) of
 					Just ((x1,y1),_,level2) -> if level==level2
 						then error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" redefined\n previously defined in line "++show(x1)++", column "++show(y1))	
-						else insertVar t val ((x,y),name,level) its
-					_ -> insertVar t val ((x,y),name,level) its
+						else do
+							(env2,nits) <- insertVar t val ((x,y),name,level) its
+							return (env2,((Init (PIdent ((x,y),name)) nexp):nits))
+					_ -> do
+						(env2,nits) <- insertVar t val ((x,y),name,level) its
+						return (env2,((Init (PIdent ((x,y),name)) nexp):nits))		
 				else error ("error in line "++show(x)++", column "++show(y)++" assigment to variable "++show(name)++" of different type")
 
 checkDecl t ((NoInit (PIdent ((x,y),name))):its) level = do
@@ -143,10 +147,16 @@ checkDecl t ((NoInit (PIdent ((x,y),name))):its) level = do
 		_ -> case (Map.lookup name env) of
 			Just ((x1,y1),_,level2) -> if level==level2
 											then error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" redefined\n previously defined in line "++show(x1)++", column "++show(y1))	
-											else insertVar t (defaultVal t) ((x,y),name,level) its
-			_ -> insertVar t (defaultVal t) ((x,y),name,level) its
-
-checkDecl _ [] _ = ask
+											else do
+												(env2,nits) <- insertVar t (defaultVal t) ((x,y),name,level) its
+												return (env2,((NoInit (PIdent ((x,y),name))):nits))
+			_ -> do
+				(env2,nits) <- insertVar t (defaultVal t) ((x,y),name,level) its
+				return (env2,((NoInit (PIdent ((x,y),name))):nits))
+				
+checkDecl _ [] _ = do
+	env <- ask
+	return (env,[])
 
 
 
@@ -158,8 +168,8 @@ checkStmt Empty _ _ _ _ = do
 	return (env,Empty)
 
 checkStmt (Decl t l) _ level _ _ = do
-	env <- checkDecl t l level
-	return (env,(Decl t l))
+	(env,nl) <- checkDecl t l level
+	return (env,(Decl t nl))
 
 checkStmt (Ass (PIdent ((x,y),name)) exp) _ _ slevel b= do
 	env <- ask
@@ -355,8 +365,6 @@ checkFunction (FnDef t (PIdent ((x,y),name)) args (Block bl)) = do
 		else return (FnDef t (PIdent ((x,y),name)) args (Block nbl))
 
 
-
-
 checkRest :: [TopDef] -> StEnv [TopDef]
 checkRest (f:fs) = do
 	nf <- checkFunction f
@@ -364,52 +372,3 @@ checkRest (f:fs) = do
 	return (nf:nfs)
 
 checkRest [] = return []
-
-
-
-
-compileFunction :: TopDef -> StEnv ()
-compileFunction (FnDef t (PIdent ((x,y),name)) args block) = return ()
-
-
-compileFunctions ::[TopDef] ->StEnv ()
-
-compileFunctions (f:fs) = do
-	compileFunction f
-	compileFunctions fs
-	return ()
-	
-compileFunctions [] = return ()
-
-compileProgram :: Program -> StEnv ()
-compileProgram (Program p) = do
-	env <- checkFunctionSignatures p
-	np <- (local (\x ->env) (checkRest p))
-	error ((show p) ++"\n\n" ++(show np))
-	compileFunctions p
-	return ()
-
-compileWhole :: Program -> IO ()
-compileWhole prog = do
-	(_,(st,_)) <- runStateT (runReaderT (compileProgram prog) predefinedEnv) predefinedSt
-	hPutStrLn stderr ("OK\n"++(show st))
-	return ()
-
-
-lexerErrCheck :: Err Program -> IO()
-lexerErrCheck (Ok e) = do
-	Control.Exception.catch (compileWhole e) (\msg -> hPutStrLn stderr $ "ERROR\n"++show(msg::Control.Exception.SomeException))
-	exitWith (ExitFailure 1)
-
-lexerErrCheck (Bad s) = do
-	hPutStrLn stderr ("ERROR\n" ++ s)
-	exitWith (ExitFailure 1)
-
-
-executeOnFile :: String -> IO()
-executeOnFile s = lexerErrCheck (pProgram (myLexer s))
-
-main = do
-	args <- getArgs
-	case args of
-		[f] -> readFile f >>= executeOnFile
