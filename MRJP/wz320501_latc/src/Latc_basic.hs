@@ -46,3 +46,12 @@ defaultVal :: Type -> Val
 defaultVal Int = Just (Right 0)
 defaultVal Bool = Just (Left (Right False))
 defaultVal Str = Just (Left (Left ""))
+
+defaultValExpr :: Type -> Expr
+defaultValExpr Int = ELitInt 0
+defaultValExpr Bool = ELitFalse
+defaultValExpr Str = EString ""
+
+
+
+

@@ -149,10 +149,10 @@ checkDecl t ((NoInit (PIdent ((x,y),name))):its) level = do
 											then error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" redefined\n previously defined in line "++show(x1)++", column "++show(y1))	
 											else do
 												(env2,nits) <- insertVar t (defaultVal t) ((x,y),name,level) its
-												return (env2,((NoInit (PIdent ((x,y),name))):nits))
+												return (env2,((Init (PIdent ((x,y),name)) (defaultValExpr t)):nits))
 			_ -> do
 				(env2,nits) <- insertVar t (defaultVal t) ((x,y),name,level) its
-				return (env2,((NoInit (PIdent ((x,y),name))):nits))
+				return (env2,((Init (PIdent ((x,y),name)) (defaultValExpr t)):nits))
 				
 checkDecl _ [] _ = do
 	env <- ask
@@ -357,7 +357,7 @@ checkFunction :: TopDef -> StEnv TopDef
 checkFunction (FnDef t (PIdent ((x,y),name)) args (Block bl)) = do
 	env <- checkArgs args
 	(b,nbl) <- (local (\x -> env) (checkBlock bl t 2 0 True))			--nbl - nowe wnętrze funkcji
-	--error ((show bl) ++"\n\n" ++(show nbl))
+	error ((show bl) ++"\n\n" ++(show nbl))
 	case t of
 	 Void -> return (FnDef t (PIdent ((x,y),name)) args (Block nbl))
 	 _ -> if b
