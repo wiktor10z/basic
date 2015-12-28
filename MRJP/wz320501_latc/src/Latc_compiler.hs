@@ -365,45 +365,31 @@ toCode4Block (stm:stmts) = do
 toCode4Block [] = return ()
 
 
-toCode4 :: TopDef -> StEnv4 [Code4Block]		--TODO inne, topdefy, może potrzebne spisanie instrukcji do ostatniego bloku - można by w return, ale dla void może nie być return 
-toCode4 (FnDef _ (PIdent (_,name)) _ (Block bl)) = do
+toCode4TopDef :: TopDef -> StEnv4 [Code4Block]		--TODO inne, topdefy, może potrzebne spisanie instrukcji do ostatniego bloku - można by w return, ale dla void może nie być return 
+toCode4TopDef (FnDef _ (PIdent (_,name)) _ (Block bl)) = do
 	put (name,1,name++"0",0,0,[],[])
 	toCode4Block bl
 	(_,_,_,_,_,bl4,inst4) <- get
 	if (null inst4)
 		then return bl4
 		else do
-			writeBlock	--TODO generator numerów labeli - nazwa funkcji w stanie?
---TODO tutaj wstawić końcówkę do ostatniego bloku (jeśli niepusta)
+			writeBlock
 
 
-compileFunction :: TopDef -> StEnv ()
-compileFunction (FnDef t (PIdent ((x,y),name)) args block) = return ()
-
-
-compileFunctions ::[TopDef] ->StEnv ()
-
-compileFunctions (f:fs) = do
-	--compileFunction f
-	let (code42,_) = runState (runReaderT (toCode4 f) (Map.empty)) ("",0,"",0,0,[],[])	--TODO zamiast empty argumenty
-	error (show code42)
-	return ()
+toCode4 :: [TopDef] -> [Code4Block]
+toCode4 (f:fs) = 
+	let (code41,_) = runState (runReaderT (toCode4TopDef f) (Map.empty)) ("",0,"",0,0,[],[])
+	in let code42 = toCode4 fs
+	in code41++code42
 	
-compileFunctions [] = return ()
+toCode4 [] = []
 
-compileProgram :: Program -> StEnv ()
-compileProgram (Program p) = do
-	env <- checkFunctionSignatures p
-	np <- (local (\x ->env) (checkRest p))
-	--error ((show p) ++"\n\n" ++(show np))
-	--toCode4 np
-	compileFunctions p				--TODO to ma chodzić na nowym np - p w celach debugowania
-	return ()
 
 compileWhole :: Program -> IO ()
-compileWhole prog = do
-	(_,(st,_)) <- runStateT (runReaderT (compileProgram prog) predefinedEnv) predefinedSt
-	hPutStrLn stderr ("OK\n")
+compileWhole (Program prog) = do
+	(nprog,(st,_)) <- runStateT (runReaderT (checkProg prog) predefinedEnv) predefinedSt
+	let code4 = toCode4 prog
+	hPutStrLn stderr ("OK\n"++(show code4))
 	return ()
 
 

@@ -351,8 +351,6 @@ whileStFixPoint stm ft level b = do
 		else whileStFixPoint stm ft level b
 
 
-
-
 checkFunction :: TopDef -> StEnv TopDef
 checkFunction (FnDef t (PIdent ((x,y),name)) args (Block bl)) = do
 	env <- checkArgs args
@@ -372,3 +370,10 @@ checkRest (f:fs) = do
 	return (nf:nfs)
 
 checkRest [] = return []
+
+
+checkProg :: [TopDef]-> StEnv [TopDef]
+checkProg p = do
+	env <- checkFunctionSignatures p
+	np <- (local (\x ->env) (checkRest p))
+	return np
