@@ -14,7 +14,6 @@ import Latte.Lex
 import Latte.Par
 import Latte.ErrM
 import Latc_basic
-import Latc_ExpTypeVal
 import Latc_frontend
 
 type Code4Block = (String,[Code4Instruction])
@@ -51,7 +50,7 @@ data ValVar4 =
     deriving (Eq,Ord,Show)	
 
 type Env4 = Map.Map String Integer
-type St4 = (String,Integer,Integer,Integer,[Code4Block],[Code4Instruction])	--nazwa, labele, zmienne, tempy
+type St4 = (String,Integer,String,Integer,Integer,[Code4Block],[Code4Instruction])	--nazwa, labele, zmienne, tempy
 
 type StEnv4 = ReaderT Env4 (State St4)
 
@@ -60,38 +59,37 @@ type StEnv4 = ReaderT Env4 (State St4)
  
 nextTemp :: StEnv4 Integer
 nextTemp = do
-	(name,labels,vars,temps,blocks,instrs) <- get
-	put (name,labels,vars,temps+1,blocks,instrs)
+	(name,labels,nextlabel,vars,temps,blocks,instrs) <- get
+	put (name,labels,nextlabel,vars,temps+1,blocks,instrs)
 	return temps
 
 newVar :: StEnv4 Integer
 newVar = do
-	(name,labels,vars,temps,blocks,instrs) <- get
-	put (name,labels,vars+1,temps,blocks,instrs)
+	(name,labels,nextlabel,vars,temps,blocks,instrs) <- get
+	put (name,labels,nextlabel,vars+1,temps,blocks,instrs)
 	return vars
 
 addInstructions :: [Code4Instruction] -> StEnv4 ()
 addInstructions instrs2 = do
-	(name,labels,vars,temps,blocks,instrs1) <- get
-	put (name,labels,vars,temps,blocks,instrs1++instrs2)
+	(name,labels,nextlabel,vars,temps,blocks,instrs1) <- get
+	put (name,labels,nextlabel,vars,temps,blocks,instrs1++instrs2)
 
-writeBlock :: String -> StEnv4 [Code4Block]
-writeBlock label = do
-	(name,labels,vars,temps,blocks,instrs) <- get
-	put (name,labels,vars,temps,blocks ++ [(label,instrs)],[])
-	return (blocks ++ [(label,instrs)])
+writeBlock :: StEnv4 [Code4Block]
+writeBlock = do
+	(name,labels,nextlabel,vars,temps,blocks,instrs) <- get
+	put (name,labels,nextlabel,vars,temps,blocks ++ [(nextlabel,instrs)],[])
+	return (blocks ++ [(nextlabel,instrs)])
 
-getLabel :: StEnv4 String		--TODOTODO trzeba zmienić by dało się spytać bez zmieniania
+getLabel :: StEnv4 String
 getLabel = do
-	(name,labels,_,_,_,_) <- get
+	(name,labels,nextlabel,vars,temps,blocks,instrs) <- get
+	put (name,labels+1,nextlabel,vars,temps,blocks,instrs)
 	return (name ++ (show labels))
 
-getLabel2 :: StEnv4 String		--TODOTODO trzeba zmienić by dało się spytać bez zmieniania
-getLabel2 = do
-	(name,labels,vars,temps,blocks,instrs) <- get
-	put (name,labels+1,vars,temps,blocks,instrs)
-	return (name ++ (show labels))
-
+setLabel :: String -> StEnv4 ()
+setLabel labelname = do
+	(name,labels,_,vars,temps,blocks,instrs) <- get
+	put (name,labels,labelname,vars,temps,blocks,instrs)
 
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -141,10 +139,6 @@ toCode4Decl _ [] = do
 	env <- ask
 	return (env,[])
 
-
-
---TODO NInit - tutaj albo usunąć wcześniej - we frontendzie
-
 toCode4Stmt :: Stmt -> StEnv4 Env4
 
 toCode4Stmt Empty = ask
@@ -170,9 +164,19 @@ toCode4Stmt (Ass (PIdent (_,varname)) exp) = do
 					addInstructions ((init inst4) ++[toCode4Ass varnum (last inst4)])
 					ask
 
---toCode4Stmt (Incr (PIdent (_,varname))) = return [] --TODO
+toCode4Stmt (Incr (PIdent (_,varname))) = do
+	env <- ask
+	case Map.lookup varname env of
+		Just varnum -> do
+			addInstructions [OpV Add4 (Var4 varnum) (Var4 varnum) (Int4 1)]
+			ask
 
---toCode4Stmt (Decr (PIdent (_,varname))) = return [] --TODO
+toCode4Stmt (Decr (PIdent (_,varname))) = do
+	env <- ask
+	case Map.lookup varname env of
+		Just varnum -> do
+			addInstructions [OpV Sub4 (Var4 varnum) (Var4 varnum) (Int4 1)]
+			ask
 
 toCode4Stmt (Ret _ exp) = do	--za tym nie ma co wrzucać, bo i tak koniec
 	(inst4,temp) <-toCode4Expr exp
@@ -184,40 +188,65 @@ toCode4Stmt (VRet _) = do
 	ask
 
 toCode4Stmt (Cond (PIf _) exp stm) = do
-	label1 <- getLabel2
-	condlabel <- getLabel2
+	condlabel <- getLabel
 	addInstructions [Goto4 condlabel]
-	writeBlock label1
+	writeBlock
 	(inst4,temp4) <- toCode4Expr exp	-- warunek typu bool - może być zmienna lub temp
-	addInstructions inst4
 	truelabel <- getLabel
+	endlabel <- getLabel	
+	setLabel truelabel
 	toCode4Stmt stm	
-	endlabel <- getLabel	--TODOTODOTODO trzeba zrobić tak, żeby nie zniszczyć labelu - nie użyć innego
 	addInstructions [Goto4 endlabel]
-	writeBlock truelabel		
+	writeBlock		
+	setLabel condlabel		
+	addInstructions inst4
 	addInstructions [If4 temp4 truelabel,Goto4 endlabel]
-	writeBlock condlabel
-			--środowisko się nie zmieniło bo nie ma deklaracji w if-ie
-	--TODO jak był return to nie ma potrzeby dawać po nim Goto
+	writeBlock	
+	setLabel endlabel
 	ask
-	--jeżeli kończył się returnem, to nie ma sensu dodawać goto, wpp. dodać goto endlabel
-	
-	--kod dla true -- może zmienić nazwę bloku finally
-	
-	
-	
-	--wygeneruj kod dla bloku w środku
-	--wygeneruj label dla bloku za końcem
-	--daj goto nowy blok, zamknij blok
-
---TODOTODO conditionale
+	--TODO jak był return to nie ma potrzeby dawać po nim Goto
 
 
+toCode4Stmt (CondElse (PIf _) exp stm stm2) = do
+	condlabel <- getLabel
+	addInstructions [Goto4 condlabel]
+	writeBlock
+	(inst4,temp4) <- toCode4Expr exp
+	truelabel <- getLabel
+	falselabel <- getLabel
+	endlabel <- getLabel
+	setLabel truelabel
+	toCode4Stmt stm	
+	addInstructions [Goto4 endlabel]
+	writeBlock
+	setLabel falselabel
+	toCode4Stmt stm2
+	addInstructions [Goto4 endlabel]
+	writeBlock	
+	setLabel condlabel		
+	addInstructions inst4
+	addInstructions [If4 temp4 truelabel,Goto4 falselabel]
+	writeBlock	
+	setLabel endlabel
+	ask
 
-
-
-
-
+toCode4Stmt (While (PWhile _) exp stm) = do
+	condlabel <- getLabel
+	addInstructions [Goto4 condlabel]
+	writeBlock
+	(inst4,temp4) <- toCode4Expr exp
+	truelabel <- getLabel
+	endlabel <- getLabel
+	setLabel truelabel
+	toCode4Stmt stm	
+	addInstructions [Goto4 condlabel]
+	writeBlock		
+	setLabel condlabel		
+	addInstructions inst4
+	addInstructions [If4 temp4 truelabel,Goto4 endlabel]
+	writeBlock	
+	setLabel endlabel
+	ask
 
 toCode4Stmt (SExp exp) = do		--TODO można zamienić OpV na OpE
 	(inst4,_) <- toCode4Expr exp
@@ -236,13 +265,13 @@ toCode4Block [] = return ()
 
 toCode4 :: TopDef -> StEnv4 [Code4Block]		--TODO inne, topdefy, może potrzebne spisanie instrukcji do ostatniego bloku - można by w return, ale dla void może nie być return 
 toCode4 (FnDef _ (PIdent (_,name)) _ (Block bl)) = do
-	put (name,0,0,0,[],[])
+	put (name,1,name++"0",0,0,[],[])
 	toCode4Block bl
-	(_,_,_,_,bl4,inst4) <- get
+	(_,_,_,_,_,bl4,inst4) <- get
 	if (null inst4)
 		then return bl4
 		else do
-			writeBlock (name++" last")	--TODO generator numerów labeli - nazwa funkcji w stanie?
+			writeBlock	--TODO generator numerów labeli - nazwa funkcji w stanie?
 --TODO tutaj wstawić końcówkę do ostatniego bloku (jeśli niepusta)
 
 
@@ -254,7 +283,7 @@ compileFunctions ::[TopDef] ->StEnv ()
 
 compileFunctions (f:fs) = do
 	--compileFunction f
-	let (code42,_) = runState (runReaderT (toCode4 f) (Map.empty)) ("",0,0,0,[],[])	--TODO zamiast empty argumenty
+	let (code42,_) = runState (runReaderT (toCode4 f) (Map.empty)) ("",0,"",0,0,[],[])	--TODO zamiast empty argumenty
 	error (show code42)
 	return ()
 	

@@ -357,7 +357,7 @@ checkFunction :: TopDef -> StEnv TopDef
 checkFunction (FnDef t (PIdent ((x,y),name)) args (Block bl)) = do
 	env <- checkArgs args
 	(b,nbl) <- (local (\x -> env) (checkBlock bl t 2 0 True))			--nbl - nowe wnętrze funkcji
-	error ((show bl) ++"\n\n" ++(show nbl))
+	--error ((show bl) ++"\n\n" ++(show nbl))
 	case t of
 	 Void -> return (FnDef t (PIdent ((x,y),name)) args (Block nbl))
 	 _ -> if b
