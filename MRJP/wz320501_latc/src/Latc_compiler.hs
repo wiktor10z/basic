@@ -23,8 +23,10 @@ data Code4Instruction =
 	Ass4 ValVar4 ValVar4|
 	OpE Op ValVar4 ValVar4 |
 	OpV Op ValVar4 ValVar4 ValVar4 |
-	CallE String [ValVar4] |
-	CallV ValVar4 String [ValVar4] |
+	Neg4 ValVar4 ValVar4 |
+	Param4 ValVar4 |
+	CallE String Integer |	
+	CallV ValVar4 String Int |
 	Return4 ValVar4	|
 	Goto4 String |
 	If4 ValVar4 String
@@ -35,7 +37,16 @@ data Op =
 	Sub4 |
 	Mul4 |
 	Div4 |
-	Mod4 
+	Mod4 |
+	SetL4 |
+	SetG4 |
+	SetLE4 |
+	SetGE4 |
+	SetE4 |
+	SetNE4 |
+	And4 |
+	Or4 |
+	Xor4
     deriving (Eq,Ord,Show)
 
 
@@ -94,11 +105,64 @@ setLabel labelname = do
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
+toCode4App :: [Expr] -> StEnv4 [Code4Instruction]
+toCode4App (exp:exps) = do
+	(str,x) <- toCode4Expr exp
+	str2 <- toCode4App exps
+	return (str++[Param4 x]++str2)
+
+toCode4App [] = return []
 
 
 toCode4Expr :: Expr -> StEnv4 ([Code4Instruction],ValVar4)
 
-toCode4Expr (EAdd exp1 (Plus (PPlus _)) exp2) = do					--dla apply param x ... call f , n
+toCode4Expr (EVar (PIdent (_,x))) = do
+	env <- ask 
+	case Map.lookup x env of
+		Just varnum -> return ([],Var4 varnum)
+toCode4Expr (ELitInt n) = return ([],Int4 n)
+toCode4Expr ELitTrue = return ([],Bool4 True)
+toCode4Expr ELitFalse = return ([],Bool4 False)
+
+toCode4Expr (EApp (PIdent (_,name)) exps) = do
+	str <- toCode4App exps
+	temp <- nextTemp
+	return (str++[CallV (Temp4 temp) name (length exps)],(Temp4 temp))
+
+toCode4Expr (EString str) = return ([],String4 str)
+
+
+toCode4Expr (Neg (PMinus _) (ELitInt n)) = return([],Int4 (-n))
+
+toCode4Expr (Neg (PMinus _) exp) = do
+	(str,x) <- toCode4Expr exp
+	temp <- nextTemp
+	return (str++[Neg4 (Temp4 temp) x],(Temp4 temp))
+
+toCode4Expr (Not (PNot _) exp) = do
+	(str,x) <- toCode4Expr exp
+	temp <- nextTemp
+	return (str++[OpV Xor4 (Temp4 temp) x (Bool4 True)],(Temp4 temp))
+
+toCode4Expr (EMul exp1 (Times (PTimes _)) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV Mul4 (Temp4 temp) x1 x2],(Temp4 temp))
+	
+toCode4Expr (EMul exp1 (Div (PDiv _)) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV Div4 (Temp4 temp) x1 x2],(Temp4 temp))
+	
+toCode4Expr (EMul exp1 (Mod (PMod _)) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV Mod4 (Temp4 temp) x1 x2],(Temp4 temp))
+	
+toCode4Expr (EAdd exp1 (Plus (PPlus _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- nextTemp
@@ -109,16 +173,54 @@ toCode4Expr (EAdd exp1 (Minus (PMinus _)) exp2) = do
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- nextTemp
 	return (str1++str2++[OpV Sub4 (Temp4 temp) x1 x2],(Temp4 temp))
-	--TODO reszta operatorów - można później - to tylko praca odtwórcza, te powinny wystarczyć do celów programowania
 	
-toCode4Expr (EVar (PIdent (_,x))) = do
-	env <- ask 
-	case Map.lookup x env of
-		Just varnum -> return ([],Var4 varnum)
-toCode4Expr (ELitInt n) = return ([],Int4 n)
-toCode4Expr ELitTrue = return ([],Bool4 True)
-toCode4Expr ELitFalse = return ([],Bool4 False)
-toCode4Expr (EString str) = return ([],String4 str)
+toCode4Expr (ERel exp1 (LTH (PLTH _)) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV SetL4 (Temp4 temp) x1 x2],(Temp4 temp))	
+	
+toCode4Expr (ERel exp1 (LE (PLE _)) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV SetLE4 (Temp4 temp) x1 x2],(Temp4 temp))	
+	
+toCode4Expr (ERel exp1 (GTH (PGTH _)) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV SetG4 (Temp4 temp) x1 x2],(Temp4 temp))	
+	
+toCode4Expr (ERel exp1 (GE (PGE _)) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV SetGE4 (Temp4 temp) x1 x2],(Temp4 temp))
+	
+toCode4Expr (ERel exp1 (EQU (PEQU _)) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV SetE4 (Temp4 temp) x1 x2],(Temp4 temp))	
+	
+toCode4Expr (ERel exp1 (NE (PNE _)) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV SetNE4 (Temp4 temp) x1 x2],(Temp4 temp))
+
+toCode4Expr (EAnd exp1 (PAnd _) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV And4 (Temp4 temp) x1 x2],(Temp4 temp))
+
+toCode4Expr (EOr exp1 (POr _) exp2) = do
+	(str1,x1) <- toCode4Expr exp1
+	(str2,x2) <- toCode4Expr exp2	
+	temp <- nextTemp
+	return (str1++str2++[OpV Or4 (Temp4 temp) x1 x2],(Temp4 temp))
 
 
 toCode4Ass :: Integer -> Code4Instruction -> Code4Instruction
