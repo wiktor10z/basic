@@ -56,8 +56,9 @@ data ValVar4 =
 	Bool4 Bool |
 	String4 String |
 	Temp4 Integer |
-	Var4 Integer |				--może też var integer - jednoznaczne nazwy, ale trzeba też pamiętać w jakimś stanie, aby rozróżniać który który oraz w envie który aktualny
-	Void4
+	Var4 Integer |		
+	Rej4 |
+	Void4 
     deriving (Eq,Ord,Show)	
 
 type Env4 = Map.Map String Integer
@@ -210,18 +211,42 @@ toCode4Expr (ERel exp1 (NE (PNE _)) exp2) = do
 	temp <- nextTemp
 	return (str1++str2++[OpV SetNE4 (Temp4 temp) x1 x2],(Temp4 temp))
 
-toCode4Expr (EAnd exp1 (PAnd _) exp2) = do
-	(str1,x1) <- toCode4Expr exp1
-	(str2,x2) <- toCode4Expr exp2	
-	temp <- nextTemp
-	return (str1++str2++[OpV And4 (Temp4 temp) x1 x2],(Temp4 temp))
-
 toCode4Expr (EOr exp1 (POr _) exp2) = do
-	(str1,x1) <- toCode4Expr exp1
-	(str2,x2) <- toCode4Expr exp2	
-	temp <- nextTemp
-	return (str1++str2++[OpV Or4 (Temp4 temp) x1 x2],(Temp4 temp))
-
+	(inst1,x1) <- toCode4Expr exp1
+	truelabel <- getLabel
+	falselabel <- getLabel
+	endlabel <- getLabel
+	addInstructions [If4 x1 truelabel,Goto4 falselabel]
+	writeBlock
+	setLabel truelabel
+	addInstructions [Ass4 Rej4 (Bool4 True),Goto4 endlabel]
+	writeBlock
+	setLabel falselabel	
+	(inst2,x2) <- toCode4Expr exp2
+	addInstructions [Ass4 Rej4 x2,Goto4 endlabel]
+	writeBlock
+	setLabel endlabel
+	temp<-nextTemp
+	return ([Ass4 (Temp4 temp) Rej4],(Temp4 temp))
+	
+toCode4Expr (EAnd exp1 (PAnd _) exp2) = do
+	(inst1,x1) <- toCode4Expr exp1
+	truelabel <- getLabel
+	falselabel <- getLabel
+	endlabel <- getLabel
+	addInstructions [If4 x1 truelabel,Goto4 falselabel]
+	writeBlock
+	setLabel truelabel	
+	(inst2,x2) <- toCode4Expr exp2
+	addInstructions [Ass4 Rej4 x2,Goto4 endlabel]
+	writeBlock	
+	setLabel falselabel
+	addInstructions [Ass4 Rej4 (Bool4 False),Goto4 endlabel]
+	writeBlock
+	setLabel endlabel
+	temp<-nextTemp
+	return ([Ass4 (Temp4 temp) Rej4],(Temp4 temp))	
+	
 
 toCode4Ass :: Integer -> Code4Instruction -> Code4Instruction
 toCode4Ass varnum (OpV op (Temp4 _) x1 x2) = (OpV op (Var4 varnum) x1 x2)
@@ -357,7 +382,7 @@ toCode4Stmt (SExp exp) = do		--TODO można zamienić OpV na OpE
 
 
 
-toCode4Block :: [Stmt] -> StEnv4 ()		--TODO inne
+toCode4Block :: [Stmt] -> StEnv4 ()
 toCode4Block (stm:stmts) = do
 	env4 <- toCode4Stmt stm
 	(local (\x -> env4) (toCode4Block stmts))
