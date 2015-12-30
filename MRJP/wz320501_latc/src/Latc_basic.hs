@@ -52,6 +52,8 @@ defaultValExpr Int = ELitInt 0
 defaultValExpr Bool = ELitFalse
 defaultValExpr Str = EString ""
 
-
-
+valSize :: Type -> Int
+valSize Int = 4
+valSize Bool = 1
+valSize Str = 8			--TODO nie wiem jeszcze jak to rozwiązać
 
