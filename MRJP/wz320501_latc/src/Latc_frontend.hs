@@ -235,7 +235,9 @@ checkBlock :: [Stmt] -> Type -> Int -> Int -> Bool -> StEnv (Bool,[Stmt])
 checkBlock ((BStmt (Block bl)):stmts) ft level slevel b = do
 	(b2,nbl) <- checkBlock bl ft (level+1) slevel b
 	(b3,nstmts) <- checkBlock stmts ft level level b2
-	return (b3,((BStmt (Block nbl)):nstmts))
+	if b2
+		then return (b3,((BStmt (Block nbl)):nstmts))
+		else return (False,[BStmt (Block nbl)])
 
 checkBlock ((Ret (PReturn ((x,y),_)) exp):stmts) ft level _ _ = case ft of
 	Void -> error ("error in line "++show(x)++", column "++show(y)++"return with argument in procedure")
@@ -263,7 +265,9 @@ checkBlock ((Cond (PIf ((x,y),_)) exp stm):stmts) ft level slevel b= do
 				Just (Left (Right True)) -> do 
 					(b2,[nstm]) <- checkBlock [stm] ft level slevel b			--TODO ja wiem ale kompilator może nie, że to będzie lista jedno elementowa
 					(b3,nstmts) <- checkBlock stmts ft level level b2
-					return (b3,(nstm:nstmts))
+					if b2
+						then return (b3,(nstm:nstmts))				
+						else return (False,[nstm])
 				Just (Left (Right False)) -> do
 					checkBlock [stm] ft (level+1) (level+1) False
 					checkBlock stmts ft level level b
@@ -285,17 +289,23 @@ checkBlock ((CondElse (PIf ((x,y),_)) exp stm1 stm2):stmts) ft level slevel b = 
 						(b2,[nstm]) <- checkBlock [stm1] ft level slevel b
 						checkBlock [stm2] ft (level+1) (level+1) False
 						(b3,nstmts) <- checkBlock stmts ft level level b2
-						return (b3,(nstm:nstmts))					
+						if b2
+							then return (b3,(nstm:nstmts))				
+							else return (False,[nstm])					
 					Just (Left (Right False)) -> do
 						checkBlock [stm1] ft (level+1) (level+1) False
 						(b2,[nstm]) <- checkBlock [stm2] ft level slevel b
 						(b3,nstmts) <- checkBlock stmts ft level level b2
-						return (b3,(nstm:nstmts))						
+						if b2
+							then return (b3,(nstm:nstmts))				
+							else return (False,[nstm])						
 					Nothing -> do
 						(b2,[nstm1]) <- checkBlock [stm1] ft (level+1) (level+1) b
 						(b3,[nstm2]) <- checkBlock [stm2] ft (level+1) (level+1) b
 						(b4,nstmts) <- checkBlock stmts ft level level (b2||b3)
-						return (b4,((CondElse (PIf ((x,y),"if")) nexp nstm1 nstm2):nstmts))
+						if b2||b3
+							then return (b4,((CondElse (PIf ((x,y),"if")) nexp nstm1 nstm2):nstmts))			
+							else return (False,[(CondElse (PIf ((x,y),"if")) nexp nstm1 nstm2)])
 		_ -> error ("error in line "++show(x)++", column "++show(y)++"if condition of non-boolean type")
 
 
@@ -309,17 +319,19 @@ checkBlock ((While (PWhile ((x,y),_)) exp stm):stmts) ft level slevel b = do
 			_ -> case val of 
 				Just (Left (Right False)) -> do
 					checkBlock [stm] ft (level+1) (level+1) False
-					checkBlock stmts ft level slevel b	--zwracam właśnie to
+					checkBlock stmts ft level slevel b
 				_ -> do
-					nstm <- whileStFixPoint stm ft (level+1) b				
-					(_,val,nexp) <- checkExpTypeVal exp
-					case val of
-						Just (Left (Right True)) -> do	--zwrócić while true i nic po nim
-							checkBlock stmts ft level level False
-							return (False,[(While (PWhile ((x,y),"while")) ELitTrue nstm)])
-						_ -> do
-							(b2,nstmts) <- checkBlock stmts ft level level b
-							return (False,((While (PWhile ((x,y),"while")) nexp nstm):nstmts))
+					(b2,nstm) <- whileStFixPoint stm ft (level+1) b
+					if b2	--jeśli b2 jest false, to znaczy, że już w pierwszym przebiegu nastąpi return lub wewnętrzna pewna pętla nieskończona
+						then do (_,val,nexp) <- checkExpTypeVal exp
+							case val of
+								Just (Left (Right True)) -> do
+									checkBlock stmts ft level level False
+									return (False,[(While (PWhile ((x,y),"while")) ELitTrue nstm)])
+								_ -> do
+									(b2,nstmts) <- checkBlock stmts ft level level b
+									return (b2,((While (PWhile ((x,y),"while")) nexp nstm):nstmts))
+						else return (False,[(Cond (PIf ((x,y),"if")) ELitTrue nstm)])
 		_ -> error ("error in line "++show(x)++", column "++show(y)++" while condition of non-boolean type")
 
 
@@ -341,21 +353,21 @@ checkBlock (stm:stmts) ft level slevel b = do
 checkBlock  [] _ _ _ b = return (b,[])
 
 
-whileStFixPoint :: Stmt -> Type -> Int -> Bool -> StEnv Stmt		--TODO zwróć nstmt z ostatniego 
+whileStFixPoint :: Stmt -> Type -> Int -> Bool -> StEnv (Bool,Stmt)
 whileStFixPoint stm ft level b = do
 	st <- getSt
-	(_,[nstmt]) <- checkBlock [stm] ft level level b
-	st2 <- getSt
-	if Map.isSubmapOf st st2
-		then return nstmt
-		else whileStFixPoint stm ft level b
-
+	(b2,[nstmt]) <- checkBlock [stm] ft level level b
+	if b2
+		then do st2 <- getSt
+			if Map.isSubmapOf st st2
+				then return (b2,nstmt)
+				else whileStFixPoint stm ft level b2
+		else return (False,nstmt)
 
 checkFunction :: TopDef -> StEnv TopDef
 checkFunction (FnDef t (PIdent ((x,y),name)) args (Block bl)) = do
 	env <- checkArgs args
-	(b,nbl) <- (local (\x -> env) (checkBlock bl t 2 0 True))			--nbl - nowe wnętrze funkcji
-	--error ((show bl) ++"\n\n" ++(show nbl))
+	(b,nbl) <- (local (\x -> env) (checkBlock bl t 2 0 True))
 	case t of
 	 Void -> return (FnDef t (PIdent ((x,y),name)) args (Block nbl))
 	 _ -> if b

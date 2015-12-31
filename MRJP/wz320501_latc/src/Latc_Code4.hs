@@ -54,7 +54,7 @@ data ValVar4 =
 	Bool4 Bool |
 	String4 String |
 	Temp4 Integer |
-	Var4 Int |		
+	Var4 Int |	--TODO można by pamiętać jezcze rozmiar/typ		
 	Rej4 |
 	Void4 
     deriving (Eq,Ord,Show)	
@@ -64,7 +64,7 @@ type St4 = (String,Integer,String,Int,Integer,[Code4Block],[Code4Instruction])	-
 
 type StEnv4 = ReaderT Env4 (State St4)
 
-
+--TODOTODOTODOTODOTODOTODOTODOTODO lepsze zarządzanie temp
 --TODO lepsze kolokacje między blokami - graf przepływu do alokacji rejestrów i optymalizacji
 
 
@@ -79,7 +79,7 @@ newVar t = do
 	let size = valSize t
 	(name,labels,nextlabel,vars,temps,blocks,instrs) <- get
 	put (name,labels,nextlabel,vars+size,temps,blocks,instrs)
-	return vars
+	return (vars+size)
 
 addInstructions :: [Code4Instruction] -> StEnv4 ()
 addInstructions instrs2 = do
@@ -260,6 +260,7 @@ toCode4Expr (EAnd exp1 (PAnd _) exp2) = do
 
 toCode4Ass :: Int -> Code4Instruction -> Code4Instruction
 toCode4Ass varnum (OpV op (Temp4 _) x1 x2) = (OpV op (Var4 varnum) x1 x2)
+toCode4Ass varnum (CallV t _ _) = Ass4 (Var4 varnum) t
 toCode4Ass varnum (Empty4 x) = Ass4 (Var4 varnum) x
 
 
@@ -315,7 +316,7 @@ toCode4Stmt (Decr (PIdent (_,varname))) = do
 			addInstructions [OpV Sub4 (Var4 varnum) (Var4 varnum) (Int4 1)]
 			ask
 
-toCode4Stmt (Ret _ exp) = do	--za tym nie ma co wrzucać, bo i tak koniec
+toCode4Stmt (Ret _ exp) = do
 	(inst4,temp) <-toCode4Expr exp
 	addInstructions (inst4 ++[Return4 temp])
 	ask
@@ -409,18 +410,20 @@ code4Arguments args =
 				(Arg t (PIdent (_,name))) -> (Map.insert name ((-1)*(length args)) env1)
 
 
-toCode4TopDef :: TopDef -> StEnv4 [Code4Block]		--TODO inne, topdefy, może potrzebne spisanie instrukcji do ostatniego bloku - można by w return, ale dla void może nie być return 
+toCode4TopDef :: TopDef -> StEnv4 Code4Function
 toCode4TopDef (FnDef _ (PIdent (_,name)) args (Block bl)) = do
 	put (name,1,name++"0",0,0,[],[])
 	let env4 = code4Arguments args
 	(local (\x -> env4) (toCode4Block bl))
-	(_,_,_,_,_,bl4,inst4) <- get
-	if (null inst4)
-		then return bl4
+	(_,_,_,vars,_,bl4,inst4) <- get
+	if ((null inst4)&&(not (null bl4)))
+		then return (name,bl4,vars)
 		else do
 			writeBlock
+			(_,_,_,_,_,bl4,_) <- get
+			return (name,bl4,vars)
 
-toCode4 :: [TopDef] -> [[Code4Block]]
+toCode4 :: [TopDef] -> [Code4Function]
 toCode4 (f:fs) = 
 	let (code41,_) = runState (runReaderT (toCode4TopDef f) (Map.empty)) ("",0,"",0,0,[],[])
 	in let code42 = toCode4 fs

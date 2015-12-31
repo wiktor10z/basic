@@ -143,7 +143,7 @@ checkExpTypeVal (EAdd exp1 (Plus (PPlus ((x,y),_))) exp2) = do							--gdyby nie
 				Nothing -> return (Str,Nothing,(EAdd nexp1 (Plus (PPlus ((x,y),"+"))) nexp2))
 				Just (Left (Left s1)) -> case val2 of 
 					Nothing -> return (Str,Nothing,(EAdd nexp1 (Plus (PPlus ((x,y),"+"))) nexp2))
-					Just (Left (Left s2)) -> return (Int,Just (Left (Left (s1++s2))),EString (s1++s2))
+					Just (Left (Left s2)) -> return (Str,Just (Left (Left (s1++s2))),EString (s1++s2))
 			_ -> error ("wrong type at plus operator at line "++show(x)++", column "++show(y))
 		else error ("not matching types at plus operator at line "++show(x)++", column "++show(y))
 
