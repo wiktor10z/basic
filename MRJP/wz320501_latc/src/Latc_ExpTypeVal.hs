@@ -140,9 +140,9 @@ checkExpTypeVal (EAdd exp1 (Plus (PPlus ((x,y),_))) exp2) = do							--gdyby nie
 						then return (Int,Just (Right (n1+n2)),ELitInt (n1+n2))
 						else return (Int,Just (Right (n1+n2)),Neg (PMinus ((0,0),"-")) (ELitInt (-(n1+n2))))
 			Str -> case val1 of
-				Nothing -> return (Str,Nothing,(EAdd nexp1 (Plus (PPlus ((x,y),"+"))) nexp2))
+				Nothing -> return (Str,Nothing,(EAdd nexp1 (Plus (PPlus ((x,y),"+s"))) nexp2))
 				Just (Left (Left s1)) -> case val2 of 
-					Nothing -> return (Str,Nothing,(EAdd nexp1 (Plus (PPlus ((x,y),"+"))) nexp2))
+					Nothing -> return (Str,Nothing,(EAdd nexp1 (Plus (PPlus ((x,y),"+s"))) nexp2))
 					Just (Left (Left s2)) -> return (Str,Just (Left (Left (s1++s2))),EString (s1++s2))
 			_ -> error ("wrong type at plus operator at line "++show(x)++", column "++show(y))
 		else error ("not matching types at plus operator at line "++show(x)++", column "++show(y))
@@ -217,9 +217,9 @@ checkExpTypeVal (ERel exp1 (EQU (PEQU ((x,y),_))) exp2) = do
 	(type2,val2,nexp2) <- checkExpTypeVal exp2
 	if type1==type2
 		then case val1 of
-			Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"=="))) nexp2))
+			Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"=="++(show type1)))) nexp2))
 			Just _ -> case val2 of
-				Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"=="))) nexp2))
+				Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"=="++(show type1)))) nexp2))
 				Just _ -> if val1==val2
 					then return (Bool,Just (Left (Right True)),ELitTrue)
 					else return (Bool,Just (Left (Right False)),ELitFalse)
@@ -230,9 +230,9 @@ checkExpTypeVal (ERel exp1 (NE (PNE ((x,y),_))) exp2) = do
 	(type2,val2,nexp2) <- checkExpTypeVal exp2
 	if type1==type2
 		then case val1 of
-			Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"!="))) nexp2))
+			Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"!="++(show type1)))) nexp2))
 			Just _ -> case val2 of
-				Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"!="))) nexp2))
+				Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"!="++(show type1)))) nexp2))
 				Just _ -> if val1/=val2
 					then return (Bool,Just (Left (Right True)),ELitTrue)
 					else return (Bool,Just (Left (Right False)),ELitFalse)

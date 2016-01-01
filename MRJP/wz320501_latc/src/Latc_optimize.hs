@@ -29,6 +29,7 @@ optGotoAftRet (label,instrs) =
 optChangePreds :: (String,Set.Set String) -> ([Code4Instruction],[String],Set.Set String)->([Code4Instruction],[String],Set.Set String)
 optChangePreds (name2,set2) (x,strs,set) = (x,strs,Set.delete name2 (Set.union set set2))
 
+
 optChangeSuccs :: (String,String) -> ([Code4Instruction],[String],Set.Set String)->([Code4Instruction],[String],Set.Set String)
 optChangeSuccs (label,nlabel) (x,[oldlabel],set) = ((init x)++[Goto4 nlabel],[nlabel],set)
 optChangeSuccs (label,nlabel) (x,[oldlabel1,oldlabel2],set) =
@@ -46,21 +47,18 @@ optChangeSuccsAll :: ([String],String,String) -> Map.Map String ([Code4Instructi
 optChangeSuccsAll ((elem:set),label,nlabel) map = Map.adjust (optChangeSuccs (label,nlabel)) elem map
 optChangeSuccsAll ([],_,_) map = map
 
+
 optEraseEmptyBlock1 :: [(String,([Code4Instruction],[String],Set.Set String))] -> Map.Map String ([Code4Instruction],[String],Set.Set String) -> Map.Map String ([Code4Instruction],[String],Set.Set String)
 optEraseEmptyBlock1 ((name,([Goto4 _],[label],set)):list) map = 
 	let m2 = Map.delete name map
 	in let m3 = Map.adjust (optChangePreds (name,set)) label m2
 	in optChangeSuccsAll ((Set.toList set),name,label) m3
 optEraseEmptyBlock1 ((_):list) map = optEraseEmptyBlock1 list map
-
 optEraseEmptyBlock1 [] map = map
-
-
 
 
 optEraseEmptyBlocks :: Map.Map String ([Code4Instruction],[String],Set.Set String) -> Map.Map String ([Code4Instruction],[String],Set.Set String) -- nie usuwa bloku 0 - specjalnie
 optEraseEmptyBlocks map = optEraseEmptyBlock1 (tail (Map.toList map)) map
-
 
 
 optEraseEmptyBlocksFix :: Map.Map String ([Code4Instruction],[String],Set.Set String) -> Map.Map String ([Code4Instruction],[String],Set.Set String)
@@ -69,9 +67,6 @@ optEraseEmptyBlocksFix map =
 	in if map==map2
 		then map
 		else optEraseEmptyBlocksFix map2
-
-
-
 
 
 optSucc :: [Code4Instruction] -> [String]
@@ -100,14 +95,18 @@ optUpdateSet s (x,y,set) =(x,y,Set.insert s set)
 
 
 optToMapSet :: [(String,[String])] -> Map.Map String ([Code4Instruction],[String],Set.Set String) -> Map.Map String ([Code4Instruction],[String],Set.Set String)
+
 optToMapSet ((s,[]):ls) m = optToMapSet ls m
+
 optToMapSet ((s,[label]):ls) m =
 	let m2 = Map.adjust (optUpdateSet s) label m
 	in optToMapSet ls m2
+	
 optToMapSet ((s,[label,label2]):ls) m =
 	let m2 = Map.adjust (optUpdateSet s) label m
 	in let m3 = Map.adjust (optUpdateSet s) label2 m2
 	in optToMapSet ls m3
+	
 optToMapSet [] m = m
 
 
@@ -115,24 +114,18 @@ optToMap :: [Code4Block] -> Map.Map String ([Code4Instruction],[String],Set.Set 
 optToMap bs = optToMapSet (optSuccList bs) (optToMapEmpty bs)
 
 
-
-
-
 optFromMap :: [(String,([Code4Instruction],[String],Set.Set String))] -> [Code4Block]
 optFromMap ((label,(instrs,_,_)):ls) = ((label,instrs):(optFromMap ls))
-
 optFromMap [] = []
 
 
-
 optimize :: Code4Function -> Code4Function
-optimize (name,bs,vars) =
+optimize (name,bs,vars,temps) =
 	let bs2 = map optGotoAftRet bs
 	in let map = optToMap bs2
 	in let map2 = optEraseEmptyBlocksFix map
-	in (name,optFromMap (Map.toList map2),vars)
+	in (name,optFromMap (Map.toList map2),vars,temps)
+
 
 optimizeWhole :: [Code4Function] -> [Code4Function]
 optimizeWhole list = map optimize list
-
-

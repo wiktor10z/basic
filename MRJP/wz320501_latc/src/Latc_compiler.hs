@@ -52,7 +52,7 @@ assembleFunCode [] = return ()
 
 
 assembleTopDef :: Code4Function -> IO()--tutaj wypisać prolog i epilog funkcji
-assembleTopDef (name,((label,inst):bs),vars)  = do
+assembleTopDef (name,((label,inst):bs),vars,temps)  = do
 	putStrLn (name++":\n"++"."++(show label)++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n    subq\t $"++(show vars)++", %rsp")
 	assembleInstrs inst
 	assembleFunCode bs
@@ -68,7 +68,9 @@ assembleWhole [] = return ()
 
 compileWhole :: Program -> IO ()
 compileWhole (Program prog) = do
+	hPutStrLn stderr ("OK\n"++(show prog))
 	(nprog,(st,_)) <- runStateT (runReaderT (checkProg prog) predefinedEnv) predefinedSt
+	hPutStrLn stderr ("OK\n"++(show nprog))
 	let code4 = toCode4 prog				--TODO zamiast prog nprog - na razie w celach lepszego oglądania bez optymalizacji pierwotnej
 	hPutStrLn stderr ("OK\n"++(show code4))
 	let code42 = optimizeWhole code4
