@@ -57,3 +57,25 @@ valSize Int = 4
 valSize Bool = 1
 valSize Str = 8			--TODO nie wiem jeszcze jak to rozwiązać
 
+argTypes :: [Arg] -> [Type]
+argTypes ((Arg t pi):args) = t : (argTypes args)
+argTypes [] = []
+
+varType :: Type -> Int
+varType Void = 0
+varType Bool = 1
+varType Int = 2
+varType Str = 3
+
+fromVarType :: Int -> Type
+fromVarType 0 = Void
+fromVarType 1 = Bool
+fromVarType 2 = Int
+fromVarType 3 = Str
+
+
+
+
+
+
+

@@ -30,13 +30,6 @@ checkVoidArguments _ [] = return ()
 
 
 
-argTypes :: [Arg] -> [Type]
-argTypes ((Arg t pi):args) = t : (argTypes args)
-argTypes [] = []
-
-
-
-
 checkFunctionSignatures :: [TopDef] -> StEnv Env
 checkFunctionSignatures ((FnDef t (PIdent ((x,y),name)) args block):fs) = do
 	checkVoidArguments name args

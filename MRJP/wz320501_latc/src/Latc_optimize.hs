@@ -22,7 +22,7 @@ optGotoAftRet (label,instrs) =
 	if (length instrs) <= 1
 		then (label,instrs)
 	else case last (init instrs) of
-		Return4 _ -> (label,init instrs)
+		Goto4 _ -> (label,init instrs)
 		_ -> (label,instrs)
 
 
@@ -120,12 +120,12 @@ optFromMap [] = []
 
 
 optimize :: Code4Function -> Code4Function
-optimize (name,bs,vars,temps) =
+optimize (argtypes,name,bs,vars,temps) =
 	let bs2 = map optGotoAftRet bs
 	in let map = optToMap bs2
 	in let map2 = optEraseEmptyBlocksFix map
-	in (name,optFromMap (Map.toList map2),vars,temps)
-
+	in (argtypes,name,optFromMap (Map.toList map2),vars,temps)
+	--przeiteruj po blokach i jeżeli kończy się returnem, to dodaj goto end
 
 optimizeWhole :: [Code4Function] -> [Code4Function]
 optimizeWhole list = map optimize list

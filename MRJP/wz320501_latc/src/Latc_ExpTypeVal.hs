@@ -14,6 +14,7 @@ import Latte.Par
 import Latte.ErrM
 import Latc_basic
 
+
 multipleTypesMatch :: PIdent -> (Int,Int) -> [Expr] -> [Type] -> Int -> StEnv [Expr]				--TODO zwróć uproszczone exps
 
 multipleTypesMatch (PIdent ((x,y),name)) (x1,y1) (exp:exps) (t:ts) i = do
@@ -61,7 +62,7 @@ checkExpTypeVal (EApp (PIdent ((x,y),name)) exps) = do
 					then error ("error in line "++show(x)++", column "++show(y)++" function "++show(name)++" declared in line "++show(x1)++", column "++show(y1)++" require "++(show (length tlist))++" arguments but is given "++(show (length exps)))
 				else do
 					nexps <- multipleTypesMatch (PIdent ((x,y),name)) (x1,y1) exps tlist 1
-					return (t,Nothing,(EApp (PIdent ((x,y),name)) nexps))
+					return (t,Nothing,(EApp (PIdent ((varType t,0),name)) nexps))
 			Just _ -> error ("error in line "++show(x)++", column "++show(y)++"attempt to use variable declared in line "++show(x1)++", column "++show(y1)++" as function")
 
 checkExpTypeVal (EString str) = return (Str,Just (Left (Left str)),(EString str))

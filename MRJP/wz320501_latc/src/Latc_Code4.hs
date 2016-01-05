@@ -17,19 +17,19 @@ import Latte.Par
 import Latte.ErrM
 import Latc_basic
 
-type Code4Function = (String,[Code4Block],Int,Int)	--nazwa,kod,l.zmiennych,max tempów
+type Code4Function = ([Type],String,[Code4Block],Int,Int)	--nazwa,kod,l.zmiennych,max tempów
 
 type Code4Block = (String,[Code4Instruction])
 
 data Code4Instruction =
 	Empty4 ValVar4 |
 	Ass4 ValVar4 ValVar4|	--TODO tutaj też typ
-	OpE Op ValVar4 ValVar4 |
+	--OpE Op ValVar4 ValVar4 |
 	OpV Op ValVar4 ValVar4 ValVar4 |
 	Neg4 ValVar4 |
 	Not4 ValVar4 |
-	Param4 ValVar4 |
-	CallE String Integer |	
+	Param4 Int ValVar4 |
+	--CallE String Integer |	
 	CallV ValVar4 String Int |
 	Return4 ValVar4	|
 	Goto4 String |
@@ -60,13 +60,13 @@ data ValVar4 =
 	Int4 Integer |
 	Bool4 Bool |
 	String4 String |
-	Temp4 Int |
-	Var4 Int |	--TODO można by pamiętać jezcze rozmiar/typ, a nawet trzeba - typ dodawani, przypisania itp. - 		
+	Temp4 Int Type|
+	Var4 Int Type|	--TODO można by pamiętać jezcze rozmiar/typ, a nawet trzeba - typ dodawani, przypisania itp. - 		
 	Rej4 |
 	Void4 
     deriving (Eq,Ord,Show)	
 
-type Env4 = Map.Map String Int
+type Env4 = Map.Map String (Int,Type)
 type St4 = (String,Int,String,Int,Int,Set.Set Int,[Code4Block],[Code4Instruction])	--nazwa, labele, zmienne, tempy
 
 type StEnv4 = ReaderT Env4 (State St4)
@@ -86,7 +86,7 @@ getTemp = do
 	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs) <- get
 	if (Set.null tempset)
 		then do put (name,labels,nextlabel,vars,temps+1,tempset,blocks,instrs)
-			return temps
+			return (temps+1)
 		else do let (x,set2) = Set.deleteFindMin tempset
 			put (name,labels,nextlabel,vars,temps,set2,blocks,instrs)
 			return x
@@ -97,7 +97,7 @@ freeTemp x = do
 	put (name,labels,nextlabel,vars,temps,Set.insert x tempset,blocks,instrs)
 
 freeTemp2 :: ValVar4 -> StEnv4 ()
-freeTemp2 (Temp4 x) = freeTemp x
+freeTemp2 (Temp4 x _) = freeTemp x
 freeTemp2 _ = return ()
 
 freeGetTemp :: ValVar4 -> ValVar4 -> StEnv4 Int
@@ -132,43 +132,89 @@ writeBlock = do
 	put (name,labels,nextlabel,vars,temps,tempset,blocks ++ [(nextlabel,instrs)],[])
 	return (blocks ++ [(nextlabel,instrs)])
 
-getLabel :: StEnv4 String
+getLabel :: StEnv4 String	--TODO zrobić tak,żeby dało się rozróżnić blok 11 funkcji f i blok 1 funkcji f1 itp. np. f1Label
 getLabel = do
 	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs) <- get
 	put (name,labels+1,nextlabel,vars,temps,tempset,blocks,instrs)
-	return (name ++ (show labels))
+	return (name++"_"++(show labels))
 
 setLabel :: String -> StEnv4 ()
 setLabel labelname = do
 	(name,labels,_,vars,temps,tempset,blocks,instrs) <- get
 	put (name,labels,labelname,vars,temps,tempset,blocks,instrs)
 
+endLabel :: StEnv4 String
+endLabel = do
+	(name,_,_,_,_,_,_,_) <- get
+	return (name++"_END")
+	
+--TODO w C jest przesunięcie o 7 a nie o 5 - niewiadomo dlaczego - może lepiej przsuwać o 7
+reserveTemps :: StEnv4 ()
+reserveTemps = do
+	getTemp
+	getTemp
+	getTemp
+	getTemp
+	getTemp
+	return ()
+	
+unreserveTemps :: StEnv4 ()
+unreserveTemps = do
+	freeTemp 1
+	freeTemp 2
+	freeTemp 3
+	freeTemp 4
+	freeTemp 5
+
+containsApp :: Expr -> Bool
+containsApp (EApp _ _) = True
+containsApp (Neg _ exp) = containsApp exp
+containsApp (Not _ exp) = containsApp exp
+containsApp (EMul exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
+containsApp (EAdd exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
+containsApp (ERel exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
+containsApp (EOr exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
+containsApp (EAnd exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
+containsApp _ = False	
+
+multiContainsApp :: [Expr] -> Bool
+multiContainsApp (exp:exps) = (containsApp exp)||(multiContainsApp exps)
+multiContainsApp [] = False
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-toCode4App :: [Expr] -> StEnv4 ([Code4Instruction],[ValVar4])	--TODO tutaj wszystko jeszcze inaczej - trzeba by wpisywać na właściwe rejestry lub na stos
-toCode4App (exp:exps) = do
-	(str,x) <- toCode4Expr exp
-	(str2,xs) <- toCode4App exps
-	return (str++[Param4 x]++str2,x:xs)
 
-toCode4App [] = return ([],[])
+toCode4App2 :: [Expr] -> Int -> StEnv4 ([Code4Instruction],[ValVar4],[Code4Instruction])
+toCode4App2 (exp:exps) n = do
+	(str,x) <- toCode4Expr exp
+	(str2,xs,params) <- toCode4App2 exps (n+1)
+	return (str++str2,x:xs,(Param4 n x):params)
+
+toCode4App2 [] _= return ([],[],[])
+
+toCode4App :: [Expr] -> StEnv4 ([Code4Instruction],[ValVar4])
+toCode4App exps = do
+	(str1,xs,params) <- toCode4App2 exps 1
+	return (str1++params,xs)
+
+
+
 
 toCode4Expr :: Expr -> StEnv4 ([Code4Instruction],ValVar4)
 
 toCode4Expr (EVar (PIdent (_,x))) = do
 	env <- ask 
 	case Map.lookup x env of
-		Just varnum -> return ([],Var4 varnum)
+		Just (varnum,type1) -> return ([],Var4 varnum type1)
 toCode4Expr (ELitInt n) = return ([],Int4 n)
 toCode4Expr ELitTrue = return ([],Bool4 True)
 toCode4Expr ELitFalse = return ([],Bool4 False)
 
-toCode4Expr (EApp (PIdent (_,name)) exps) = do
+toCode4Expr (EApp (PIdent ((x,_),name)) exps) = do
 	(str,xs) <- toCode4App exps
 	multiFreeTemp xs
 	temp <- getTemp
-	return (str++[CallV (Temp4 temp) name (length exps)],(Temp4 temp))
+	return (str++[CallV (Temp4 temp (fromVarType x)) name (length exps)],(Temp4 temp (fromVarType x)))
 
 toCode4Expr (EString str) = return ([],String4 str)
 
@@ -177,114 +223,114 @@ toCode4Expr (Neg (PMinus _) (ELitInt n)) = return([],Int4 (-n))
 toCode4Expr (Neg (PMinus _) exp) = do
 	(str,x) <- toCode4Expr exp
 	case x of
-		Temp4 _ -> return (str++[Neg4 x],x)
+		Temp4 _ _ -> return (str++[Neg4 x],x)
 		_ -> do
 			temp <- getTemp
-			return (str++[Ass4 (Temp4 temp) x ,Neg4 (Temp4 temp)],(Temp4 temp))
+			return (str++[Ass4 (Temp4 temp Int) x ,Neg4 (Temp4 temp Int)],(Temp4 temp Int ))
 
 toCode4Expr (Not (PNot _) exp) = do
 	(str,x) <- toCode4Expr exp
 	case x of
-		Temp4 _ -> return (str++[Not4 x],x)
+		Temp4 _ _-> return (str++[Not4 x],x)
 		_ -> do
 			temp <- getTemp
-			return (str++[Ass4 (Temp4 temp) x ,Not4 (Temp4 temp)],(Temp4 temp))
+			return (str++[Ass4 (Temp4 temp Bool) x ,Not4 (Temp4 temp Bool)],(Temp4 temp Bool))
 
 toCode4Expr (EMul exp1 (Times (PTimes _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV Mul4 (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV Mul4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
 	
 toCode4Expr (EMul exp1 (Div (PDiv _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV Div4 (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV Div4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
 	
 toCode4Expr (EMul exp1 (Mod (PMod _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV Mod4 (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV Mod4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
 	
 toCode4Expr (EAdd exp1 (Plus (PPlus (_,"+"))) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV Add4 (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV Add4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
 	
 toCode4Expr (EAdd exp1 (Plus (PPlus (_,"+s"))) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV Concat4 (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV Concat4 (Temp4 temp Str) x1 x2],(Temp4 temp Str))
 	
 toCode4Expr (EAdd exp1 (Minus (PMinus _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV Sub4 (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV Sub4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
 	
 toCode4Expr (ERel exp1 (LTH (PLTH _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetL4 (Temp4 temp) x1 x2],(Temp4 temp))	
+	return (str1++str2++[OpV SetL4 (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))	
 	
 toCode4Expr (ERel exp1 (LE (PLE _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetLE4 (Temp4 temp) x1 x2],(Temp4 temp))	
+	return (str1++str2++[OpV SetLE4 (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))	
 	
 toCode4Expr (ERel exp1 (GTH (PGTH _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetG4 (Temp4 temp) x1 x2],(Temp4 temp))	
+	return (str1++str2++[OpV SetG4 (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))	
 	
 toCode4Expr (ERel exp1 (GE (PGE _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetGE4 (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV SetGE4 (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))
 
 toCode4Expr (ERel exp1 (EQU (PEQU (_,"==Bool"))) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetE4B (Temp4 temp) x1 x2],(Temp4 temp))	
+	return (str1++str2++[OpV SetE4B (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))	
 
 toCode4Expr (ERel exp1 (EQU (PEQU (_,"==Int"))) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetE4I (Temp4 temp) x1 x2],(Temp4 temp))	
+	return (str1++str2++[OpV SetE4I (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))	
 	
 toCode4Expr (ERel exp1 (EQU (PEQU (_,"==Str"))) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetE4S (Temp4 temp) x1 x2],(Temp4 temp))	
+	return (str1++str2++[OpV SetE4S (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))	
 	
 toCode4Expr (ERel exp1 (NE (PNE (_,"!=Bool"))) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetNE4B (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV SetNE4B (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))
 
 toCode4Expr (ERel exp1 (NE (PNE (_,"!=Int"))) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetNE4I (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV SetNE4I (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))
 	
 toCode4Expr (ERel exp1 (NE (PNE (_,"!=Str"))) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV SetNE4S (Temp4 temp) x1 x2],(Temp4 temp))
+	return (str1++str2++[OpV SetNE4S (Temp4 temp Bool) x1 x2],(Temp4 temp Bool))
 	
 toCode4Expr (EOr exp1 (POr _) exp2) = do
 	(inst1,x1) <- toCode4Expr exp1
@@ -304,7 +350,7 @@ toCode4Expr (EOr exp1 (POr _) exp2) = do
 	writeBlock
 	setLabel endlabel
 	temp <- getTemp
-	return ([Ass4 (Temp4 temp) Rej4],(Temp4 temp))
+	return ([Ass4 (Temp4 temp Bool) Rej4],(Temp4 temp Bool))
 	
 toCode4Expr (EAnd exp1 (PAnd _) exp2) = do
 	(inst1,x1) <- toCode4Expr exp1
@@ -324,24 +370,36 @@ toCode4Expr (EAnd exp1 (PAnd _) exp2) = do
 	writeBlock
 	setLabel endlabel
 	temp<-getTemp
-	return ([Ass4 (Temp4 temp) Rej4],(Temp4 temp))	
-	
+	return ([Ass4 (Temp4 temp Bool) Rej4],(Temp4 temp Bool))	
 
-toCode4Ass :: Int -> Code4Instruction -> Code4Instruction
-toCode4Ass varnum (OpV op (Temp4 _) x1 x2) = (OpV op (Var4 varnum) x1 x2)
-toCode4Ass varnum (CallV t _ _) = Ass4 (Var4 varnum) t
-toCode4Ass varnum (Empty4 x) = Ass4 (Var4 varnum) x
+toCode4Expr2 :: Expr -> StEnv4 ([Code4Instruction],ValVar4)
+toCode4Expr2 exp = do
+	if (containsApp exp)
+		then do
+			reserveTemps
+			x<- toCode4Expr exp
+			unreserveTemps
+			return x
+		else toCode4Expr exp
+		
+
+
+
+toCode4Ass :: Int -> Type -> Code4Instruction -> Code4Instruction
+toCode4Ass varnum t (OpV op (Temp4 _ _) x1 x2) = (OpV op (Var4 varnum t) x1 x2)
+toCode4Ass varnum t (CallV _ name n) = CallV (Var4 varnum t) name n
+toCode4Ass varnum t (Empty4 x) = Ass4 (Var4 varnum t) x
 
 
 toCode4Decl :: Type -> [Item] -> StEnv4 (Env4,[Code4Instruction])
 toCode4Decl t ((Init (PIdent (_,varname)) exp):its) = do
-	(r,temp) <- toCode4Expr exp
+	(r,temp) <- toCode4Expr2 exp
 	varnum <- newVar t
 	let str = if (null r)
-		then [toCode4Ass varnum (Empty4 temp)]
-		else (init r) ++[toCode4Ass varnum (last r)]
+		then [toCode4Ass varnum t (Empty4 temp)]
+		else (init r) ++[toCode4Ass varnum t (last r)]
 	freeTemp2 temp		
-	(env4,r2) <- (local (Map.insert varname varnum)  (toCode4Decl t its))
+	(env4,r2) <- (local (Map.insert varname (varnum,t))  (toCode4Decl t its))
 	return (env4,str++r2)
 
 toCode4Decl _ [] = do
@@ -363,39 +421,41 @@ toCode4Stmt (Decl t l) = do
 
 toCode4Stmt (Ass (PIdent (_,varname)) exp) = do
 	env <- ask
-	(inst4,temp) <- toCode4Expr exp
+	(inst4,temp) <- toCode4Expr2 exp
 	freeTemp2 temp
 	case Map.lookup varname env of
-		Just varnum -> if (null inst4)
+		Just (varnum,type1) -> if (null inst4)
 				then do
-					addInstructions [toCode4Ass varnum (Empty4 temp)]
+					addInstructions [toCode4Ass varnum type1 (Empty4 temp)]
 					ask
 				else do
-					addInstructions ((init inst4) ++[toCode4Ass varnum (last inst4)])
+					addInstructions ((init inst4) ++[toCode4Ass varnum type1 (last inst4)])
 					ask
 
 toCode4Stmt (Incr (PIdent (_,varname))) = do
 	env <- ask
 	case Map.lookup varname env of
-		Just varnum -> do
-			addInstructions [OpV Add4 (Var4 varnum) (Var4 varnum) (Int4 1)]
+		Just (varnum,type1) -> do
+			addInstructions [OpV Add4 (Var4 varnum type1) (Var4 varnum type1) (Int4 1)]
 			ask
 
 toCode4Stmt (Decr (PIdent (_,varname))) = do
 	env <- ask
 	case Map.lookup varname env of
-		Just varnum -> do
-			addInstructions [OpV Sub4 (Var4 varnum) (Var4 varnum) (Int4 1)]
+		Just (varnum,type1) -> do
+			addInstructions [OpV Sub4 (Var4 varnum type1) (Var4 varnum type1) (Int4 1)]
 			ask
 
 toCode4Stmt (Ret _ exp) = do
-	(inst4,temp) <-toCode4Expr exp
-	addInstructions (inst4 ++[Return4 temp])
+	(inst4,temp) <-toCode4Expr2 exp
+	label <- endLabel
+	addInstructions (inst4 ++[Return4 temp,Goto4 label])
 	freeTemp2 temp
 	ask
 
 toCode4Stmt (VRet _) = do
-	addInstructions [Return4 Void4]
+	label <- endLabel
+	addInstructions [Goto4 label]
 	ask
 
 toCode4Stmt (Cond (PIf _) exp stm) = do
@@ -409,7 +469,7 @@ toCode4Stmt (Cond (PIf _) exp stm) = do
 	addInstructions [Goto4 endlabel]
 	writeBlock		
 	setLabel condlabel
-	(inst4,temp4) <- toCode4Expr exp	-- warunek typu bool - może być zmienna lub temp	
+	(inst4,temp4) <- toCode4Expr2 exp	-- warunek typu bool - może być zmienna lub temp	
 	addInstructions inst4
 	addInstructions [If4 temp4 truelabel,Goto4 endlabel]
 	freeTemp2 temp4
@@ -435,7 +495,7 @@ toCode4Stmt (CondElse (PIf _) exp stm stm2) = do
 	addInstructions [Goto4 endlabel]
 	writeBlock	
 	setLabel condlabel
-	(inst4,temp4) <- toCode4Expr exp
+	(inst4,temp4) <- toCode4Expr2 exp
 	addInstructions inst4
 	addInstructions [If4 temp4 truelabel,Goto4 falselabel]
 	freeTemp2 temp4
@@ -454,7 +514,7 @@ toCode4Stmt (While (PWhile _) exp stm) = do
 	addInstructions [Goto4 condlabel]
 	writeBlock		
 	setLabel condlabel	
-	(inst4,temp4) <- toCode4Expr exp		
+	(inst4,temp4) <- toCode4Expr2 exp		
 	addInstructions inst4
 	addInstructions [If4 temp4 truelabel,Goto4 endlabel]
 	freeTemp2 temp4
@@ -463,7 +523,7 @@ toCode4Stmt (While (PWhile _) exp stm) = do
 	ask
 
 toCode4Stmt (SExp exp) = do		--TODO można zamienić OpV na OpE
-	(inst4,temp4) <- toCode4Expr exp
+	(inst4,temp4) <- toCode4Expr2 exp
 	addInstructions inst4
 	freeTemp2 temp4
 	ask
@@ -478,27 +538,33 @@ toCode4Block (stm:stmts) = do
 toCode4Block [] = return ()
 
 
-code4Arguments :: [Arg] -> Env4
+code4Arguments :: [Arg] -> (Env4,Int)
 code4Arguments args = 
 	if(null args)
-		then Map.empty
-		else let env1 = code4Arguments (init args)
+		then (Map.empty,0)
+		else let (env1,offset) = code4Arguments (init args)
 			in case (last args) of
-				(Arg t (PIdent (_,name))) -> (Map.insert name ((-1)*(length args)) env1)
+				(Arg t (PIdent (_,name))) -> if ((length args) == 7)
+					then (Map.insert name (-124,t) env1,124)
+					else ((Map.insert name ((-1)*(valSize t)-offset,t) env1),offset+(valSize t))
 
 
 toCode4TopDef :: TopDef -> StEnv4 Code4Function
 toCode4TopDef (FnDef _ (PIdent (_,name)) args (Block bl)) = do
-	put (name,1,name++"0",0,0,Set.empty,[],[])
-	let env4 = code4Arguments args
+	put (name,1,name++"_0",0,0,Set.empty,[],[])
+	let (env4,_) = code4Arguments args
 	(local (\x -> env4) (toCode4Block bl))
+	--(_,_,_,vars,temps,_,bl4,inst4) <- get
+	--if ((null inst4)&&(not (null bl4)))
+		--then return (argTypes args,name,bl4,vars,temps)
+		--else do
+	label <- endLabel		
+	addInstructions [Goto4 label]
+	writeBlock
+	--(_,_,_,_,_,_,bl4,_) <- get
 	(_,_,_,vars,temps,_,bl4,inst4) <- get
-	if ((null inst4)&&(not (null bl4)))
-		then return (name,bl4,vars,temps)
-		else do
-			writeBlock
-			(_,_,_,_,_,_,bl4,_) <- get
-			return (name,bl4,vars,temps)
+
+	return (argTypes args,name,bl4++[(label,[])],vars,temps)
 
 toCode4 :: [TopDef] -> [Code4Function]
 toCode4 (f:fs) = 
