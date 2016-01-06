@@ -17,7 +17,7 @@ import Latte.Par
 import Latte.ErrM
 import Latc_basic
 
-type Code4Function = ([Type],String,[Code4Block],Int,Int)	--nazwa,kod,l.zmiennych,max tempów
+type Code4Function = ([Type],String,[Code4Block],Int,Int)	--argumenty,nazwa,kod,l.zmiennych,max tempów
 
 type Code4Block = (String,[Code4Instruction])
 
@@ -132,7 +132,7 @@ writeBlock = do
 	put (name,labels,nextlabel,vars,temps,tempset,blocks ++ [(nextlabel,instrs)],[])
 	return (blocks ++ [(nextlabel,instrs)])
 
-getLabel :: StEnv4 String	--TODO zrobić tak,żeby dało się rozróżnić blok 11 funkcji f i blok 1 funkcji f1 itp. np. f1Label
+getLabel :: StEnv4 String
 getLabel = do
 	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs) <- get
 	put (name,labels+1,nextlabel,vars,temps,tempset,blocks,instrs)
@@ -177,9 +177,9 @@ containsApp (EOr exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp (EAnd exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp _ = False	
 
-multiContainsApp :: [Expr] -> Bool
-multiContainsApp (exp:exps) = (containsApp exp)||(multiContainsApp exps)
-multiContainsApp [] = False
+--multiContainsApp :: [Expr] -> Bool
+--multiContainsApp (exp:exps) = (containsApp exp)||(multiContainsApp exps)
+--multiContainsApp [] = False
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -242,17 +242,27 @@ toCode4Expr (EMul exp1 (Times (PTimes _)) exp2) = do
 	temp <- freeGetTemp x1 x2
 	return (str1++str2++[OpV Mul4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
 	
-toCode4Expr (EMul exp1 (Div (PDiv _)) exp2) = do
+toCode4Expr (EMul exp1 (Div (PDiv _)) exp2) = do	-- jeśli dzielimy przez stałą, to przypisać ją na temp,podzielić przez nią i zapomnieć temp
 	(str1,x1) <- toCode4Expr exp1
-	(str2,x2) <- toCode4Expr exp2	
-	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV Div4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
+	(str2,x2) <- toCode4Expr exp2
+	temp <- freeGetTemp x1 x2	
+	case x2 of
+		(Int4 n) -> do
+			temp2 <- getTemp
+			freeTemp temp2
+			return (str1++str2++[Ass4 (Temp4 temp2 Int ) (Int4 n),OpV Div4 (Temp4 temp Int) x1 (Temp4 temp2 Int)],(Temp4 temp Int))
+		_ -> return (str1++str2++[OpV Div4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
 	
 toCode4Expr (EMul exp1 (Mod (PMod _)) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
 	(str2,x2) <- toCode4Expr exp2	
 	temp <- freeGetTemp x1 x2
-	return (str1++str2++[OpV Mod4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
+	case x2 of
+		(Int4 n) -> do
+			temp2 <- getTemp
+			freeTemp temp2
+			return (str1++str2++[Ass4 (Temp4 temp2 Int ) (Int4 n),OpV Mod4 (Temp4 temp Int) x1 (Temp4 temp2 Int)],(Temp4 temp Int))
+		_ -> return (str1++str2++[OpV Mod4 (Temp4 temp Int) x1 x2],(Temp4 temp Int))
 	
 toCode4Expr (EAdd exp1 (Plus (PPlus (_,"+"))) exp2) = do
 	(str1,x1) <- toCode4Expr exp1
@@ -389,6 +399,8 @@ toCode4Ass :: Int -> Type -> Code4Instruction -> Code4Instruction
 toCode4Ass varnum t (OpV op (Temp4 _ _) x1 x2) = (OpV op (Var4 varnum t) x1 x2)
 toCode4Ass varnum t (CallV _ name n) = CallV (Var4 varnum t) name n
 toCode4Ass varnum t (Empty4 x) = Ass4 (Var4 varnum t) x
+toCode4Ass varnum t (Ass4 (Temp4 _ _) Rej4) = Ass4 (Var4 varnum t) Rej4
+
 
 
 toCode4Decl :: Type -> [Item] -> StEnv4 (Env4,[Code4Instruction])
@@ -546,7 +558,7 @@ code4Arguments args =
 			in case (last args) of
 				(Arg t (PIdent (_,name))) -> if ((length args) == 7)
 					then (Map.insert name (-124,t) env1,124)
-					else ((Map.insert name ((-1)*(valSize t)-offset,t) env1),offset+(valSize t))
+					else ((Map.insert name ((-1)*(valSize t)-offset,t) env1),offset+(valSize t))--TODOTODOTODOTODO czy to jest poprawne - czy rozmiar tego argumentu czy raczej poprzedniego i czy zawsze 24, czy też jest to zależne od wołającego
 
 
 toCode4TopDef :: TopDef -> StEnv4 Code4Function

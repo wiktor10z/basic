@@ -26,17 +26,26 @@ readVal v = do
 	varloc <- getAddress v
 	case varloc of
 		Right str -> return (str,"")
-		Left str -> return ("%rdx", "    movq\t "++str++", %rdx\n")	--TODO inne formaty
+		Left str -> case (getType v) of
+			Bool -> return ("%al", "    movzbl\t "++str++", %eax\n")
+			Int -> return ("%eax", "    movl\t "++str++", %eax\n")
+			Str -> return ("%rax", "    movq\t "++str++", %rax\n")	--TODO sprawdzić, czy używanie tego rejestru jest bezpieczne - czy czegoś nie psuje
 
 writeVal :: ValVar4 -> StAss (String,String)
 writeVal v = do
 	varloc <- getAddress v
 	case varloc of
 		Right str -> return (str,"")
-		Left str -> return ("%rdx", "    movq\t rdx, "++str++"\n")	--TODO inne formaty
+		Left str -> case (getType v) of
+			Bool -> return ("%al", "    movb\t %al, "++str++"\n")	--TODO przetestować szczególnie bool
+			Int -> return ("%eax", "    movl\t %eax, "++str++"\n")
+			Str -> return ("%rax", "    movq\t %rax, "++str++"\n")
+			
 
 exactAddress :: ValVar4 -> StAss String
 exactAddress (Int4 n) = return ("$"++(show n))
+exactAddress (Bool4 True) = return "$1"
+exactAddress (Bool4 False) = return "$0"
 exactAddress v = do
 	varloc <- getAddress v
 	case varloc of
@@ -55,7 +64,7 @@ getAddress (Temp4 n t) = do
 		varloc <- tempsHash t n
 		return (Right varloc)
 		else return (Left ((show ((-1)*off3))++"(%rbp)")) --TODO prawdziwy adres
-getAddress Rej4 = return (Right "%rdx")
+--getAddress Rej4 = return (Right "%eax") --TODO czasem %eax a czasem %al - ustalić żeby było dobrze dla and i or
 
 
 getType :: ValVar4 -> Type
@@ -185,7 +194,21 @@ movString (Var4 var1 t1) (Var4 var2 t2) =
 movString var1 (Int4 n) = do
 	varloc1 <- exactAddress var1
 	return ("    movl\t $"++(show n)++", "++varloc1++"\n")
-	
+
+movString Rej4 var1 = do
+	varloc1 <- exactAddress var1
+	return ("    movl\t "++varloc1++", %eax\n")
+
+movString (Temp4 x y) Rej4 = do
+	varloc1 <- getAddress (Temp4 x y)
+	case varloc1 of
+		Left loc -> return ("    movb\t %al, "++loc++"\n")
+		Right loc -> return ("    movzbl\t %al, "++loc++"\n")
+
+movString var1 Rej4 = do
+	varloc1 <- exactAddress var1
+	return ("    movb\t %al, "++varloc1++"\n")
+
 movString var1 (Bool4 True) = do
 	varloc1 <- exactAddress var1
 	return ("    movb\t $1, "++varloc1++"\n")
@@ -205,6 +228,17 @@ movString var1 var2 =
 				Int -> return (str2++"    movl\t "++varloc2++", "++varloc1++"\n"++str1)
 				Str -> return (str2++"    movq\t "++varloc2++", "++varloc1++"\n"++str1)
 
+movAL :: ValVar4 -> StAss String
+movAL (Temp4 x y)  = do
+	varloc1 <- getAddress (Temp4 x y)
+	case varloc1 of
+		Left loc -> return ("    movb\t %al, "++loc++"\n")
+		Right loc -> return ("    movzbl\t %al, "++loc++"\n")
+		
+movAL var1 = do
+	varloc1 <- exactAddress var1
+	return ("    movb\t %al, "++varloc1++"\n")
+
 operString :: String -> ValVar4 -> ValVar4 -> StAss String
 operString oper (Var4 var1 t1) (Var4 var2 t2) = do
 	(varloc1,_) <- writeVal (Var4 var1 t1)
@@ -222,17 +256,6 @@ operString oper var1 var2 = do
 
 
 assembleInstruction :: Code4Instruction -> StAss String
-assembleInstruction (Ass4 var (Int4 n)) = do
-	(varloc,str) <- writeVal var
-	return ("    movl\t $"++(show n)++", "++varloc++"\n"++str)
-
-assembleInstruction (Ass4 var (Bool4 True)) = do
-	(varloc,str) <- writeVal var
-	return ("    movb\t $"++(show 1)++", "++varloc++"\n"++str)
-
-assembleInstruction (Ass4 var (Bool4 False)) = do
-	(varloc,str) <- writeVal var
-	return ("    movb\t $"++(show 0)++", "++varloc++"\n"++str)
 --TODO przypisanie stringa
 
 assembleInstruction (Ass4 var1 var2)= movString var1 var2
@@ -265,12 +288,12 @@ assembleInstruction (CallV var name _ ) = do
 		Void -> return("    call\t"++name++"\n")
 
 
-assembleInstruction (Return4 Void4) = return ("")	--TODO przejście do końca, ale to chyba w Code4 jak niżej
+assembleInstruction (Return4 Void4) = return ("")
 assembleInstruction (Return4 var) = do
 	varloc <- exactAddress var
 	if ((getType var)==Str)
-		then return ("    movq\t"++varloc++", %rax\n")	--TODO trzeba odesłać do końcowego bloku - tutaj albo w toCode4
-		else return ("    movl\t"++varloc++", %eax\n")	--TODO trzeba odesłać do końcowego bloku - tutaj albo w toCode4
+		then return ("    movq\t"++varloc++", %rax\n")
+		else return ("    movl\t"++varloc++", %eax\n")
 		--TODO może jeszcze co innego dla bool
 
 
@@ -328,54 +351,73 @@ assembleInstruction (OpV Sub4 var1 var2 var3)=
 				return (str++str2)
 
 		
-assembleInstruction (OpV Mul4 var1 (Int4 n) var2)= do	--TODO można by zrobić tak jak w c - binarne dodawanie i przesuwanie
+assembleInstruction (OpV Mul4 var1 (Int4 n) var2) = do	--TODO można by zrobić tak jak w c - binarne dodawanie i przesuwanie
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	return ("    movl\t "++loc2++", %eax\n    imull\t $"++(show n)++", %eax\n    movl\t %eax, "++loc1++"\n")
 
-assembleInstruction (OpV Mul4 var1 var2 var3)=	do
+assembleInstruction (OpV Mul4 var1 var2 var3) =	do
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movl\t "++loc2++", %eax\n    imull\t "++loc3++", %eax\n    movl\t %eax, "++loc1++"\n")
 
 
-assembleInstruction (OpV Div4 var1 var2 var3)= do	--TODO można by zrobić tak jak w c - binarne dodawanie i przesuwanie
+assembleInstruction (OpV Div4 var1 var2 var3) = do	--TODO można by zrobić tak jak w c - binarne dodawanie i przesuwanie
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movl\t "++loc2++", %eax\n    cltd\n    idivl\t "++loc3++"\n    movl\t %eax, "++loc1++"\n")
 
-assembleInstruction (OpV Mod4 var1 var2 var3)= do	--TODO można by zrobić tak jak w c - binarne dodawanie i przesuwanie przy stałych
+assembleInstruction (OpV Mod4 var1 var2 var3) = do	--TODO można by zrobić tak jak w c - binarne dodawanie i przesuwanie przy stałych
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movl\t "++loc2++", %eax\n    cltd\n    idivl\t "++loc3++"\n    movl\t %edx, "++loc1++"\n")
 
-
-assembleInstruction (OpV SetL4 var1 var2 var3)= do
+--TODO może być porównanie miedzy rejestrem i czymś - wtedy nie trzeba przepisywać
+assembleInstruction (OpV SetL4 var1 var2 var3) = do
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setl\t %al\n    movb\t %al, "++loc1++"\n")
 
-assembleInstruction (OpV SetLE4 var1 var2 var3)= do
+assembleInstruction (OpV SetLE4 var1 var2 var3) = do
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setle\t %al\n    movb\t %al, "++loc1++"\n")
 
-assembleInstruction (OpV SetG4 var1 var2 var3)= do
+assembleInstruction (OpV SetG4 var1 var2 var3) = do
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setg\t %al\n    movb\t %al, "++loc1++"\n")
 
-assembleInstruction (OpV SetGE4 var1 var2 var3)= do
+assembleInstruction (OpV SetGE4 var1 var2 var3) = do
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setge\t %al\n    movb\t %al, "++loc1++"\n")
+
+assembleInstruction (OpV SetE4B var1 var2 var3) = do
+	str1 <- movAL var1
+	loc2 <- exactAddress var2
+	loc3 <- exactAddress var3
+	return ("    movzbl\t "++loc2++", %eax\n    testl\t "++loc3++", %eax\n    setne\t %al\n"++str1) -- jeżeli lokacja jest rejestrem, to movzbl
+
+assembleInstruction (OpV SetE4I var1 var2 var3) = do
+	str1 <- movAL var1
+	loc2 <- exactAddress var2
+	loc3 <- exactAddress var3
+	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    sete\t %al\n"++str1)
+	
+assembleInstruction (OpV SetE4S var1 var2 var3) = do
+	str1 <- movAL var1
+	loc2 <- exactAddress var2
+	loc3 <- exactAddress var3
+	return ("    movq\t "++loc2++", %eax\n    cmpq\t "++loc3++", %eax\n    sete\t %al\n"++str1)
+
 
 --TODOTODO równośc i nierówność, if
 

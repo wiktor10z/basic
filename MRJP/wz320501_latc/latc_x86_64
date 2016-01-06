@@ -1,0 +1,6 @@
+filenamewp="${1%.*}"
+filename="${filenamewe##*/}"
+path="${1%/*}"
+./Latc_compiler $1 $filename >"$filenamewp.s"
+as -o "$filenamewp.o" "$filenamewp.s"
+gcc -g -W "$filenamewp.o" lib/runtime.o -o "$filenamewp"
