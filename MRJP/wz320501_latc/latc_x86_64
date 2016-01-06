@@ -2,5 +2,10 @@ filenamewp="${1%.*}"
 filename="${filenamewe##*/}"
 path="${1%/*}"
 ./Latc_compiler $1 $filename >"$filenamewp.s"
+rc=$?
+if [[ $rc != 0 ]]; then return $rc;
+else
 as -o "$filenamewp.o" "$filenamewp.s"
 gcc -g -W "$filenamewp.o" lib/runtime.o -o "$filenamewp"
+return $rc;
+fi

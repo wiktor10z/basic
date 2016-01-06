@@ -4,11 +4,11 @@
 
 
 void printInt(int i){
-	printf("%d",i);
+	printf("%d\n",i);
 }
 
 void printString(char* s){//sprawdzić, czy działa
-	printf("%s",s);
+	printf("%s\n",s);
 }
 
 //error i concat
@@ -21,7 +21,7 @@ char* concat(char *str1, char *str2){
 
 int readInt(){//sprawdzić, czy działa
 	int i;
-	scanf("%d",&i);
+	scanf("%d\n",&i);
 	return i;
 }
 

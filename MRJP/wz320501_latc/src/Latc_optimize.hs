@@ -1,19 +1,12 @@
 module Latc_optimize where
 
-import Data.Maybe
 import Control.Monad.Reader
 import Control.Monad.State
-import Control.Exception
 import System.Environment
-import System.Exit
-import System.IO
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 
 import Latte.Abs
-import Latte.Lex
-import Latte.Par
-import Latte.ErrM
 import Latc_basic
 import Latc_Code4
 
@@ -44,7 +37,9 @@ optChangeSuccs (label,nlabel) (x,[oldlabel1,oldlabel2],set) =
 
 
 optChangeSuccsAll :: ([String],String,String) -> Map.Map String ([Code4Instruction],[String],Set.Set String)-> Map.Map String ([Code4Instruction],[String],Set.Set String)
-optChangeSuccsAll ((elem:set),label,nlabel) map = Map.adjust (optChangeSuccs (label,nlabel)) elem map
+optChangeSuccsAll ((elem:set),label,nlabel) map = 
+	let map2 = Map.adjust (optChangeSuccs (label,nlabel)) elem map
+	in optChangeSuccsAll (set,label,nlabel) map2
 optChangeSuccsAll ([],_,_) map = map
 
 
@@ -120,11 +115,11 @@ optFromMap [] = []
 
 
 optimize :: Code4Function -> Code4Function
-optimize (argtypes,name,bs,vars,temps) =
+optimize (argtypes,name,bs,vars,temps,strList) =
 	let bs2 = map optGotoAftRet bs
 	in let map = optToMap bs2
 	in let map2 = optEraseEmptyBlocksFix map
-	in (argtypes,name,optFromMap (Map.toList map2),vars,temps)
+	in (argtypes,name,optFromMap (Map.toList map2),vars,temps,strList)
 	--przeiteruj po blokach i jeżeli kończy się returnem, to dodaj goto end
 
 optimizeWhole :: [Code4Function] -> [Code4Function]

@@ -1,17 +1,11 @@
 module Latc_basic where
 
-import Data.Maybe
 import Control.Monad.Reader
 import Control.Monad.State
 import System.Environment
-import System.Exit
-import System.IO
 import qualified Data.Map as Map
 
 import Latte.Abs
-import Latte.Lex
-import Latte.Par
-import Latte.ErrM
 
 type Val = Maybe (Either (Either String Bool) Integer)
 

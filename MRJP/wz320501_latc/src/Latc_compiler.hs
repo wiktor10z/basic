@@ -29,13 +29,17 @@ compileWhole (Program prog) = do
 	let code42 = optimizeWhole code4
 	hPutStrLn stderr ("OK\n"++(show code42))
 	assembleWhole code42
-	return ()
+	hPutStrLn stderr ("OK\n")
+	--exitWith ExitSuccess
 
 
 lexerErrCheck :: Err Program -> IO()
 lexerErrCheck (Ok e) = do
-	Control.Exception.catch (compileWhole e) (\msg -> hPutStrLn stderr $ "ERROR\n"++show(msg::Control.Exception.SomeException))
-	exitWith (ExitFailure 1)
+	let result = compileWhole e
+	Control.Exception.catch (result) (\msg -> do
+		hPutStrLn stderr $ "ERROR\n"++show(msg::Control.Exception.SomeException)
+		exitWith (ExitFailure 1))
+	exitWith ExitSuccess
 
 lexerErrCheck (Bad s) = do
 	hPutStrLn stderr ("ERROR\n" ++ s)

@@ -1,18 +1,12 @@
 module Latc_frontend where
 
-import Data.Maybe
 import Control.Monad.Reader
 import Control.Monad.State
-import Control.Exception
 import System.Environment
-import System.Exit
-import System.IO
+
 import qualified Data.Map as Map
 
 import Latte.Abs
-import Latte.Lex
-import Latte.Par
-import Latte.ErrM
 import Latc_basic
 import Latc_ExpTypeVal
 

@@ -1,24 +1,18 @@
 module Latc_printout where
 
-import Data.Maybe
 import Control.Monad.Reader
 import Control.Monad.State
-import Control.Exception
 import System.Environment
-import System.Exit
 import System.IO
 
 import Latte.Abs
-import Latte.Lex
-import Latte.Par
-import Latte.ErrM
 import Latc_basic
 import Latc_Code4
 
 
 --TODO rdi....r15 są potrzebne na argumenty funkcji więc może być problem jak są aktualnie używane - sprawdzić działanie
 
-type StAss = State (Int,Int,Int) -- trzyma off1,off2,off3
+type StAss = State (String,Int,Int,Int) -- trzyma name,off1,off2,off3
 
 
 readVal :: ValVar4 -> StAss (String,String)
@@ -46,25 +40,31 @@ exactAddress :: ValVar4 -> StAss String
 exactAddress (Int4 n) = return ("$"++(show n))
 exactAddress (Bool4 True) = return "$1"
 exactAddress (Bool4 False) = return "$0"
+exactAddress (String4 n) = do
+	(name,_,_,_) <- get
+	return ("$."++name++"_string"++(show n))
 exactAddress v = do
 	varloc <- getAddress v
 	case varloc of
 		Right str -> return str
 		Left str -> return str
 
+--left - na stosie, right w rejestrze
 getAddress :: ValVar4 -> StAss (Either String String)
 getAddress (Var4 n t) = do
 	varloc <- varsHash n
-	return (Right ((show varloc)++"(%rbp)"))
+	return (Left ((show varloc)++"(%rbp)"))
 	
 getAddress (Temp4 n t) = do
-	(_,_,off3) <- get
+	(_,_,_,off3) <- get
 	if n<13
 		then do
 		varloc <- tempsHash t n
 		return (Right varloc)
-		else return (Left ((show ((-1)*off3))++"(%rbp)")) --TODO prawdziwy adres
---getAddress Rej4 = return (Right "%eax") --TODO czasem %eax a czasem %al - ustalić żeby było dobrze dla and i or
+		else return (Left ((show ((-1)*off3))++"(%rbp)"))
+getAddress (String4 n) = do
+	(name,_,_,_) <- get
+	return (Right ("$."++name++"_string"++(show n)))
 
 
 getType :: ValVar4 -> Type
@@ -80,7 +80,7 @@ getType Rej4 = Bool
 
 varsHash ::Int -> StAss Int	--off1 = 
 varsHash n = do
-	(off1,off2,_) <- get
+	(_,off1,off2,_) <- get
 	if n<(-100)
 		then return (-n-100)
 		else if n>=0
@@ -119,20 +119,20 @@ tempsHash _ 12 =  return "%r15d"
 pushRegisters :: Int -> String
 pushRegisters 0 =""
 pushRegisters 8 = "    pushq\t %rbx\n"
-pushRegisters 9 =(pushRegisters 8) ++"    pushq\t %r12\n"
-pushRegisters 10 =(pushRegisters 9) ++"    pushq\t %r13\n"
-pushRegisters 11 =(pushRegisters 10) ++"    pushq\t %r14\n"
-pushRegisters 12 =(pushRegisters 11) ++"    pushq\t %r15\n"
+pushRegisters 9 ="    pushq\t %r12\n"++(pushRegisters 8)
+pushRegisters 10 ="    pushq\t %r13\n"++(pushRegisters 9)
+pushRegisters 11 ="    pushq\t %r14\n"++(pushRegisters 10)
+pushRegisters 12 ="    pushq\t %r15\n"++(pushRegisters 11)
 pushRegisters x = pushRegisters (x-1)
 
 popRegisters :: Int -> String
 popRegisters 0 =""
 popRegisters 8 = "    popq\t %rbx\n"
-popRegisters 9 =(pushRegisters 8) ++"    popq\t %r12\n"
-popRegisters 10 =(pushRegisters 9) ++"    popq\t %r13\n"
-popRegisters 11 =(pushRegisters 10) ++"    popq\t %r14\n"
-popRegisters 12 =(pushRegisters 11) ++"    popq\t %r15\n"
-popRegisters x = pushRegisters (x-1)
+popRegisters 9 =(popRegisters 8) ++"    popq\t %r12\n"
+popRegisters 10 =(popRegisters 9) ++"    popq\t %r13\n"
+popRegisters 11 =(popRegisters 10) ++"    popq\t %r14\n"
+popRegisters 12 =(popRegisters 11) ++"    popq\t %r15\n"
+popRegisters x = popRegisters (x-1)
 
 
 
@@ -164,28 +164,41 @@ manageArgs1 Bool 4 = "    movl\t %ecx, %eax\n    movb\t %al, "
 manageArgs1 Bool n = "    movl\t %r"++show(n+3)++"d, %eax\n    movb\t %al, "
 
 
-functionIntro :: [Type] -> Int -> Int -> (String,Int,Int,Int)
+
+
+
+
+
+
+functionStrings :: String ->[(String,Int)] -> String
+functionStrings name ((str,n):ls) = ("."++name++"_string"++(show n)++":\n    .string "++show(str)++"\n"++(functionStrings name ls))
+functionStrings name [] = []
+
+
+
+functionIntro :: [Type] -> Int -> Int -> (String,Int,Int,Int,Int)
 functionIntro args vars temps = 
 	let (str,off2) = manageArgs args 1 (((div (vars+15) 16))*16) ((max 0 (min (temps-7) 5))*8)
 	in ((pushRegisters temps) ++
-	"    subq\t $"++(show ((((div (off2+7) 8))*8)+((max (temps - 12) 0)*8)))++", %rsp\n"++str
-	,((max 0 (min (temps-7) 5))*8),(((div (vars+15) 16))*16)+((max 0 (min (temps-7) 5))*8),(((div (off2+7) 8))*8)+((max 0 (min (temps-7) 5))*8)+8)
+	"    subq\t $"++(show ((((div (off2+7) 8))*8)+((max (temps - 12) 0)*8)))++", %rsp\n"++str,
+	((max 0 (min (temps-7) 5))*8),(((div (vars+15) 16))*16)+((max 0 (min (temps-7) 5))*8),
+	(((div (off2+7) 8))*8)+((max 0 (min (temps-7) 5))*8)+8,(((div (off2+7) 8))*8)+((max (temps - 12) 0)*8))
 
 --(((div (vars+15) 16))*16) - zaokrąglenie miejsca zajmowanego przez zmienne w górę do podzielnego przez 16
 --((max 0 (min (temps-7) 5))*8) - (tempy minus liczba wolnych rejestrów) - ile z rejestrów które muszą być zachowane będzie używane
 --((max (temps - 12) 0)*8))) - miejsce zaarezerwowane na dodatkowe tempy
 --(((div (off2+7) 8))*8) - wysokość stosu do przesunięcia wyliczona po wpisaniu argumetnów funkcji z rejestrów na stos
 
-functionOutro :: Int -> String
-functionOutro temps = (popRegisters temps)++"    leave\n    ret\n"
+functionOutro :: Int -> Int -> String
+functionOutro move temps = "    addq\t $"++show(move)++", %rsp\n" ++(popRegisters temps)++"    leave\n    ret\n"
 
 movString ::ValVar4 -> ValVar4 -> StAss String
 movString (Var4 var1 t1) (Var4 var2 t2) = 
 	if (var1==var2)
 		then return ""
 		else do
-			(varloc1,_) <- writeVal (Var4 var1 t1)
-			(varloc2,_) <- readVal (Var4 var2 t2)
+			varloc1 <- exactAddress (Var4 var1 t1)
+			varloc2 <- exactAddress (Var4 var2 t2)
 			case t1 of
 				Bool -> return ("    movzbl\t "++varloc2++", %eax\n    "++"movb\t %al, "++varloc1++"\n")
 				Int -> return ("    movl\t "++varloc2++", %eax\n    movl\t %eax, "++varloc1++"\n")
@@ -199,61 +212,73 @@ movString Rej4 var1 = do
 	varloc1 <- exactAddress var1
 	return ("    movl\t "++varloc1++", %eax\n")
 
-movString (Temp4 x y) Rej4 = do
-	varloc1 <- getAddress (Temp4 x y)
+movString var1 Rej4 = do
+	varloc1 <- getAddress var1
 	case varloc1 of
 		Left loc -> return ("    movb\t %al, "++loc++"\n")
 		Right loc -> return ("    movzbl\t %al, "++loc++"\n")
 
-movString var1 Rej4 = do
-	varloc1 <- exactAddress var1
-	return ("    movb\t %al, "++varloc1++"\n")
-
 movString var1 (Bool4 True) = do
 	varloc1 <- exactAddress var1
-	return ("    movb\t $1, "++varloc1++"\n")
+	return ("    movl\t $1, "++varloc1++"\n")
 
 movString var1 (Bool4 False) = do
 	varloc1 <- exactAddress var1
-	return ("    movb\t $0, "++varloc1++"\n")
+	return ("    movl\t $0, "++varloc1++"\n")
 
 movString var1 var2 =
 	if (var1==var2)
 		then return ""
 		else do
-			(varloc1,str1) <- writeVal var1
-			(varloc2,str2) <- readVal var2
+			varloc1 <- getAddress var1
+			varloc2 <- getAddress var2
+			loc1 <- exactAddress var1
+			loc2 <- exactAddress var2
 			case (getType var1) of
-				Bool -> return (str2++"    movzbl\t "++varloc2++", %eax\n    "++"movb\t %al, "++varloc1++"\n"++str1)
-				Int -> return (str2++"    movl\t "++varloc2++", "++varloc1++"\n"++str1)
-				Str -> return (str2++"    movq\t "++varloc2++", "++varloc1++"\n"++str1)
+				Bool -> do
+					str3 <- movAL var1
+					case varloc2 of
+						Right _ -> return ("    movl\t "++loc2++", %eax\n"++str3)
+						Left _ ->return ("    movzbl\t "++loc2++", %eax\n"++str3)
+				Int -> do
+					case (varloc1,varloc2) of
+						(Left _,Left _) -> return ("    movl\t "++loc2++", %eax\n    movl\t %eax, "++loc1++"\n")
+						_ -> return ("    movl\t "++loc2++", "++loc1++"\n")
+				Str -> do
+					case (varloc1,varloc2) of
+						(Left _,Left _) -> return ("    movq\t "++loc2++", %rax\n    movq\t %rax, "++loc1++"\n")
+						_ -> return ("    movq\t "++loc2++", "++loc1++"\n")
 
 movAL :: ValVar4 -> StAss String
-movAL (Temp4 x y)  = do
-	varloc1 <- getAddress (Temp4 x y)
+movAL var1  = do
+	varloc1 <- getAddress var1
 	case varloc1 of
 		Left loc -> return ("    movb\t %al, "++loc++"\n")
 		Right loc -> return ("    movzbl\t %al, "++loc++"\n")
-		
-movAL var1 = do
-	varloc1 <- exactAddress var1
-	return ("    movb\t %al, "++varloc1++"\n")
 
 operString :: String -> ValVar4 -> ValVar4 -> StAss String
-operString oper (Var4 var1 t1) (Var4 var2 t2) = do
-	(varloc1,_) <- writeVal (Var4 var1 t1)
-	(varloc2,_) <- readVal (Var4 var2 t2)
-	case t1 of
-		Str -> return ("    movq\t "++varloc2++", %rax\n    "++oper++"\t %rax, "++varloc1++"\n")
-		_ ->  return ("    movl\t "++varloc2++", %eax\n    "++oper++"\t %eax, "++varloc1++"\n")
-		
 operString oper var1 var2 = do
-	(varloc1,str1) <- writeVal var1
-	(varloc2,str2) <- readVal var2
-	return (str2++"    "++oper++"\t "++varloc2++", "++varloc1++"\n"++str1)
+	varloc1 <- getAddress var1
+	varloc2 <- getAddress var2
+	loc1 <- exactAddress var1
+	loc2 <- exactAddress var2
+	case (getType var1) of
+		Bool -> do
+			str3 <- movAL var1
+			case varloc2 of
+				Right _ -> return ("    "++oper++"\t "++loc2++", %eax\n"++str3)
+				Left _ ->return ("    "++oper++"\t "++loc2++", %eax\n"++str3)
+		Int -> do
+			case (varloc1,varloc2) of
+				(Left _,Left _) -> return ("    movl\t "++loc2++", %eax\n    "++oper++"\t %eax, "++loc1++"\n")
+				_ -> return ("    "++oper++"\t "++loc2++", "++loc1++"\n")
+		Str -> do
+			case (varloc1,varloc2) of
+				(Left _,Left _) -> return ("    movq\t "++loc2++", %rax\n    "++oper++"\t %rax, "++loc1++"\n")
+				_ -> return ("    "++oper++"\t "++loc2++", "++loc1++"\n")
 
 
-
+---------------------------------------------------------------------------------------------------------------
 
 assembleInstruction :: Code4Instruction -> StAss String
 --TODO przypisanie stringa
@@ -282,7 +307,9 @@ assembleInstruction (Param4 n var) = return "TODO zrobić push na stos - i jakie
 assembleInstruction (CallV var name _ ) = do
 	varloc <- exactAddress var
 	case (getType var) of
-		Bool -> return ("    call\t "++name++"\n    movb\t %al, "++varloc++"\n")
+		Bool -> do
+			str <- movAL var
+			return ("    call\t "++name++"\n"++str)
 		Int -> return ("    call\t "++name++"\n    movl\t %eax, "++varloc++"\n")
 		Str -> return ("    call\t "++name++"\n    movq\t %rax, "++varloc++"\n")
 		Void -> return("    call\t"++name++"\n")
@@ -298,13 +325,27 @@ assembleInstruction (Return4 var) = do
 
 
 assembleInstruction (If4 var str) = do
-	varloc <- exactAddress var
-	return ("    cmpb $0, "++varloc++"\n    jne ."++str++"\n")
+	varloc <- getAddress var
+	case varloc of
+		Left loc -> return ("    cmpb\t $0, "++loc++"\n    jne ."++str++"\n")
+		Right loc -> return ("    movl\t "++loc++", %eax\n    testb\t %al, %al\n    jne\t ."++str++"\n")
 assembleInstruction (Goto4 str) = return ("    jmp ."++str++"\n")
 
+assembleInstruction (Not4 var) = do
+	varloc <- getAddress var
+	case varloc of
+		Left loc -> return ("movzbl\t "++loc++", %eax\n xorl\t $1, %eax\n movzbl\t %al, "++loc++"\n")
+		Right loc -> return ("xorl\t $1, "++loc++"\n")
+	
+assembleInstruction (Neg4 var) = do
+	varloc <- exactAddress var
+	return ("    negl\t "++varloc++"\n")
 
-
-
+assembleInstruction (OpV Concat4 var1 var2 var3)= do
+	varloc <- exactAddress var1
+	str2 <- movString (Temp4 3 (getType var2)) var2
+	str3 <- movString (Temp4 2 (getType var3)) var3
+	return (str2++str3++"    call\t concat\n    movq\t %rax, "++varloc++"\n")
 
 assembleInstruction (OpV Add4 var1 var2 (Int4 n))= do
 	str <- movString var1 var2
@@ -344,7 +385,9 @@ assembleInstruction (OpV Sub4 var1 var2 var3)=
 			operString "subl" var1 var3
 		else if (var1==var3)
 			then do
-				operString "subl" var1 var2
+				str <- operString "subl" var1 var2
+				loc <-exactAddress var1
+				return (str++"    negl\t "++loc++"\n")
 			else do
 				str <- movString var1 var2
 				str2 <- operString "subl" var1 var3
@@ -377,34 +420,34 @@ assembleInstruction (OpV Mod4 var1 var2 var3) = do	--TODO można by zrobić tak 
 
 --TODO może być porównanie miedzy rejestrem i czymś - wtedy nie trzeba przepisywać
 assembleInstruction (OpV SetL4 var1 var2 var3) = do
-	loc1 <- exactAddress var1
+	str1 <- movAL var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
-	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setl\t %al\n    movb\t %al, "++loc1++"\n")
+	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setl\t %al\n"++str1)
 
 assembleInstruction (OpV SetLE4 var1 var2 var3) = do
-	loc1 <- exactAddress var1
+	str1 <- movAL var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
-	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setle\t %al\n    movb\t %al, "++loc1++"\n")
+	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setle\t %al\n"++str1)
 
 assembleInstruction (OpV SetG4 var1 var2 var3) = do
-	loc1 <- exactAddress var1
+	str1 <- movAL var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
-	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setg\t %al\n    movb\t %al, "++loc1++"\n")
+	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setg\t %al\n"++str1)
 
 assembleInstruction (OpV SetGE4 var1 var2 var3) = do
-	loc1 <- exactAddress var1
+	str1 <- movAL var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
-	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setge\t %al\n    movb\t %al, "++loc1++"\n")
+	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setge\t %al\n"++str1)
 
 assembleInstruction (OpV SetE4B var1 var2 var3) = do
 	str1 <- movAL var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
-	return ("    movzbl\t "++loc2++", %eax\n    testl\t "++loc3++", %eax\n    setne\t %al\n"++str1) -- jeżeli lokacja jest rejestrem, to movzbl
+	return ("    movzbl\t "++loc2++", %eax\n    testl\t "++loc3++", %eax\n    setne\t %al\n"++str1)
 
 assembleInstruction (OpV SetE4I var1 var2 var3) = do
 	str1 <- movAL var1
@@ -417,7 +460,24 @@ assembleInstruction (OpV SetE4S var1 var2 var3) = do
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movq\t "++loc2++", %eax\n    cmpq\t "++loc3++", %eax\n    sete\t %al\n"++str1)
+	
+assembleInstruction (OpV SetNE4B var1 var2 var3) = do
+	str1 <- movAL var1
+	loc2 <- exactAddress var2
+	loc3 <- exactAddress var3
+	return ("    movzbl\t "++loc2++", %eax\n    testl\t "++loc3++", %eax\n    sete\t %al\n"++str1)
 
+assembleInstruction (OpV SetNE4I var1 var2 var3) = do
+	str1 <- movAL var1
+	loc2 <- exactAddress var2
+	loc3 <- exactAddress var3
+	return ("    movl\t "++loc2++", %eax\n    cmpl\t "++loc3++", %eax\n    setne\t %al\n"++str1)
+	
+assembleInstruction (OpV SetNE4S var1 var2 var3) = do
+	str1 <- movAL var1
+	loc2 <- exactAddress var2
+	loc3 <- exactAddress var3
+	return ("    movq\t "++loc2++", %eax\n    cmpq\t "++loc3++", %eax\n    setne\t %al\n"++str1)
 
 --TODOTODO równośc i nierówność, if
 
@@ -452,13 +512,14 @@ assembleFunCode [] = return ""
 
 
 assembleTopDef :: Code4Function -> IO()--tutaj wypisać prolog i epilog funkcji
-assembleTopDef (argtypes,name,((label,inst):bs),vars,temps)  = do
-	let (intro,off1,off2,off3) =functionIntro argtypes vars temps
+assembleTopDef (argtypes,name,((label,inst):bs),vars,temps,strList)  = do
+	putStrLn (functionStrings name strList)
+	let (intro,off1,off2,off3,move) =functionIntro argtypes vars temps
 	putStrLn ("    .globl  "++name++"\n"++name++":\n"++"."++label++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n"++intro)		--TODO Code4Function mus i zawierać jeszcze listę typów argumentów
-	let (str1,_) = runState (assembleInstrs inst) (off1,off2,off3)	--TODOTODO prawdziwe offsety wyciagnięte z functionIntro
-	let (str2,_) = runState (assembleFunCode (init bs)) (off1,off2,off3)
+	let (str1,_) = runState (assembleInstrs inst) (name,off1,off2,off3)	--TODOTODO prawdziwe offsety wyciagnięte z functionIntro
+	let (str2,_) = runState (assembleFunCode (init bs)) (name,off1,off2,off3)
 	putStr (str1++str2)
-	putStr ("."++name++"_END:\n"++(functionOutro temps))
+	putStr ("."++name++"_END:\n"++(functionOutro move temps))
 
 
 assembleWhole :: [Code4Function] -> IO ()
