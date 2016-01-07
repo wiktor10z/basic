@@ -10,31 +10,8 @@ import Latc_basic
 import Latc_Code4
 
 
---TODO rdi....r15 są potrzebne na argumenty funkcji więc może być problem jak są aktualnie używane - sprawdzić działanie
-
-type StAss = State (String,Int,Int,Int) -- trzyma name,off1,off2,off3
-
-
-readVal :: ValVar4 -> StAss (String,String)
-readVal v = do
-	varloc <- getAddress v
-	case varloc of
-		Right str -> return (str,"")
-		Left str -> case (getType v) of
-			Bool -> return ("%al", "    movzbl\t "++str++", %eax\n")
-			Int -> return ("%eax", "    movl\t "++str++", %eax\n")
-			Str -> return ("%rax", "    movq\t "++str++", %rax\n")	--TODO sprawdzić, czy używanie tego rejestru jest bezpieczne - czy czegoś nie psuje
-
-writeVal :: ValVar4 -> StAss (String,String)
-writeVal v = do
-	varloc <- getAddress v
-	case varloc of
-		Right str -> return (str,"")
-		Left str -> case (getType v) of
-			Bool -> return ("%al", "    movb\t %al, "++str++"\n")	--TODO przetestować szczególnie bool
-			Int -> return ("%eax", "    movl\t %eax, "++str++"\n")
-			Str -> return ("%rax", "    movq\t %rax, "++str++"\n")
-			
+type StAss = State (String,Int,Int,Int)
+		
 
 exactAddress :: ValVar4 -> StAss String
 exactAddress (Int4 n) = return ("$"++(show n))
@@ -62,10 +39,18 @@ getAddress (Temp4 n t) = do
 		varloc <- tempsHash t n
 		return (Right varloc)
 		else return (Left ((show ((-1)*off3))++"(%rbp)"))
+		
+getAddress (Int4 n) =  return (Right ("$"++(show n)))
+getAddress (Bool4 True) = return (Right "$1")
+getAddress (Bool4 False) = return (Right "$0")
+	
 getAddress (String4 n) = do
 	(name,_,_,_) <- get
 	return (Right ("$."++name++"_string"++(show n)))
 
+
+	
+	
 
 getType :: ValVar4 -> Type
 getType (Var4 n t) = t
@@ -78,7 +63,7 @@ getType Rej4 = Bool
 
 
 
-varsHash ::Int -> StAss Int	--off1 = 
+varsHash ::Int -> StAss Int 
 varsHash n = do
 	(_,off1,off2,_) <- get
 	if n<(-100)
@@ -164,28 +149,23 @@ manageArgs1 Bool 4 = "    movl\t %ecx, %eax\n    movb\t %al, "
 manageArgs1 Bool n = "    movl\t %r"++show(n+3)++"d, %eax\n    movb\t %al, "
 
 
-
-
-
-
-
-
 functionStrings :: String ->[(String,Int)] -> String
 functionStrings name ((str,n):ls) = ("."++name++"_string"++(show n)++":\n    .string "++show(str)++"\n"++(functionStrings name ls))
 functionStrings name [] = []
 
 
 
-functionIntro :: [Type] -> Int -> Int -> (String,Int,Int,Int,Int)
-functionIntro args vars temps = 
+functionIntro :: [Type] -> Int -> Int -> Int -> (String,Int,Int,Int,Int)
+functionIntro args vars temps params = 
 	let (str,off2) = manageArgs args 1 (((div (vars+15) 16))*16) ((max 0 (min (temps-7) 5))*8)
 	in ((pushRegisters temps) ++
-	"    subq\t $"++(show ((((div (off2+7) 8))*8)+((max (temps - 12) 0)*8)))++", %rsp\n"++str,
+	"    subq\t $"++(show ((((div (off2+7) 8))*8)+((max (temps - 12) 0)*8)+((max 0 (params -6 ))*8)))++", %rsp\n"++str,
 	((max 0 (min (temps-7) 5))*8),(((div (vars+15) 16))*16)+((max 0 (min (temps-7) 5))*8),
-	(((div (off2+7) 8))*8)+((max 0 (min (temps-7) 5))*8)+8,(((div (off2+7) 8))*8)+((max (temps - 12) 0)*8))
+	(((div (off2+7) 8))*8)+((max 0 (min (temps-7) 5))*8)+8,(((div (off2+7) 8))*8)+((max (temps - 12) 0)*8)+((max 0 (params -6 ))*8))
 
 --(((div (vars+15) 16))*16) - zaokrąglenie miejsca zajmowanego przez zmienne w górę do podzielnego przez 16
 --((max 0 (min (temps-7) 5))*8) - (tempy minus liczba wolnych rejestrów) - ile z rejestrów które muszą być zachowane będzie używane
+--((max 0 (params -6 ))*8) - miejsce zarezerwowane na parametry wołania funkcji przekazywane na stosie (7+)
 --((max (temps - 12) 0)*8))) - miejsce zaarezerwowane na dodatkowe tempy
 --(((div (off2+7) 8))*8) - wysokość stosu do przesunięcia wyliczona po wpisaniu argumetnów funkcji z rejestrów na stos
 
@@ -281,10 +261,8 @@ operString oper var1 var2 = do
 ---------------------------------------------------------------------------------------------------------------
 
 assembleInstruction :: Code4Instruction -> StAss String
---TODO przypisanie stringa
 
 assembleInstruction (Ass4 var1 var2)= movString var1 var2
-
 
 assembleInstruction (Param4 1 var) = movString (Temp4 3 (getType var)) var
 assembleInstruction (Param4 2 var) = movString (Temp4 2 (getType var)) var
@@ -296,13 +274,23 @@ assembleInstruction (Param4 3 var) =
 			return ("    movq\t "++varloc++", %rdx\n")
 		else do
 			varloc <- exactAddress var
-			return ("    movq\t "++varloc++", %edx\n")
+			return ("    movl\t "++varloc++", %edx\n")
 			
 assembleInstruction (Param4 4 var) = movString (Temp4 1 (getType var)) var
 assembleInstruction (Param4 5 var) = movString (Temp4 4 (getType var)) var	
 assembleInstruction (Param4 6 var) = movString (Temp4 5 (getType var)) var
 	
-assembleInstruction (Param4 n var) = return "TODO zrobić push na stos - i jakieś wyrównanie\n" 
+assembleInstruction (Param4 n var) = do
+	varloc <- getAddress var
+	case varloc of
+		Right loc -> case (getType var) of
+			Bool -> return ("    movl\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
+			Int -> return ("    movl\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
+			Str -> return ("    movq\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
+		Left loc -> case (getType var) of
+			Bool -> return ("    movzbl\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
+			Int -> return ("    movl\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
+			Str -> return ("    movq\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
 	
 assembleInstruction (CallV var name _ ) = do
 	varloc <- exactAddress var
@@ -312,7 +300,7 @@ assembleInstruction (CallV var name _ ) = do
 			return ("    call\t "++name++"\n"++str)
 		Int -> return ("    call\t "++name++"\n    movl\t %eax, "++varloc++"\n")
 		Str -> return ("    call\t "++name++"\n    movq\t %rax, "++varloc++"\n")
-		Void -> return("    call\t"++name++"\n")
+		Void -> return("    call\t "++name++"\n")
 
 
 assembleInstruction (Return4 Void4) = return ("")
@@ -321,8 +309,6 @@ assembleInstruction (Return4 var) = do
 	if ((getType var)==Str)
 		then return ("    movq\t"++varloc++", %rax\n")
 		else return ("    movl\t"++varloc++", %eax\n")
-		--TODO może jeszcze co innego dla bool
-
 
 assembleInstruction (If4 var str) = do
 	varloc <- getAddress var
@@ -394,7 +380,7 @@ assembleInstruction (OpV Sub4 var1 var2 var3)=
 				return (str++str2)
 
 		
-assembleInstruction (OpV Mul4 var1 (Int4 n) var2) = do	--TODO można by zrobić tak jak w c - binarne dodawanie i przesuwanie
+assembleInstruction (OpV Mul4 var1 (Int4 n) var2) = do
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	return ("    movl\t "++loc2++", %eax\n    imull\t $"++(show n)++", %eax\n    movl\t %eax, "++loc1++"\n")
@@ -406,19 +392,18 @@ assembleInstruction (OpV Mul4 var1 var2 var3) =	do
 	return ("    movl\t "++loc2++", %eax\n    imull\t "++loc3++", %eax\n    movl\t %eax, "++loc1++"\n")
 
 
-assembleInstruction (OpV Div4 var1 var2 var3) = do	--TODO można by zrobić tak jak w c - binarne dodawanie i przesuwanie
+assembleInstruction (OpV Div4 var1 var2 var3) = do
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movl\t "++loc2++", %eax\n    cltd\n    idivl\t "++loc3++"\n    movl\t %eax, "++loc1++"\n")
 
-assembleInstruction (OpV Mod4 var1 var2 var3) = do	--TODO można by zrobić tak jak w c - binarne dodawanie i przesuwanie przy stałych
+assembleInstruction (OpV Mod4 var1 var2 var3) = do
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
 	return ("    movl\t "++loc2++", %eax\n    cltd\n    idivl\t "++loc3++"\n    movl\t %edx, "++loc1++"\n")
 
---TODO może być porównanie miedzy rejestrem i czymś - wtedy nie trzeba przepisywać
 assembleInstruction (OpV SetL4 var1 var2 var3) = do
 	str1 <- movAL var1
 	loc2 <- exactAddress var2
@@ -479,12 +464,6 @@ assembleInstruction (OpV SetNE4S var1 var2 var3) = do
 	loc3 <- exactAddress var3
 	return ("    movq\t "++loc2++", %eax\n    cmpq\t "++loc3++", %eax\n    setne\t %al\n"++str1)
 
---TODOTODO równośc i nierówność, if
-
-
-
-assembleInstruction _ = return "TODO\n"
-
 
 assembleInstrs :: [Code4Instruction] -> StAss String
 assembleInstrs (inst:instrs) = do
@@ -494,7 +473,7 @@ assembleInstrs (inst:instrs) = do
 	
 assembleInstrs [] = return ""
 	
-assembleBlock :: Code4Block -> StAss String --TODO to blok zerowy powinien zawierać push\q...
+assembleBlock :: Code4Block -> StAss String
 assembleBlock (label,instrs) = do
 	str <- assembleInstrs instrs
 	return ("."++label++":\n"++str)
@@ -511,12 +490,12 @@ assembleFunCode (b:bs) = do
 assembleFunCode [] = return ""
 
 
-assembleTopDef :: Code4Function -> IO()--tutaj wypisać prolog i epilog funkcji
-assembleTopDef (argtypes,name,((label,inst):bs),vars,temps,strList)  = do
+assembleTopDef :: Code4Function -> IO()
+assembleTopDef (argtypes,name,((label,inst):bs),vars,temps,strList,params)  = do
 	putStrLn (functionStrings name strList)
-	let (intro,off1,off2,off3,move) =functionIntro argtypes vars temps
-	putStrLn ("    .globl  "++name++"\n"++name++":\n"++"."++label++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n"++intro)		--TODO Code4Function mus i zawierać jeszcze listę typów argumentów
-	let (str1,_) = runState (assembleInstrs inst) (name,off1,off2,off3)	--TODOTODO prawdziwe offsety wyciagnięte z functionIntro
+	let (intro,off1,off2,off3,move) =functionIntro argtypes vars temps params
+	putStr ("    .globl  "++name++"\n"++name++":\n"++"."++label++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n"++intro)
+	let (str1,_) = runState (assembleInstrs inst) (name,off1,off2,off3)
 	let (str2,_) = runState (assembleFunCode (init bs)) (name,off1,off2,off3)
 	putStr (str1++str2)
 	putStr ("."++name++"_END:\n"++(functionOutro move temps))

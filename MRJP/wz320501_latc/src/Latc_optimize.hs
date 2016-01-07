@@ -105,7 +105,7 @@ optToMapSet ((s,[label,label2]):ls) m =
 optToMapSet [] m = m
 
 
-optToMap :: [Code4Block] -> Map.Map String ([Code4Instruction],[String],Set.Set String)	--zamienić na z [Block] - i zmienić w toCode4
+optToMap :: [Code4Block] -> Map.Map String ([Code4Instruction],[String],Set.Set String)
 optToMap bs = optToMapSet (optSuccList bs) (optToMapEmpty bs)
 
 
@@ -115,12 +115,11 @@ optFromMap [] = []
 
 
 optimize :: Code4Function -> Code4Function
-optimize (argtypes,name,bs,vars,temps,strList) =
+optimize (argtypes,name,bs,vars,temps,strList,params) =
 	let bs2 = map optGotoAftRet bs
 	in let map = optToMap bs2
 	in let map2 = optEraseEmptyBlocksFix map
-	in (argtypes,name,optFromMap (Map.toList map2),vars,temps,strList)
-	--przeiteruj po blokach i jeżeli kończy się returnem, to dodaj goto end
+	in (argtypes,name,optFromMap (Map.toList map2),vars,temps,strList,params)
 
 optimizeWhole :: [Code4Function] -> [Code4Function]
 optimizeWhole list = map optimize list

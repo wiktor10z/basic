@@ -10,8 +10,6 @@ import Latte.Abs
 import Latc_basic
 import Latc_ExpTypeVal
 
---TODO można użyć update mapy a nie insert przy zmienianiu wartości
---TODO brak pliku wynikowego jak error
 
 checkVoidArguments :: String -> [Arg] -> StEnv ()
 checkVoidArguments name ((Arg t (PIdent ((x,y),_))):args) =
@@ -48,10 +46,6 @@ checkFunctionSignatures [] = do
 				Just (Fun Int [],_) -> do return env
 				Just (Fun _ (h:hs),_) -> error ("error main in line "++show(x)++" function cannot have arguments")
 				Just (Fun _ _,_)	-> error ("error main function in line "++show(x)++" must return int")
-				-- Just (_) -> error "???"
-				--Nothing -> error "???"
-
-
 
 
 checkArgs :: [Arg] -> StEnv Env
@@ -71,8 +65,6 @@ checkArgs ((Arg t (PIdent ((x,y),name))):args) = do
 checkArgs [] = ask
 	 
 	 
-	 
-
 insertVar :: Type -> Val -> ((Int,Int),String,Int) -> [Item]-> StEnv (Env,[Item])
 insertVar t val (l,name,level) its = do
 	st <- getSt	
@@ -81,9 +73,6 @@ insertVar t val (l,name,level) its = do
 	putSt s
 	(local (Map.insert name (l,loc,level)) (checkDecl t its level))
 	
-
-
-
 
 duplicateAndAssVar :: String -> Val -> Int -> Bool -> StEnv Env
 duplicateAndAssVar name val newlevel b= do
@@ -101,8 +90,6 @@ duplicateAndAssVar name val newlevel b= do
 				return (Map.insert name ((x1,y1),loc2,newlevel) env)
 			_ -> error "???"
 		_ -> error "???"
-
-
 
 
 checkDecl :: Type -> [Item] -> Int -> StEnv (Env,[Item])
@@ -146,8 +133,6 @@ checkDecl _ [] _ = do
 	return (env,[])
 
 
-
-
 checkStmt :: Stmt ->Type -> Int -> Int -> Bool -> StEnv (Env,Stmt)
 
 checkStmt Empty _ _ _ _ = do
@@ -176,7 +161,6 @@ checkStmt (Ass (PIdent ((x,y),name)) exp) _ _ slevel b= do
 						env2 <- ask
 						return (env2,(Ass (PIdent ((x,y),name)) nexp))
 				else error ("error in line "++show(x)++", column "++show(y)++" assigment to variable "++show(name)++" defined in line "++show(x1)++", column "++show(y1)++" of different type")
-			--Nothing -> error "???"
 
 checkStmt (Incr (PIdent ((x,y),name))) _ _ slevel b = do
 	env <- ask
@@ -250,7 +234,7 @@ checkBlock ((Cond (PIf ((x,y),_)) exp stm):stmts) ft level slevel b= do
 			Decl _ _ -> error ("error in line "++show(x)++", column "++show(y)++" bare declaration in if")
 			_ -> case val of
 				Just (Left (Right True)) -> do 
-					(b2,[nstm]) <- checkBlock [stm] ft level slevel b			--TODO ja wiem ale kompilator może nie, że to będzie lista jedno elementowa
+					(b2,[nstm]) <- checkBlock [stm] ft level slevel b
 					(b3,nstmts) <- checkBlock stmts ft level level b2
 					if b2
 						then return (b3,(nstm:nstmts))				
@@ -296,8 +280,6 @@ checkBlock ((CondElse (PIf ((x,y),_)) exp stm1 stm2):stmts) ft level slevel b = 
 		_ -> error ("error in line "++show(x)++", column "++show(y)++"if condition of non-boolean type")
 
 
-
---TODOTODO przetestować
 checkBlock ((While (PWhile ((x,y),_)) exp stm):stmts) ft level slevel b = do
 	(type1,val,_) <- checkExpTypeVal exp
 	case type1 of

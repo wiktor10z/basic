@@ -1,35 +1,26 @@
 module Latc_Code4 where
 
-import Data.Maybe
 import Control.Monad.Reader
 import Control.Monad.State
-import Control.Exception
 import System.Environment
-import System.Exit
-import System.IO
+import qualified Data.List as List
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 
-
 import Latte.Abs
-import Latte.Lex
-import Latte.Par
-import Latte.ErrM
 import Latc_basic
 
-type Code4Function = ([Type],String,[Code4Block],Int,Int)	--argumenty,nazwa,kod,l.zmiennych,max tempów
+type Code4Function = ([Type],String,[Code4Block],Int,Int,[(String,Int)],Int)	--argumenty,nazwa,kod,ilość zmiennych,max tempów,lista stringów,max liczba argumentów w wywołaniu
 
 type Code4Block = (String,[Code4Instruction])
 
 data Code4Instruction =
 	Empty4 ValVar4 |
-	Ass4 ValVar4 ValVar4|	--TODO tutaj też typ
-	--OpE Op ValVar4 ValVar4 |
+	Ass4 ValVar4 ValVar4|
 	OpV Op ValVar4 ValVar4 ValVar4 |
 	Neg4 ValVar4 |
 	Not4 ValVar4 |
 	Param4 Int ValVar4 |
-	--CallE String Integer |	
 	CallV ValVar4 String Int |
 	Return4 ValVar4	|
 	Goto4 String |
@@ -52,49 +43,39 @@ data Op =
 	SetE4S |
 	SetNE4B |
 	SetNE4I |
-	SetNE4S |
-	Xor4
+	SetNE4S
     deriving (Eq,Ord,Show)
 
 data ValVar4 =
 	Int4 Integer |
 	Bool4 Bool |
-	String4 String |
+	String4 Int |
 	Temp4 Int Type|
-	Var4 Int Type|	--TODO można by pamiętać jezcze rozmiar/typ, a nawet trzeba - typ dodawani, przypisania itp. - 		
+	Var4 Int Type|	
 	Rej4 |
 	Void4 
     deriving (Eq,Ord,Show)	
 
 type Env4 = Map.Map String (Int,Type)
-type St4 = (String,Int,String,Int,Int,Set.Set Int,[Code4Block],[Code4Instruction])	--nazwa, labele, zmienne, tempy
+type St4 = (String,Int,String,Int,Int,Set.Set Int,Int,Map.Map String Int,Int,[Code4Block],[Code4Instruction])	--nazwa, labele, zmienne, tempy,stringi,l. param wywołania
 
 type StEnv4 = ReaderT Env4 (State St4)
 
---TODOTODOTODOTODOTODOTODOTODOTODO lepsze zarządzanie temp
---TODO lepsze kolokacje między blokami - graf przepływu do alokacji rejestrów i optymalizacji
 
-
---nextTemp :: StEnv4 Integer
---nextTemp = do
---	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs) <- get
---	put (name,labels,nextlabel,vars,temps+1,tempset,blocks,instrs)
---	return temps
-	
 getTemp :: StEnv4 Int
 getTemp = do
-	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs) <- get
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
 	if (Set.null tempset)
-		then do put (name,labels,nextlabel,vars,temps+1,tempset,blocks,instrs)
+		then do put (name,labels,nextlabel,vars,temps+1,tempset,strs,strmap,params,blocks,instrs)
 			return (temps+1)
 		else do let (x,set2) = Set.deleteFindMin tempset
-			put (name,labels,nextlabel,vars,temps,set2,blocks,instrs)
+			put (name,labels,nextlabel,vars,temps,set2,strs,strmap,params,blocks,instrs)
 			return x
 
 freeTemp :: Int -> StEnv4 ()
 freeTemp x = do
-	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs) <- get	
-	put (name,labels,nextlabel,vars,temps,Set.insert x tempset,blocks,instrs)
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get	
+	put (name,labels,nextlabel,vars,temps,Set.insert x tempset,strs,strmap,params,blocks,instrs)
 
 freeTemp2 :: ValVar4 -> StEnv4 ()
 freeTemp2 (Temp4 x _) = freeTemp x
@@ -106,7 +87,7 @@ freeGetTemp x y = do
 	freeTemp2 y
 	getTemp
 
---TODO to jest tylko tymczasowe - i tak trzeba tempty przepisać na właściwe rejestry lub stos
+
 multiFreeTemp :: [ValVar4] -> StEnv4 ()
 multiFreeTemp (x:xs) = do
 	freeTemp2 x
@@ -117,40 +98,58 @@ multiFreeTemp [] = return ()
 newVar :: Type -> StEnv4 Int
 newVar t = do
 	let size = valSize t
-	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs) <- get
-	put (name,labels,nextlabel,vars+size,temps,tempset,blocks,instrs)
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
+	put (name,labels,nextlabel,vars+size,temps,tempset,strs,strmap,params,blocks,instrs)
 	return (vars+size)
 
 addInstructions :: [Code4Instruction] -> StEnv4 ()
 addInstructions instrs2 = do
-	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs1) <- get
-	put (name,labels,nextlabel,vars,temps,tempset,blocks,instrs1++instrs2)
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs1) <- get
+	put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs1++instrs2)
 
 writeBlock :: StEnv4 [Code4Block]
 writeBlock = do
-	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs) <- get
-	put (name,labels,nextlabel,vars,temps,tempset,blocks ++ [(nextlabel,instrs)],[])
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
+	put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks ++ [(nextlabel,instrs)],[])
 	return (blocks ++ [(nextlabel,instrs)])
 
 getLabel :: StEnv4 String
 getLabel = do
-	(name,labels,nextlabel,vars,temps,tempset,blocks,instrs) <- get
-	put (name,labels+1,nextlabel,vars,temps,tempset,blocks,instrs)
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
+	put (name,labels+1,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs)
 	return (name++"_"++(show labels))
 
 setLabel :: String -> StEnv4 ()
 setLabel labelname = do
-	(name,labels,_,vars,temps,tempset,blocks,instrs) <- get
-	put (name,labels,labelname,vars,temps,tempset,blocks,instrs)
+	(name,labels,_,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
+	put (name,labels,labelname,vars,temps,tempset,strs,strmap,params,blocks,instrs)
 
 endLabel :: StEnv4 String
 endLabel = do
-	(name,_,_,_,_,_,_,_) <- get
+	(name,_,_,_,_,_,_,_,_,_,_) <- get
 	return (name++"_END")
 	
---TODO w C jest przesunięcie o 7 a nie o 5 - niewiadomo dlaczego - może lepiej przsuwać o 7
+pushString :: String -> StEnv4 Int
+pushString str = do
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
+	case Map.lookup str strmap of
+		Just n -> return n
+		Nothing -> do
+			put (name,labels,nextlabel,vars,temps,tempset,strs+1,Map.insert str (strs+1) strmap,params,blocks,instrs)
+			return (strs+1)
+
+maxParams :: Int -> StEnv4 ()
+maxParams n = do
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
+	if (n>params)
+		then put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,n,blocks,instrs)
+		else return ()
+
+
 reserveTemps :: StEnv4 ()
 reserveTemps = do
+	getTemp
+	getTemp
 	getTemp
 	getTemp
 	getTemp
@@ -165,9 +164,12 @@ unreserveTemps = do
 	freeTemp 3
 	freeTemp 4
 	freeTemp 5
+	freeTemp 6
+	freeTemp 7
 
 containsApp :: Expr -> Bool
 containsApp (EApp _ _) = True
+containsApp (EAdd _ (Plus (PPlus (_,"+s"))) _) = True
 containsApp (Neg _ exp) = containsApp exp
 containsApp (Not _ exp) = containsApp exp
 containsApp (EMul exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
@@ -176,10 +178,6 @@ containsApp (ERel exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp (EOr exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp (EAnd exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp _ = False	
-
---multiContainsApp :: [Expr] -> Bool
---multiContainsApp (exp:exps) = (containsApp exp)||(multiContainsApp exps)
---multiContainsApp [] = False
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -198,8 +196,6 @@ toCode4App exps = do
 	return (str1++params,xs)
 
 
-
-
 toCode4Expr :: Expr -> StEnv4 ([Code4Instruction],ValVar4)
 
 toCode4Expr (EVar (PIdent (_,x))) = do
@@ -214,9 +210,12 @@ toCode4Expr (EApp (PIdent ((x,_),name)) exps) = do
 	(str,xs) <- toCode4App exps
 	multiFreeTemp xs
 	temp <- getTemp
+	maxParams (length exps)
 	return (str++[CallV (Temp4 temp (fromVarType x)) name (length exps)],(Temp4 temp (fromVarType x)))
 
-toCode4Expr (EString str) = return ([],String4 str)
+toCode4Expr (EString str) = do
+	n <- pushString str
+	return ([],String4 n)
 
 toCode4Expr (Neg (PMinus _) (ELitInt n)) = return([],Int4 (-n))
 
@@ -347,7 +346,7 @@ toCode4Expr (EOr exp1 (POr _) exp2) = do
 	truelabel <- getLabel
 	falselabel <- getLabel
 	endlabel <- getLabel
-	addInstructions [If4 x1 truelabel,Goto4 falselabel]
+	addInstructions (inst1 ++ [If4 x1 truelabel,Goto4 falselabel])
 	freeTemp2 x1
 	writeBlock
 	setLabel truelabel
@@ -355,7 +354,7 @@ toCode4Expr (EOr exp1 (POr _) exp2) = do
 	writeBlock
 	setLabel falselabel	
 	(inst2,x2) <- toCode4Expr exp2
-	addInstructions [Ass4 Rej4 x2,Goto4 endlabel]
+	addInstructions (inst2 ++ [Ass4 Rej4 x2,Goto4 endlabel])
 	freeTemp2 x2
 	writeBlock
 	setLabel endlabel
@@ -367,12 +366,12 @@ toCode4Expr (EAnd exp1 (PAnd _) exp2) = do
 	truelabel <- getLabel
 	falselabel <- getLabel
 	endlabel <- getLabel
-	addInstructions [If4 x1 truelabel,Goto4 falselabel]
+	addInstructions (inst1 ++ [If4 x1 truelabel,Goto4 falselabel])
 	freeTemp2 x1
 	writeBlock
 	setLabel truelabel	
 	(inst2,x2) <- toCode4Expr exp2
-	addInstructions [Ass4 Rej4 x2,Goto4 endlabel]
+	addInstructions (inst2 ++ [Ass4 Rej4 x2,Goto4 endlabel])
 	freeTemp2 x2
 	writeBlock	
 	setLabel falselabel
@@ -381,6 +380,7 @@ toCode4Expr (EAnd exp1 (PAnd _) exp2) = do
 	setLabel endlabel
 	temp<-getTemp
 	return ([Ass4 (Temp4 temp Bool) Rej4],(Temp4 temp Bool))	
+
 
 toCode4Expr2 :: Expr -> StEnv4 ([Code4Instruction],ValVar4)
 toCode4Expr2 exp = do
@@ -393,14 +393,11 @@ toCode4Expr2 exp = do
 		else toCode4Expr exp
 		
 
-
-
 toCode4Ass :: Int -> Type -> Code4Instruction -> Code4Instruction
 toCode4Ass varnum t (OpV op (Temp4 _ _) x1 x2) = (OpV op (Var4 varnum t) x1 x2)
 toCode4Ass varnum t (CallV _ name n) = CallV (Var4 varnum t) name n
 toCode4Ass varnum t (Empty4 x) = Ass4 (Var4 varnum t) x
 toCode4Ass varnum t (Ass4 (Temp4 _ _) Rej4) = Ass4 (Var4 varnum t) Rej4
-
 
 
 toCode4Decl :: Type -> [Item] -> StEnv4 (Env4,[Code4Instruction])
@@ -417,6 +414,7 @@ toCode4Decl t ((Init (PIdent (_,varname)) exp):its) = do
 toCode4Decl _ [] = do
 	env <- ask
 	return (env,[])
+
 
 toCode4Stmt :: Stmt -> StEnv4 Env4
 
@@ -481,15 +479,13 @@ toCode4Stmt (Cond (PIf _) exp stm) = do
 	addInstructions [Goto4 endlabel]
 	writeBlock		
 	setLabel condlabel
-	(inst4,temp4) <- toCode4Expr2 exp	-- warunek typu bool - może być zmienna lub temp	
+	(inst4,temp4) <- toCode4Expr2 exp
 	addInstructions inst4
 	addInstructions [If4 temp4 truelabel,Goto4 endlabel]
 	freeTemp2 temp4
 	writeBlock	
 	setLabel endlabel
 	ask
-
-
 
 toCode4Stmt (CondElse (PIf _) exp stm stm2) = do
 	condlabel <- getLabel
@@ -534,12 +530,11 @@ toCode4Stmt (While (PWhile _) exp stm) = do
 	setLabel endlabel
 	ask
 
-toCode4Stmt (SExp exp) = do		--TODO można zamienić OpV na OpE
+toCode4Stmt (SExp exp) = do
 	(inst4,temp4) <- toCode4Expr2 exp
 	addInstructions inst4
 	freeTemp2 temp4
 	ask
-
 
 
 toCode4Block :: [Stmt] -> StEnv4 ()
@@ -556,31 +551,26 @@ code4Arguments args =
 		then (Map.empty,0)
 		else let (env1,offset) = code4Arguments (init args)
 			in case (last args) of
-				(Arg t (PIdent (_,name))) -> if ((length args) == 7)
-					then (Map.insert name (-124,t) env1,124)
-					else ((Map.insert name ((-1)*(valSize t)-offset,t) env1),offset+(valSize t))--TODOTODOTODOTODO czy to jest poprawne - czy rozmiar tego argumentu czy raczej poprzedniego i czy zawsze 24, czy też jest to zależne od wołającego
+				(Arg t (PIdent (_,name))) -> if ((length args) >= 7)
+					then (Map.insert name (-116-8*((length args)-7),t) env1,116+8*((length args)-7))
+					else ((Map.insert name ((-1)*(valSize t)-offset,t) env1),offset+(valSize t))
 
 
 toCode4TopDef :: TopDef -> StEnv4 Code4Function
 toCode4TopDef (FnDef _ (PIdent (_,name)) args (Block bl)) = do
-	put (name,1,name++"_0",0,0,Set.empty,[],[])
+	put (name,1,name++"_0",0,0,Set.empty,0,Map.empty,0,[],[])
 	let (env4,_) = code4Arguments args
 	(local (\x -> env4) (toCode4Block bl))
-	--(_,_,_,vars,temps,_,bl4,inst4) <- get
-	--if ((null inst4)&&(not (null bl4)))
-		--then return (argTypes args,name,bl4,vars,temps)
-		--else do
 	label <- endLabel		
 	addInstructions [Goto4 label]
 	writeBlock
-	--(_,_,_,_,_,_,bl4,_) <- get
-	(_,_,_,vars,temps,_,bl4,inst4) <- get
-
-	return (argTypes args,name,bl4++[(label,[])],vars,temps)
+	(_,_,_,vars,temps,_,_,strmap,params,bl4,inst4) <- get
+	let strList = List.sortBy (\(x1,y1) (x2,y2) -> (compare y1 y2)) (Map.toList strmap)
+	return (argTypes args,name,bl4++[(label,[])],vars,temps,strList,params)
 
 toCode4 :: [TopDef] -> [Code4Function]
 toCode4 (f:fs) = 
-	let (code41,_) = runState (runReaderT (toCode4TopDef f) (Map.empty)) ("",0,"",0,0,Set.empty,[],[])
+	let (code41,_) = runState (runReaderT (toCode4TopDef f) (Map.empty)) ("",0,"",0,0,Set.empty,0,Map.empty,0,[],[])
 	in let code42 = toCode4 fs
 	in code41:code42
 	

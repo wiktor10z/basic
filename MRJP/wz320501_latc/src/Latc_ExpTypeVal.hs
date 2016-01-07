@@ -1,21 +1,15 @@
 module Latc_ExpTypeVal where
 
-import Data.Maybe
 import Control.Monad.Reader
 import Control.Monad.State
 import System.Environment
-import System.Exit
-import System.IO
 import qualified Data.Map as Map
 
 import Latte.Abs
-import Latte.Lex
-import Latte.Par
-import Latte.ErrM
 import Latc_basic
 
 
-multipleTypesMatch :: PIdent -> (Int,Int) -> [Expr] -> [Type] -> Int -> StEnv [Expr]				--TODO zwróć uproszczone exps
+multipleTypesMatch :: PIdent -> (Int,Int) -> [Expr] -> [Type] -> Int -> StEnv [Expr]
 
 multipleTypesMatch (PIdent ((x,y),name)) (x1,y1) (exp:exps) (t:ts) i = do
 	(t2,_,nexp) <- checkExpTypeVal exp
@@ -73,8 +67,8 @@ checkExpTypeVal (Neg (PMinus ((x,y),_)) exp) = do
 		then case val of
 			Nothing -> return (Int,Nothing,(Neg (PMinus ((x,y),"-")) nexp))
 			Just (Right n) -> if (-n)>=0 
-					then return (Int,Just (Right (-n)),ELitInt n)
-					else return (Int,Just (Right (-n)),Neg (PMinus ((x,y),"-")) (ELitInt (-n)))
+					then return (Int,Just (Right (-n)),ELitInt (-n))
+					else return (Int,Just (Right (-n)),Neg (PMinus ((x,y),"-")) (ELitInt n))
 			--Just _ -> error "???"
 		else error ("integer negation of non-integer expresion at line "++show(x)++", column "++show(y))
 
@@ -87,7 +81,7 @@ checkExpTypeVal (Not (PNot ((x,y),_)) exp) = do
 			Just (Left(Right False)) -> return (Bool,Just(Left (Right True)),ELitTrue)
 		else error ("boolean negation of non-boolean expresion at line "++show(x)++", column "++show(y))
 		
-checkExpTypeVal (EMul exp1 (Times (PTimes ((x,y),_))) exp2) = do				--razy 0 można dać jako osobny przypadek -> zawsze 0, podobnie razy 1 to samo
+checkExpTypeVal (EMul exp1 (Times (PTimes ((x,y),_))) exp2) = do
 	(type1,val1,nexp1) <- checkExpTypeVal exp1
 	(type2,val2,nexp2) <- checkExpTypeVal exp2
 	if ((type1==Int) && (type2==Int))
@@ -128,7 +122,7 @@ checkExpTypeVal (EMul exp1 (Mod (PMod ((x,y),_))) exp2) = do
 					else return (Int,Just (Right (mod n1 n2)),Neg (PMinus ((0,0),"-")) (ELitInt (-(mod n1 n2))))
 		else error ("non-integer at modulo operator at line "++show(x)++", column "++show(y))		
 
-checkExpTypeVal (EAdd exp1 (Plus (PPlus ((x,y),_))) exp2) = do							--gdyby nie było potrzeby braku łączności można by upraszczać wyrażenia typu x+1+1
+checkExpTypeVal (EAdd exp1 (Plus (PPlus ((x,y),_))) exp2) = do
 	(type1,val1,nexp1) <- checkExpTypeVal exp1
 	(type2,val2,nexp2) <- checkExpTypeVal exp2
 	if type1==type2
@@ -231,9 +225,9 @@ checkExpTypeVal (ERel exp1 (NE (PNE ((x,y),_))) exp2) = do
 	(type2,val2,nexp2) <- checkExpTypeVal exp2
 	if type1==type2
 		then case val1 of
-			Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"!="++(show type1)))) nexp2))
+			Nothing -> return (Bool,Nothing,(ERel nexp1 (NE (PNE ((x,y),"!="++(show type1)))) nexp2))
 			Just _ -> case val2 of
-				Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"!="++(show type1)))) nexp2))
+				Nothing -> return (Bool,Nothing,(ERel nexp1 (NE (PNE ((x,y),"!="++(show type1)))) nexp2))
 				Just _ -> if val1/=val2
 					then return (Bool,Just (Left (Right True)),ELitTrue)
 					else return (Bool,Just (Left (Right False)),ELitFalse)

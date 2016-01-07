@@ -11,12 +11,8 @@ void printString(char* s){//sprawdzić, czy działa
 	printf("%s\n",s);
 }
 
-//error i concat
-char* concat(char *str1, char *str2){
-	char *str3 = malloc(strlen(str1)+strlen(str2)+1);
-	strcpy(str3,str1);
-	strcat(str3,str2);
-	return str3;
+void error(){
+	//TODO
 }
 
 int readInt(){//sprawdzić, czy działa
@@ -32,3 +28,9 @@ char* readString(){	//TODO sprawdzić jak sobie radzi z testami - łamanie wczyt
 	return s;
 }
 	
+char* concat(char *str1, char *str2){
+	char *str3 = malloc(strlen(str1)+strlen(str2)+1);
+	strcpy(str3,str1);
+	strcat(str3,str2);
+	return str3;
+}
