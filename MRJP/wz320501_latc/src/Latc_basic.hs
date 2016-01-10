@@ -7,6 +7,8 @@ import qualified Data.Map as Map
 
 import Latte.Abs
 
+
+--stan i środowisko używane we frontendzie - zawierają zmienne z typami, ich wartości jeżeli można je łatwo ustalić oraz funkcje z typowaniem
 type Val = Maybe (Either (Either String Bool) Integer)
 
 type Env = Map.Map String ((Int,Int),Integer,Int)
@@ -29,11 +31,13 @@ newLoc = do
 	put(st, loc+1)
 	return loc
 
+predefinedNames = ["printInt","printString","error","readInt","readString"]
+
 predefinedEnv :: Env
-predefinedEnv = Map.fromList [("printInt",((0,0),0,0)),("printString",((0,0),1,0)),("error",((0,0),2,0)),("readInt",((0,0),3,0)),("readString",((0,0),4,0)),("concat",((0,0),5,0))] 
+predefinedEnv = Map.fromList [("printInt",((0,0),0,0)),("printString",((0,0),1,0)),("error",((0,0),2,0)),("readInt",((0,0),3,0)),("readString",((0,0),4,0))] 
 
 predefinedSt :: (St,Integer)
-predefinedSt = (Map.fromList [(0,(Fun Void [Int],Nothing)),(1,(Fun Void [Str],Nothing)),(2,(Fun Void [],Nothing)),(3,(Fun Int [],Nothing)),(4,(Fun Str [],Nothing)),(5,(Fun Str [Str,Str],Nothing))],6)
+predefinedSt = (Map.fromList [(0,(Fun Void [Int],Nothing)),(1,(Fun Void [Str],Nothing)),(2,(Fun Void [],Nothing)),(3,(Fun Int [],Nothing)),(4,(Fun Str [],Nothing))],5)
 
 defaultVal :: Type -> Val
 defaultVal Int = Just (Right 0)
@@ -53,6 +57,8 @@ valSize Str = 8
 argTypes :: [Arg] -> [Type]
 argTypes ((Arg t pi):args) = t : (argTypes args)
 argTypes [] = []
+
+--zmiana typów w liczby - dla przekazywanie w łatwiejszy sposób pomiędzy częściami kompilatora
 
 varType :: Type -> Int
 varType Void = 0

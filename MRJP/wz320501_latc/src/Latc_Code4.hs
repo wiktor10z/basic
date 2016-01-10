@@ -56,12 +56,16 @@ data ValVar4 =
 	Void4 
     deriving (Eq,Ord,Show)	
 
+--środowisko zawiera mapę z nazw zmiennych w lokację i typ
 type Env4 = Map.Map String (Int,Type)
-type St4 = (String,Int,String,Int,Int,Set.Set Int,Int,Map.Map String Int,Int,[Code4Block],[Code4Instruction])	--nazwa, labele, zmienne, tempy,stringi,l. param wywołania
+type St4 = (String,Int,String,Int,Int,Set.Set Int,Int,Map.Map String Int,Int,[Code4Block],[Code4Instruction])
+--stan zawiera nazwę funkcji, numer ostatniego labelu, nazwę bloku aktualnie zapisywanego, lokację ostatniej zmiennej,maksymalną ilość tempów używanych,
+--zbiór tempów zwolnionych, ilość stringów już zapisanych i ich mapowanie w etykiety, maksymalną ilość argumentów funkcji wywoływanych,
+--zapisane już bloki proste funkcji i instrukcje z aktualnie zapisywanego bloku
 
 type StEnv4 = ReaderT Env4 (State St4)
 
-
+--funkcje zmieniające i czytające stan i środowisko
 getTemp :: StEnv4 Int
 getTemp = do
 	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
@@ -145,7 +149,7 @@ maxParams n = do
 		then put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,n,blocks,instrs)
 		else return ()
 
-
+--rezerwacja i zwolnienie rezerwacji rejestrów które mogą zmieniać wartości w funkcji wołanej
 reserveTemps :: StEnv4 ()
 reserveTemps = do
 	getTemp
@@ -167,6 +171,7 @@ unreserveTemps = do
 	freeTemp 6
 	freeTemp 7
 
+--czy wyrażenie zawiera wywołanie funkcji - wtedy nie należy używać w nim rejestrów przekazujących argumenty
 containsApp :: Expr -> Bool
 containsApp (EApp _ _) = True
 containsApp (EAdd _ (Plus (PPlus (_,"+s"))) _) = True

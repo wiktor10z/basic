@@ -1,5 +1,7 @@
 module Latc_ExpTypeVal where
 
+--moduł służy do sprawdzania poprawności wyrażeń arytmetycznych
+
 import Control.Monad.Reader
 import Control.Monad.State
 import System.Environment
@@ -8,7 +10,17 @@ import qualified Data.Map as Map
 import Latte.Abs
 import Latc_basic
 
+--Dwie funkcje używane przy wypisaniu komunikatu o błędzie typu
+typeShow :: Type -> String
+typeShow Int = "integer"
+typeShow Bool = "boolean"
+typeShow Str = "string"
+typeShow Void = "void"
 
+wrongType :: Type -> Type -> String
+wrongType t1 t2 = "expected "++(typeShow t1)++" but got "++(typeShow t2)
+
+--funkcja sprawdzająca poprawność typów argumentów przekazywanych do funkcji
 multipleTypesMatch :: PIdent -> (Int,Int) -> [Expr] -> [Type] -> Int -> StEnv [Expr]
 
 multipleTypesMatch (PIdent ((x,y),name)) (x1,y1) (exp:exps) (t:ts) i = do
@@ -17,11 +29,13 @@ multipleTypesMatch (PIdent ((x,y),name)) (x1,y1) (exp:exps) (t:ts) i = do
 		then do
 			nexps <- multipleTypesMatch (PIdent ((x,y),name)) (x1,y1) exps ts (i+1)
 			return (nexp:nexps)
-		else error ("error in line "++show(x)++", column "++show(y)++" argument "++show(i)++" type does not match with function "++show(name)++" declared in line "++show(x1)++", column "++show(y1)++" argument")
+		else error ("error in line "++show(x)++", column "++show(y)++" argument "++show(i)++" type does not match with function "++show(name)
+					++" declared in line "++show(x1)++", column "++show(y1)++" argument "++(wrongType t t2))
 
 
 multipleTypesMatch _ _ [] [] _ = return []
 
+-- funkcja sprawdzająca wyrażenia arytmetyczne, zwracająca ich typ, wartość jeśli jest znana i uproszczoną wersję wyrażenia o ile da się coś uporścić
 checkExpTypeVal :: Expr -> StEnv (Type,Val,Expr)
 
 checkExpTypeVal (EVar (PIdent ((x,y),name))) = do
@@ -39,7 +53,6 @@ checkExpTypeVal (EVar (PIdent ((x,y),name))) = do
 				Just (Left (Right True)) -> return (t,val,ELitTrue)
 				Just (Left (Right False)) -> return (t,val,ELitFalse)
 				Just (Left (Left str)) -> return (t,val,(EString str))
-			--Nothing -> error "???"
 
 checkExpTypeVal (ELitInt n) = return (Int,Just (Right n),ELitInt n)
 checkExpTypeVal ELitTrue = return (Bool,Just (Left (Right True)),ELitTrue)
@@ -53,7 +66,8 @@ checkExpTypeVal (EApp (PIdent ((x,y),name)) exps) = do
 		Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
 			Just ((Fun t tlist),_) -> 
 				if((length exps) /= (length tlist))
-					then error ("error in line "++show(x)++", column "++show(y)++" function "++show(name)++" declared in line "++show(x1)++", column "++show(y1)++" require "++(show (length tlist))++" arguments but is given "++(show (length exps)))
+					then error ("error in line "++show(x)++", column "++show(y)++" function "++show(name)++" declared in line "++show(x1)
+								++", column "++show(y1)++" require "++(show (length tlist))++" arguments but is given "++(show (length exps)))
 				else do
 					nexps <- multipleTypesMatch (PIdent ((x,y),name)) (x1,y1) exps tlist 1
 					return (t,Nothing,(EApp (PIdent ((varType t,0),name)) nexps))
@@ -69,7 +83,6 @@ checkExpTypeVal (Neg (PMinus ((x,y),_)) exp) = do
 			Just (Right n) -> if (-n)>=0 
 					then return (Int,Just (Right (-n)),ELitInt (-n))
 					else return (Int,Just (Right (-n)),Neg (PMinus ((x,y),"-")) (ELitInt n))
-			--Just _ -> error "???"
 		else error ("integer negation of non-integer expresion at line "++show(x)++", column "++show(y))
 
 checkExpTypeVal (Not (PNot ((x,y),_)) exp) = do
@@ -240,10 +253,7 @@ checkExpTypeVal (EAnd exp1 (PAnd ((x,y),_)) exp2) = do
 		then case val1 of
 			Just (Left (Right False)) -> return (Bool,Just (Left (Right False)),ELitFalse)
 			Just (Left (Right True)) -> return (Bool,val2,nexp2)	
-			Nothing -> case val2 of
-				Just (Left (Right False)) -> return (Bool,Just (Left (Right False)),ELitFalse)
-				Just (Left (Right True)) -> return (Bool,val1,nexp1)
-				Nothing -> return (Bool,Nothing,(EAnd nexp1 (PAnd ((x,y),"&&")) nexp2))
+			Nothing -> return (Bool,Nothing,(EAnd nexp1 (PAnd ((x,y),"&&")) nexp2))
 		else error ("non-boolean at and operator at line "++show(x)++", column "++show(y))		
 
 checkExpTypeVal (EOr exp1 (POr ((x,y),_)) exp2) = do
@@ -253,8 +263,5 @@ checkExpTypeVal (EOr exp1 (POr ((x,y),_)) exp2) = do
 		then case val1 of
 			Just (Left (Right True)) -> return (Bool,Just (Left (Right True)),ELitTrue)
 			Just (Left (Right False)) -> return (Bool,val2,nexp2)		
-			Nothing -> case val2 of
-				Just (Left (Right True)) -> return (Bool,Just (Left (Right True)),ELitTrue)
-				Just (Left (Right False)) -> return (Bool,val1,nexp1)			
-				Nothing -> return (Bool,Nothing,(EOr nexp1 (POr ((x,y),"||")) nexp2))
+			Nothing -> return (Bool,Nothing,(EOr nexp1 (POr ((x,y),"||")) nexp2))
 		else error ("non-boolean at or operator at line "++show(x)++", column "++show(y))	

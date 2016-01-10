@@ -21,13 +21,9 @@ import Latc_printout
 
 compileWhole :: Program -> IO ()
 compileWhole (Program prog) = do
-	--hPutStrLn stderr ("OK\n"++(show prog))
 	(nprog,(st,_)) <- runStateT (runReaderT (checkProg prog) predefinedEnv) predefinedSt
-	--hPutStrLn stderr ("OK\n"++(show nprog))
 	let code4 = toCode4 nprog
-	--hPutStrLn stderr ("OK\n"++(show code4))
 	let code42 = optimizeWhole code4
-	--hPutStrLn stderr ("OK\n"++(show code42))
 	assembleWhole code42
 	hPutStrLn stderr ("OK\n")
 

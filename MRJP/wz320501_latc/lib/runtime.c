@@ -12,19 +12,21 @@ void printString(char* s){//sprawdzić, czy działa
 }
 
 void error(){
-	//TODO
+	printf("runtime error\n");
+	exit(1);
 }
 
-int readInt(){//sprawdzić, czy działa
+int readInt(){
 	int i;
 	scanf("%d\n",&i);
 	return i;
 }
 
-char* readString(){	//TODO sprawdzić jak sobie radzi z testami - łamanie wczytuje łamanie linii co może nie być dobre
+char* readString(){
 	char* s;
 	size_t len=0;
-	getline(&s,&len,stdin);
+	ssize_t length = getline(&s,&len,stdin);
+	s[length-1]='\0';
 	return s;
 }
 	

@@ -1,0 +1,54 @@
+Wiktor Zuba 320501
+MRJP Zadanie 2 frontend
+
+Kompilacja przy użyciu make.
+Uruchamianie poprzez skrypt bashowy latc_x86_64 (lub latc - ten sam plik z inną nazwą dla zgodności z treścią) z treścią programu jako argumentem.
+
+Kompilator podzielony jest na 4 części uruchamiane na wyniku działania poprzedniej:
+
+Frontend : pliki Latc_ExpTypeVal.hs (sprawdzanie wyrażeń arytmerycznych) i Latc_frontend.hs (sprawdzanie pozostałych instrukcji)
+	w 2 przebiegach sprawdza poprawność programu (pierwszy przebieg - zebranie definicji funkcji, drugi - cała reszta)
+	i zwraca program z wyliczonymi wyrażeniami stałymi oraz bez jawnie nieosiągalnych fragmentów kodu (poprawność tego kodu jest sprawdzana).
+Kod 4 : plik Latc_toCode4.hs
+	przerabia program na kod 4, dzieląc go na bloki proste i instrukcje czwórkowe
+Optymalizacja : plik Latc_optimize.hs
+	usuwa nieosiągalne goto (po return) następnie przerabia listę bloków w graf przepływu, usuwa martwe bloki i z powrotem przerabia na listę bloków
+Wypisywanie : plik Latc_printout.hs
+	zamienia kod4 na napis zawierający kod assemblera x86_64
+
+Dodatkowo w katalogu src znajduja się:
+	plik Latte.cf z gramatyką języka (zmodyfikowany aby parser podawał pozycje wybranych elementów programu, co nie zmienia jednak prawdziwej gramatyki programów)
+	plik Latc_basic.hs z podstawowymi danymi typami i funkcjami używanymi w kilku częściach programu
+	plik Latc_compiler.hs zawierający funkcję main uruchamiającą Parser i pozostałe części programu jak i wypisującą wynik lub komunikat o błędzie
+
+Struktura katalogowa:
+
+W korzeniu Pliki README, Makefile, latc_x86_64, latc (nie działające przed kompilacją), po kompilacji dodatkowo program Latc_compiler.
+Katalog src zawierający pliki Latc_frontend.hs, Latc_ExpTypeVal.hs, Latc_basic.hs, Latc_toCode4.hs,
+Latc_optimize.hs, Latc_printout.hs, Latc_compiler.hs, Latte.cf, po kompilacji dodatkowo pliki .hi .o.
+Katalog lib zawierający plik runtime.c, po kompilacji dodatkowo runtime.s i runtime.o
+Po kompilacji dodatkowo katalog Latte zawierający pliki generowane przez program bnfc.
+
+Kompilator jest programem napisanym w języku Haskell przetwarzającym kod sparsowany przy użyciu plików wyjściowych programu bnfc.
+
+Używam jedynie standardowych bibliotek Haskella (jak Data, Control, System), oraz C (w runtime.c - stdio,stdlib,string) 
+
+Uwagi:
+	W używaniu rejestrów wzorowałem się częściowo na kompilacji pliku c przy pomocy gcc:
+		- po wejściu do funkcji przenoszę argumenty przekazywane w rejestrach na stos
+		- jeżeli w środku funkcji zachodzi konieczność skorzystania z większej ilości zmiennych temporalnych (czyli wyników fragmentu wyrażenia)
+			niż ilość wolnych rejestrów to wpycham na stos wartości z rejestrów które muszą zostać zachowane, a przy końcu wykonania funkcji je przywracam
+			jeżeli potrzeba jeszcze większej ilości zmiennych temporalnych, to przechowywane są one na stosie
+			(%rsp jest przesuwane tak jakby każda z tych zmiennych mogła być potencjalnie wskaźnikiem = największa pamięć)
+		- jeśli w wyrażeniu używane jest wywołanie funkcji, to nie używane są w nim rejestry które mogą zostać nadpisane
+		- inaczej niż w gcc nie optymalizuje kolejności przechowywania wartości boolowskich - 1 bajt
+			(gcc zbiera je i trzyma obok siebie, co przydatne jest praktycznie tylko przy przekazywaniu jako argumentów funkcji w rejestrach)
+		- inaczej niż w gcc nie zmieniam dzielenia przez stałą na kombinację przesunięć i dodawań, zamiast tego ponieważ nie da się dzielić
+			przez stałą wrzucam tę stałą do rejestru i dzielę przez wartość w rejestrze
+	
+	Zaimplementowałem następujące optymalizacje:
+		- wyliczenie wartości stałych
+		- usunięcie martwego kodu (po return, error(), while(true),w nieosiągalnych wnętrzach if/else/while)
+		- usunięcie martwych bloków
+	Nie zaimplementowałem żadnych rozszerzeń, jednak zamierzam to zrobić przed terminem ostatecznym (27 I)
+	W pliku wynikowym nazwy funkcji (oprócz main i predefiniowanych) poprzedzane są podkreśleniem _, aby uniknąć kolizji z funkcją concat zdefiniowaną w pliku runtime.c

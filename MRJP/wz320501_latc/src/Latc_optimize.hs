@@ -10,6 +10,7 @@ import Latte.Abs
 import Latc_basic
 import Latc_Code4
 
+--usunięcie zbędnych goto po return
 optGotoAftRet :: Code4Block -> Code4Block
 optGotoAftRet (label,instrs) =
 	if (length instrs) <= 1
@@ -18,11 +19,11 @@ optGotoAftRet (label,instrs) =
 		Goto4 _ -> (label,init instrs)
 		_ -> (label,instrs)
 
-
+--zmiana poprzedników po usunięciu jakiegoś bloku
 optChangePreds :: (String,Set.Set String) -> ([Code4Instruction],[String],Set.Set String)->([Code4Instruction],[String],Set.Set String)
 optChangePreds (name2,set2) (x,strs,set) = (x,strs,Set.delete name2 (Set.union set set2))
 
-
+--zmiana następników po usunięciu jakiegoś bloku
 optChangeSuccs :: (String,String) -> ([Code4Instruction],[String],Set.Set String)->([Code4Instruction],[String],Set.Set String)
 optChangeSuccs (label,nlabel) (x,[oldlabel],set) = ((init x)++[Goto4 nlabel],[nlabel],set)
 optChangeSuccs (label,nlabel) (x,[oldlabel1,oldlabel2],set) =
@@ -42,7 +43,7 @@ optChangeSuccsAll ((elem:set),label,nlabel) map =
 	in optChangeSuccsAll (set,label,nlabel) map2
 optChangeSuccsAll ([],_,_) map = map
 
-
+-- usuwanie martwych bloków
 optEraseEmptyBlock1 :: [(String,([Code4Instruction],[String],Set.Set String))] -> Map.Map String ([Code4Instruction],[String],Set.Set String) -> Map.Map String ([Code4Instruction],[String],Set.Set String)
 optEraseEmptyBlock1 ((name,([Goto4 _],[label],set)):list) map = 
 	let m2 = Map.delete name map
@@ -63,7 +64,7 @@ optEraseEmptyBlocksFix map =
 		then map
 		else optEraseEmptyBlocksFix map2
 
-
+--wyliczenie następników bloków
 optSucc :: [Code4Instruction] -> [String]
 optSucc [] = []
 optSucc [Goto4 label] = [label]
@@ -79,7 +80,7 @@ optSuccList :: [Code4Block] -> [(String,[String])]
 optSuccList ((label,instrs):bs) = ((label,optSucc instrs):(optSuccList bs))
 optSuccList [] = []
 
-
+--wyliczanie poprzedników bloków
 optToMapEmpty :: [Code4Block] -> Map.Map String ([Code4Instruction],[String],Set.Set String)
 optToMapEmpty ((label,instrs):bs) = Map.insert label (instrs,optSucc instrs,Set.empty) (optToMapEmpty bs)
 optToMapEmpty [] = Map.empty
@@ -104,7 +105,7 @@ optToMapSet ((s,[label,label2]):ls) m =
 	
 optToMapSet [] m = m
 
-
+-- zamiana listy bloków prostych w graf przepływu i z powrotem
 optToMap :: [Code4Block] -> Map.Map String ([Code4Instruction],[String],Set.Set String)
 optToMap bs = optToMapSet (optSuccList bs) (optToMapEmpty bs)
 

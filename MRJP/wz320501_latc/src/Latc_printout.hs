@@ -9,10 +9,10 @@ import Latte.Abs
 import Latc_basic
 import Latc_Code4
 
-
+--stan nie zmienia się, zawiera nazwę funkcji i informację o przesunięciach pozwalające odnaleźć lokację na stosie
 type StAss = State (String,Int,Int,Int)
 		
-
+--adres w pamięci jako string
 exactAddress :: ValVar4 -> StAss String
 exactAddress (Int4 n) = return ("$"++(show n))
 exactAddress (Bool4 True) = return "$1"
@@ -26,7 +26,7 @@ exactAddress v = do
 		Right str -> return str
 		Left str -> return str
 
---left - na stosie, right w rejestrze
+--adres w pamięci - left -> stos, right -> rejestr lub wartość stała
 getAddress :: ValVar4 -> StAss (Either String String)
 getAddress (Var4 n t) = do
 	varloc <- varsHash n
@@ -48,10 +48,6 @@ getAddress (String4 n) = do
 	(name,_,_,_) <- get
 	return (Right ("$."++name++"_string"++(show n)))
 
-
-	
-	
-
 getType :: ValVar4 -> Type
 getType (Var4 n t) = t
 getType (Temp4 n t) = t
@@ -60,8 +56,7 @@ getType (Bool4 _) = Bool
 getType (String4 _) = Str
 getType Rej4 = Bool
 
-
-
+--przemapowanie zmiennych z kodu czwórkowego na adresy i rejestry
 
 varsHash ::Int -> StAss Int 
 varsHash n = do
@@ -154,7 +149,7 @@ functionStrings name ((str,n):ls) = ("."++name++"_string"++(show n)++":\n    .st
 functionStrings name [] = []
 
 
-
+--funkcja tworząca string wejściowy funkcji - operacje na argumentach funkcji, wyliczanie przesunięć zawartych w stanie, przesuwanie rsp
 functionIntro :: [Type] -> Int -> Int -> Int -> (String,Int,Int,Int,Int)
 functionIntro args vars temps params = 
 	let (str,off2) = manageArgs args 1 (((div (vars+15) 16))*16) ((max 0 (min (temps-7) 5))*8)
@@ -172,6 +167,7 @@ functionIntro args vars temps params =
 functionOutro :: Int -> Int -> String
 functionOutro move temps = "    addq\t $"++show(move)++", %rsp\n" ++(popRegisters temps)++"    leave\n    ret\n"
 
+--funkcja obsługująca przenoszenie wartości między różnymi typami zmiennych i stałych
 movString ::ValVar4 -> ValVar4 -> StAss String
 movString (Var4 var1 t1) (Var4 var2 t2) = 
 	if (var1==var2)
@@ -294,14 +290,21 @@ assembleInstruction (Param4 n var) = do
 	
 assembleInstruction (CallV var name _ ) = do
 	varloc <- exactAddress var
-	case (getType var) of
-		Bool -> do
-			str <- movAL var
-			return ("    call\t "++name++"\n"++str)
-		Int -> return ("    call\t "++name++"\n    movl\t %eax, "++varloc++"\n")
-		Str -> return ("    call\t "++name++"\n    movq\t %rax, "++varloc++"\n")
-		Void -> return("    call\t "++name++"\n")
-
+	if (name=="main") || (elem name predefinedNames)
+		then case (getType var) of
+			Bool -> do
+				str <- movAL var
+				return ("    call\t "++name++"\n"++str)
+			Int -> return ("    call\t "++name++"\n    movl\t %eax, "++varloc++"\n")
+			Str -> return ("    call\t "++name++"\n    movq\t %rax, "++varloc++"\n")
+			Void -> return("    call\t "++name++"\n")
+		else case (getType var) of
+			Bool -> do
+				str <- movAL var
+				return ("    call\t _"++name++"\n"++str)
+			Int -> return ("    call\t _"++name++"\n    movl\t %eax, "++varloc++"\n")
+			Str -> return ("    call\t _"++name++"\n    movq\t %rax, "++varloc++"\n")
+			Void -> return("    call\t _"++name++"\n")
 
 assembleInstruction (Return4 Void4) = return ("")
 assembleInstruction (Return4 var) = do
@@ -379,7 +382,6 @@ assembleInstruction (OpV Sub4 var1 var2 var3)=
 				str2 <- operString "subl" var1 var3
 				return (str++str2)
 
-		
 assembleInstruction (OpV Mul4 var1 (Int4 n) var2) = do
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
@@ -464,7 +466,6 @@ assembleInstruction (OpV SetNE4S var1 var2 var3) = do
 	loc3 <- exactAddress var3
 	return ("    movq\t "++loc2++", %eax\n    cmpq\t "++loc3++", %eax\n    setne\t %al\n"++str1)
 
-
 assembleInstrs :: [Code4Instruction] -> StAss String
 assembleInstrs (inst:instrs) = do
 	str1 <- assembleInstruction inst
@@ -472,13 +473,12 @@ assembleInstrs (inst:instrs) = do
 	return (str1++str2)
 	
 assembleInstrs [] = return ""
-	
+
+
 assembleBlock :: Code4Block -> StAss String
 assembleBlock (label,instrs) = do
 	str <- assembleInstrs instrs
 	return ("."++label++":\n"++str)
-
-
 
 
 assembleFunCode :: [Code4Block] -> StAss (String)
@@ -492,9 +492,11 @@ assembleFunCode [] = return ""
 
 assembleTopDef :: Code4Function -> IO()
 assembleTopDef (argtypes,name,((label,inst):bs),vars,temps,strList,params)  = do
-	putStrLn (functionStrings name strList)
+	putStr (functionStrings name strList)
 	let (intro,off1,off2,off3,move) =functionIntro argtypes vars temps params
-	putStr ("    .globl  "++name++"\n"++name++":\n"++"."++label++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n"++intro)
+	if name =="main"
+		then putStr ("    .globl  main\n main:\n"++"."++label++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n"++intro)
+		else putStr ("    .globl  _"++name++"\n_"++name++":\n"++"."++label++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n"++intro)
 	let (str1,_) = runState (assembleInstrs inst) (name,off1,off2,off3)
 	let (str2,_) = runState (assembleFunCode (init bs)) (name,off1,off2,off3)
 	putStr (str1++str2)
@@ -507,5 +509,3 @@ assembleWhole (f:fs) = do
 	assembleWhole fs
 
 assembleWhole [] = return ()
-
-

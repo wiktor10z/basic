@@ -1,5 +1,7 @@
 module Latc_frontend where
 
+--moduł sprawdzający poprawność programu
+
 import Control.Monad.Reader
 import Control.Monad.State
 import System.Environment
@@ -10,7 +12,7 @@ import Latte.Abs
 import Latc_basic
 import Latc_ExpTypeVal
 
-
+--funkcja sprawdza, czy program nie używa void jako argumentu funkcji
 checkVoidArguments :: String -> [Arg] -> StEnv ()
 checkVoidArguments name ((Arg t (PIdent ((x,y),_))):args) =
 	case t of
@@ -21,7 +23,7 @@ checkVoidArguments _ [] = return ()
 
 
 
-
+--funkcja sprawdza poprawność deklaracji funkcji
 checkFunctionSignatures :: [TopDef] -> StEnv Env
 checkFunctionSignatures ((FnDef t (PIdent ((x,y),name)) args block):fs) = do
 	checkVoidArguments name args
@@ -48,6 +50,7 @@ checkFunctionSignatures [] = do
 				Just (Fun _ _,_)	-> error ("error main function in line "++show(x)++" must return int")
 
 
+--funkcja sprawdza poprawność argumentów funkcji (unikalność nazw)
 checkArgs :: [Arg] -> StEnv Env
 
 checkArgs ((Arg t (PIdent ((x,y),name))):args) = do
@@ -64,7 +67,7 @@ checkArgs ((Arg t (PIdent ((x,y),name))):args) = do
 
 checkArgs [] = ask
 	 
-	 
+--wstawienie zmiennej do środowiska i stanu
 insertVar :: Type -> Val -> ((Int,Int),String,Int) -> [Item]-> StEnv (Env,[Item])
 insertVar t val (l,name,level) its = do
 	st <- getSt	
@@ -73,7 +76,7 @@ insertVar t val (l,name,level) its = do
 	putSt s
 	(local (Map.insert name (l,loc,level)) (checkDecl t its level))
 	
-
+--duplikowanie zmiennych używane przy wchodzeniu do bloków - aby były widoczne, ale mogły być nadpisane
 duplicateAndAssVar :: String -> Val -> Int -> Bool -> StEnv Env
 duplicateAndAssVar name val newlevel b= do
 	env <- ask
@@ -91,7 +94,7 @@ duplicateAndAssVar name val newlevel b= do
 			_ -> error "???"
 		_ -> error "???"
 
-
+--sprawdzenie deklaracji zmiennych + usunięcie NoInit - poprzez zmienienie w Init wartość domyślna
 checkDecl :: Type -> [Item] -> Int -> StEnv (Env,[Item])
 
 checkDecl t ((Init (PIdent ((x,y),name)) exp):its) level = do
@@ -111,7 +114,7 @@ checkDecl t ((Init (PIdent ((x,y),name)) exp):its) level = do
 					_ -> do
 						(env2,nits) <- insertVar t val ((x,y),name,level) its
 						return (env2,((Init (PIdent ((x,y),name)) nexp):nits))		
-				else error ("error in line "++show(x)++", column "++show(y)++" assigment to variable "++show(name)++" of different type")
+				else error ("error in line "++show(x)++", column "++show(y)++" assigment to variable "++show(name)++" of different type "++(wrongType t type2))
 
 checkDecl t ((NoInit (PIdent ((x,y),name))):its) level = do
 	env <- ask
@@ -132,7 +135,7 @@ checkDecl _ [] _ = do
 	env <- ask
 	return (env,[])
 
-
+--sprawdzenie poprawności instrukcji + uproszczenie
 checkStmt :: Stmt ->Type -> Int -> Int -> Bool -> StEnv (Env,Stmt)
 
 checkStmt Empty _ _ _ _ = do
@@ -160,7 +163,8 @@ checkStmt (Ass (PIdent ((x,y),name)) exp) _ _ slevel b= do
 						putSt s
 						env2 <- ask
 						return (env2,(Ass (PIdent ((x,y),name)) nexp))
-				else error ("error in line "++show(x)++", column "++show(y)++" assigment to variable "++show(name)++" defined in line "++show(x1)++", column "++show(y1)++" of different type")
+				else error ("error in line "++show(x)++", column "++show(y)++" assigment to variable "++show(name)++" defined in line "++show(x1)
+							++", column "++show(y1)++" of different type "++(wrongType t type2))
 
 checkStmt (Incr (PIdent ((x,y),name))) _ _ slevel b = do
 	env <- ask
@@ -178,7 +182,8 @@ checkStmt (Incr (PIdent ((x,y),name))) _ _ slevel b = do
 					putSt s
 					env2 <- ask
 					return (env2,(Incr (PIdent ((x,y),name))))		
-			_ -> error ("error in line "++show(x)++", column "++show(y)++" incrementation of variable "++show(name)++" defined in line "++show(x1)++", column "++show(y1)++" of non-integer type")	
+			_ -> error ("error in line "++show(x)++", column "++show(y)++" incrementation of variable "++show(name)++" defined in line "++show(x1)
+						++", column "++show(y1)++" of non-integer type")	
 
 checkStmt (Decr (PIdent ((x,y),name))) _ _ slevel b = do
 	env <- ask
@@ -196,11 +201,12 @@ checkStmt (Decr (PIdent ((x,y),name))) _ _ slevel b = do
 					putSt s
 					env2 <- ask
 					return (env2,(Decr (PIdent ((x,y),name))))				
-			_ -> error ("error in line "++show(x)++", column "++show(y)++" decrementation of variable "++show(name)++" defined in line "++show(x1)++", column "++show(y1)++" of non-integer type")
+			_ -> error ("error in line "++show(x)++", column "++show(y)++" decrementation of variable "++show(name)++" defined in line "++show(x1)
+						++", column "++show(y1)++" of non-integer type")
 
 
 
-
+--sprawdzenie poprawności bloku + uproszczenie , sprawdzane są tutaj również instrukcje mogące wpłynąć na osiągalność dalszej części bloku (return,while,if,error())
 checkBlock :: [Stmt] -> Type -> Int -> Int -> Bool -> StEnv (Bool,[Stmt])
 
 checkBlock ((BStmt (Block bl)):stmts) ft level slevel b = do
@@ -308,7 +314,7 @@ checkBlock ((SExp exp):stmts) ft level slevel b = do
 	case exp of
 		EApp (PIdent ((x,y),"error")) []-> do
 			checkBlock stmts ft level level False
-			return (False,[(SExp exp)])
+			return (False,[(SExp (EApp (PIdent ((0,y),"error")) []))])
 		_ -> do 
 			(_,_,nexp) <- checkExpTypeVal exp
 			(b2,nstmts) <- checkBlock stmts ft level slevel b
@@ -321,7 +327,7 @@ checkBlock (stm:stmts) ft level slevel b = do
 				
 checkBlock  [] _ _ _ b = return (b,[])
 
-
+--funkcja wyliczająca stan wykonania while - wykrycie pewnego while(true)
 whileStFixPoint :: Stmt -> Type -> Int -> Bool -> StEnv (Bool,Stmt)
 whileStFixPoint stm ft level b = do
 	st <- getSt
@@ -333,6 +339,7 @@ whileStFixPoint stm ft level b = do
 				else whileStFixPoint stm ft level b2
 		else return (False,nstmt)
 
+--sprawdzenie poprawności wnętrza funkcji
 checkFunction :: TopDef -> StEnv TopDef
 checkFunction (FnDef t (PIdent ((x,y),name)) args (Block bl)) = do
 	env <- checkArgs args
@@ -343,7 +350,7 @@ checkFunction (FnDef t (PIdent ((x,y),name)) args (Block bl)) = do
 		then error ("error non-void function "++show(name)++" declared in line "++show(x)++", column "++show(y)++" possibly could end without return")
 		else return (FnDef t (PIdent ((x,y),name)) args (Block nbl))
 
-
+--drugi przebieg = sprawdzenie wszystkiego poza deklaracjami funkcji
 checkRest :: [TopDef] -> StEnv [TopDef]
 checkRest (f:fs) = do
 	nf <- checkFunction f
