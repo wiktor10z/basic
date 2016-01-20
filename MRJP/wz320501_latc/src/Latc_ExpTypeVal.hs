@@ -16,6 +16,7 @@ typeShow Int = "integer"
 typeShow Bool = "boolean"
 typeShow Str = "string"
 typeShow Void = "void"
+typeShow (Array t) = "array of "++(typeShow t)
 
 wrongType :: Type -> Type -> String
 wrongType t1 t2 = "expected "++(typeShow t1)++" but got "++(typeShow t2)
@@ -265,3 +266,47 @@ checkExpTypeVal (EOr exp1 (POr ((x,y),_)) exp2) = do
 			Just (Left (Right False)) -> return (Bool,val2,nexp2)		
 			Nothing -> return (Bool,Nothing,(EOr nexp1 (POr ((x,y),"||")) nexp2))
 		else error ("non-boolean at or operator at line "++show(x)++", column "++show(y))	
+
+-----------------------------------------------------------------------------------------------------
+--rozszerzenia
+
+checkExpTypeVal (ENewArr (PNew ((x,y),_)) t exp) = do
+	(type1,_,nexp) <- checkExpTypeVal exp
+	if(type1==Int)
+		then case t of
+			Array _ -> error ("array must be one dimensional at line "++show(x)++", column "++show(y))
+			_ -> return ((Array t),Nothing,(ENewArr (PNew ((x,y),"new")) t nexp))							--TODO może coś zamiast Nothing
+		else error ("array length of non integer type at line "++show(x)++", column "++show(y))
+
+
+checkExpTypeVal (EArrInd (PIdent ((x,y),name)) exp) = do
+	env <- ask
+	st <- getSt
+	(type1,_,nexp) <- checkExpTypeVal exp
+	if(type1==Int)
+		then case (Map.lookup name env) of
+			Nothing -> error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" not declared")
+			Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
+				Just (Array t,_) -> return (t,Nothing,(EArrInd (PIdent ((varType t,y),name)) nexp))
+				_ -> error ("attempt to use non array variable as array at line "++show(x)++", column "++show(y))
+		else error ("array index of non integer type at line "++show(x)++", column "++show(y))
+
+
+checkExpTypeVal (ELength (PIdent ((x,y),name))) = do
+	env <- ask
+	st <- getSt
+	case (Map.lookup name env) of
+		Nothing -> error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" not declared")
+		Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
+			Just (Array t,_) -> return (Int,Nothing,(ELength (PIdent ((x,y),name))))
+			_ -> error ("attempt to use non array variable as array at line "++show(x)++", column "++show(y))		
+
+
+
+
+
+--TODO sprawdzić jak z tym ((Fun t tlist),_) kontra (Fun _ _,_)
+--TODOTODOTODOTODO przekazywanie typu funkcji z frontendu do code4 w lepszy sposób niż zmienianie współrzędnej - i uogólnić na wiele typów
+--TODOTODO we wszystkich wyrażenia +,-,or ... rozważyć co się dzieje jak array 
+
+

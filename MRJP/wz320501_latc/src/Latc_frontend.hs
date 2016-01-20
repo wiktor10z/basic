@@ -166,6 +166,23 @@ checkStmt (Ass (PIdent ((x,y),name)) exp) _ _ slevel b= do
 				else error ("error in line "++show(x)++", column "++show(y)++" assigment to variable "++show(name)++" defined in line "++show(x1)
 							++", column "++show(y1)++" of different type "++(wrongType t type2))
 
+checkStmt (ArrAss (PIdent ((x,y),name)) exp1 exp2) _ _ _ b= do
+	env <- ask
+	st <- getSt
+	(type1,_,nexp1) <- checkExpTypeVal exp1
+	(type2,_,nexp2) <- checkExpTypeVal exp2
+	case (Map.lookup name env) of
+		Nothing -> error ("error in line "++show(x)++", column "++show(y)++" array "++show(name)++" not declared")
+		Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
+			Just (Array t,_) -> if (type1==Int)
+				then if (t==type2)
+					then return (env,(ArrAss (PIdent ((x,y),name)) nexp1 nexp2))
+					else error ("error in line "++show(x)++", column "++show(y)++" assigment to variable "++show(name)++" defined in line "++show(x1)
+							++", column "++show(y1)++" of different type "++(wrongType t type2))
+				else error ("array index of non integer type at line "++show(x)++", column "++show(y))
+			_ -> error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" is not an array")
+
+
 checkStmt (Incr (PIdent ((x,y),name))) _ _ slevel b = do
 	env <- ask
 	st <- getSt
@@ -285,7 +302,6 @@ checkBlock ((CondElse (PIf ((x,y),_)) exp stm1 stm2):stmts) ft level slevel b = 
 							else return (False,[(CondElse (PIf ((x,y),"if")) nexp nstm1 nstm2)])
 		_ -> error ("error in line "++show(x)++", column "++show(y)++"if condition of non-boolean type")
 
-
 checkBlock ((While (PWhile ((x,y),_)) exp stm):stmts) ft level slevel b = do
 	(type1,val,_) <- checkExpTypeVal exp
 	case type1 of
@@ -297,7 +313,7 @@ checkBlock ((While (PWhile ((x,y),_)) exp stm):stmts) ft level slevel b = do
 					checkBlock stmts ft level slevel b
 				_ -> do
 					(b2,nstm) <- whileStFixPoint stm ft (level+1) b
-					if b2	--jeśli b2 jest false, to znaczy, że już w pierwszym przebiegu nastąpi return lub wewnętrzna pewna pętla nieskończona
+					if b2	--jeśli b2 jest false, to znaczy, że już w pierwszym przebiegu nastąpi return lub wewnętrzna pewna pętla nieskończona --TODOTODO a co jak nie wykona się ani razu - chodzi o zwrot tego czy koniec czy nie
 						then do (_,val,nexp) <- checkExpTypeVal exp
 							case val of
 								Just (Left (Right True)) -> do
@@ -306,9 +322,25 @@ checkBlock ((While (PWhile ((x,y),_)) exp stm):stmts) ft level slevel b = do
 								_ -> do
 									(b2,nstmts) <- checkBlock stmts ft level level b
 									return (b2,((While (PWhile ((x,y),"while")) nexp nstm):nstmts))
-						else return (False,[(Cond (PIf ((x,y),"if")) ELitTrue nstm)])
+						else return (False,[(Cond (PIf ((x,y),"if")) ELitTrue nstm)])	--TODOTODO powinno chyba zwrócić też resztę - bo mógł się w ogóle nie wykonać
 		_ -> error ("error in line "++show(x)++", column "++show(y)++" while condition of non-boolean type")
 
+checkBlock ((ForEach (PFor ((x,y),_)) t (PIdent ((x1,y1),var)) (PIdent ((x2,y2),arr)) stm):stmts) ft level slevel b = do
+	env <- ask
+	st <- getSt
+	case (Map.lookup arr env) of
+		Nothing -> error ("error in line "++show(x2)++", column "++show(y2)++" array "++show(arr)++" not declared")
+		Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
+			Just (Array t2,_) -> if (t==t2)
+				then case stm of
+					Decl _ _ -> error ("error in line "++show(x)++", column "++show(y)++" bare declaration in for")
+					_ -> do
+						(env2,_) <- insertVar t Nothing ((x1,y1),var,level+1) []
+						(_,nstm) <- local (\x->env2) (whileStFixPoint stm ft (level+1) b)
+						(b2,nstmts) <- checkBlock stmts ft level level b
+						return (b2,((ForEach (PFor ((x,y),"for")) t (PIdent (((x1,y1),var))) (PIdent (((x2,y2),arr))) nstm):nstmts))
+				else error ("error in line "++show(x1)++", column "++show(y1)++" variable "++(show var)++" of wrong type "++(wrongType t2 t))
+			_ -> error ("attempt to use non array variable as array at line "++show(x2)++", column "++show(y2))		
 
 checkBlock ((SExp exp):stmts) ft level slevel b = do
 	case exp of
@@ -338,6 +370,8 @@ whileStFixPoint stm ft level b = do
 				then return (b2,nstmt)
 				else whileStFixPoint stm ft level b2
 		else return (False,nstmt)
+
+
 
 --sprawdzenie poprawności wnętrza funkcji
 checkFunction :: TopDef -> StEnv TopDef

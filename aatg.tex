@@ -1,0 +1,100 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\DeclareMathOperator{\xor}{xor}
+\begin{document}
+
+Wiktor Zuba 320501\newline
+
+Zielony hackenbush\newline
+Strategią gry w hackenbush jest doprowadzenie swoim ruchem do stanu w którym xor drzewowy obliczany jako $\xor\limits_{i\in I}(d_i+1)$,
+(gdzie $I$ to zbiór synów wierzchołka, a $d_i$ to xor wierzchołka $i$, dodawanie w systemie binarnym) jest równy $0$ w korzeniu.\newline
+Dowód:\newline
+Jeśli za każdym razem uda nam się, żeby po naszym ruchu xor był równy $0$ (a po ruchu przeciwnika nie), to ponieważ gra kończy się w skończonym czasie,
+a puste drzewo (w przypadku lasu w całym dowodzie łączymy korzenie wszystkich drzew w jeden wierzchołek, co nie zmienia zadania) ma xor zerowy,
+to jest to strategia wygrywająca.\newline
+Przeciwnik nie może popsuć naszej strategii: jeśli zmienimy xor jednego z poddrzew, to zmieniamy i xor w jego korzeniu,
+i tak rekurencyjnie do korzenia całego drzewa. Jedynym możliwym ruchem jest wycięcie jednej krawędzi (wraz z całym poddrzewem),
+co zmienia xor w wierchołku z którego wychodziła ta krawędź. Ponieważ wraz z ruchem musimy zmienić xor w korzeniu,
+to przeciwnik nie może uzyskać xor=0 po swoim ruchu.\newline
+Lemat: Zawsze możemy zmniejszyć xor wierchołka (do dowolnej mniejszej wartości) wycinając coś w poddrzewie w nim się zaczynającym (a więc w szczególności wyzerować xor w korzeniu).\newline
+Dowód lematu (i jednocześnie algorytm grania):\newline
+W wierzchołku mamy xor postaci $a1x$, a chcemy mieć $a0y$ - gdzie $x$ i $y$ reprezentują zapis $n$ najmniej istotnych bitów.\newline
+Wybieramy takie poddrzewo $k\in I$, że $d_k+1$ ma $1$ na $n+1$ miejscu od końca (musi takie istnieć inaczej xor tego miejsca równy $1$ byłby xorem po samych $0$).\newline
+$d_k+1=b1c$, a chcemy, żeby było równe $b0d$, gdzie $d=\xor(c,x,y)$ (wtedy xor naddrzewa będzie równy $\xor(a1x,b1c,b0d)=\xor(a1x,b1c,b0c,x,y)=a0y$).\newline
+Jeśli $b=0,d=0$, to należy usunąć całe poddrzewo odcinając krawędź prowadzącą do wierzchołka $k$.
+W przeciwnym przypadku, stosujemy algortym dla poddrzewa $k$ i wartości $b0d-1$.\newline
+
+Uwagi: Zchodząc po drzewie do liści musimy otrzymać sytuację w której $b=0,d=0$, gdyż w krawędzi liścia o xorze równym $1$
+jedyną wartoścą do jakiej możemy zmniejszyć xor jest $0$.\newline
+Strategią wygrywającą jest odcinanie krawędzi podanej w dowodzie.
+\newpage
+
+Wiktor Zuba 320501\newline
+
+Czerwono-Niebieski Hackenbush\newline
+Gra czerwono-niebieska nie jest symetryczna, dlatego też funkcja oceniająca gry musi być niesymetryczna
+(dodatnia wartość wskazuje na stan dobry dla jednego gracza, zaś ujemna dla gracza drugiego).\newline
+Własności poszukiwanej funkcji:\newline
+Dla gry pustej oraz gier w których odwrócenie koloru dało by ten sam las (z dokładnością do przenumerowania drzew i poddrzew...) wartość musi być równa $0$
+ponieważ gra jest zdeterminowana (skończona ilość możliwych przebiegów dla konkretnego lasu, brak remisów) i wygrywający (posiadający strategię wygrywającą)
+jest gracz który rusza się jako drugi (strategy stealing - powtarzanie ruchów symetrycznie).
+Jako, że naszym celem jest usunięcie wszystkich krawędzi przeciwnika (i zostawienie własnych) dowolny nasz ruch pogarsza naszą sytuację (udowodnione później).
+Biorąc za $1$ wartość gry w której jest pojedyńcza krawędź gracza pierwszego i $-1$ dla pojedyńczej krawędzi gracza drugiego mając las drzew wysokości $1$
+stan możemy wyliczyć dodając wartości drzew (możemy to uogólnić na wszystkie lasy). Jeżeli wartość w wierzchołku jest dodatnia ($x>0$) i krawędź z której
+wychodzi ten wierzchołek należy do gracza pierwszego, to nie opłaca się mu jej usuwać przed dokonaniem zmiany w tym wierzchołku,
+więc stan w tej krawędzi będzie równy $1+x$. Jeżeli wartość w wierzchołku jest ujemna, to wartość w krawędzi powinna być dodatnia mimo wszystko
+(gracz może usunąć tę krawędź i wartość gry się dla niego pogorszy), ale też powinna być mniejsza niż $1$.\newline
+Wśród funkcji spełniających wyżej wymienione wartości dobrze sprawdza się (po testach na kilku różnych sensownych funkcjach) funkcja dająca rezultat pomiedzy
+największą wartością po ruchu gracza pierwszego (po wszystkich możliwych ruchach), a najmniejszą po ruchach gracza drugiego (podobnie),
+jako że celem obu graczy jest optymalizacja funkcji w swoją stronę (w szczególności znak funkcji na końcu gry ma znak taki jak gracz wygrywający lub $0$).
+Funkcja biorąc średnią arytmetyczną tych wartości przyjmuje wartości o postaci $\frac{x}{2^n}$.
+Funkcja dla pojedyńczej krawędzi gracza pierwszego jest równa $1$. W grze z dwoma krawędziami - gracza pierwszego na dole i drugiego z niej wychodzącej
+ma wartość $\frac{1}{2}$. Dla $k$ krawędzi gracza drugiego wychodzących z krawędzi gracza pierwszego wartość wychodzi $\frac{1}{2^k}$.
+Ogólnie jako, że ruch można wykonać w którymś poddrzewie drzewa wartość dla naddrzewa może być zsyntezowana z wartości poddrzew.\newline
+Wartością funkcji dla lasu drzew (lub wierzchołka wewnętrznego) jest suma wartości dla drzew (krawędzi wychodzących).
+Jak wyżej wartością dla krawędzi gdy stan w wierzchołku kończącym krawędź jest tego samego znaku (lub $0$) $=x$,
+to wartość w krawędzi jest równa sgn(gracza)$*(1+|x|)$. W przypadku gdy znak jest przeciwny znajdujemy takie $m$, że $-|x|+m>1$
+i jako wartość zwracamy sgn(gracza)$*\frac{-|x|+m}{2^{m-1}}$ (sens takiej definicji wartości widoczny w dowodzie poniżej).\newline
+Pomocniczo wprowadzam również wartość dla krawędzi (wartość w wierzchołku gdyby wychodziła z niego tylko ta krawędź).\newline
+Twierdzenie: Jeżeli stan gry przed ruchem gracza jest na jego korzyść (wartość o odpowiednim znaku), to ma on strategię wygrywającą, zaś jeśli wartość stanu jest równa $0$,
+to po ruchu dowolnego gracza będzie ona już od niego różna (na niekorzyść gracza), dlatego wartość $0$ jest również przegrywająca.\newline
+Lemat: Dla gracza pierwszego i stanu poddrzewa postaci $\frac{x}{2^n}$ nieskracalnej może on wykonać ruch,
+po którym wartość będzie niemniejsza niż $\frac{x-1}{2^n}$ ale musi być mniejsza niż $\frac{x}{2^n}$.\newline
+Lemat$\Rightarrow$Twierdzenie - wartość jest większa od $0\Rightarrow$ po ruchu wartość jest nieujemna.
+Wartość $\le0\Rightarrow$ po ruchu wartość jest ujemna.\newline
+Dowód lematu (+ strategia ruchu dla gracza pierwszego) rekurencyjny: stan gry w wierzchołku jest równy $\frac{x}{2^n}$ w postaci nieskracalnej.
+$\frac{x}{2^n}=\sum\limits_{i\in\text{krawędzie wychodzące}}\frac{y_i}{2^{n_i}}$ - wybieramy $k$ t.że. $n_k=\max_{i}{n_i}$ (oczywiście $n_k\ge n$).\newline
+Jeśli $n_k=0$, to wszystkie drzewa wychodzące z lasu są monochromatyczne - jeśli nie ma żadnych naszych krawędzi,
+to nie możemy wykonać ruchu - już przegraliśmy gdyż nie możemy wykonać ruchu
+(ten przypadek występuje tylko dla korzenia = lasu, inaczej do niego nie wejdziemy),
+jeśli zaś występują nasze krawędzie, to odcinamy jedną taką, że nic z niej nie wychodzi - wartość gry będzie równa $x-1=\frac{x-1}{2^n}$.\newline
+Jeśli $n_k>0$, korzystamy z lematu dla krawędzi $k$ (Wartośc zmniejszy się o coś $>0$ i $\le\frac{1}{2^{n_k}}\le\frac{1}{2^n}$).\newline
+Dowód dla krawędzi (tego samego co dla wierzchołka):$\frac{x}{2^n}=\frac{y_k}{2^{n_k}}$ - rozpatrujemy przypadki:\newline
+$x\ge2^n$ $\Rightarrow$ krawędź jest nasza $\rightarrow$ korzystamy rekurencyjnie z dowodu dla wierzchołka wychodzącego i wartości $\frac{x}{2^n}-1$.\newline
+$2^n>x>0$, $\Rightarrow$ krawędź jest nasza.\newline
+Jeśli wszystkie krawędzie w poddrzewie wychodzącym z tej krawędzi należą do przeciwnika,
+to wartość jest równa $\frac{1}{2^n}$, gdzie $n=$ilość tych krawędzi - usuwamy tę krawędź - wartość wychodzi $0$, co spełnia tezę.
+W przeciwnym przypadku $\exists_k$ : $n=k+m-1,k+\frac{y}{2^m}=\frac{x}{2^m}$ $\rightarrow$ $\frac{y}{2^m}<0$ jest wartością w wierzchołku wychodzącym z tej krawędzi
+- korzystamy z dowodu dla tego wierzchołka (przy generowaniu wartości występuje to samo $k$, $\frac{y-1}{2^m}\rightarrow\frac{x-1}{2^n}$ ).\newline
+$0>x>-2^n$- krawędź należy do przeciwnika, $\exists_k$ : $n=k+m-1,-k+\frac{y}{2^m}=\frac{x}{2^m}$ $\rightarrow$ $\frac{y}{2^m}>0$ jest wartością w wierzchołku wychodzącym z tej krawędzi
+- korzystamy z dowodu dla tego wierzchołka jak wyżej.\newline
+$-2^n\ge x$ $\Rightarrow$ krawędź jest przeciwnika - korzystamy rekurencyjnie z dowodu dla wierzchołka wychodzącego i wartości $\frac{x}{2^n}+1$.\newline
+Wartość musi się pogorszyć, jako, że wycięcie naszej krawędzi zmienia jej wartość z dodatniej na $0$, a wartość w naddrzewie jest monotoniczna
+(ściśle rosnąca) ze względu na wartości w poddrzewach.\newline\newline
+
+
+Uwagi:
+W przypadku krawędzi przypadek $x=0$ nie występuje - znak jest taki jak znak właściciela krawędzi.\newline
+Chodząc po drzewie w głąb dowód kończy się w momencie albo gdy z wierzchołka wychodzą jedynie poddrzewa monochromatyczne,
+lub gdy z naszej krawędzi wystają jedynie krawędzie przeciwnika (czyli to samo, tylko przypadek gdy są jedynie drzewa jednokolorowe poza korzeniem).\newline
+Strategią jest wycięcie tej krawędzi, która została zadeklarowana do wycięcia w jednym z tych dwóch przypadków do którego dojdziemy wędrując od korzenia lasu
+(drzewa) jak w dowodzie.
+"To samo $k$" wnioskujemy stąd, że $k$ dla $\frac{y}{2^m}<0$ jest wartością $1+\lfloor\frac{y}{2^m}\rfloor$ (i symetrycznie dla $>0$),
+zaś by zmienić wartość funkcji podłoga musielibyśmy zmienić wartość $y$ o więcej niż $1$ (aby $\frac{y}{2^m}$ nieskracalne przekroczyło liczbę całkowitą). 
+
+
+\end{document}

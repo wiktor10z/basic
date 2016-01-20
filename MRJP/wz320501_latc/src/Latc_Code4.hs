@@ -20,6 +20,7 @@ data Code4Instruction =
 	OpV Op ValVar4 ValVar4 ValVar4 |
 	Neg4 ValVar4 |
 	Not4 ValVar4 |
+	Alloc4 ValVar4 ValVar4 | --wskażnik , ile pamięci
 	Param4 Int ValVar4 |
 	CallV ValVar4 String Int |
 	Return4 ValVar4	|
@@ -50,11 +51,14 @@ data ValVar4 =
 	Int4 Integer |
 	Bool4 Bool |
 	String4 Int |
-	Temp4 Int Type|
-	Var4 Int Type|	
+	ArrElem4 Int Type ValVar4 |
+	ArrLength4 Int |
+	Pointer4 Int |
+	Temp4 Int Type |
+	Var4 Int Type |
 	Rej4 |
 	Void4 
-    deriving (Eq,Ord,Show)	
+    deriving (Eq,Ord,Show)
 
 --środowisko zawiera mapę z nazw zmiennych w lokację i typ
 type Env4 = Map.Map String (Int,Type)
@@ -182,6 +186,8 @@ containsApp (EAdd exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp (ERel exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp (EOr exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp (EAnd exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
+containsApp (ENewArr _ _ exp) = containsApp exp
+containsApp (EArrInd _ exp) = containsApp exp
 containsApp _ = False	
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
@@ -217,6 +223,32 @@ toCode4Expr (EApp (PIdent ((x,_),name)) exps) = do
 	temp <- getTemp
 	maxParams (length exps)
 	return (str++[CallV (Temp4 temp (fromVarType x)) name (length exps)],(Temp4 temp (fromVarType x)))
+
+toCode4Expr (ENewArr (PNew _) t exp) = do
+	(str,x1) <- toCode4Expr exp
+	freeTemp2 x1
+	temp <- getTemp
+	--TODO jeśli zrobię struckty, to może tutaj zmienić tę instrukcję - tak żeby to tutaj dodać sługość na stertę
+	return (str++[Alloc4 (Temp4 temp (Array t)) x1],(Temp4 temp (Array t)))
+	
+toCode4Expr (EArrInd (PIdent (_,arrname)) exp) = do
+	env <- ask
+	(str,temp1) <- toCode4Expr exp
+	temp2 <- getTemp
+	temp3 <- getTemp
+	freeTemp2 temp1
+	freeTemp temp2
+	freeTemp temp3
+	case Map.lookup arrname env of
+		Just (varnum, Array type1) -> return (str++[OpV Add4 (Temp4 temp3 Int) temp1 (Int4 (toInteger (valSize type1))),OpV Mul4 (Temp4 temp3 Int) (Temp4 temp3 Int) (Int4 4),
+													Ass4 (Temp4 temp2 type1) (ArrElem4 varnum type1 (Temp4 temp3 Int))],(Temp4 temp2 type1))
+
+toCode4Expr (ELength (PIdent (_,arrname))) = do
+	env <- ask
+	temp <- getTemp
+	case Map.lookup arrname env of
+		Just (varnum, Array type1) -> return ([Ass4 (Temp4 temp Int) (ArrLength4 varnum)],(Temp4 temp Int))
+
 
 toCode4Expr (EString str) = do
 	n <- pushString str
@@ -392,7 +424,7 @@ toCode4Expr2 exp = do
 	if (containsApp exp)
 		then do
 			reserveTemps
-			x<- toCode4Expr exp
+			x <- toCode4Expr exp
 			unreserveTemps
 			return x
 		else toCode4Expr exp
@@ -402,7 +434,9 @@ toCode4Ass :: Int -> Type -> Code4Instruction -> Code4Instruction
 toCode4Ass varnum t (OpV op (Temp4 _ _) x1 x2) = (OpV op (Var4 varnum t) x1 x2)
 toCode4Ass varnum t (CallV _ name n) = CallV (Var4 varnum t) name n
 toCode4Ass varnum t (Empty4 x) = Ass4 (Var4 varnum t) x
-toCode4Ass varnum t (Ass4 (Temp4 _ _) Rej4) = Ass4 (Var4 varnum t) Rej4
+toCode4Ass varnum t (Ass4 (Temp4 _ _) y) = Ass4 (Var4 varnum t) y
+toCode4Ass varnum t (Alloc4 (Temp4 temp _) x)= Alloc4 (Var4 varnum t) x
+
 
 
 toCode4Decl :: Type -> [Item] -> StEnv4 (Env4,[Code4Instruction])
@@ -440,12 +474,25 @@ toCode4Stmt (Ass (PIdent (_,varname)) exp) = do
 	freeTemp2 temp
 	case Map.lookup varname env of
 		Just (varnum,type1) -> if (null inst4)
-				then do
-					addInstructions [toCode4Ass varnum type1 (Empty4 temp)]
-					ask
-				else do
-					addInstructions ((init inst4) ++[toCode4Ass varnum type1 (last inst4)])
-					ask
+			then do
+				addInstructions [toCode4Ass varnum type1 (Empty4 temp)]
+				ask
+			else do
+				addInstructions ((init inst4) ++[toCode4Ass varnum type1 (last inst4)])
+				ask
+
+toCode4Stmt (ArrAss (PIdent (_,arrname)) exp1 exp2) = do
+	env <- ask
+	(inst1,temp1) <- toCode4Expr2 exp1
+	(inst2,temp2) <- toCode4Expr2 exp2
+	temp <- freeGetTemp temp1 temp2
+	freeTemp temp
+	case Map.lookup arrname env of
+		Just (varnum, Array type1) -> do
+			addInstructions (inst1++inst2++[OpV Add4 (Temp4 temp Int) temp1 (Int4 (toInteger (valSize type1))),OpV Mul4 (Temp4 temp Int) (Temp4 temp Int) (Int4 4),
+											Ass4 (ArrElem4 varnum type1 (Temp4 temp Int)) temp2])
+			ask
+
 
 toCode4Stmt (Incr (PIdent (_,varname))) = do
 	env <- ask
@@ -534,6 +581,35 @@ toCode4Stmt (While (PWhile _) exp stm) = do
 	writeBlock
 	setLabel endlabel
 	ask
+
+toCode4Stmt (ForEach _ t (PIdent (_,var)) (PIdent (_,arr)) stm) = do
+	varnum1 <- newVar (Array t)
+	varnum2 <- newVar (Array t)
+	varnum3 <- newVar t
+	env <- ask
+	case Map.lookup arr env of
+		Just (arrnum,Array type1) -> do
+			addInstructions [OpV Add4 (Var4 varnum1 (Array t)) (Var4 arrnum (Array t)) (Int4 4)]	--TODOTODO to daje dodawanie na typach 8 bajt, a nie tylko na 4 bajt
+			temp <- getTemp
+			addInstructions [OpV Mul4 (Temp4 temp (Array t)) (ArrLength4 arrnum) (Int4 (toInteger (valSize t))),OpV Add4 (Var4 varnum2 (Array t)) (Var4 varnum1 (Array t)) (Temp4 temp (Array t))]
+			freeTemp temp
+			condlabel <- getLabel
+			addInstructions [Goto4 condlabel]
+			writeBlock
+			insidelabel <-getLabel
+			endlabel <- getLabel
+			setLabel insidelabel
+			addInstructions [Ass4 (Var4 varnum3 type1) (ArrElem4 varnum1 type1 (Int4 0))]
+			(local (Map.insert var (varnum3,type1)) (toCode4Stmt stm))
+			addInstructions [OpV Add4 (Var4 varnum1 (Array t)) (Var4 varnum1 (Array t)) (Int4 (toInteger (valSize t))),Goto4 condlabel]
+			writeBlock
+			setLabel condlabel
+			temp <- getTemp
+			addInstructions [OpV SetE4S (Temp4 temp Bool) (Var4 varnum1 (Array t)) (Var4 varnum2 (Array t)),If4 (Temp4 temp Bool) insidelabel,Goto4 endlabel]
+			freeTemp temp
+			writeBlock
+			setLabel endlabel
+			ask
 
 toCode4Stmt (SExp exp) = do
 	(inst4,temp4) <- toCode4Expr2 exp
