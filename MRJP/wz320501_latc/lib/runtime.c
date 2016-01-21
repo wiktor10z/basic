@@ -7,7 +7,7 @@ void printInt(int i){
 	printf("%d\n",i);
 }
 
-void printString(char* s){//sprawdzić, czy działa
+void printString(char* s){
 	printf("%s\n",s);
 }
 
@@ -35,4 +35,23 @@ char* concat(char *str1, char *str2){
 	strcpy(str3,str1);
 	strcat(str3,str2);
 	return str3;
+}
+
+void* allocatearr(int size,int length){
+	void* a = calloc(1,size*length+4);
+	int *b=a;
+	b[0]=length;
+	return a;
+}
+
+void* allocatearrofpointers (int length, long long int default1){
+	void* a = calloc(1,8*length+4);
+	int *b=a;
+	b[0]=length;
+	long long int *c=a+4;
+	int i;
+	for(i=0;i<length;++i){
+		c[i]=default1;
+	}
+	return a;
 }

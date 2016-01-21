@@ -69,31 +69,44 @@ varsHash n = do
 
 tempsHash :: Type -> Int-> StAss String
 
-tempsHash Str 1 =  return "%rcx"
-tempsHash Str 2 =  return "%rsi"
-tempsHash Str 3 =  return "%rdi"
-tempsHash Str 4 =  return "%r8"
-tempsHash Str 5 =  return "%r9"
-tempsHash Str 6 =  return "%r10"
-tempsHash Str 7 =  return "%r11"
-tempsHash Str 8 =  return "%rbx"
-tempsHash Str 9 =  return "%r12"
-tempsHash Str 10 =  return "%r13"
-tempsHash Str 11 =  return "%r14"
-tempsHash Str 12 =  return "%r15"
+tempsHash Bool 1 =  return "%ecx"
+tempsHash Bool 2 =  return "%esi"
+tempsHash Bool 3 =  return "%edi"
+tempsHash Bool 4 =  return "%r8d"
+tempsHash Bool 5 =  return "%r9d"
+tempsHash Bool 6 =  return "%r10d"
+tempsHash Bool 7 =  return "%r11d"
+tempsHash Bool 8 =  return "%ebx"
+tempsHash Bool 9 =  return "%r12d"
+tempsHash Bool 10 =  return "%r13d"
+tempsHash Bool 11 =  return "%r14d"
+tempsHash Bool 12 =  return "%r15d"
 
-tempsHash _ 1 =  return "%ecx"
-tempsHash _ 2 =  return "%esi"
-tempsHash _ 3 =  return "%edi"
-tempsHash _ 4 =  return "%r8d"
-tempsHash _ 5 =  return "%r9d"
-tempsHash _ 6 =  return "%r10d"
-tempsHash _ 7 =  return "%r11d"
-tempsHash _ 8 =  return "%ebx"
-tempsHash _ 9 =  return "%r12d"
-tempsHash _ 10 =  return "%r13d"
-tempsHash _ 11 =  return "%r14d"
-tempsHash _ 12 =  return "%r15d"
+tempsHash Int 1 =  return "%ecx"
+tempsHash Int 2 =  return "%esi"
+tempsHash Int 3 =  return "%edi"
+tempsHash Int 4 =  return "%r8d"
+tempsHash Int 5 =  return "%r9d"
+tempsHash Int 6 =  return "%r10d"
+tempsHash Int 7 =  return "%r11d"
+tempsHash Int 8 =  return "%ebx"
+tempsHash Int 9 =  return "%r12d"
+tempsHash Int 10 =  return "%r13d"
+tempsHash Int 11 =  return "%r14d"
+tempsHash Int 12 =  return "%r15d"
+
+tempsHash _ 1 =  return "%rcx"
+tempsHash _ 2 =  return "%rsi"
+tempsHash _ 3 =  return "%rdi"
+tempsHash _ 4 =  return "%r8"
+tempsHash _ 5 =  return "%r9"
+tempsHash _ 6 =  return "%r10"
+tempsHash _ 7 =  return "%r11"
+tempsHash _ 8 =  return "%rbx"
+tempsHash _ 9 =  return "%r12"
+tempsHash _ 10 =  return "%r13"
+tempsHash _ 11 =  return "%r14"
+tempsHash _ 12 =  return "%r15"
 
 
 pushRegisters :: Int -> String
@@ -125,23 +138,23 @@ manageArgs [] _ off off2= ("",off)
 
 manageArgs1 :: Type -> Int -> String
 
+manageArgs1 Bool 1 = "    movl\t %edi, %eax\n    movb\t %al, "
+manageArgs1 Bool 2 = "    movl\t %esi, %eax\n    movb\t %al, "
+manageArgs1 Bool 3 = "    movl\t %edx, %eax\n    movb\t %al, "
+manageArgs1 Bool 4 = "    movl\t %ecx, %eax\n    movb\t %al, "
+manageArgs1 Bool n = "    movl\t %r"++show(n+3)++"d, %eax\n    movb\t %al, "
+
 manageArgs1 Int 1 = "    movl\t %edi, "
 manageArgs1 Int 2 = "    movl\t %esi, "
 manageArgs1 Int 3 = "    movl\t %edx, "
 manageArgs1 Int 4 = "    movl\t %ecx, "
 manageArgs1 Int n = "    movl\t %r"++show(n+3)++"d, "
 
-manageArgs1 Str 1 = "    movq\t %rdi, "
-manageArgs1 Str 2 = "    movq\t %rsi, "
-manageArgs1 Str 3 = "    movq\t %rdx, "
-manageArgs1 Str 4 = "    movq\t %rcx, "
-manageArgs1 Str n = "    movq\t %r"++show(n+3)++", "
-
-manageArgs1 Bool 1 = "    movl\t %edi, %eax\n    movb\t %al, "
-manageArgs1 Bool 2 = "    movl\t %esi, %eax\n    movb\t %al, "
-manageArgs1 Bool 3 = "    movl\t %edx, %eax\n    movb\t %al, "
-manageArgs1 Bool 4 = "    movl\t %ecx, %eax\n    movb\t %al, "
-manageArgs1 Bool n = "    movl\t %r"++show(n+3)++"d, %eax\n    movb\t %al, "
+manageArgs1 _ 1 = "    movq\t %rdi, "
+manageArgs1 _ 2 = "    movq\t %rsi, "
+manageArgs1 _ 3 = "    movq\t %rdx, "
+manageArgs1 _ 4 = "    movq\t %rcx, "
+manageArgs1 _ n = "    movq\t %r"++show(n+3)++", "
 
 
 functionStrings :: String ->[(String,Int)] -> String
@@ -178,7 +191,39 @@ movString (Var4 var1 t1) (Var4 var2 t2) =
 			case t1 of
 				Bool -> return ("    movzbl\t "++varloc2++", %eax\n    "++"movb\t %al, "++varloc1++"\n")
 				Int -> return ("    movl\t "++varloc2++", %eax\n    movl\t %eax, "++varloc1++"\n")
-				Str -> return ("    movq\t "++varloc2++", %rax\n    movq\t %rax, "++varloc1++"\n")
+				_ -> return ("    movq\t "++varloc2++", %rax\n    movq\t %rax, "++varloc1++"\n")
+
+movString var1 (ArrElem4 arr t var2) = do
+	arrloc <- exactAddress (Var4 arr (Array t))
+	varloc1 <- getAddress var1
+	loc2 <- exactAddress var2
+	let str = "    movl\t "++loc2++", %eax\n    addq\t "++arrloc++", %rax\n"
+	case varloc1 of
+		Left loc1 -> case t of
+			Bool -> return (str++"    movzbl\t (%rax), %eax\n    movb\t %al, "++loc1++"\n")
+			Int -> return (str++"    movl\t (%rax), %eax\n    movl\t %eax, "++loc1++"\n")
+			_ -> return (str++"    movq\t (%rax), %rax\n    movq\t %rax, "++loc1++"\n")
+		Right loc1 -> case t of
+			Bool -> return (str++"    movzbl\t (%rax), "++loc1++"\n")--TODO to oczywiście trzeba przetestować i poprawić, bo prawie na pewno źle
+			Int -> return (str++"    movl\t (%rax), "++loc1++"\n")
+			_ -> return (str++"    movq\t (%rax), "++loc1++"\n")
+
+movString (ArrElem4 arr t var2) var1 = do
+	arrloc <- exactAddress (Var4 arr (Array t))
+	varloc1 <- getAddress var1
+	loc1 <- exactAddress var1
+	loc2 <- exactAddress var2
+	let str = "    movl\t "++loc2++", %eax\n    addq\t "++arrloc++", %rax\n"
+	case t of
+		Bool -> case var1 of
+			(Bool4 _) -> return (str++"    movb\t "++loc1++", (%rax)\n")
+			_ -> return (str++"    movl\t "++loc1++", %edx\n    movb\t %dl, (%rax)\n")
+		Int-> case varloc1 of
+			Left _ -> return (str++"    movl\t "++loc1++", %edx\n    movl\t %edx, (%rax)\n")
+			Right _ -> return (str++"    movl\t "++loc1++", (%rax)\n")
+		_ -> case varloc1 of
+			Left _ -> return (str++"    movq\t "++loc1++", %rdx\n    movq\t %rdx, (%rax)\n")
+			Right _ -> return (str++"    movq\t "++loc1++", (%rax)\n")
 
 movString var1 (Int4 n) = do
 	varloc1 <- exactAddress var1
@@ -196,11 +241,11 @@ movString var1 Rej4 = do
 
 movString var1 (Bool4 True) = do
 	varloc1 <- exactAddress var1
-	return ("    movl\t $1, "++varloc1++"\n")
+	return ("    movb\t $1, "++varloc1++"\n")
 
 movString var1 (Bool4 False) = do
 	varloc1 <- exactAddress var1
-	return ("    movl\t $0, "++varloc1++"\n")
+	return ("    movb\t $0, "++varloc1++"\n")
 
 movString var1 var2 =
 	if (var1==var2)
@@ -220,7 +265,7 @@ movString var1 var2 =
 					case (varloc1,varloc2) of
 						(Left _,Left _) -> return ("    movl\t "++loc2++", %eax\n    movl\t %eax, "++loc1++"\n")
 						_ -> return ("    movl\t "++loc2++", "++loc1++"\n")
-				Str -> do
+				_ -> do
 					case (varloc1,varloc2) of
 						(Left _,Left _) -> return ("    movq\t "++loc2++", %rax\n    movq\t %rax, "++loc1++"\n")
 						_ -> return ("    movq\t "++loc2++", "++loc1++"\n")
@@ -248,7 +293,7 @@ operString oper var1 var2 = do
 			case (varloc1,varloc2) of
 				(Left _,Left _) -> return ("    movl\t "++loc2++", %eax\n    "++oper++"\t %eax, "++loc1++"\n")
 				_ -> return ("    "++oper++"\t "++loc2++", "++loc1++"\n")
-		Str -> do
+		_ -> do
 			case (varloc1,varloc2) of
 				(Left _,Left _) -> return ("    movq\t "++loc2++", %rax\n    "++oper++"\t %rax, "++loc1++"\n")
 				_ -> return ("    "++oper++"\t "++loc2++", "++loc1++"\n")
@@ -282,11 +327,11 @@ assembleInstruction (Param4 n var) = do
 		Right loc -> case (getType var) of
 			Bool -> return ("    movl\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
 			Int -> return ("    movl\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
-			Str -> return ("    movq\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
+			_ -> return ("    movq\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
 		Left loc -> case (getType var) of
 			Bool -> return ("    movzbl\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
 			Int -> return ("    movl\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
-			Str -> return ("    movq\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
+			_ -> return ("    movq\t "++loc++", "++(show ((n-7)*8))++"(%rsp)\n")
 	
 assembleInstruction (CallV var name _ ) = do
 	varloc <- exactAddress var
@@ -296,15 +341,17 @@ assembleInstruction (CallV var name _ ) = do
 				str <- movAL var
 				return ("    call\t "++name++"\n"++str)
 			Int -> return ("    call\t "++name++"\n    movl\t %eax, "++varloc++"\n")
-			Str -> return ("    call\t "++name++"\n    movq\t %rax, "++varloc++"\n")
-			Void -> return("    call\t "++name++"\n")
+			Void -> return("    call\t "++name++"\n")		
+			_ -> return ("    call\t "++name++"\n    movq\t %rax, "++varloc++"\n")
+
 		else case (getType var) of
 			Bool -> do
 				str <- movAL var
 				return ("    call\t _"++name++"\n"++str)
 			Int -> return ("    call\t _"++name++"\n    movl\t %eax, "++varloc++"\n")
-			Str -> return ("    call\t _"++name++"\n    movq\t %rax, "++varloc++"\n")
-			Void -> return("    call\t _"++name++"\n")
+			Void -> return("    call\t _"++name++"\n")			
+			_ -> return ("    call\t _"++name++"\n    movq\t %rax, "++varloc++"\n")
+
 
 assembleInstruction (Return4 Void4) = return ("")
 assembleInstruction (Return4 var) = do
@@ -329,6 +376,18 @@ assembleInstruction (Not4 var) = do
 assembleInstruction (Neg4 var) = do
 	varloc <- exactAddress var
 	return ("    negl\t "++varloc++"\n")
+
+assembleInstruction (AllocArr14 var1 var2 var3) = do
+	varloc1 <- exactAddress var1
+	varloc2 <- exactAddress var2
+	varloc3 <- exactAddress var3
+	return ("    movl\t "++varloc2++", %edi\n    movl\t "++varloc3++", %esi\n    call\t allocatearr\n    movq\t %rax, "++varloc1++"\n")
+
+assembleInstruction (AllocArr24 var1 var2 var3) = do
+	varloc1 <- exactAddress var1
+	varloc2 <- exactAddress var2
+	varloc3 <- exactAddress var3
+	return ("    movl\t "++varloc2++", %edi\n    movq\t "++varloc3++", %rsi\n    call\t allocatearrofpointers\n    movq\t %rax, "++varloc1++"\n")
 
 assembleInstruction (OpV Concat4 var1 var2 var3)= do
 	varloc <- exactAddress var1
@@ -358,6 +417,28 @@ assembleInstruction (OpV Add4 var1 var2 var3)=
 				str2 <- operString "addl" var1 var3
 				return (str++str2)
 
+assembleInstruction (OpV Add24 var1 var2 (Int4 n))= do
+	str <- movString var1 var2
+	varloc <- exactAddress var1
+	return (str ++"    addq\t $"++(show n)++", "++varloc++"\n")
+		
+assembleInstruction (OpV Add24 var1 (Int4 n) var2)= do
+	str <- movString var1 var2
+	varloc <- exactAddress var1	
+	return (str ++"    addq\t $"++(show n)++", "++varloc++"\n")
+
+assembleInstruction (OpV Add24 var1 var2 var3)=
+	if (var1==var2)
+		then do
+			operString "addq" var1 var3
+		else if (var1==var3)
+			then do
+				operString "addq" var1 var2
+			else do
+				str <- movString var1 var2
+				str2 <- operString "addq" var1 var3
+				return (str++str2)
+				
 assembleInstruction (OpV Sub4 var1 var2 (Int4 n)) = do
 	str <- movString var1 var2
 	varloc <- exactAddress var1
@@ -446,7 +527,7 @@ assembleInstruction (OpV SetE4S var1 var2 var3) = do
 	str1 <- movAL var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
-	return ("    movq\t "++loc2++", %eax\n    cmpq\t "++loc3++", %eax\n    sete\t %al\n"++str1)
+	return ("    movq\t "++loc2++", %rax\n    cmpq\t "++loc3++", %rax\n    sete\t %al\n"++str1)
 	
 assembleInstruction (OpV SetNE4B var1 var2 var3) = do
 	str1 <- movAL var1
@@ -464,7 +545,7 @@ assembleInstruction (OpV SetNE4S var1 var2 var3) = do
 	str1 <- movAL var1
 	loc2 <- exactAddress var2
 	loc3 <- exactAddress var3
-	return ("    movq\t "++loc2++", %eax\n    cmpq\t "++loc3++", %eax\n    setne\t %al\n"++str1)
+	return ("    movq\t "++loc2++", %rax\n    cmpq\t "++loc3++", %rax\n    setne\t %al\n"++str1)
 
 assembleInstrs :: [Code4Instruction] -> StAss String
 assembleInstrs (inst:instrs) = do
