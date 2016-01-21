@@ -292,16 +292,17 @@ checkExpTypeVal (EArrInd (PIdent ((x,y),name)) exp) = do
 		else error ("array index of non integer type at line "++show(x)++", column "++show(y))
 
 
-checkExpTypeVal (ELength (PIdent ((x,y),name))) = do
+checkExpTypeVal (EAttr (PIdent ((x,y),name)) (PIdent ((x1,y1),"length"))) = do
 	env <- ask
 	st <- getSt
 	case (Map.lookup name env) of
 		Nothing -> error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" not declared")
 		Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
-			Just (Array t,_) -> return (Int,Nothing,(ELength (PIdent ((x,y),name))))
+			Just (Array t,_) -> return (Int,Nothing,(EAttr (PIdent ((x,y),name)) (PIdent ((x1,y1),"length"))))
 			_ -> error ("attempt to use non array variable as array at line "++show(x)++", column "++show(y))		
 
-
+checkExpTypeVal (EAttr (PIdent ((x,y),name)) (PIdent ((x1,y1),attr))) =
+	error ("error in line "++show(x)++", column "++show(y)++" array don't have attribute "++attr++"\n")	--na razie rozważam tylko tabele, które mogą mieć tylko atrybut długość
 
 
 

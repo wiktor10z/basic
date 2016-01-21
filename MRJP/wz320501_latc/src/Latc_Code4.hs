@@ -246,7 +246,7 @@ toCode4Expr (EArrInd (PIdent (_,arrname)) exp) = do
 		Just (varnum, Array type1) -> return (str++[OpV Mul4 (Temp4 temp2 Int) temp1 (Int4 (toInteger (valSize type1))),OpV Add4 (Temp4 temp2 Int) (Temp4 temp2 Int) (Int4 4),
 													Ass4 (Temp4 temp2 type1) (ArrElem4 varnum type1 (Temp4 temp2 Int))],(Temp4 temp2 type1))
 
-toCode4Expr (ELength (PIdent (_,arrname))) = do
+toCode4Expr (EAttr (PIdent (_,arrname)) (PIdent (_,"length"))) = do
 	env <- ask
 	temp <- getTemp
 	case Map.lookup arrname env of
