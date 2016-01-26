@@ -28,7 +28,7 @@ compileWhole (Program prog) = do
 	let code4 = toCode4 nprog
 	--hPutStrLn stderr ("OK\n"++(show code4))
 	let code42 = optimizeWhole code4
-	--hPutStrLn stderr ("OK\n"++(show code42))
+	hPutStrLn stderr ("OK\n"++(show code42))
 	assembleWhole code42
 	--error ("OK\n")
 	hPutStrLn stderr ("OK\n")

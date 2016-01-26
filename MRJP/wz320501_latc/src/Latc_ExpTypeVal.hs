@@ -10,6 +10,24 @@ import qualified Data.Map as Map
 import Latte.Abs
 import Latc_basic
 
+
+checkTypeExists :: Type -> StEnv ()
+checkTypeExists (Class (PIdent ((x,y),name))) = do
+	env <- ask
+	case (Map.lookup (name,"") env) of
+		Nothing -> error ("error in line "++show(x)++", column "++show(y)++" no class "++name++" exists")
+		Just _ -> return ()
+checkTypeExists (Array (Class (PIdent ((x,y),name)))) = do
+	env <- ask
+	case (Map.lookup (name,"") env) of
+		Nothing -> error ("error in line "++show(x)++", column "++show(y)++" no class "++name++" exists")
+		Just _ -> return ()
+checkTypeExists (Array (Array _)) = error "???"
+checkTypeExists _ = return ()
+
+
+
+
 --Dwie funkcje używane przy wypisaniu komunikatu o błędzie typu
 typeShow :: Type -> String
 typeShow Int = "integer"
@@ -17,6 +35,7 @@ typeShow Bool = "boolean"
 typeShow Str = "string"
 typeShow Void = "void"
 typeShow (Array t) = "array of "++(typeShow t)
+typeShow (Class (PIdent (_,name))) = name++" object"
 
 wrongType :: Type -> Type -> String
 wrongType t1 t2 = "expected "++(typeShow t1)++" but got "++(typeShow t2)
@@ -26,7 +45,7 @@ multipleTypesMatch :: PIdent -> (Int,Int) -> [Expr] -> [Type] -> Int -> StEnv [E
 
 multipleTypesMatch (PIdent ((x,y),name)) (x1,y1) (exp:exps) (t:ts) i = do
 	(t2,_,nexp) <- checkExpTypeVal exp
-	if t2==t
+	if (typesMatch t2 t)
 		then do
 			nexps <- multipleTypesMatch (PIdent ((x,y),name)) (x1,y1) exps ts (i+1)
 			return (nexp:nexps)
@@ -42,7 +61,7 @@ checkExpTypeVal :: Expr -> StEnv (Type,Val,Expr)
 checkExpTypeVal (EVar (PIdent ((x,y),name))) = do
 	env <- ask
 	st <- getSt
-	case (Map.lookup name env) of
+	case (Map.lookup ("",name) env) of
 		Nothing -> error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" not declared")
 		Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
 			Just (Fun _ _,_) -> error ("error in line "++show(x)++", column "++show(y)++" attempt to use function "++show(name)++" declared in line "++show(x1)++", column "++show(y1))	
@@ -62,7 +81,7 @@ checkExpTypeVal ELitFalse = return (Bool,Just (Left (Right False)),ELitFalse)
 checkExpTypeVal (EApp (PIdent ((x,y),name)) exps) = do
 	env <- ask
 	st <-getSt
-	case (Map.lookup name env) of
+	case (Map.lookup ("",name) env) of
 		Nothing -> error ("error in line "++show(x)++", column "++show(y)++" function "++show(name)++" does not exist")
 		Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
 			Just ((Fun t tlist),_) -> 
@@ -224,7 +243,7 @@ checkExpTypeVal (ERel exp1 (GE (PGE ((x,y),_))) exp2) = do
 checkExpTypeVal (ERel exp1 (EQU (PEQU ((x,y),_))) exp2) = do
 	(type1,val1,nexp1) <- checkExpTypeVal exp1
 	(type2,val2,nexp2) <- checkExpTypeVal exp2
-	if type1==type2
+	if (typesMatch type1 type2)
 		then case val1 of
 			Nothing -> return (Bool,Nothing,(ERel nexp1 (EQU (PEQU ((x,y),"=="++(show type1)))) nexp2))
 			Just _ -> case val2 of
@@ -237,7 +256,7 @@ checkExpTypeVal (ERel exp1 (EQU (PEQU ((x,y),_))) exp2) = do
 checkExpTypeVal (ERel exp1 (NE (PNE ((x,y),_))) exp2) = do
 	(type1,val1,nexp1) <- checkExpTypeVal exp1
 	(type2,val2,nexp2) <- checkExpTypeVal exp2
-	if type1==type2
+	if (typesMatch type1 type2)
 		then case val1 of
 			Nothing -> return (Bool,Nothing,(ERel nexp1 (NE (PNE ((x,y),"!="++(show type1)))) nexp2))
 			Just _ -> case val2 of
@@ -268,9 +287,14 @@ checkExpTypeVal (EOr exp1 (POr ((x,y),_)) exp2) = do
 		else error ("non-boolean at or operator at line "++show(x)++", column "++show(y))	
 
 -----------------------------------------------------------------------------------------------------
---rozszerzenia
+--rozszerzenia		--TODO może lepiej przenieść na właściwe mejsce
+
+checkExpTypeVal (ENewObj (PNew ((x,y),_)) pclass) = do
+	checkTypeExists (Class pclass)
+	return ((Class pclass),Nothing,ENewObj (PNew ((x,y),"new")) pclass)
 
 checkExpTypeVal (ENewArr (PNew ((x,y),_)) t exp) = do
+	checkTypeExists t
 	(type1,_,nexp) <- checkExpTypeVal exp
 	if(type1==Int)
 		then case t of
@@ -284,25 +308,38 @@ checkExpTypeVal (EArrInd (PIdent ((x,y),name)) exp) = do
 	st <- getSt
 	(type1,_,nexp) <- checkExpTypeVal exp
 	if(type1==Int)
-		then case (Map.lookup name env) of
+		then case (Map.lookup ("",name) env) of
 			Nothing -> error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" not declared")
 			Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
 				Just (Array t,_) -> return (t,Nothing,(EArrInd (PIdent ((varType t,y),name)) nexp))
 				_ -> error ("attempt to use non array variable as array at line "++show(x)++", column "++show(y))
 		else error ("array index of non integer type at line "++show(x)++", column "++show(y))
 
-
-checkExpTypeVal (EAttr (PIdent ((x,y),name)) (PIdent ((x1,y1),"length"))) = do
+checkExpTypeVal (EAttr (PIdent ((x,y),name)) (PIdent ((x1,y1),attr))) = do
 	env <- ask
 	st <- getSt
-	case (Map.lookup name env) of
+	case (Map.lookup ("",name) env) of
 		Nothing -> error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" not declared")
-		Just ((x1,y1),loc,_) -> case (Map.lookup loc st) of
-			Just (Array t,_) -> return (Int,Nothing,(EAttr (PIdent ((x,y),name)) (PIdent ((x1,y1),"length"))))
-			_ -> error ("attempt to use non array variable as array at line "++show(x)++", column "++show(y))		
+		Just ((x2,y2),loc,_) -> case (Map.lookup loc st) of
+			Just (Array t,_) -> if attr=="length"
+				then return (Int,Nothing,(EAttr (PIdent ((x,y),name)) (PIdent ((x1,y1),"length"))))
+				else error ("error in line "++show(x)++", column "++show(y)++" array don't have attribute "++attr++"\n")
+			Just (Class (PIdent ((x3,y3),clname)),_) -> case (Map.lookup (clname,attr) env) of
+				Nothing -> error ("error in line "++show(x)++", column "++show(y)++" class "++show(clname)++" does not have attribute"++show(attr))
+				Just ((x4,y4),loc2,_) -> case (Map.lookup loc2 st) of
+					Just (t2,_) -> return (t2,Nothing,(EAttr (PIdent ((x,y),name)) (PIdent ((x1,y1),attr))))
+			_ -> error ("attempt to use attribute of non class (nor array) variable in line "++show(x)++", column "++show(y))	
 
-checkExpTypeVal (EAttr (PIdent ((x,y),name)) (PIdent ((x1,y1),attr))) =
-	error ("error in line "++show(x)++", column "++show(y)++" array don't have attribute "++attr++"\n")	--na razie rozważam tylko tabele, które mogą mieć tylko atrybut długość
+
+
+checkExpTypeVal (ENull t (P2Null ((x,y),_))) = do
+	checkTypeExists t
+	case t of
+		Class _ -> return (t,Nothing,ENull t (P2Null ((x,y),")null")))
+		Array _ -> return (t,Nothing,ENull t (P2Null ((x,y),")null")))
+		_ -> error ("error in line "++show(x)++", column "++show(y)++" null of base type does not exist")
+
+
 
 
 

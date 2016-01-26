@@ -6,9 +6,15 @@ Program.   Program ::= [TopDef] ;
 
 FnDef.	   TopDef ::= Type PIdent "(" [Arg] ")" Block ;
 
---ClDef.     TopDef ::= "class" PIdent Block ;
+ClDef.     TopDef ::= "class" PIdent "{" [InDef] "}" ;					--nowe2
 
 separator nonempty TopDef "" ;
+
+--ClFnDef.   InDef ::= Type PIdent "(" [Arg] ")" Block ;				--nowe3?
+
+AttrDef.   InDef ::= Type [Item] ";";									--nowe2
+
+separator  InDef "";
 
 Arg. 	   Arg ::= Type PIdent;
 
@@ -32,9 +38,11 @@ Init.      Item ::= PIdent "=" Expr ;
 
 separator nonempty Item "," ;
 
-Ass.       Stmt ::= PIdent "=" Expr  ";" ;
+Ass.       Stmt ::= PIdent "=" Expr ";" ;
 
 ArrAss.    Stmt ::= PIdent "[" Expr "]" "=" Expr ";" ;					--nowe
+
+AttrAss.   Stmt ::= PIdent "." PIdent "=" Expr ";" ;					--nowe2
 
 Incr.      Stmt ::= PIdent "++"  ";" ;
 
@@ -66,7 +74,7 @@ Void.      Type ::= "void" ;
 
 Array.     Type ::= Type "[]" ;											--nowe
 
---Class.     Type ::= PIdent ; 
+Class.     Type ::= PIdent ; 											--nowe2
 
 internal   Fun. Type ::= Type "(" [Type] ")" ;
 
@@ -84,11 +92,15 @@ ELitFalse. Expr6 ::= "false" ;
 
 EApp.      Expr6 ::= PIdent "(" [Expr] ")" ;
 
+ENewObj.   Expr6 ::= PNew PIdent ;										--nowe2
+
 ENewArr.   Expr6 ::= PNew Type "[" Expr "]" ;							--nowe
 
 EArrInd.   Expr6 ::= PIdent "[" Expr "]" ;								--nowe
 
-EAttr.     Expr6 ::= PIdent "." PIdent ;								--nowe
+EAttr.     Expr6 ::= PIdent "." PIdent ;								--nowe1.5
+
+ENull.     Expr6 ::= "(" Type P2Null  ;									--nowe2 
 
 EString.   Expr6 ::= String ;
 
@@ -148,6 +160,7 @@ position token PIf 'i''f' ;
 position token PWhile 'w''h''i''l''e' ;
 position token PFor 'f''o''r' ;											--nowe
 position token PNew 'n''e''w' ;											--nowe
+position token P2Null ')''n''u''l''l' ;									--nowe2
 position token PIdent (letter (letter|digit|'_'|'\'')*) ;
 
 --position token PNeg '-' ;

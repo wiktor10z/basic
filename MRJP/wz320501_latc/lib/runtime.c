@@ -37,6 +37,10 @@ char* concat(char *str1, char *str2){
 	return str3;
 }
 
+void* alloc(int size){
+	return calloc(1,size);
+}
+
 void* allocatearr(int size,int length){
 	void* a = calloc(1,size*length+4);
 	int *b=a;

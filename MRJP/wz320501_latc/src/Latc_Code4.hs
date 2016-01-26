@@ -22,6 +22,7 @@ data Code4Instruction =
 	Not4 ValVar4 |
 	AllocArr14 ValVar4 ValVar4 ValVar4| --wskażnik , rozmiar, długość
 	AllocArr24 ValVar4 ValVar4 ValVar4| --wskażnik , długość, default
+	AllocObj4 ValVar4 Int| --powinno być wywołanie konstruktora, który wylicza i wprowadza wartości domyślne na właściwe miejsca, i zwraca wskaźnik do nowego obiektu
 	Param4 Int ValVar4 |
 	CallV ValVar4 String Int |
 	Return4 ValVar4	|
@@ -53,7 +54,8 @@ data ValVar4 =
 	Int4 Integer |
 	Bool4 Bool |
 	String4 Int |
-	ArrElem4 Int Type ValVar4 |
+	ArrElem4 ValVar4 Type ValVar4 |
+	ObjAttr4 ValVar4 Type Int | 
 	Pointer4 Int |
 	Temp4 Int Type |
 	Var4 Int Type |
@@ -63,28 +65,28 @@ data ValVar4 =
 
 --środowisko zawiera mapę z nazw zmiennych w lokację i typ
 type Env4 = Map.Map String (Int,Type)
-type St4 = (String,Int,String,Int,Int,Set.Set Int,Int,Map.Map String Int,Int,[Code4Block],[Code4Instruction])
+type St4 = (String,Int,String,Int,Int,Set.Set Int,Int,Map.Map String Int,Int,Map.Map (String,String) (Type,Int), [Code4Block],[Code4Instruction])
 --stan zawiera nazwę funkcji, numer ostatniego labelu, nazwę bloku aktualnie zapisywanego, lokację ostatniej zmiennej,maksymalną ilość tempów używanych,
 --zbiór tempów zwolnionych, ilość stringów już zapisanych i ich mapowanie w etykiety, maksymalną ilość argumentów funkcji wywoływanych,
---zapisane już bloki proste funkcji i instrukcje z aktualnie zapisywanego bloku
+--pozycje atrybutów w objektach,zapisane już bloki proste funkcji i instrukcje z aktualnie zapisywanego bloku
 
 type StEnv4 = ReaderT Env4 (State St4)
 
 --funkcje zmieniające i czytające stan i środowisko
 getTemp :: StEnv4 Int
 getTemp = do
-	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs) <- get
 	if (Set.null tempset)
-		then do put (name,labels,nextlabel,vars,temps+1,tempset,strs,strmap,params,blocks,instrs)
+		then do put (name,labels,nextlabel,vars,temps+1,tempset,strs,strmap,params,objattrs,blocks,instrs)
 			return (temps+1)
 		else do let (x,set2) = Set.deleteFindMin tempset
-			put (name,labels,nextlabel,vars,temps,set2,strs,strmap,params,blocks,instrs)
+			put (name,labels,nextlabel,vars,temps,set2,strs,strmap,params,objattrs,blocks,instrs)
 			return x
 
 freeTemp :: Int -> StEnv4 ()
 freeTemp x = do
-	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get	
-	put (name,labels,nextlabel,vars,temps,Set.insert x tempset,strs,strmap,params,blocks,instrs)
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs) <- get	
+	put (name,labels,nextlabel,vars,temps,Set.insert x tempset,strs,strmap,params,objattrs,blocks,instrs)
 
 freeTemp2 :: ValVar4 -> StEnv4 ()
 freeTemp2 (Temp4 x _) = freeTemp x
@@ -107,52 +109,58 @@ multiFreeTemp [] = return ()
 newVar :: Type -> StEnv4 Int
 newVar t = do
 	let size = valSize t
-	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
-	put (name,labels,nextlabel,vars+size,temps,tempset,strs,strmap,params,blocks,instrs)
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs) <- get
+	put (name,labels,nextlabel,vars+size,temps,tempset,strs,strmap,params,objattrs,blocks,instrs)
 	return (vars+size)
 
 addInstructions :: [Code4Instruction] -> StEnv4 ()
 addInstructions instrs2 = do
-	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs1) <- get
-	put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs1++instrs2)
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs1) <- get
+	put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs1++instrs2)
 
 writeBlock :: StEnv4 [Code4Block]
 writeBlock = do
-	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
-	put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks ++ [(nextlabel,instrs)],[])
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs) <- get
+	put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks ++ [(nextlabel,instrs)],[])
 	return (blocks ++ [(nextlabel,instrs)])
 
 getLabel :: StEnv4 String
 getLabel = do
-	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
-	put (name,labels+1,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs)
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs) <- get
+	put (name,labels+1,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs)
 	return (name++"_"++(show labels))
 
 setLabel :: String -> StEnv4 ()
 setLabel labelname = do
-	(name,labels,_,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
-	put (name,labels,labelname,vars,temps,tempset,strs,strmap,params,blocks,instrs)
+	(name,labels,_,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs) <- get
+	put (name,labels,labelname,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs)
 
 endLabel :: StEnv4 String
 endLabel = do
-	(name,_,_,_,_,_,_,_,_,_,_) <- get
+	(name,_,_,_,_,_,_,_,_,_,_,_) <- get
 	return (name++"_END")
 	
 pushString :: String -> StEnv4 Int
 pushString str = do
-	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs) <- get
 	case Map.lookup str strmap of
 		Just n -> return n
 		Nothing -> do
-			put (name,labels,nextlabel,vars,temps,tempset,strs+1,Map.insert str (strs+1) strmap,params,blocks,instrs)
+			put (name,labels,nextlabel,vars,temps,tempset,strs+1,Map.insert str (strs+1) strmap,params,objattrs,blocks,instrs)
 			return (strs+1)
 
 maxParams :: Int -> StEnv4 ()
 maxParams n = do
-	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,blocks,instrs) <- get
+	(name,labels,nextlabel,vars,temps,tempset,strs,strmap,params,objattrs,blocks,instrs) <- get
 	if (n>params)
-		then put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,n,blocks,instrs)
+		then put (name,labels,nextlabel,vars,temps,tempset,strs,strmap,n,objattrs,blocks,instrs)
 		else return ()
+
+clAttrs :: String -> String -> StEnv4 (Type,Int)
+clAttrs name attr = do
+	(_,_,_,_,_,_,_,_,_,objattrs,_,_) <- get
+	case Map.lookup (name,attr) objattrs of
+		Just x -> return x
 
 --rezerwacja i zwolnienie rezerwacji rejestrów które mogą zmieniać wartości w funkcji wołanej
 reserveTemps :: StEnv4 ()
@@ -187,11 +195,82 @@ containsApp (EAdd exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp (ERel exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp (EOr exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
 containsApp (EAnd exp1 _ exp2) = (containsApp exp1)||(containsApp exp2)
-containsApp (ENewArr _ _ exp) = containsApp exp
+containsApp (ENewObj _ _) = True
+containsApp (ENewArr _ _ _) = True
 containsApp (EArrInd _ exp) = containsApp exp
 containsApp _ = False	
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
+
+toCode4Ass :: ValVar4 -> Code4Instruction -> Code4Instruction
+toCode4Ass var (OpV op (Temp4 _ _) x1 x2) = (OpV op var x1 x2)
+toCode4Ass var (CallV _ name n) = CallV var name n
+toCode4Ass var (Empty4 x) = Ass4 var x
+toCode4Ass var (Ass4 (Temp4 _ _) y) = Ass4 var y
+toCode4Ass var (AllocArr14 (Temp4 temp _) x y)= AllocArr14 var x y
+toCode4Ass var (AllocArr24 (Temp4 temp _) x y)= AllocArr24 var x y
+
+------------------------------------------------------------------------------------------------------------
+
+toCode4ClAttr2 :: String -> Type -> [Item] -> Int -> ((Map.Map (String,String) (Type,Int)),Int)
+toCode4ClAttr2 name t ((Init (PIdent (_,attr)) exp):its) n =
+	let (map1,n1) = toCode4ClAttr2 name t its (n+(valSize t))
+	in ((Map.insert (name,attr) (t,n) map1),n1)
+toCode4ClAttr2 _ _ [] n = (Map.empty,n)
+
+toCode4ClAttr1 :: String -> [InDef] -> Int -> ((Map.Map (String,String) (Type,Int)),Int)
+toCode4ClAttr1 name ((AttrDef t attrs):ls) n = 
+	let (map1,n1) = toCode4ClAttr2 name t attrs n
+	in let (map2,n2) = toCode4ClAttr1 name ls n1
+	in (Map.union map1 map2,n2)
+toCode4ClAttr1 _ [] n = (Map.empty,n)
+
+
+toCode4ClAttrsOffs :: [TopDef] -> (Map.Map (String,String) (Type,Int),Map.Map String Int)
+toCode4ClAttrsOffs ((FnDef _ (PIdent (_,name)) args (Block bl)):fs) = toCode4ClAttrsOffs fs
+toCode4ClAttrsOffs ((ClDef (PIdent ((x,y),name)) ls):fs) =
+	let (map1,n) = toCode4ClAttr1 name ls 0
+	in let (map2,map3) = toCode4ClAttrsOffs fs
+	in (Map.union map1 map2, Map.insert name n map3)
+toCode4ClAttrsOffs [] = (Map.empty,Map.empty)
+
+-------------------------------------------------------------------------------------------------
+
+toCode4ClConstr2 :: String -> Type -> [Item] -> StEnv4 ()
+toCode4ClConstr2 name t ((Init (PIdent (_,attr)) exp):its) = do
+	(r,temp) <- toCode4Expr2 exp
+	(_,attrnum) <- clAttrs name attr
+	if (null r)
+		then do addInstructions [toCode4Ass (ObjAttr4 (Var4 8 (Class (PIdent ((0,0),name)))) t attrnum) (Empty4 temp)]	--przypisanie we właściwe miejsce
+		else do addInstructions (r++[Ass4 (ObjAttr4 (Var4 8 (Class (PIdent ((0,0),name)))) t attrnum) temp])
+		--((init r) ++[toCode4Ass (ObjAttr4 (Var4 8 (Class (PIdent ((0,0),name)))) t attrnum) (last r)])
+	freeTemp2 temp
+	toCode4ClConstr2 name t its
+toCode4ClConstr2 _ _ [] = return ()
+
+
+toCode4ClConstr1 :: String -> [InDef] -> StEnv4 ()
+toCode4ClConstr1 name ((AttrDef t attrs):ls) = do
+	toCode4ClConstr2 name t attrs
+	toCode4ClConstr1 name ls
+toCode4ClConstr1 _ [] = return ()
+
+
+toCode4ClConstructor :: String -> [InDef] -> (Map.Map String Int)-> StEnv4 Code4Function
+toCode4ClConstructor name ls map = do
+	case Map.lookup name map
+		of Just size -> do
+			addInstructions [AllocObj4 (Var4 8 (Class (PIdent ((0,0),name)))) size]
+			toCode4ClConstr1 name ls
+			label <- endLabel			
+			addInstructions [Return4 (Var4 8 (Class (PIdent ((0,0),name)))),Goto4 label]
+			writeBlock
+			(_,_,_,vars,temps,_,_,strmap,params,_,bl4,inst4) <- get
+			let strList = List.sortBy (\(x1,y1) (x2,y2) -> (compare y1 y2)) (Map.toList strmap)
+			return ([],"class_"++name,bl4++[(label,[])],vars,temps,strList,params)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 toCode4App2 :: [Expr] -> Int -> StEnv4 ([Code4Instruction],[ValVar4],[Code4Instruction])
@@ -223,9 +302,15 @@ toCode4Expr (EApp (PIdent ((x,_),name)) exps) = do
 	multiFreeTemp xs
 	temp <- getTemp
 	maxParams (length exps)
-	return (str++[CallV (Temp4 temp (fromVarType x)) name (length exps)],(Temp4 temp (fromVarType x)))
+	if (name=="main") || (elem name predefinedNames)
+		then return (str++[CallV (Temp4 temp (fromVarType x)) name (length exps)],(Temp4 temp (fromVarType x)))
+		else return (str++[CallV (Temp4 temp (fromVarType x)) ("_"++name) (length exps)],(Temp4 temp (fromVarType x)))
 
-toCode4Expr (ENewArr (PNew _) t exp) = do
+toCode4Expr (ENewObj _ (PIdent (_,clname))) = do
+	temp <- getTemp
+	return ([CallV (Temp4 temp (Class (PIdent ((0,0),clname)))) ("class_"++clname) 0],(Temp4 temp (Class (PIdent ((0,0),clname)))))
+
+toCode4Expr (ENewArr _ t exp) = do
 	(str,x1) <- toCode4Expr exp
 	freeTemp2 x1
 	temp <- getTemp
@@ -244,13 +329,18 @@ toCode4Expr (EArrInd (PIdent (_,arrname)) exp) = do
 	freeTemp2 temp1
 	case Map.lookup arrname env of
 		Just (varnum, Array type1) -> return (str++[OpV Mul4 (Temp4 temp2 Int) temp1 (Int4 (toInteger (valSize type1))),OpV Add4 (Temp4 temp2 Int) (Temp4 temp2 Int) (Int4 4),
-													Ass4 (Temp4 temp2 type1) (ArrElem4 varnum type1 (Temp4 temp2 Int))],(Temp4 temp2 type1))
+													Ass4 (Temp4 temp2 type1) (ArrElem4 (Var4 varnum (Array type1)) type1 (Temp4 temp2 Int))],(Temp4 temp2 type1))
 
-toCode4Expr (EAttr (PIdent (_,arrname)) (PIdent (_,"length"))) = do
+toCode4Expr (EAttr (PIdent (_,name)) (PIdent (_,attr))) = do
 	env <- ask
 	temp <- getTemp
-	case Map.lookup arrname env of
-		Just (varnum, Array _) -> return ([Ass4 (Temp4 temp Int) (ArrElem4 varnum Int (Int4 0))],(Temp4 temp Int))
+	case Map.lookup name env of
+		Just (varnum, Array t) -> return ([Ass4 (Temp4 temp Int) (ArrElem4 (Var4 varnum (Array t)) Int (Int4 0))],(Temp4 temp Int))	--jak nie length to frontend nie przepuści
+		Just (varnum, (Class (PIdent (_,clname)))) -> do
+			(type1,offset) <- clAttrs clname attr
+			return ([Ass4 (Temp4 temp type1) (ObjAttr4 (Var4 varnum (Class (PIdent ((0,0),clname)))) type1 offset)],Temp4 temp type1)
+			
+toCode4Expr (ENull t _) = return ([],Pointer4 0)
 
 toCode4Expr (EString str) = do
 	n <- pushString str
@@ -430,25 +520,14 @@ toCode4Expr2 exp = do
 			unreserveTemps
 			return x
 		else toCode4Expr exp
-		
-
-toCode4Ass :: Int -> Type -> Code4Instruction -> Code4Instruction
-toCode4Ass varnum t (OpV op (Temp4 _ _) x1 x2) = (OpV op (Var4 varnum t) x1 x2)
-toCode4Ass varnum t (CallV _ name n) = CallV (Var4 varnum t) name n
-toCode4Ass varnum t (Empty4 x) = Ass4 (Var4 varnum t) x
-toCode4Ass varnum t (Ass4 (Temp4 _ _) y) = Ass4 (Var4 varnum t) y
-toCode4Ass varnum t (AllocArr14 (Temp4 temp _) x y)= AllocArr14 (Var4 varnum t) x y
-toCode4Ass varnum t (AllocArr24 (Temp4 temp _) x y)= AllocArr24 (Var4 varnum t) x y
-
-
 
 toCode4Decl :: Type -> [Item] -> StEnv4 (Env4,[Code4Instruction])
 toCode4Decl t ((Init (PIdent (_,varname)) exp):its) = do
 	(r,temp) <- toCode4Expr2 exp
 	varnum <- newVar t
 	let str = if (null r)
-		then [toCode4Ass varnum t (Empty4 temp)]
-		else (init r) ++[toCode4Ass varnum t (last r)]
+		then [toCode4Ass (Var4 varnum t) (Empty4 temp)]
+		else (init r) ++[toCode4Ass (Var4 varnum t) (last r)]
 	freeTemp2 temp		
 	(env4,r2) <- (local (Map.insert varname (varnum,t))  (toCode4Decl t its))
 	return (env4,str++r2)
@@ -478,10 +557,10 @@ toCode4Stmt (Ass (PIdent (_,varname)) exp) = do
 	case Map.lookup varname env of
 		Just (varnum,type1) -> if (null inst4)
 			then do
-				addInstructions [toCode4Ass varnum type1 (Empty4 temp)]
+				addInstructions [toCode4Ass (Var4 varnum type1) (Empty4 temp)]
 				ask
 			else do
-				addInstructions ((init inst4) ++[toCode4Ass varnum type1 (last inst4)])
+				addInstructions ((init inst4) ++[toCode4Ass (Var4 varnum type1) (last inst4)])
 				ask
 
 toCode4Stmt (ArrAss (PIdent (_,arrname)) exp1 exp2) = do
@@ -495,8 +574,20 @@ toCode4Stmt (ArrAss (PIdent (_,arrname)) exp1 exp2) = do
 	case Map.lookup arrname env of
 		Just (varnum, Array type1) -> do
 			addInstructions (inst1++inst2++[OpV Mul4 (Temp4 temp Int) temp1 (Int4 (toInteger (valSize type1))),OpV Add4 (Temp4 temp Int) (Temp4 temp Int) (Int4 4),
-											Ass4 (ArrElem4 varnum type1 (Temp4 temp Int)) temp2])
+											Ass4 (ArrElem4 (Var4 varnum (Array type1)) type1 (Temp4 temp Int)) temp2])
 			ask
+
+
+toCode4Stmt (AttrAss (PIdent (_,name)) (PIdent (_,attr)) exp) = do
+	env <- ask
+	(inst1,temp1) <- toCode4Expr2 exp
+	freeTemp2 temp1
+	case Map.lookup name env of
+		Just (varnum, Class (PIdent (_,clname))) -> do
+			(type1,offset) <- clAttrs clname attr
+			addInstructions (inst1++[Ass4 (ObjAttr4 (Var4 varnum (Class (PIdent ((0,0),clname)))) type1 offset) temp1])
+			ask
+	
 
 
 toCode4Stmt (Incr (PIdent (_,varname))) = do
@@ -594,9 +685,9 @@ toCode4Stmt (ForEach _ t (PIdent (_,var)) (PIdent (_,arr)) stm) = do
 	env <- ask
 	case Map.lookup arr env of
 		Just (arrnum,Array type1) -> do
-			addInstructions [OpV Add24 (Var4 varnum1 (Array t)) (Var4 arrnum (Array t)) (Int4 4)]	--TODOTODO to daje dodawanie na typach 8 bajt, a nie tylko na 4 bajt
+			addInstructions [OpV Add24 (Var4 varnum1 (Array t)) (Var4 arrnum (Array t)) (Int4 4)]	--TODOTODO to daje dodawanie na typach 8 bajt, a nie tylko na 4 bajt?
 			temp <- getTemp
-			addInstructions [Ass4 (Temp4 temp Int) (ArrElem4 arrnum Int (Int4 0)),OpV Mul4 (Temp4 temp Int) (Temp4 temp Int) (Int4 (toInteger (valSize t))),
+			addInstructions [Ass4 (Temp4 temp Int) (ArrElem4 (Var4 arrnum (Array t)) Int (Int4 0)),OpV Mul4 (Temp4 temp Int) (Temp4 temp Int) (Int4 (toInteger (valSize t))),
 							OpV Add24 (Var4 varnum2 (Array t)) (Var4 varnum1 (Array t)) (Temp4 temp (Array t))]
 			freeTemp temp
 			condlabel <- getLabel
@@ -605,7 +696,7 @@ toCode4Stmt (ForEach _ t (PIdent (_,var)) (PIdent (_,arr)) stm) = do
 			insidelabel <-getLabel
 			endlabel <- getLabel
 			setLabel insidelabel
-			addInstructions [Ass4 (Var4 varnum3 type1) (ArrElem4 varnum1 type1 (Int4 0))]
+			addInstructions [Ass4 (Var4 varnum3 type1) (ArrElem4 (Var4 varnum1 (Array t)) type1 (Int4 0))]
 			(local (Map.insert var (varnum3,type1)) (toCode4Stmt stm))
 			addInstructions [OpV Add24 (Var4 varnum1 (Array t)) (Var4 varnum1 (Array t)) (Int4 (toInteger (valSize t))),Goto4 condlabel]
 			writeBlock
@@ -643,22 +734,43 @@ code4Arguments args =
 					else ((Map.insert name ((-1)*(valSize t)-offset,t) env1),offset+(valSize t))
 
 
-toCode4TopDef :: TopDef -> StEnv4 Code4Function
-toCode4TopDef (FnDef _ (PIdent (_,name)) args (Block bl)) = do
-	put (name,1,name++"_0",0,0,Set.empty,0,Map.empty,0,[],[])
+toCode4Function :: TopDef -> (Map.Map (String,String) (Type,Int)) -> StEnv4 Code4Function
+toCode4Function (FnDef _ (PIdent (_,name)) args (Block bl)) map1 = do
+	if(name=="main")
+		then put ("main",1,"main_0",0,0,Set.empty,0,Map.empty,0,map1,[],[])
+		else put ("_"++name,1,"_"++name++"_0",0,0,Set.empty,0,Map.empty,0,map1,[],[])
 	let (env4,_) = code4Arguments args
 	(local (\x -> env4) (toCode4Block bl))
 	label <- endLabel		
 	addInstructions [Goto4 label]
 	writeBlock
-	(_,_,_,vars,temps,_,_,strmap,params,bl4,inst4) <- get
+	(name2,_,_,vars,temps,_,_,strmap,params,_,bl4,inst4) <- get
 	let strList = List.sortBy (\(x1,y1) (x2,y2) -> (compare y1 y2)) (Map.toList strmap)
-	return (argTypes args,name,bl4++[(label,[])],vars,temps,strList,params)
+	return (argTypes args,name2,bl4++[(label,[])],vars,temps,strList,params)
 
-toCode4 :: [TopDef] -> [Code4Function]
-toCode4 (f:fs) = 
-	let (code41,_) = runState (runReaderT (toCode4TopDef f) (Map.empty)) ("",0,"",0,0,Set.empty,0,Map.empty,0,[],[])
-	in let code42 = toCode4 fs
+
+toCode4TopDef :: TopDef -> (Map.Map (String,String) (Type,Int)) -> (Map.Map String Int)-> Code4Function
+
+toCode4TopDef (ClDef (PIdent (_,name)) ls) map1 map2 = 
+	let (f,_) = runState (runReaderT (toCode4ClConstructor name ls map2) (Map.empty)) ("class_"++name,1,"class_"++name++"_0",8,0,Set.empty,0,Map.empty,0,map1,[],[])
+	in f
+	
+toCode4TopDef (FnDef a b c d) map1 _=
+	let (code4,_) = runState (runReaderT (toCode4Function (FnDef a b c d) map1) (Map.empty)) ("",0,"",0,0,Set.empty,0,Map.empty,0,Map.empty,[],[])
+	in code4
+
+
+	
+toCode4Program :: [TopDef] -> (Map.Map (String,String) (Type,Int)) -> (Map.Map String Int)-> [Code4Function]
+toCode4Program (f:fs) map1 map2 =
+	let code41 = toCode4TopDef f map1 map2	--TODO ostatnie map.empty zamienić na wynik toCode4ClAttrsOffs
+	in let code42 = toCode4Program fs map1 map2
 	in code41:code42
 	
-toCode4 [] = []
+toCode4Program [] _ _ = []
+
+
+toCode4 :: [TopDef] -> [Code4Function]	--TODOTODO do Code4Program też trzeba dać map1
+toCode4 fs =
+	let (map1,map2) = toCode4ClAttrsOffs fs
+	in (toCode4Program fs map1 map2)

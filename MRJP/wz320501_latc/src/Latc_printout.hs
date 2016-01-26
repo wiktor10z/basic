@@ -19,7 +19,7 @@ exactAddress (Bool4 True) = return "$1"
 exactAddress (Bool4 False) = return "$0"
 exactAddress (String4 n) = do
 	(name,_,_,_) <- get
-	return ("$."++name++"_string"++(show n))
+	return ("$."++(ciapkasReplace name)++"_string"++(show n))
 exactAddress v = do
 	varloc <- getAddress v
 	case varloc of
@@ -43,10 +43,11 @@ getAddress (Temp4 n t) = do
 getAddress (Int4 n) =  return (Right ("$"++(show n)))
 getAddress (Bool4 True) = return (Right "$1")
 getAddress (Bool4 False) = return (Right "$0")
+getAddress (Pointer4 n) = return (Right ("$"++(show n)))
 	
 getAddress (String4 n) = do
 	(name,_,_,_) <- get
-	return (Right ("$."++name++"_string"++(show n)))
+	return (Right ("$."++(ciapkasReplace name)++"_string"++(show n)))
 
 getType :: ValVar4 -> Type
 getType (Var4 n t) = t
@@ -54,6 +55,9 @@ getType (Temp4 n t) = t
 getType (Int4 _) = Int
 getType (Bool4 _) = Bool
 getType (String4 _) = Str
+getType (ArrElem4 _ t _) = t
+getType (ObjAttr4 _ t _) = t
+getType (Pointer4 _) = Str	--to jest tak na prawdę null o braku typu
 getType Rej4 = Bool
 
 --przemapowanie zmiennych z kodu czwórkowego na adresy i rejestry
@@ -193,8 +197,59 @@ movString (Var4 var1 t1) (Var4 var2 t2) =
 				Int -> return ("    movl\t "++varloc2++", %eax\n    movl\t %eax, "++varloc1++"\n")
 				_ -> return ("    movq\t "++varloc2++", %rax\n    movq\t %rax, "++varloc1++"\n")
 
+movString (ObjAttr4 obj1 t off1) (ObjAttr4 obj2 _ off2) = do
+	objloc1 <- exactAddress obj1
+	objloc2 <- exactAddress obj2
+	let str1 = "    movq\t "++objloc1++", %rdx\n    addq\t $"++(show off1)++", %rdx\n"
+	let str2 = "    movq\t "++objloc2++", %rax\n    addq\t $"++(show off2)++", %rax\n"
+	case t of
+		Bool -> return (str1++str2++"    movzbl\t (%rax), %eax\n    movb\t %al, (%rdx)\n")
+		Int -> return (str1++str2++"    movl\t (%rax), %eax\n    movl\t %eax, (%rdx)\n")
+		_ -> return (str1++str2++"    movq\t (%rax), %rax\n    movq\t %rax, (%rdx)\n")
+
+movString (ArrElem4 arr t var1) (ObjAttr4 obj2 _ off2) = do
+	arrloc <- exactAddress arr
+	objloc2 <- exactAddress obj2
+	loc1 <- exactAddress var1
+	let str1 = "    movl\t "++loc1++", %edx\n    addq\t "++arrloc++", %rdx\n"
+	let str2 = "    movq\t "++objloc2++", %rax\n    addq\t $"++(show off2)++", %rax\n"
+	case t of
+		Bool -> return (str1++str2++"    movzbl\t (%rax), %eax\n    movb\t %al, (%rdx)\n")
+		Int -> return (str1++str2++"    movl\t (%rax), %eax\n    movl\t %eax, (%rdx)\n")
+		_ -> return (str1++str2++"    movq\t (%rax), %rax\n    movq\t %rax, (%rdx)\n")
+
+movString var1 (ObjAttr4 obj t off) = do
+	objloc <- exactAddress obj
+	varloc1 <- getAddress var1
+	let str = "    movq\t "++objloc++", %rax\n    addq\t $"++(show off)++", %rax\n"
+	case varloc1 of
+		Left loc1 -> case t of
+			Bool -> return (str++"    movzbl\t (%rax), %eax\n    movb\t %al, "++loc1++"\n")
+			Int -> return (str++"    movl\t (%rax), %eax\n    movl\t %eax, "++loc1++"\n")
+			_ -> return (str++"    movq\t (%rax), %rax\n    movq\t %rax, "++loc1++"\n")
+		Right loc1 -> case t of
+			Bool -> return (str++"    movzbl\t (%rax), "++loc1++"\n")--TODO to oczywiście trzeba przetestować i poprawić, bo prawie na pewno źle
+			Int -> return (str++"    movl\t (%rax), "++loc1++"\n")
+			_ -> return (str++"    movq\t (%rax), "++loc1++"\n")
+
+movString (ObjAttr4 obj t off) var1 = do
+	objloc <- exactAddress obj
+	varloc1 <- getAddress var1
+	loc1 <- exactAddress var1
+	let str = "    movq\t "++objloc++", %rax\n    addq\t $"++(show off)++", %rax\n"
+	case t of
+		Bool -> case var1 of
+			(Bool4 _) -> return (str++"    movb\t "++loc1++", (%rax)\n")
+			_ -> return (str++"    movl\t "++loc1++", %edx\n    movb\t %dl, (%rax)\n")
+		Int-> case varloc1 of
+			Left _ -> return (str++"    movl\t "++loc1++", %edx\n    movl\t %edx, (%rax)\n")
+			Right _ -> return (str++"    movl\t "++loc1++", (%rax)\n")
+		_ -> case varloc1 of
+			Left _ -> return (str++"    movq\t "++loc1++", %rdx\n    movq\t %rdx, (%rax)\n")
+			Right _ -> return (str++"    movq\t "++loc1++", (%rax)\n")
+			
 movString var1 (ArrElem4 arr t var2) = do
-	arrloc <- exactAddress (Var4 arr (Array t))
+	arrloc <- exactAddress arr
 	varloc1 <- getAddress var1
 	loc2 <- exactAddress var2
 	let str = "    movl\t "++loc2++", %eax\n    addq\t "++arrloc++", %rax\n"
@@ -209,7 +264,7 @@ movString var1 (ArrElem4 arr t var2) = do
 			_ -> return (str++"    movq\t (%rax), "++loc1++"\n")
 
 movString (ArrElem4 arr t var2) var1 = do
-	arrloc <- exactAddress (Var4 arr (Array t))
+	arrloc <- exactAddress arr
 	varloc1 <- getAddress var1
 	loc1 <- exactAddress var1
 	loc2 <- exactAddress var2
@@ -335,37 +390,27 @@ assembleInstruction (Param4 n var) = do
 	
 assembleInstruction (CallV var name _ ) = do
 	varloc <- exactAddress var
-	if (name=="main") || (elem name predefinedNames)
-		then case (getType var) of
-			Bool -> do
-				str <- movAL var
-				return ("    call\t "++name++"\n"++str)
-			Int -> return ("    call\t "++name++"\n    movl\t %eax, "++varloc++"\n")
-			Void -> return("    call\t "++name++"\n")		
-			_ -> return ("    call\t "++name++"\n    movq\t %rax, "++varloc++"\n")
-
-		else case (getType var) of
-			Bool -> do
-				str <- movAL var
-				return ("    call\t _"++name++"\n"++str)
-			Int -> return ("    call\t _"++name++"\n    movl\t %eax, "++varloc++"\n")
-			Void -> return("    call\t _"++name++"\n")			
-			_ -> return ("    call\t _"++name++"\n    movq\t %rax, "++varloc++"\n")
-
+	case (getType var) of
+		Bool -> do
+			str <- movAL var
+			return ("    call\t "++(ciapkasReplace name)++"\n"++str)
+		Int -> return ("    call\t "++(ciapkasReplace name)++"\n    movl\t %eax, "++varloc++"\n")
+		Void -> return("    call\t "++(ciapkasReplace name)++"\n")		
+		_ -> return ("    call\t "++(ciapkasReplace name)++"\n    movq\t %rax, "++varloc++"\n")
 
 assembleInstruction (Return4 Void4) = return ("")
 assembleInstruction (Return4 var) = do
 	varloc <- exactAddress var
-	if ((getType var)==Str)
-		then return ("    movq\t"++varloc++", %rax\n")
-		else return ("    movl\t"++varloc++", %eax\n")
+	if (((getType var)==Int )||((getType var)==Bool))
+		then return ("    movl\t"++varloc++", %eax\n")	
+		else return ("    movq\t"++varloc++", %rax\n")
 
 assembleInstruction (If4 var str) = do
 	varloc <- getAddress var
 	case varloc of
-		Left loc -> return ("    cmpb\t $0, "++loc++"\n    jne ."++str++"\n")
-		Right loc -> return ("    movl\t "++loc++", %eax\n    testb\t %al, %al\n    jne\t ."++str++"\n")
-assembleInstruction (Goto4 str) = return ("    jmp ."++str++"\n")
+		Left loc -> return ("    cmpb\t $0, "++loc++"\n    jne ."++(ciapkasReplace str)++"\n")
+		Right loc -> return ("    movl\t "++loc++", %eax\n    testb\t %al, %al\n    jne\t ."++(ciapkasReplace str)++"\n")
+assembleInstruction (Goto4 str) = return ("    jmp ."++(ciapkasReplace str)++"\n")
 
 assembleInstruction (Not4 var) = do
 	varloc <- getAddress var
@@ -388,6 +433,10 @@ assembleInstruction (AllocArr24 var1 var2 var3) = do
 	varloc2 <- exactAddress var2
 	varloc3 <- exactAddress var3
 	return ("    movl\t "++varloc2++", %edi\n    movq\t "++varloc3++", %rsi\n    call\t allocatearrofpointers\n    movq\t %rax, "++varloc1++"\n")
+
+assembleInstruction (AllocObj4 var size) = do
+	varloc <- exactAddress var
+	return ("    movl\t $"++show(size)++", %edi\n    call\t alloc\n    movq\t %rax, "++varloc++"\n")
 
 assembleInstruction (OpV Concat4 var1 var2 var3)= do
 	varloc <- exactAddress var1
@@ -559,7 +608,7 @@ assembleInstrs [] = return ""
 assembleBlock :: Code4Block -> StAss String
 assembleBlock (label,instrs) = do
 	str <- assembleInstrs instrs
-	return ("."++label++":\n"++str)
+	return ("."++(ciapkasReplace label)++":\n"++str)
 
 
 assembleFunCode :: [Code4Block] -> StAss (String)
@@ -575,13 +624,11 @@ assembleTopDef :: Code4Function -> IO()
 assembleTopDef (argtypes,name,((label,inst):bs),vars,temps,strList,params)  = do
 	putStr (functionStrings name strList)
 	let (intro,off1,off2,off3,move) =functionIntro argtypes vars temps params
-	if name =="main"
-		then putStr ("    .globl  main\n main:\n"++"."++label++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n"++intro)
-		else putStr ("    .globl  _"++name++"\n_"++name++":\n"++"."++label++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n"++intro)
+	putStr ("    .globl  "++(ciapkasReplace name)++"\n"++(ciapkasReplace name)++":\n"++"."++(ciapkasReplace label)++":\n    pushq\t %rbp\n    movq\t %rsp, %rbp\n"++intro)
 	let (str1,_) = runState (assembleInstrs inst) (name,off1,off2,off3)
 	let (str2,_) = runState (assembleFunCode (init bs)) (name,off1,off2,off3)
 	putStr (str1++str2)
-	putStr ("."++name++"_END:\n"++(functionOutro move temps))
+	putStr ("."++(ciapkasReplace name)++"_END:\n"++(functionOutro move temps))
 
 
 assembleWhole :: [Code4Function] -> IO ()
