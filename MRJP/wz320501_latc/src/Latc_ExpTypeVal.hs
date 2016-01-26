@@ -295,12 +295,15 @@ checkExpTypeVal (ENewObj (PNew ((x,y),_)) pclass) = do
 
 checkExpTypeVal (ENewArr (PNew ((x,y),_)) t exp) = do
 	checkTypeExists t
-	(type1,_,nexp) <- checkExpTypeVal exp
-	if(type1==Int)
-		then case t of
-			Array _ -> error ("array must be one dimensional at line "++show(x)++", column "++show(y))
-			_ -> return ((Array t),Nothing,(ENewArr (PNew ((x,y),"new")) t nexp))							--TODO może coś zamiast Nothing
-		else error ("array length of non integer type at line "++show(x)++", column "++show(y))
+	if (t == Void)
+		then error ("error in line "++show(x)++", column "++show(y)++" array of void is not allowed")
+		else do
+			(type1,_,nexp) <- checkExpTypeVal exp
+			if(type1==Int)
+				then case t of
+					Array _ -> error ("array must be one dimensional at line "++show(x)++", column "++show(y))
+					_ -> return ((Array t),Nothing,(ENewArr (PNew ((x,y),"new")) t nexp))							--TODO może coś zamiast Nothing
+				else error ("array length of non integer type at line "++show(x)++", column "++show(y))
 
 
 checkExpTypeVal (EArrInd (PIdent ((x,y),name)) exp) = do

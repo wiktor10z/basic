@@ -76,6 +76,7 @@ checkVoidArguments name ((Arg t (PIdent ((x,y),_))):args) = do
 	checkTypeExists t
 	case t of
 		Void -> error ("error in line "++show(x)++", column "++show(y)++" function "++show(name)++" cannot have a void argument")
+		(Array Void) -> error ("error in line "++show(x)++", column "++show(y)++" function "++show(name)++" cannot have an argument of type array of void")
 		_ -> checkVoidArguments name args
 
 checkVoidArguments _ [] = return ()
@@ -84,17 +85,19 @@ checkVoidArguments _ [] = return ()
 checkFunctionSignatures :: [TopDef] -> StEnv Env
 checkFunctionSignatures ((FnDef t (PIdent ((x,y),name)) args block):fs) = do
 	checkTypeExists t
-	checkVoidArguments name args
-	env <- ask														
-	st <- getSt
-	case (Map.lookup ("",name) env) of
-		Nothing -> do
-			loc <- newLoc
-			let s = Map.insert loc (Fun t (argTypes args),Nothing) st 
-			putSt s	
-			env2 <- (local (Map.insert ("",name) ((x,y),loc,0)) (checkFunctionSignatures fs))			
-			return env2
-		Just ((x1,y1),_,_) -> error ("error in line "++show(x)++", column "++show(y)++" function "++show(name)++" previously defined in line "++show(x1)++", column "++show(y1))
+	if (t == (Array Void))
+		then error ("error in line "++show(x)++", column "++show(y)++" function "++show(name)++" cannot return array of void")
+		else do checkVoidArguments name args
+			env <- ask														
+			st <- getSt
+			case (Map.lookup ("",name) env) of
+				Nothing -> do
+					loc <- newLoc
+					let s = Map.insert loc (Fun t (argTypes args),Nothing) st 
+					putSt s	
+					env2 <- (local (Map.insert ("",name) ((x,y),loc,0)) (checkFunctionSignatures fs))			
+					return env2
+				Just ((x1,y1),_,_) -> error ("error in line "++show(x)++", column "++show(y)++" function "++show(name)++" previously defined in line "++show(x1)++", column "++show(y1))
 
 checkFunctionSignatures ((ClDef (PIdent ((x,y),name)) ls):fs) = do
 	env2 <- getClassInside name ls
@@ -187,6 +190,7 @@ checkDecl t ((NoInit (PIdent ((x,y),name))):its) level = do
 	st <- getSt
 	case t of 
 		Void -> error ("error in line "++show(x)++", column "++show(y)++" variable cannot be of void type")
+		(Array Void) -> error ("error in line "++show(x)++", column "++show(y)++" variable cannot be of type array of void")
 		_ -> case (Map.lookup ("",name) env) of
 			Just ((x1,y1),_,level2) -> if level==level2
 											then error ("error in line "++show(x)++", column "++show(y)++" variable "++show(name)++" redefined\n previously defined in line "++show(x1)++", column "++show(y1))	
