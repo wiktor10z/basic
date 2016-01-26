@@ -385,26 +385,30 @@ checkBlock ((CondElse (PIf ((x,y),_)) exp stm1 stm2):stmts) ft level slevel b = 
 		_ -> error ("error in line "++show(x)++", column "++show(y)++"if condition of non-boolean type")
 
 checkBlock ((While (PWhile ((x,y),_)) exp stm):stmts) ft level slevel b = do
-	(type1,val,_) <- checkExpTypeVal exp
+	(type1,val,nexp) <- checkExpTypeVal exp
 	case type1 of
 		Bool -> case stm of
 			Decl _ _ -> error ("error in line "++show(x)++", column "++show(y)++" bare declaration in while")
 			_ -> case val of 
 				Just (Left (Right False)) -> do
 					checkBlock [stm] ft (level+1) (level+1) False
-					checkBlock stmts ft level slevel b
+					checkBlock stmts ft level slevel b				
 				_ -> do
 					(b2,nstm) <- whileStFixPoint stm ft (level+1) b
-					if b2	--jeśli b2 jest false, to znaczy, że już w pierwszym przebiegu nastąpi return lub wewnętrzna pewna pętla nieskończona --TODOTODO a co jak nie wykona się ani razu - chodzi o zwrot tego czy koniec czy nie
-						then do (_,val,nexp) <- checkExpTypeVal exp
-							case val of
-								Just (Left (Right True)) -> do
-									checkBlock stmts ft level level False
-									return (False,[(While (PWhile ((x,y),"while")) ELitTrue nstm)])
-								_ -> do
-									(b2,nstmts) <- checkBlock stmts ft level level b
-									return (b2,((While (PWhile ((x,y),"while")) nexp nstm):nstmts))
-						else return (False,[(Cond (PIf ((x,y),"if")) ELitTrue nstm)])	--TODOTODO powinno chyba zwrócić też resztę - bo mógł się w ogóle nie wykonać
+					(_,val2,nexp) <- checkExpTypeVal exp
+					if b2	--jeśli b2 jest false, to znaczy, że już w pierwszym przebiegu nastąpi return lub wewnętrzna pewna pętla nieskończona
+						then case val2 of
+							Just (Left (Right True)) -> do
+								checkBlock stmts ft level level False
+								return (False,[(While (PWhile ((x,y),"while")) ELitTrue nstm)])
+							_ -> do
+								(b2,nstmts) <- checkBlock stmts ft level level b
+								return (b2,((While (PWhile ((x,y),"while")) nexp nstm):nstmts))
+						else if (val == Just (Left (Right True)))
+							then return (False,[(Cond (PIf ((x,y),"if")) ELitTrue nstm)])
+							else do
+								(b2,nstmts) <- checkBlock stmts ft level level b
+								return (b2,(Cond (PIf ((x,y),"if")) nexp nstm):nstmts)
 		_ -> error ("error in line "++show(x)++", column "++show(y)++" while condition of non-boolean type")
 
 checkBlock ((ForEach (PFor ((x,y),_)) t (PIdent ((x1,y1),var)) (PIdent ((x2,y2),arr)) stm):stmts) ft level slevel b = do
