@@ -1,23 +1,8 @@
-# wczytanie
 source("basic.r")
 source("CF_functions.R")
 read_ml_file("ml-100k/u.data")
-# non-personalized
-mean(ml_means)
-
-remove_viewed=function(x,y){
-  return ((x==0)*y)
-}
-
-non_personalized=function(u,n){
-  return(head(order(remove_viewed(ml_matrix[u,],ml_means),decreasing=TRUE),n))
-}
-
-non_personalized_recs=function(n){
- lapply(1:users,function(u) non_personalized(u,n)) 
-}
+mean(mov_means)
 non_per_propos=non_personalized_recs(10)
-# colaborative-filtering
 system.time({
   cov_matrix=make_sim_matrix(cov_similarity)
   cos_matrix=make_sim_matrix(cos_similarity)
@@ -25,12 +10,12 @@ system.time({
 system.time({
   CF_predicted_ratings=CF_predict_all(cov_matrix)
 })
-predicted_ratings=CF_predicted_ratings
+CF_propos=rating_to_propos(CF_predicted_ratings,10)
 
-rating_to_propos1=function(u,n){
-  return(head(order(remove_viewed(ml_matrix[u,],predicted_ratings[u,]),decreasing=TRUE),n))
+
+#SVD++(
+us_viewed_root1=apply(us_viewed,FUN=function(x){return(1/sqrt(x))})
+SVDppitem=function(u,i){
+  r2[u,i]<<-glob_mean+b[u]+b2[i]+q[i]*(p[u]+us_viewed_root1[u]*sum(y*ml_bin_matrix[,i]))
+  
 }
-rating_to_propos=function(n){
-  lapply(1:users,function(u) rating_to_propos1(u,n))
-}
-CF_propos=rating_to_propos(10)

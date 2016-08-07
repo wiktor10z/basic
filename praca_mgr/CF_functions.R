@@ -5,8 +5,8 @@ viewed_both=function(x,y){
 # podobieństwo kowariancyjne Paersona
 cov_similarity_vec=function(x,y){
   viewed=viewed_both(x,y)
-  x2=x-ml_means
-  y2=y-ml_means
+  x2=x-mov_means
+  y2=y-mov_means
   if(sum(viewed)<2){
     return(0)
   }else{
