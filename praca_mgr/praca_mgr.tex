@@ -48,12 +48,81 @@ Instytut Informatyki}
 
 
  \chapter{Sformułowanie problemu}
- 
+  W każdym modelu danych wykorzystywanym do wyliczania możliwych ocen przedmiotów lub sporządzania list rekomendacji
+  występują użytkownicy i przedmioty, oraz pewne niepełne informacje na temat ich powiązań ze sobą.
+  Aby móc przewidzieć czy dany nie oceniony jeszcze przedmiot zainteresuje konkretnego użytkownika trzeba dla obu określić preferencje na podstawie 
+  załączonych opisów, znanych interakcji tego użytkownika z innymi przedmiotami i przedmiotu z innymi uzytkownikami, lub też obu informacji na raz.
+  
+  
+  \section{Podstawowe definicje}
+   \textbf{Definicja 1.1.1.} Użytkownik -- osoba korzystająca z serwisu, dla której staramy się stworzyć rekomendacje lub też,
+    która tylko dostarcza informacji użytecznych przy ich sporządzaniu dla innych użytkowników.\newline\newline
+   %
+   \textbf{Definicja 1.1.2.} Przedmiot -- rzecz która jest używana (czasem też oceniana) przez użytkowników.\newline
+   
+    Przedmiot musi być reużywalny (np. filmy do oglądnięcia, książki do przeczytania, strony internetowe do odwiedzenia),
+    lub występujący w wielu identycznych egzemplarzach (przedmioty w sklepach), aby użycie przez innego uzytkownika nie wyczerpało jego zasobu
+    (wtedy rekomendacja nie miała by sensu, skoro przedmiot nie istnieje) i dało miarodajne informacje na jego temat.
+    Przedmiot jest rzeczą, której ocenę przez użytkownika chcemy przewidzieć, lub którą chcemy mu zarekomendować.\newline\newline
+   %
+   \textbf{Definicja 1.1.3.} Użycie przedmiotu -- zarejestrowana informacja o interakcji użytkownika z przedmiotem,
+   dostępna w danych wykorzystywanych do tworzenia rekomendacji -- niekoniecznie prawdziwe używanie przedmiotu
+   (kupienie produktu nie oznacza jego używania a wypożyczenie książki jej przeczytania). \newline\newline
+   %
+   \textbf{Definicja 1.1.4.} Informacja explicite -- wyraźne informacje dostarczone przez użytkownika odnośnie przedmiotu -- głównie
+    ocena, recenzja lub przypisanie tagów.\newline\newline
+   %
+   \textbf{Definicja 1.1.5.} Informacja implicite -- bezwarunkowe informacje o użyciu przedmiotu przez użytkownika
+    (kupienie towaru, obejrzenie filmu, wypożyczenie książki, odwiedzenie strony).\newline
+    
+    Informacje bezwarunkowe, których główną zaletą jest łatwość ich zbierania
+    (dzieje się to automatycznie, bez dodatkowych akcji ze strony uzytkownika, a czasem i bez jego wiedzy),
+    są niestety bardzo narażone na przekłamania odnośnie preferencji użytkownika.
+    Po pierwsze zarejestrowanie uzycia przez system wcale nie musi oznaczać faktycznego użycia
+    (przypadkowe kliknięcie linku, pomyłka we wpisywaniu nazwy, zrezygnowanie po przeczytaniu opisu), 
+    a po drugie z użycia nie musi wynikać pozytywny odbiór.
+    W szczególności użycie przedmiotu wynikające z nietrafionych rekomendacji może pogłębiać zawodność systemu.
+    Pomimo licznych wad informacje implicite często są jedynymi posiadanymi, a nawet przy dostępnych danych explicite ze względu na
+    znacznie większą ilość znajdują istotne zastosowanie w systemach rekomendacyjnych.
+    Dane o wielokrotnym użyciu przedmiotu są często spłaszczone do binarnych (przedmiot użyty/nie użyty),
+    co pozwala na zmniejsznie rozmiaru pamięci potrzebnej do ich przechowywania, oraz użycie niektórych metod rekomendacji.\newline\newline
+   %
+   \textbf{Definicja 1.1.6.} Lista rekomendacji -- (zazwyczaj uporządkowany) podzbiór przedmiotów nie użytych dotychczas przez użytkownika,
+    które powinny się mu spodobać (być najwyżej ocenione, chętnie użyte).
+    
+  \section{Przeznaczenie systemów}
+   Istnieją dwa główne cele postawione przed systemami rekomendacyjnymi:
+   \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+    \item zbudowanie listy rekomendacyjnej konkretnej długości
+    \item przewidzenie niewprowadzonych ocen przedmiotów
+   \end{itemize}
+   Oczywiście jeżeli system przewidzi oceny wszystkich nieocenionych przedmiotów,
+   łatwo można je uszeregować malejąco i obciąć listę w odpowiednim miejscu otrzymując listę rekomendacji pożądanej długości.\newline
+   Konwersja w drugą stronę jest znacznie trudniejsza, a bez dodatkowych informacji praktycznie niemożliwa.\newline
+   Posiadanie przewidzianych ocen przedmiotów może być bardzo przydatne -- serwis proponujący przedmioty może przedstawiać użytkownikowi
+   rekomendacje mocniejsze i słabsze w inny sposób, lub też obciąć listę rekomendacji tylko do przedmiotów o przewidzianej ocenie powyżej pewnego poziomu.
+   Dodatkową motywacją do wyliczenia przewidywanych ocen jest możliwość podania tych informacji użytkownikowi wraz z rekomendacjami
+   dla mocniejszego zainteresowania użytkownika przedmiotem, oraz zwiększenia satysfakcji z systemu.\newline
+   Niestety w niektórych przypadkach na przykład przy posiadaniu jedynie informacji implicite określenie ocen przedmiotów jest niemożliwe
+   (chyba że wprowadzimy sztuczne oceny na podstawie miejsc w liście rankingowej). Dodatkowo algorytm generowania rekomendacji którego wynikiem
+   jest tylko lista rekomendacji (bez ocen) może posiadać pożądane przez nas zalety jak szybkość lub oszczędność pamięci,
+   są więc one wykorzystywane w sytuacjach w których posiadanie przewidzianych ewaluacji nie ma dodatkowych zastosowań.
+   
+   
+   
+  \section{Problemy stojące przed systemami rekomendacyjnymi}
+   
+   
+   
+   
+   
+   
+   
 
 
  \chapter{Podstawowe techniki}
   \section{Filtrowanie kolaboratywne}
-  Jedną z najbardziej podstawowych technik przewidywania 
+   Jedną z najbardziej podstawowych technik przewidywania 
  
 
 \begin{thebibliography}{99}%TODO
