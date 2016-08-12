@@ -111,10 +111,55 @@ Instytut Informatyki}
    
    
   \section{Problemy stojące przed systemami rekomendacyjnymi}
+   Do czysto teoretycznych badań wykorzystuje się stabilne, nie zmieniające się dane aby uzyskać wiarygodne porównanie jakości algorytmów
+   (również pomiedzy niezależnymi badaczami). W danych tych zazwyczaj nie występują skrajne warunki ani błędne informacje,
+   ze względu na ciężkość porównania prędkości (badacze uzywają innego sprzętu do badań),
+   algorytmy porównywane są głównie pod względem trafności ocen czy rekomendacji.\newline
+   W warunkach w których systemy rekomendacyjne są najczęściej wykorzystywane -- systemach proponujących różne rzeczy w internecie dane ulegają ciągłym zmianom
+   oznacza to, że nie tylko mogą pojawić się różne nieregularne sytuacje, ale również cały rozkład danych może się zmienić po dłuższym czasie.
+   Do głównych problemów jakie mogą napotkać systemy należą:
+   \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+    \item zjawisko zimnego startu -- pojawienie się nowego użytkownika lub przedmiotu.\newline
+      Gdy użytkownik nie zdążył użyć wystarczająco wielu przedmiotów i nie załączył o sobie dodatkowych informacji,
+      większość algorytmów nie jest w stanie określić jego upodobań.
+      W przypadku gdy użytkownik nie użył żadnego przedmiotu nie istnieje wręcz możliwość stworzenia spersonalizowanej rekomendacji
+    \item dylemat hipstera -- niektórzy użytkownicy (czasem umyślnie) nie wpasowują się w żadne proste schematy --
+     nie są podobni do żadnego innego użytkownika (do zbyt małej ilości dla niektórych algorytmów bazujących na tym podobieństwie).\newline
+     Użytkownicy tacy wybierają rzadko używane przez ogół przedmioty, co tworzy jednocześnie w danych przedmioty, które mimo dostatecznej liczby użyć,
+     by przekroczyć limity zabezpieczające algorytmy przed sytuacjami trudnymi nie dają się zaklasyfikować odpowiednio.
+     Osobie która niejako działa przeciwko systemowi rekomendacyjnemu ciężko przyporządkować trafne propozycje.
+     Dopasowanie parametrów algorytmu tak, żeby zoptymalizować funkcje miary jakości,
+     obejmujące tych uzytkowników może wpłynąć negatywnie również na rekomendacje dla standardowych użytkowników na normalnych przedmiotach.
+    \item asymetria pomiedzy ilością przedmiotów ocenionych przez uzytkowników -- w przypadku danych explicite często zachodzi sytuacja,
+     gdy kilku aktywnych użytkowników wystawia dużo ocen, zaś reszta zaledwie pojedyncze.\newline
+     W takiej sytuacji program rekomendujący również powinien być w stanie przydzielić propozycje mniej aktywnym użytownikom.
+     Zasadniczym problemem w takiej sytuacji jest to, że ocena jakości w niektórych (zazwyczaj dobrych)
+     miarach może być zawyżona przy dobrym dopasowaniu się do tych pojedynczych uzytkowników,
+     jendocześnie przypasowującej mniej aktywnym oceny bliskie losowym. % może podać/rozrysować przykład
+    \item sytuacja w której nie da się już nic zaproponować -- jeśli użytkownik użył znaczną ilość przedmiotów,
+     system nie może nic zaproponować albo ponieważ nie ma już wystarczająco dużo przedmiotów nieużytych,
+     albo wszystkie pozostałe zostały zaklasyfikowane jako silnie niepasujące.\newline
+     Sytuacja ta jest dosyć łatwa do kontrolowania, jednak należy o niej pamiętać przy projektowaniu algorytmu i jego ocenie.
+    %.... może jeszcze da się coś wymyślić    
+   \end{itemize}
+  %\section{Cechy produkcyjnych systemów}
+   Poza odpornością na wyżej wymienione sytuacje systemy używane przez ludzi powinny posiadać dodatkowe cechy zapewniające wygodę użycia.
+   Podstawową różnicą między badaniem laboratoryjnym a systemem używanym przez ludzi jest szybkość użycia --
+   użytkownik portalu internetowego nie jest skłonny czekać aż algorytm używany w rekomendacji przeanalizuje pełną bazę danych od początku
+   (może to trwać od kilku minut do wielu godzin).
+   Jednym z rozwiązań mogłoby być wyprodukowanie rekomendacji dla wszystkich użytkowników i pamiętanie ich dodatkowo w bazie danych
+   jednak wymagałoby to przeliczania od początku po wprowadzeniu kilku zmian, oraz nie dałoby szybkich rozwiązań nowym użytkownikom.
+   W takich sytuacjach niektóre systemy mają możliwość przetworzenia danych i stworzenia modelu,
+   który pozwoli wyprodukować rekomendacje wystarczająco szybko, a dodatkowo daje możliwość przypasowania nowego użytkownika w krótkim czasie.
+   Niektóre algorytmy pozwalają jednak na bardzo szybkie modyfikacje modelu.
+   Jeżeli jednak przetworzenie modelu zajmuje zbyt dużo czasu można pamiętać stary model,
+   a po pewnej ilości zmian w bazie danych przeliczyć nowy model (nie zaburzając pracy portalu),
+   Dodatkowymi zaletami takiego rozwiązania jest łatwa przenośność, oraz rozpraszalność systemu (mały model może być przechowywany w wielu miejscach,
+   podczas gdy pełna baza danych znajduje się tylko w jednym).
    
    
    
-   
+   %TODO napisać w założeniach, że przy podobieństwie przedmiotów nie chcemy wykluzania podobnych - jak przy sprzętach, tylko chęć użycia nowego innego, ale podobnego
    
    
    
