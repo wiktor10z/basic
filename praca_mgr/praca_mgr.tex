@@ -1,7 +1,7 @@
 \documentclass{pracamgr}
 \usepackage{polski}
 \usepackage[utf8]{inputenc}
-
+\usepackage{amsmath}
 
 \author{Wiktor Zuba}
 
@@ -159,16 +159,107 @@ Instytut Informatyki}
    
    
    
-   %TODO napisać w założeniach, że przy podobieństwie przedmiotów nie chcemy wykluzania podobnych - jak przy sprzętach, tylko chęć użycia nowego innego, ale podobnego
+   %TODO napisać w założeniach, że przy podobieństwie przedmiotów nie chcemy wykluczania podobnych - jak przy sprzętach, tylko chęć użycia nowego innego, ale podobnego
    
    
    
 
 
  \chapter{Podstawowe techniki}
-  \section{Filtrowanie kolaboratywne}
-   Jedną z najbardziej podstawowych technik przewidywania 
- 
+  \section{Techniki niespersonalizowane}
+   Najprostszą możliwą techniką tworzenia list rekomendacji jest stworzenie pojedynczej liczby najlepszych przedmiotów
+   i jako rekomendacji zwrócenie użytkownikowi jej podlisty przedmiotów, których jeszcze nie użył.
+   Wartością szeregującą przedmioty może być średnia ocen, popularność lub dowolna inna funkcja monotoniczna ze względu na oceny wystawione przedmiotowi.
+   Główną wadą takiego podejścia jest to, ze tylko niewielki podzbiór popularnych przedmiotów zostanie zaproponowany ogółowi użytkowników,
+   co pogłębi różnicę w popularności przedmiotów (przedmiot, który mógłby spodobać się użytkownikom nie będzie proponowany dlatego, że za mało osób go zna).
+   Analogicznie, jako że gusta użytkowników są różne przedmiot oceniany jako dobry może obniżyć swoją średnią ponieważ będzie proponowany osobom do których nie pasuje,
+   co może zaburzyć obraz danych.\newline
+   Pomimo swoich wad niespersonalizowane rekomendacje oprócz dobrego punktu odniesienia stanowią jedyny sposób przydziału rekomendacji nowym użytkownikom
+   (brak opisu i za mało użytych przedmiotów by zastosować ine algorytmy).
+   Cecha ta powoduje, że często stanowią one fragment innych algorytmów używany w skrajnych przypadkach. 
+  \section{Filtrowanie kolaboratywne}%TODO napisać, że raczej explicit feedback, choć dla implicit feedback też coś się da
+   Jedną z najbardziej podstawowych technik przewidywania ocen przedmiotów jest filtrowanie kolaboratywne polegające na wykorzystaniu wyłącznie informacji
+   o użyciach przedmiotów (bez jawnych informacji o użytkownikach, czy przedmiotach). Predykcje tworzone są na podstawie założenia, że użytkownicy,
+   którzy używali wych samych przedmiotów i podobnie je ocenili mają te same upodobania. Jeżeli ustali się na podstawie wspólnie ocenionych przedmiotów,
+   że dwóch użytkowników jest bardzo podobnych można założyć,
+   że przedmioty użyte tylko przez jednego z nich byłyby podobnie ocenione i przez drugiego.
+   %TODO może jakieś gładkie przejście z opisu do algorytmów
+   \subsection{Colaborative Filtering}
+   Najprostszym algorytmem realizującym ideę filtorwania kolaboratywnego jest zdefiniowanie funkcji podobieństwa pomiędzy użytkownikami
+   oraz wystawienie przedmiotowi oceny jako pewnej średniej z ocen najbardziej podobnych użytkowników, którzy ten przedmiot ocenili.\newline
+   Do najpowszechniej stosowanych funkcji podobieństwa należą:
+   \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+    \item Współczynnik korelacji liniowej Paersona:
+     \begin{center}
+      $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})(r_{vi}-\overline{r_v})}
+      {\sqrt{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})^2\sum\limits_{i\in R_{uv}}(r_{vi}-\overline{r_v})^2}}$
+     \end{center}
+     Wyliczane dla par użytkowników, którzy ocenili po conajmniej dwa przedmioty, w tym conajmniej jeden wspólny.
+    \item podobieństwo kosinusowe:
+     \begin{center}
+      $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}r_{ui}\cdot r_{vi}}
+      {\sqrt{\sum\limits_{i\in R_{uv}}r_{ui}^2\sum\limits_{i\in R_{uv}}r_{vi}^2}}$
+     \end{center}
+     Wyliczane dla par użytkowników, którzy ocenili conajmniej jeden wspólny przedmiot.
+    %\item podobieństwo implicite\newline % jak się nazywa przecięcie przez suma - odpowiednik f-score
+     %begin{center}
+      %$S_{uv}=\frac{|R_{uv}|}{|R_{u}\cup R_{v}|}$\newline
+      %Używane gdy dostępne są jedynie informacje implicite.
+     %end{center} 
+   \end{itemize}
+   {\scriptsize
+   $S_{u,v}$ -- podobieństwo użytkowników $u$ i $v$, $R_{uv}$ -- zbiór przedmiotów, które ocenili zarówno użytkownik $u$ jak i $v$,\newline
+   $r_{ui}$ -- ocena przedmiotu $i$ wystawiona przez użytkownika $u$, $\overline{r_{u}}$ -- średnia ocen wystawionych przez użytkownika $u$
+   %,\newline$R_{u}$ -- zbiór przedmiotów, ocenionych przez użytkownika $u$
+   }\newline
+   Najczęściej stosowany jest współczynnik korelacji Paersona, jako że jest trafny w większości przypadków.
+   Odjęcie średniej od oceny pozwala poradzić sobie z często spotykanym zjawiskiem spłaszczenia ocen (używanie przez użytkownika ocen tylko po jednej stronie skali),
+   może jednak spowodować nieważność funkcji podobieństwa w przypadku gdy użytkownik ocenił tylko jeden przedmiot,
+   lub wszystkie wspólnie ocenione przedmioty mają ocenę równą średniej (wtedy $S_{uv}=\frac{0}{0}$).
+   Podobieństwo kosinusowe jest bardziej odporne na szczególne przypadki w danych,
+   dlatego jest często wykorzystywane przy bardzo rzadkich danych (kiedy takie przypadki często występują).
+   Oba podobieństwa nie sprawdzają się zbyt dobrze w przypadku gdy użytkownik wystawia wszystkim przedmiotom takie same oceny,
+   oraz premiują podobieństwo pomiedzy uzytkownikami z pojedynczymi wspólnie ocenionymi przedmiotami (przy jednym wspólnym przedmiocie podobieństwo kosinusowe = 1),
+   dlatego, stosowane są często dodatkowe wagi ze względu na ilość wspólnie ocenionych przedmiotów lub odgraniczenia na ich minimalną ilość.
+   Jeśli założenia funkcji nie są spełnione (za mało wspólnych przedmiotów), lub wartość jest bez sensu (np. $\frac{0}{0}$)
+   funkcja przyjmuje wartość odpowiadającą brakowi podobieństwa (zazwyczaj 0).\newline\newline
+   Do wyliczenia przewidzianej oceny przedmiotu używa się ważonej średniej z ocen wystarczająco podobnych użytkowników
+   (obcięcie listy użytkowników według wartości funkcji podobieństwa, ilości najbliższych sąsiadów, lub obu), zadanej wzorem:\newline
+   \begin{center}
+    $r'_{u,i}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{vi}-\overline{r_v})S_{uv}}{\sum\limits_{v\in N_u}S_{uv}}$
+   \end{center}
+   {\scriptsize
+   $N_u$ -- zbiór sąsiadów (najbardziej podobnych użytkowników)
+   }\newline
+   \subsection{Rozkład według wartości osobliwych}
+   Rozkład SVD (Singular Value Decomposition) macierzy $m\times n$ przedstawiony jest wzorem:
+   $M=U\Sigma V^*$\newline
+   gdzie $U$ -- macierz unitarna $m\times m$, $\Sigma$ -- macierz diagonalna zawierająca wartości własne macierzy $M$,
+   $V$ -- macierz unitarna $n\times n$\newline
+   (w przypadku macierzy nad ciałem rzeczywistym macierze unitarne są ortogonalne)\newline\newline
+   Rozkład SVD stosowany jest między innymi do kompresji macierzy:\newline
+   %można to zrobić jako lematy
+   W przypadku gdy $m>n$ ($m<n$) $m-n$ ostatnich kolumn macierzy $U$ ($n-m$ ostatnich wierszy macierzy $V^*$) jest nieistotne,
+   gdyż są mnożone zawsze przez wektor $0$, więc można ich nie przechowywać w pamięci.\newline
+   Podobnie dzieje się w przypadku wierszy (kolumn) przypadających na zerowe wartości własne w macierzy $\Sigma$.\newline
+   Zastosowanie jednej permutacji do wierszy macierzy $U$, kolumn macierzy $V^*$, oraz wartości własnych w macierzy $\Sigma$ nie zmienia ich iloczynu.\newline
+   Po zastosowaniu tych przekształceń dla $r=$rank$(M)$ otrzymujemy rozkład $M=U'\Sigma'V'^{*}$, gdzie macierz $U'$ ma wymiary $m\times r$ $\Sigma'$
+   jest macierzą diagonalną rozmiaru $r\times r$, zaś $V'^{*}$ macierzą rozmiaru $r\times n$
+   (a więc rozkład pozwala na przechowywanie mniejszej ilości danych dla $r<\frac{mn}{m+n+1}$).\newline
+   Norma Frobeniusa macierzy: $\lVert M \rVert_F=\sqrt{\sum\limits_{i=1}^{m}\sum\limits_{j=1}^{n}|m_{ij}|^2}$\newline
+   \textbf{Twierdzenie 2.2.2.1.} (Eckhart-Young 1936) Dla dowolnego $r<$rank$(M)$
+   macierz $\tilde{M}=U\Sigma_r V^*$,
+   (gdzie $\Sigma_r$, to macierz $\Sigma$ z pozostawionymi jedynie $r$ wartościami własnymi o największych wartościach bezwzględnych)
+   jest najlepszym przybliżeniem macierzy $M$ pod względem normy Frobeniusa, wśród macierzy o rzędzie $\le r$.\newline
+   Zastosowanie rozkładu SVD i Twierdzenia Eckharta-Younga pozwala na stratną kompresję macierzy.\newline\newline
+   
+   Algorytm rekomendacyjne z grupy SVD polegają na wygenerowaniu mozliwie
+   najlepszych macierzy $U'$ i $V'^{*}$ dla zadanego $r$ reprezentującymi pełną macierz ocen użytkownik--przedmiot
+   (wiersz zawiera oceny wystawione przez jednego użytkownika, zaś kolumna oceny wystawione jednemu przedmiotowi)
+   na podstawie rzadkiej macierzy $M$ znanych juz ocen.
+   
+  %TODO wspomnieć, że mogą być oceny poza zakresem 
+  \section{Filtrowanie na podstawie opisów} %TODO jakieś lepsze tłumaczenie
 
 \begin{thebibliography}{99}%TODO
 \addcontentsline{toc}{chapter}{Bibliografia}
