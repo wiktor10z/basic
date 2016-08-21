@@ -1,6 +1,7 @@
 \documentclass{pracamgr}
 \usepackage{polski}
 \usepackage[utf8]{inputenc}
+\usepackage{amssymb}
 \usepackage{amsmath}
 
 \author{Wiktor Zuba}
@@ -232,33 +233,98 @@ Instytut Informatyki}
    $N_u$ -- zbiór sąsiadów (najbardziej podobnych użytkowników)
    }\newline
    \subsection{Rozkład według wartości osobliwych}
-   Rozkład SVD (Singular Value Decomposition) macierzy $m\times n$ przedstawiony jest wzorem:
-   $M=U\Sigma V^*$\newline
-   gdzie $U$ -- macierz unitarna $m\times m$, $\Sigma$ -- macierz diagonalna zawierająca wartości własne macierzy $M$,
-   $V$ -- macierz unitarna $n\times n$\newline
-   (w przypadku macierzy nad ciałem rzeczywistym macierze unitarne są ortogonalne)\newline\newline
-   Rozkład SVD stosowany jest między innymi do kompresji macierzy:\newline
-   %można to zrobić jako lematy
-   W przypadku gdy $m>n$ ($m<n$) $m-n$ ostatnich kolumn macierzy $U$ ($n-m$ ostatnich wierszy macierzy $V^*$) jest nieistotne,
-   gdyż są mnożone zawsze przez wektor $0$, więc można ich nie przechowywać w pamięci.\newline
-   Podobnie dzieje się w przypadku wierszy (kolumn) przypadających na zerowe wartości własne w macierzy $\Sigma$.\newline
-   Zastosowanie jednej permutacji do wierszy macierzy $U$, kolumn macierzy $V^*$, oraz wartości własnych w macierzy $\Sigma$ nie zmienia ich iloczynu.\newline
-   Po zastosowaniu tych przekształceń dla $r=$rank$(M)$ otrzymujemy rozkład $M=U'\Sigma'V'^{*}$, gdzie macierz $U'$ ma wymiary $m\times r$ $\Sigma'$
-   jest macierzą diagonalną rozmiaru $r\times r$, zaś $V'^{*}$ macierzą rozmiaru $r\times n$
-   (a więc rozkład pozwala na przechowywanie mniejszej ilości danych dla $r<\frac{mn}{m+n+1}$).\newline
-   Norma Frobeniusa macierzy: $\lVert M \rVert_F=\sqrt{\sum\limits_{i=1}^{m}\sum\limits_{j=1}^{n}|m_{ij}|^2}$\newline
-   \textbf{Twierdzenie 2.2.2.1.} (Eckhart-Young 1936) Dla dowolnego $r<$rank$(M)$
-   macierz $\tilde{M}=U\Sigma_r V^*$,
-   (gdzie $\Sigma_r$, to macierz $\Sigma$ z pozostawionymi jedynie $r$ wartościami własnymi o największych wartościach bezwzględnych)
-   jest najlepszym przybliżeniem macierzy $M$ pod względem normy Frobeniusa, wśród macierzy o rzędzie $\le r$.\newline
-   Zastosowanie rozkładu SVD i Twierdzenia Eckharta-Younga pozwala na stratną kompresję macierzy.\newline\newline
-   
-   Algorytm rekomendacyjne z grupy SVD polegają na wygenerowaniu mozliwie
-   najlepszych macierzy $U'$ i $V'^{*}$ dla zadanego $r$ reprezentującymi pełną macierz ocen użytkownik--przedmiot
-   (wiersz zawiera oceny wystawione przez jednego użytkownika, zaś kolumna oceny wystawione jednemu przedmiotowi)
-   na podstawie rzadkiej macierzy $M$ znanych juz ocen.
-   
+    Rozkład SVD (Singular Value Decomposition) macierzy $m\times n$ przedstawiony jest wzorem:
+    $M=U\Sigma V^*$\newline
+    gdzie $U$ -- macierz unitarna $m\times m$, $\Sigma$ -- macierz diagonalna zawierająca wartości własne macierzy $M$,
+    $V$ -- macierz unitarna $n\times n$\newline
+    (w przypadku macierzy nad ciałem rzeczywistym macierze unitarne są ortogonalne)\newline\newline
+    Rozkład SVD stosowany jest między innymi do kompresji macierzy:\newline
+    %można to zrobić jako lematy
+    W przypadku gdy $m>n$ ($m<n$) $m-n$ ostatnich kolumn macierzy $U$ ($n-m$ ostatnich wierszy macierzy $V^*$) jest nieistotne,
+    gdyż są mnożone zawsze przez wektor $0$, więc można ich nie przechowywać w pamięci.\newline
+    Podobnie dzieje się w przypadku wierszy (kolumn) przypadających na zerowe wartości własne w macierzy $\Sigma$.\newline
+    Zastosowanie jednej permutacji do wierszy macierzy $U$, kolumn macierzy $V^*$, oraz wartości własnych w macierzy $\Sigma$ nie zmienia ich iloczynu.\newline
+    Po zastosowaniu tych przekształceń dla $r=$rank$(M)$ otrzymujemy rozkład $M=U'\Sigma'V'^{*}$, gdzie macierz $U'$ ma wymiary $m\times r$ $\Sigma'$
+    jest macierzą diagonalną rozmiaru $r\times r$, zaś $V'^{*}$ macierzą rozmiaru $r\times n$
+    (a więc rozkład pozwala na przechowywanie mniejszej ilości danych dla $r<\frac{mn}{m+n+1}$).\newline
+    Norma Frobeniusa macierzy: $\lVert M \rVert_F=\sqrt{\sum\limits_{i=1}^{m}\sum\limits_{j=1}^{n}|m_{ij}|^2}$\newline
+    \textbf{Twierdzenie 2.2.2.1.} (Eckhart-Young 1936) Dla dowolnego $r<$rank$(M)$
+    macierz $\tilde{M}=U\Sigma_r V^*$,
+    (gdzie $\Sigma_r$, to macierz $\Sigma$ z pozostawionymi jedynie $r$ wartościami własnymi o największych wartościach bezwzględnych)
+    jest najlepszym przybliżeniem macierzy $M$ pod względem normy Frobeniusa, wśród macierzy o rzędzie $\le r$.\newline
+    Zastosowanie rozkładu SVD i Twierdzenia Eckharta-Younga pozwala na stratną kompresję macierzy.\newline\newline
+    %
+    Algorytm rekomendacyjne z grupy SVD polegają na wygenerowaniu mozliwie
+    najlepszych macierzy $U'$ i $V'^{*}$ dla zadanego $r$ reprezentującymi pełną macierz ocen użytkownik--przedmiot
+    (wiersz zawiera oceny wystawione przez jednego użytkownika, zaś kolumna oceny wystawione jednemu przedmiotowi)
+    na podstawie rzadkiej macierzy znanych już ocen.
+    %być może przydałaby się unifikacja r i f -- raz rząd a raz faktor, ale tylko jedno mogłoby być czytelne
+    \subsubsection{Model SVD}
+     Oznaczenia:\newline
+     $p_u\in\mathbb{R}^f$ -- wektor związany z użytkownikiem $u$\newline
+     $b_u\in\mathbb{R}$ -- podstawa oceny związana z użytkownikiem $u$\newline
+     $q_i\in\mathbb{R}^f$ -- wektor związany z przedmiotem $i$\newline
+     $b_i\in\mathbb{R}$ -- podstawa oceny związana z przedmiotem $i$\newline
+     $\mu$ -- średnia wszystkich ocen wystawionych wszystkim przedmiotom\newline
+     $K=\{(u,i)|$ użytkownik $u$ wystawił ocenę przedmiotowi $i\}$\newline
+     $\lambda_{*}$ -- różne stałe użyte do regularyzacji (ustawiane w celu optymalizacji pożądanych miar jakości predykcji)\newline 
+     $r_{ui}$ -- prawdziwa ocena wystawiona przedmiotowi $i$ przez użytkownika $u$\newline
+     $\tilde{r}_{ui}$ -- przewidziana przez system ocena przypisana użytkownikowi $u$ i przedmiotowi $i$\newline
+     %
+     \begin{center}
+     $\tilde{r}_{ui}=\mu+b_u+b_i+p_u\cdot q_i$
+     \end{center}
+     zaś parametry ($b_*,p_*,q_*$) równań wyliczone są poprzez minimalizację funkcji kwadratowej:
+     \begin{center}
+     $\sum\limits_{(u,i)\in K}(r_{ui}-\mu-b_u-b_i-p_u\cdot q_i)^2+\lambda\cdot(b_u^2+b_i^2+\lVert p_u\rVert^2+\lVert q_i\rVert^2)$
+     \end{center}
+     Dla $f=$rank$(M)$ pierwsza część funkcji byłby zerowa dla wektorów $p$ i $q$ będących wierszami macierzy $U$ i $V$
+     (macierz $\Sigma$ wmnożona w pozostałe) z rozkładu SVD macierzy $M$ (z dowolnymi wartościami zastępuącymi nieznane).
+     Ustawienie $f$ na odpowiednią wielkość pozwala uzyskać z jednej strony model wystarczająco prosty do wyliczenia,
+     oraz wystarczająco skomplikowany, aby wektory $p_*$ i $q_*$ mogły oddać profile użytkowników i przedmiotów.
+     Wartość $f$ odpowiednio mniejsza od rank$(M)$ uniemożliwia modelowi przeuczenie się znanych ocen i powodując uproszczenie modelu
+     ustala wartości $\tilde{r}_{ui}$ na najmniej komplikujące model.
+     Ustawienie stałej $\lambda$ na niezerową pozwala uniknąć optymalizacji funkcji w skrajnych, oddalonych wartościach wektorów
+     (co mogłoby wynikać z zaburzeń w danych).
+    \subsubsection{Algorytm SVD++}
+     Najczęściej uzywanym rozszerzeniem modelu SVD jest algorytm SVD++, korzystający również z informacji implicite.
+     Do modelu dodane zostają wektory $y_i\in\mathbb{R}^f$ reprezentujące informacje o użyciach przedmiotów.
+     Równanie docelowe przyjmuje postać:
+     \begin{center}
+      $\tilde{r}_{ui}=\mu+b_u+b_i+q_i\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
+     \end{center}
+     gdzie $N(u)$ oznacza zbiór przedmiotów ocenionych przez użytkownika $u$.\newline
+     {\scriptsize
+      (dodawanie wektorów oznacza dodanie wyraz po wyrazie, zaś mnożenie iloczyn skalarny)
+     }\newline
+     Parametry równań znajdowane są poprzez optymalizację modelu w procesie iteracyjnym opisanym pseudokodem:\newline\newline
+     %
+    \hspace*{16pt}	for $I$ iterations\{\newline
+    \hspace*{32pt}		foreach $(u,i)\in K$\{\newline
+    \hspace*{48pt}			$py=p_u +|N(u)|^{-\frac{1}{2}}\cdot\sum\limits_{j\in N(u)}y_j$\newline
+    \hspace*{48pt}			$\tilde{r}_{ui}=\mu+b_u+b_i+q_i\cdot py$\newline
+    \hspace*{48pt}			$err=\tilde{r}_{ui}-r_{ui}$\newline
+    \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_1\cdot b_u)$\newline
+    \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
+    \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot q_i-\lambda_3\cdot p_u)$\newline
+    \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_4\cdot q_i)$\newline
+    \hspace*{48pt}			foreach $j\in N(u)$\{\newline
+    \hspace*{64pt}				$y_j=y_j+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot q_i-\lambda_5\cdot y_j)$\newline
+    \hspace*{48pt}			\}\newline
+    \hspace*{32pt}		\}\newline
+    \hspace*{16pt}	\}\newline
+     {\scriptsize
+      stała $\alpha$ oznacza szybkość uczenia (powinna więc zależeć od ilości przewidzianych iteracji = dostępnego czasu na działanie algorytmu uczącego)\newline
+      stałe $\lambda_*$ służą lepszemu dostosowaniu algorytmu do problemu i powinny zostać ustalone tak, by optymalizowały funkcje oceny na zbiorze testowym\newline
+      wartości początkowe wektorów $p_*$ i $y_*$ powinny zostać wylosowane np. z rozkładu standardowego
+      (jeśli wszystkie wektory początkowe mają wartość $0$ na tej samej współrzędnej to tak pozostanie,
+      jeśli wszystkie wektory mają te same wartości na określonych współrzędnych, to nie będą mogły się zróżnicować i będą redundantne)
+     }\newline
+
+     
   %TODO wspomnieć, że mogą być oceny poza zakresem 
+  
+  %TODO BPR
   \section{Filtrowanie na podstawie opisów} %TODO jakieś lepsze tłumaczenie
 
 \begin{thebibliography}{99}%TODO
