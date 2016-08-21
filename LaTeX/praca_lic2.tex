@@ -1,0 +1,1033 @@
+\documentclass[licencjacka]{pracamgr}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage{array}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage[pdftex]{graphicx}
+\usepackage{underscore}
+\usepackage{hyperref}
+\author{Wiktor Zuba}
+
+\nralbumu{320501}
+
+\title{Algorytmy programowania liniowego i programowania liniowego całkowitoliczbowego}
+
+\tytulang{Algorithms of linear programming and integral linear programming}
+
+\kierunek{Matematyka}
+
+\opiekun{dra Pawła Bechlera\\
+Zakład Analizy Numerycznej}
+
+\date{August 2014}
+
+\dziedzina{ 
+11.0 Matematyka, Informatyka:\\
+11.1 Matematyka\\ 
+}
+
+\klasyfikacja{65--XX Numerical analysis\\
+  65Kxx Mathematical programming, optimalization and variational techniques\\
+  65K05 Mathematical programing methods}
+  
+\keywords{programowanie liniowe, programowanie liniowe całkowitoliczbowe, optymalizacja, algorytm,
+sympleks, elipsoida, punkt wewnętrzny, podział i ograniczenia, przegląd pośredni, aproksymacja, dualność}
+
+%\newtheorem{defi}{Definicja}[section]
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+W pracy przedstawiono problem programowania liniowego oraz programowania liniowego całkowitoliczbowego, niektóre ze sposobów ich rozwiązywania,
+jak i kilka sposobów wykorzystania ich w innych problemach algorytmicznych.
+Do przedstawionych metod programowania liniowego należą algorytm symplicjalny, algorytm elipsoidy Khachiyana i algorytm punktu wewnętrznego Karmarkara,
+zaś do algorytmów rozwiązywania programów liniowych całkowitoliczbowych metody podziału i ograniczeń oraz przeglądu pośredniego.
+W pracy przedstawione jest również parę szczególnych przypadków, w których użycie niestandardowych sposobów rozwiązywania pozwala uzyskać lepsze wyniki.
+Wśród zastosowań przedstawione są redukcje do programowania liniowego oraz aproksymacje przy użyciu programowania liniowego kilku znanych problemów grafowych.
+\end{abstract}
+
+
+\tableofcontents
+
+\chapter*{Wprowadzenie}
+\addcontentsline{toc}{chapter}{Wprowadzenie}
+Programowanie liniowe jest klasą problemów zajmującą się szukaniem argumentu, dla którego określona funkcja liniowa wielu zmiennych osiąga maksimum (minimum)
+na dziedzinie zawierającej krotki zmiennych spełniających zbiór założeń w postaci nierówności i równań liniowych.
+
+Posiadając liczne zastosowania w dziedzinach ekonomii, fizyki oraz informatyki, programowanie liniowe oraz programowanie liniowe całkowitoliczbowe
+(klasa problemów zakładająca dodatkowo całkowitoliczbowość rozwiązań) doczekały się licznych metod rozwiązywania.
+
+Niniejsza praca stanowi przegląd różnych stosowanych w praktyce jak i tych bardziej teoretycznych technik i algorytmów służących do znajdywania w jak najkrótszym czasie
+optymalnych rozwiązań problemów przedstawialnych w postaci programów liniowych.
+
+Praca składa się z pięciu rozdziałów. W rozdziale pierwszym przedstawione są podstawowe informacje oraz pojęcia z zakresu programowania matematycznego stosowane w analizie
+struktury i badaniu właściwości zagadnień liniowych dających podstawę różnych podejść do rozwiązywania zgłębianych problemów programowania liniowego.
+W rozdziale 2. przedstawione są interpretacja geometryczna oraz implementacja najczęściej stosowanej w praktyce metody rozwiązywania programów liniowych -- algorytmu sympleks.
+Rozdział ten zawiera również informację o słabych własnościach teoretycznych omawianego algorytmu,
+które stymulują potrzebę znalezienia innych metod skutecznych we wszystkich przypadkach.
+W kolejnym rozdziale przedstawione są dwa odmienne podejścia owocujące algorytmami programowania liniowego działającymi w czasie wielomianowym względem rozmiaru danych potrzebnych
+do przedstawienia rozwiązywanego problemu.
+W czwartym rozdziale pracy przedstawiony jest problem programowania liniowego całkowitoliczbowego, będącego trudniejszym odpowiednikiem zwykłego programowania liniowego, które oprócz
+ograniczeń w formie równań i nierówności liniowych nakłada na zmienne dodatkowe założenie o należeniu do liczb całkowitych.
+Rozdział przedstawia różne metody rozwiązywania problemów całkowitoliczbowych, zarówno te bazowane na metodach programowania liniowego ciągłego,
+jak i te działające wyłącznie w przypadku skończonej ilości możliwych rozwiązań, a także różne konstrukcje mające na celu osiąganie pożądanych rezultatów w czasie wielomianowym.
+Ostatni rozdział pokazuje, w jaki sposób dzięki redukcji do programowania liniowego można otrzymać nowe sposoby rozwiązywania i aproksymacji rozmaitych problemów algorytmicznych.
+
+Do pracy dołączone są też programy w języku C rozwiązujące umieszczone w pracy przykłady, oraz implementujące algorytmy sympleks, elipsoidy oraz podziałów i ograniczeń, pozwalające
+zaobserwować działanie przedstawionych w pracy metod w praktyce.
+Programy są również dostępne pod adresem \url{http://students.mimuw.edu.pl/~wz320501/praca_lic/wz320501_linear_programming.zip}
+%
+ \chapter{Podstawowe informacje}\label{r:podst}
+  \section{Postać problemu}
+Problem programowania liniowego przyjmuję postać ogólną:\newline
+zmaksymalizuj(zminimalizuj)
+$
+\sum\limits_{j=1}^{n}c_jx_j
+$\newline
+przy zachowaniu warunków:\newline
+\centerline{
+$
+\forall_{i=1..p}\sum\limits_{j=1}^{n} a_{ij}x_j\le b_i,
+\quad
+\forall_{i=p+1..q}\sum\limits_{j=1}^{n} a_{ij}x_j= b_i,
+\quad
+\forall_{i=q+1..r}\sum\limits_{j=1}^{n} a_{ij}x_j\ge b_i,
+$}\newline
+które to za pomocą operacji rozkładania równości na dwie słabe nierówności i przemnażania całego wiersza przez $-1$ oraz zapisania zmiennych za pomocą wektorów i macierzy
+możemy sprowadzić do postaci kanonicznej macierzowej:\newline
+\centerline{max (min) $c^{\top}x$\quad\quad\quad
+przy zachowaniu $Ax\le b$}\newline
+a ją przy zastąpieniu zmiennych na zmienne dodatnie i ujemne ($x_j=x_j^+-x_j^-$) do postaci standardowej:\newline
+\centerline{max (min) $c^{\top}x$\quad\quad\quad
+przy zachowaniu $Ax\le b ,\quad x\ge0$}
+
+W wielu algorytmach używana jest również postać dopełnieniowa
+(do każdego równania dołożona zostaje nieujemna zmienna, która wskazuje ile można maksymalnie dodać do lewej strony nierówności, aby pozostała ona prawdziwa):\newline\newline
+\centerline{max (min) $\sum\limits_{j=1}^{n}c_jx_j$}\newline
+przy zachowaniu warunków:
+$
+\forall_{i=1..m}\left(\sum\limits_{j=1}^{n} a_{ij}x_j\right)+x_{n+i}= b_i,
+\quad
+\forall_{i=1..m+n}$ $x_i\ge0
+$\newline
+
+Postać dopełnieniowa jest również przedstawiana w formie macierzowej:\newline
+\centerline{max (min) $c^{\top}x$\quad\quad\quad
+przy zachowaniu $Ax=b,\quad x\ge0$}
+%
+  \section{Rozwiązanie dopuszczalne i optymalne}
+\textbf{Definicja 1.2.1.} Funkcją celu programu liniowego nazywamy maksymalizowaną (minimalizowaną) funkcję liniową zmiennych $x_1,...,x_n$ ($c^{\top}x$)\newline\newline
+%
+\textbf{Definicja 1.2.2.} Rozwiązaniem dopuszczalnym programu liniowego nazywamy takie wartościowanie zmiennych $x_1,...,x_n$, które spełnia wszystkie warunki zadania
+(czyli w postaci standardowej : $Ax\le b,x\ge0$).\newline\newline
+%
+\textbf{Definicja 1.2.3.} Rozwiązaniem optymalnym programu liniowego nazywamy takie rozwiązanie dopuszczalne, które optymalizuje (maksymalizuje (minimalizuje)) funkcję celu.\newline\newline
+%
+\textbf{Definicja 1.2.4.} Program liniowy jest dopuszczalny, gdy istnieje dla niego przynajmniej jedno rozwiązanie dopuszczalne, w przeciwnym przypadku program jest sprzeczny.\newline\newline
+%
+\textbf{Definicja 1.2.5.} Program liniowy jest nieograniczony, gdy jest dopuszczalny, ale nie posada rozwiązań optymalnych ($\forall r\in \mathbb{R}$ $\exists x$ dopuszczalne, takie że $c^{\top}x>r$)
+%
+  \section{Program dualny}
+Ważnym pojęciem w teorii programowania liniowego pozwalającym zamienić ze sobą problemy znajdowania rozwiązania dopuszczalnego i optymalizacji rozwiązania jest program dualny.\newline
+
+Postacie programów dualnych:\newline
+%
+Dla programu liniowego postaci:\newline
+\centerline{$\max c^{\top}x$ przy warunkach: $Ax\le b,$ $x\ge0$,}\newline
+program dualny przyjmuje postać:\newline
+\centerline{$\min b^{\top}y$ przy warunkach: $A^{\top}y\ge c,$ $y\ge0$.}\newline
+A dla postaci:\newline
+\centerline{$\max c^{\top}x$ przy warunkach: $Ax=b,$ $x\ge0$,}\newline
+postać:\newline
+\centerline{$\min b^{\top}y$ przy warunkach: $A^{\top}y\ge c$,}\newline\newline
+gdzie zmienne $y_1,...,y_m$ odpowiadają kolejnym równaniom (nierównościom) zadania prymalnego (czyli tego pierwszego), zaś nowe nierówności zmiennym rozwiązania prymalnego.\newline\newline
+%
+\textbf{Uwaga 1.3.1.} Dualność jest relacją symetryczną, czyli program dualny do programu dualnego jest programem prymalnym.\newline\newline
+%
+\textbf{Twierdzenie 1.3.2.} (słaba dualność) Niech $x$ i $y$ będą rozwiązaniami dopuszczalnymi kolejno programów prymalnego i dualnego. Wówczas $c^{\top}x\le b^{\top}y$.
+\begin{proof}[Dowód]
+$c^{\top}x=\sum\limits_{j=1}^{n}c_jx_j\le\sum\limits_{j=1}^{n}(\sum\limits_{i=1}^{m}a_{ij}y_i)x_j=
+\sum\limits_{i=1}^{m}(\sum\limits_{j=1}^{n}a_{ij}x_j)y_i\le\sum\limits_{i=1}^{m}b_iy_i=b^{\top}y$
+\end{proof}
+\noindent
+\textbf{Twierdzenie 1.3.3.} (silna dualność) Jeśli $z$ jest wartością funkcji celu rozwiązania optymalnego programu prymalnego, a $w$ programu dualnego, to $z=w$.\newline\newline
+\textit{Pełny dowód można znaleźć w} \cite[tw. 8.3]{OPT}.\newline
+\textit{Szkic dowodu : } Mając optymalne bazowe rozwiązanie dopuszczalne $x'$ (zdefiniowane w rozdziale 2.1.), możemy przedstawić $c$ jako $\sum\limits_{i=1}^{l}r_ia_i$, 
+gdzie $a_i$, to te wiersze macierzy $A$, dla których $\sum\limits_{j=1}^{n}a_{ij}x'_j=b_j$, można pokazać, że $(r_1,...,r_l,0,...,0)$ jest rozwiązaniem dopuszczalnym programu dualnego
+o wartości funkcji celu równej $z$, co wraz z twierdzeniem 1.3.2. kończy dowód.\newline\newline
+%//Dowód w ALG i OPT %TODO sprawdzić czy gdzie indziej też
+\textbf{Uwaga 1.3.4.} Jeśli program jest nieograniczony, to dualny do niego program jest sprzeczny,
+zaś jeśli jest sprzeczny, to dualny może być albo nieograniczony albo również sprzeczny.
+% w SDK i OPT
+%
+\chapter{Algorytm sympleks}\label{r:simpleks}
+  \section{Pomysł i schemat algorytmu}
+Jeżeli zmienne $x_1,...,x_n$ potraktujemy jako $n$ współrzędnych punktu w hiperprzestrzeni to równania$\sum\limits_{j=1}^{n}a_{ij}x_j=b_i$ wyznaczają hiperpłaszczyzny kowymiaru 1,
+zaś nierówności $\sum\limits_{j=1}^{n}a_{ij}x_j\le b_i$ półprzestrzenie. Przecięciem półprzestrzeni jest wielościan (być może nieograniczony lub pusty),
+a punkty do niego należące są rozwiązaniami dopuszczalnymi programu liniowego.
+Bazowym rozwiązaniem dopuszczalnym programu liniowego nazywamy rozwiązanie dopuszczalne $x$, które spełnia $n$ liniowo niezależnych założeń jako równość
+(w postaci standardowej jest co najmniej $n$ równań liniowo niezależnych ze względu na nierówności $x_j\ge0$).\newline
+Punkt ekstremalny wielościanu $W$ jest to dowolny punkt $x\in W$, którego nie możemy wyrazić jako wypukłej kombinacji dwóch innych punktów:
+$\neg\left(\exists_{y,z\in W,t\in(0,1)} : x=ty+(1-t)z\right)$\newline\newline
+%
+\textbf{Twierdzenie 2.1.1.} Dla dowolnego programu liniowego następujące warunki są równoważne:
+\begin{itemize}
+\item $x$ jest bazowym rozwiązaniem dopuszczalnym
+\item $x$ jest punktem ekstremalnym wielościanu
+\item $x$ jest wierzchołkiem wielościanu (jedynym punktem optymalnym w wielościanie dla pewnej funkcji liniowej)
+\end{itemize}
+\begin{proof}[Dowód]
+
+Wierzchołek $x'$ jest punktem ekstremalnym, gdyż inaczej dla $x'=ty+(1-t)z$ i dowolnej funkcji liniowej $c^{\top}x'\le c^{\top}y$ lub $c^{\top}x'\le c^{\top}z$
+(gdyż $c^{\top}x'=t\cdot c^{\top}y+(1-t)\cdot c^{\top}z$).
+
+Jeśli rozwiązanie dopuszczalne $x'$ nie jest bazowe, to istnieje wektor $v$ liniowo niezależny od wierszy $a_i$ macierzy $A$
+dla których $a_ix=b$, oraz $\varepsilon>0$,
+taki że $x'+\varepsilon v$ oraz $x'-\varepsilon v$ są rozwiązaniami dopuszczalnymi, co przeczy ekstremalności punktu $x'$.
+
+Dla bazowego rozwiązania dopuszczalnego $x'$ i $c=\sum\limits_{i\in F}a_i$ (gdzie $F=\{i: a_i^{\top}x'=b_i\}$) $c^{\top}x$ jest funkcją celu,
+dla której jedynym rozwiązaniem optymalnym jest $x'$.
+(Dla dowolnego $y$ $c^{\top}y=\sum\limits_{i\in F}a_i^{\top}y\le\sum\limits_{i\in F}b_i=c^{\top}x'$.
+Unikalność wynika z tego, że równość następuje tylko, gdy dla każdego $i\in F$ $a_iy=b_i$,
+($n$ liniowo niezależnych równań $n$ zmiennych).) Więc $x'$ jest wierzchołkiem.
+\end{proof}
+%//W ALG i OPT
+\textbf{Uwaga 2.1.2.} Jeżeli istnieje rozwiązanie optymalne, to istnieje rozwiązanie optymalne w wierzchołku.
+Co więcej, gdy rozwiązanie optymalne leży na ścianie (pewnego wymiaru) wielościanu, to wszystkie punkty tej ściany są rozwiązaniami optymalnymi.\newline\newline
+%//W ALG, OPT, SDK
+\textbf{Wniosek 2.1.3.} Szukając dopuszczalnego rozwiązania optymalnego, możemy zajmować się tylko dopuszczalnymi rozwiązaniami bazowymi.\newline\newline
+%
+\textbf{Wniosek 2.1.4.} Istnieje algorytm znajdujący rozwiązanie optymalne w czasie $O({m+n\choose n}\cdot n^3)$.\newline\newline
+%//W ALG
+\textit{Szkic Dowodu}: 
+Szukanie wszystkich (co najwyżej ${m+n \choose n}$) dopuszczalnych rozwiązań bazowych poprzez rozwiązywanie układów $n$ liniowo niezależnych równań (w czasie $O(n^3)$, choć da się i w $O(n^{2,38})$).\newline
+
+Gdy przesuwamy punkt (wartości zmiennych $x_j$ w hiperpłaszczyźnie) jednostajnie po prostej, wartość funkcji celu zmienia się jednostajnie.
+Oznacza to, że każdej prostej, a dokładniej krawędzi wielościanu, można przypisać pewien współczynnik, z jakim zmienia się wartość tej funkcji, przy przesuwaniu sie po niej.
+Dla każdej krawędzi wychodzącej z wierzchołka możemy określić jak szybko poprawiamy wartość funkcji celu przy przesunięciu po niej rozpatrywanego przez nas punktu.
+Krawędzią \emph{poprawiającą} nazwiemy taką krawędź wychodzącą z wierzchołka, której współczynnik zmiany wartości funkcji przy przesuwaniu jest dodatni,
+\emph{pogarszającą}, gdy jest on ujemny, a \emph{neutralną}, gdy wynosi $0$.\newline\newline
+%
+\textbf{Twierdzenie 2.1.5.} Jeśli z wierzchołka wielościanu dopuszczającego nie wychodzi żadna krawędź poprawiająca, to jest on punktem optymalnym zadania programowania liniowego.\newline\newline
+\textit{Dowód znajduje się w} \cite[tw. 4.3]{OPT}.\newline\newline
+\textbf{Algorytm 1. (Geometryczny algorytm sympleks) -- pseudokod:}\newline
+Mając dany wielościan dopuszczalny programu liniowego wykonujemy kolejne kroki:
+\begin{enumerate}
+\item Znajdujemy dowolny wierzchołek wielościanu.
+\item Mając dane wszystkie krawędzie wychodzące z wierzchołka wybieramy jedną z poprawiających i przesuwamy się na jej drugi koniec o ile jest on skończony.
+\item Jeśli w kroku 2. Krawędź poprawiająca jest nieskończona, to przesuwając się po niej możemy otrzymać dowolnie duże wartości, więc zadanie nie ma rozwiązania.
+\item Jeżeli z wierzchołka nie wychodzi żadna krawędź poprawiająca, to na mocy Twierdzenia 2.1.5 znaleźliśmy rozwiązanie optymalne, w przeciwnym przypadku wracamy do kroku 2.
+\end{enumerate}
+%
+\textbf{Uwaga 2.1.6.} (Problem stopu) Algorytm musi się zatrzymać (znaleźć rozwiązanie lub określić jego brak) w skończonym czasie, ponieważ odwiedza każdy wierzchołek co najwyżej raz
+(przy każdym przejściu wartość funkcji celu rośnie), a tych jest co najwyżej ${m+n\choose n}$.\newpage
+%
+  \section{Implementacja algorytmu}
+Działanie algorytmu w postaci geometrycznej można zrozumieć bez większych trudności,
+jednak w implementacji zrozumiałej dla komputera zamiast wierzchołków i krawędzi wygodniej jest posłużyć się wektorami i macierzami.\newline\newline
+%
+\textbf{Przygotowanie do algorytmu:}
+
+Korzystając z postaci dopełnieniowej zadania macierz $A$ oraz wektor $x$ dzielimy na dwie części postaci 
+$\left[\begin{array}{cc}B&N\end{array}\right]\left[\begin{array}{c}x_B\\x_N\end{array}\right]=b$,
+gdzie macierz $B$ jest to kwadratowa podmacierz macierzy $A$ której kolumny odpowiadają kolejnym składowym $x_B$.
+W tej postaci dopuszczalne rozwiązanie bazowe jest to takie rozwiązanie, które spełnia wszystkie $m$ równań w taki sposób, że tylko $m$ spośród $x_1,...,x_{n+m}$ może być niezerowych
+(są to właśnie składowe $x_B$, podczas gdy $x_N=0$), oraz macierz $B$ jest nieosobliwa.
+Ponieważ mamy równość $\left[\begin{array}{cc}B&N\end{array}\right]\left[\begin{array}{c}x_B\\x_N\end{array}\right]=b=B*x_B$ (korzystając z nieosobliwości macierzy $B$) otrzymujemy 
+$x_B=B^{-1}b$, więc wektor $x_B$ jest jednoznacznie wyznaczony przez dobór bazy $B$. Algorytm sympleks doprowadza do rozwiązania optymalnego poprzez zmiany bazy dokonywane za pomocą
+zastąpienia przez kolumnę z macierzy $N$ (odpowiadającej zmiennej, która maksymalizuje wzrost wartości funkcji celu),
+kolumny macierzy $B$ (takiej, by wartość nowej zmiennej mogła być jak największa).
+Jako, że w każdym kroku w macierzy $B$ zmienia się tylko jedna kolumna nie trzeba za każdym razem od początku obliczać macierzy $B^{-1}$, a jedynie uwzględnić tę zmianę 
+(w czasie kwadratowym).\newline\newline
+%
+\textbf{Algorytm 2. (Zrewidowany algorytm sympleks) -- pseudokod:}\newline\newline
+%
+\textbf{Zasadnicza część algorytmu sympleks:}\newline\newline
+Zakładamy, że mamy daną bazę $B$ wyznaczającą pewne rozwiązanie dopuszczalne.(Oraz macierz do niej odwrotną).
+\begin{enumerate}
+\item Wyliczamy wektor $p=c_N^{\top}-\lambda^{\top} N$, gdzie $\lambda^{\top}=c_B^{\top}B^{-1}$, a $c_B$ oraz $c_N$ oznaczają fragmenty wektora $c$ odpowiadające kolumnom macierzy $B$ oraz $N$.
+Jako kolumnę, którą wstawimy do nowej bazy, wybieramy tę, dla której odpowiednia wartość w wektorze $p$
+(wartości odpowiadają kolejnym kolumnom macierzy $N$) jest dodatnia (w szczególności największa).\newline
+Jeżeli wszystkie wartości w wektorze $p$ są niedodatnie, to aktualne rozwiązanie jest optymalne.
+%
+\item Rozwiązujemy układ $By=a_k$ przy pomocy $B^{-1}$, gdzie $a_k$ jest to kolumna macierzy $N$ wybrana w poprzednim kroku (kolumna $k$--ta).
+%
+\item Znajdujemy $\theta=\frac{x_l}{y_l}=\min{\left\{\frac{x_i}{y_i}:y_i>0\right\}}$, gdzie $x_i$ są to aktualne wartości zmiennych bazowych ($x_B=B^{-1}b$).\newline
+Jeśli każde $y_i$ jest niedodatnie, to zbiór rozwiązań zadania programu liniowego jest nieograniczony oraz funkcja celu może przyjmować dowolnie duże wartości.
+%
+\item Zmieniamy bazę oraz rozwiązanie bazowe: $x'_i=x_i-\theta y_i$ dla $i\neq k$, $x'_k=\theta$, kolumnę $k$ w macierzy $B$ zamieniamy z kolumną $l$ macierzy $N$.
+$B^{-1}$ zmieniamy korzystając ze wzoru $B'^{-1}=EB^{-1}$, gdzie macierz $E$ jest równa macierzy identycznościowej $m\times m$ z $l$--tą kolumną zastąpioną przez 
+$(-\frac{y_1}{y_l},...,-\frac{y_{l-1}}{y_l},\frac{1}{y_l},-\frac{y_{l+1}}{y_l},...,-\frac{y_m}{y_l})^{\top}$\newline\newline
+%
+Wracamy do kroku 1. i kontynuujemy, aż algorytm zatrzyma się w kroku 1., znajdując rozwiązanie optymalne lub w kroku 3., oznaczając nieograniczoność programu liniowego.
+\end{enumerate}
+
+W zasadniczej części algorytmu założyliśmy, że mamy daną macierz bazową wyznaczającą pewne rozwiązanie. Przy znajdowaniu takiej bazy mogą wystąpić 2 przypadki:\newline\newline
+%
+\textit{I Przypadek prostszy:}\newline\newline
+$b\ge0$, czyli w każdym warunku występuje ograniczenie górne przez liczbę nieujemną.
+W tym przypadku jako bazę wystarczy wziąć kolumny odpowiadające zmiennym dodanym $x_n+1,...,x_n+m$, 
+w dodatku macierz $B$ jest w takim przypadku macierzą identycznościową o wymiarach $m\times m$, dzięki czemu znamy początkową macierz $B^{-1}$.\newline\newline
+%
+\textit{II Przypadek trudniejszy:}\newline\newline
+Co najmniej jeden z warunków posiada górne ograniczenie ujemne. Co zaskakujące, w tym przypadku do znalezienia rozwiązanie dopuszczalnego posłużymy się
+właśnie opisaną zasadniczą częścią algorytmu sympleks, jednak dla nieznacznie zmodyfikowanego problemu.\newline\newline
+%
+\textbf{Algorytm wyznaczania dopuszczalnego rozwiązanie bazowego:}\newline
+
+Bazowy program liniowy przedstawiony w postaci dopełnieniowej przekształcamy na równoważny mu, poprzez operacje na wierszach macierzy $A$ oraz wektora $b$.
+
+W wektorze $b$ znajdujemy najmniejszą wartość i odejmujemy ją od wszystkich pozostałych, jak również odejmujemy wiersz jej odpowiadający w macierzy $A$, od jej pozostałych wierszy.
+Następnie tą wartość oraz ten wiersz przemnażamy przez $-1$, otrzymując w ten sposób równoważny wyjściowemu
+(jako, że operacje podstawowe działania operacji na wierszach macierzy nie zmieniają rozwiązania układu równań liniowych) program, w którym żadna z wartości wektora $b$ nie jest ujemna.
+
+Gdybyśmy teraz chcieli przyjąć rozwiązanie bazowe jak w przypadku I, napotkalibyśmy na taki problem, że choć macierz $B$ była by podobna do identyczności
+(zamiast jednej kolumny wystąpiłaby kolumna samych $-1$), to rozwiązanie bazowe otrzymane przy jej pomocy nie byłoby dopuszczalne
+(co najmniej jedna ze zmiennych, ta odpowiadająca zmienionej kolumnie, musiałaby być ujemna). Dlatego też do programu w wyróżnionym wcześniej wierszu wprowadzamy nową zmienną $x_0$, oraz
+kolumną jej odpowiadającą zastępujemy w $B$ kolumnę minus jedynek znów otrzymując macierz identycznościową.
+Wyróżnione przez nas rozwiązanie bazowe jest rozwiązaniem dopuszczalnym nowego zmienionego programu, nierównoważnego wyjściowemu.
+Jeśli jednak za jego pomocą uda się otrzymać kolejne rozwiązanie bazowe, które nie zawiera zmiennej $x_0$ ($x_0=0$), to będzie ono również rozwiązaniem dopuszczalnym wyjściowego problemu.
+Dlatego też dla nowych danych stosujemy zasadniczą część algorytmu sympleks, szukając bazy i wartościowań zmiennych takich, by wartość $x_0$ była równa $0$, inaczej mówiąc,
+jako funkcję celu wstawiamy $\min x_0$ lub by otrzymać maksymalizację $\max (-x_0)$. Jeśli otrzymamy wartość optymalną funkcji celu równą $0$.
+To optymalne bazowe rozwiązanie dopuszczalne jest również bazowym rozwiązaniem dopuszczalnym wyjściowego programu liniowego.
+W przeciwnym przypadku zbiór rozwiązań dopuszczalnych jest pusty.\newline\newline
+%
+\textbf{Pseudokod pełnego algorytmu:}
+\begin{enumerate}
+\item Znajdujemy $b_k=\min{\{b_i\}}$, jeżeli $b_k<0$, to przechodzimy do kroku 2, w przeciwnym przypadku przechodzimy do kroku 6.
+\item Odejmujemy $k$--ty wiersz macierzy $A$ od wszystkich pozostałych, oraz wartość $b_k$ od pozostałych wartości wektora $b$, następnie ten wiersz oraz tę wartość przemnażamy przez $-1$.
+\item Wprowadzamy nową kolumnę do macierzy $A$ ($1$ w $k$--tym wierszu, $0$ w pozostałych), nową funkcję celu ($\max (-x_0)$)
+oraz macierz $B=I=B^{-1}$ poprzez wybór kolumn\newline $n+1,..,n+k-1,0,n+k+1,...,n+m$
+\item Stosujemy zasadniczą część algorytmu sympleks do nowego programu liniowego.
+\item Jeśli wartość optymalna nowej funkcji celu jest równa 0, to przechodzimy do kroku 7. z bazą otrzymaną z kolumn wyjściowej macierzy $A$ odpowiadającym tym wyznaczonym w kroku 4. 
+w przeciwnym przypadku nie istnieje rozwiązanie programu liniowego -- koniec algorytmu.
+\item Jako bazę wybieramy macierz $B$ złożoną z kolumn $n+1,...n+m$ macierzy $A$.
+\item Stosujemy zasadniczą część algorytmu sympleks dla wyjściowego programu liniowego i wyznaczonej bazy.
+\end{enumerate}
+%
+\textbf{Uwaga 2.2.1.} W przypadku II możemy w końcowym kroku algorytmu zamiast wyjściowej formy programu liniowego użyć formy równoważnej
+(tej po operacjach na wierszach, a przed wprowadzeniem $x_0$). Plusem takiego rozwiązania, jest to, że możemy wtedy użyć bazy oraz jej odwrotności wyliczonych w kroku 4
+zamiast wyliczania nowych na podstawie numerów kolumn macierzy $A$, co pozwala zaoszczędzić koszt odwracania macierzy.\newline\newline
+%
+\textbf{Uwaga 2.2.2.} Istnieją liczne modyfikacje algorytmu sympleks zazwyczaj polegające na obraniu innej strategii wyboru kolejnych krawędzi,
+pozwalające otrzymywać rozwiązania optymalne w nieznacznie krótszym czasie lub poprawiające złożoność w szczególnych przypadkach.\newline
+%
+  \section{Przykład}
+Wyznaczymy\newline
+$\begin{array}{cccccccc}\max&&&x_2&+&x_3&&\\
+ &x_1&-&x_2&&&\le&-1\\
+\text{przy warunkach}&3x_1&+&2x_2&+&5x_3&\le&4\\
+ &x_1&-&2x_2&-&5x_3&\le&-3\\
+\end{array}
+$\newpage
+%
+\textbf{Część 1.} Szukanie bazowego rozwiązania dopuszczalnego:\newline
+Rozważamy program pomocniczy:
+\begin{center}
+$
+Ax=\left[\begin{array}{>{\columncolor{gray!35}}cccc>{\columncolor{gray!35}}c>{\columncolor{gray!35}}cc}
+ 0&0&1&5&1&0&-1\\
+ 0&2&4&10&0&1&-1\\
+ 1&-1&2&5&0&0&-1\\
+\end{array}\right]\cdot\left[\begin{array}{c}\\x\\\\\end{array}\right]=\left[\begin{array}{c}2\\7\\3\\\end{array}\right]=b\newline\newline
+c^{\top}=\left[\begin{array}{ccccccc}-1&0&0&0&0&0&0\end{array}\right],\quad x^{\top}=\left[\begin{array}{ccccccc}x_0&x_1&x_2&x_3&x_4&x_5&x_6\end{array}\right]
+$
+\end{center}
+(kolor szary wyznacza kolumny należące do $B$)\newline
+Startujemy z:\newline
+\centerline{$x_B=\left[\begin{array}{c}x_4\\x_5\\x_0\end{array}\right]=\left[\begin{array}{c}2\\7\\3\end{array}\right],
+B^{-1}=\left[\begin{array}{ccc}1&0&0\\0&1&0\\0&0&1\end{array}\right]$.}\newline
+Obliczamy $\lambda^{\top}=c_B^{\top}=\left[\begin{array}{ccc}0&0&-1\end{array}\right],\newline
+p=c_N^{\top}-\lambda^{\top}N=\left[\begin{array}{cccc}0&0&0&0\end{array}\right]-\left[\begin{array}{cccc}1&-2&-5&1\end{array}\right]
+=\left[\begin{array}{cc>{\columncolor{gray!35}}cc}-1&2&5&-1\end{array}\right]$,\newline
+wybieramy $x_3$ do bazy $y=B^{-1}a_3=\left[\begin{array}{ccc}5&10&5\end{array}\right]^{\top}.\newline
+\theta=\min{\left\{\frac{2}{5},\frac{7}{10},\frac{3}{5}\right\}}=\frac{2}{5}=\frac{x_4}{y_1}$, $x_4$ opuszcza bazę.\newline
+\centerline{$B_2^{-1}=EB^{-1}=\left[\begin{array}{ccc}\frac{1}{5}&0&0\\-\frac{10}{5}&1&0\\-\frac{5}{5}&0&1\end{array}\right]\cdot\left[\begin{array}{ccc}1&0&0\\0&1&0\\0&0&1\end{array}\right]=
+\left[\begin{array}{ccc}\frac{1}{5}&0&0\\-2&1&0\\-1&0&1\end{array}\right]$}\newline
+\centerline{$x_B=\left[\begin{array}{c}x_3\\x_5\\x_0\end{array}\right]=\left[\begin{array}{c}\theta\\7-10\theta\\3-5\theta\end{array}\right]=\left[\begin{array}{c}\frac{2}{5}\\5\\1\end{array}\right]$}\newline
+Po kolejnej iteracji otrzymujemy:\newline
+\centerline{$ B^{-1}=\left[\begin{array}{ccc}\frac{2}{5}&0&-\frac{1}{5}\\0&1&-2\\-1&0&1\end{array}\right],x_B=\left[\begin{array}{c}x_3\\x_5\\x_2\end{array}\right]=
+\left[\begin{array}{c}\frac{1}{5}\\1\\1\end{array}\right]$,}\newline
+co daje nam bazowe rozwiązanie dopuszczalne wyjściowego problemu, który przyjmuje teraz postać:\newline
+\centerline{$
+Ax=\left[\begin{array}{c>{\columncolor{gray!35}}c>{\columncolor{gray!35}}cc>{\columncolor{gray!35}}ccc}
+ 0&1&5&1&0&-1\\
+ 2&4&10&0&1&-1\\
+ -1&2&5&0&0&-1\\
+\end{array}\right]\cdot\left[\begin{array}{c}\\x\\\\\end{array}\right]=\left[\begin{array}{c}2\\7\\3\\\end{array}\right]=b$,}\newline
+\centerline{$B^{-1},x_B$ jak wyżej, natomiast $c^{\top}x=1+\frac{1}{5}=\frac{6}{5}=1.2$}\newline
+
+\textbf{Część 2.} Szukanie optymalnego bazowego rozwiązania dopuszczalnego:\newline
+W pierwszej iteracji zmienne przyjmują kolejne wartości:\newline
+\centerline{$
+\lambda^{\top}=\left[\begin{array}{ccc}-\frac{3}{5}&0&\frac{4}{5}\end{array}\right],
+p=\left[\begin{array}{>{\columncolor{gray!35}}ccc}\frac{4}{5}&\frac{1}{5}&\frac{3}{5}\end{array}\right],
+y=\left[\begin{array}{ccc}\frac{1}{5}&4&-1\end{array}\right],\theta=\min{\{1,\frac{1}{4}\}}=\frac{1}{4}$}\newline
+więc $x_1$ zastępuje $x_5,
+x_B=\left[\begin{array}{ccc}\frac{3}{20}&\frac{1}{4}&\frac{5}{4}\end{array}\right]^{\top},c^{\top}x=\frac{7}{5}=1.4$\newline
+W kolejnych dwóch iteracjach otrzymujemy:\newline
+$
+x_1=\frac{1}{4},x_2=\frac{13}{8},x_4=\frac{3}{8},c^{\top}x=\frac{13}{8}=1.625\newline
+x_2=2,x_4=1,x_6=1,c^{\top}x=2$\newline
+Wyliczając teraz $p$ otrzymujemy $\lambda^{\top}=\left[\begin{array}{ccc}0&\frac{1}{2}&-\frac{1}{2}\end{array}\right],
+p=\left[\begin{array}{ccc}-\frac{1}{2}&-\frac{3}{2}&-\frac{3}{2}\end{array}\right]$,\newline
+czyli ponieważ wszystkie wartości w wektorze $p$ są niedodatnie znalezione rozwiązanie jest optymalne.\newpage
+%
+ \section{Niewielomianowość i przykład Clausena}
+Pomimo, że algorytm sympleks jest najczęściej stosowanym sposobem rozwiązywania problemów programowania liniowego za pomocą maszyn liczących posiada on pewną wadę,
+jaką jest to, że żadna jego wersja nie jest algorytmem w pełni wielomianowym. Dla większości implementacji algorytmu sympleks istnieją udowodnione przykłady danych,
+dla których liczba przeglądanych wierzchołków wielościanu dopuszczalnego ma stosunek wykładniczy względem rozmiaru wczytywanych przez program danych.\newline\newline
+Zbiorem takich danych dla zrewidowanej metody sympleks jest przykład zaproponowany w 1980 roku przez Clausena.\newline
+\textbf{Przykład Clausena:}\newline
+Wyznaczamy\newline
+$
+\begin{array}{cccccccccccc}\max&x_1&+&\frac{4}{5}x_2&+&\frac{4}{5}\cdot\frac{4}{5}x_3&+&\cdots&+&{\frac{4}{5}}^{n-1}x_n&\\
+ &x_1&&&&&&&&&\le&1\\
+ &\frac{5}{2}x_1&+&x_2&&&&&&&\le&5\\
+\text{przy warunkach}&\frac{5}{4}\cdot\frac{5}{2}x_1&+&\frac{5}{2}x_2&+&x_3&&&&&\le&25\\
+ &\vdots&&\vdots&&\vdots&&\ddots&&&&\vdots\\
+ &{\frac{5}{4}}^{n-2}\cdot\frac{5}{2}x_1&+&{\frac{5}{4}}^{n-3}\cdot\frac{5}{2}x_2&+&{\frac{5}{4}}^{n-4}\cdot\frac{5}{2}x_3&+&\cdots&+&x_n&\le&5^{n-1}\\
+\end{array}
+$\newline
+
+Dla owego przykładu liczba iteracji algorytmu zrewidowanej metody sympleks potrzebnych do znalezienia rozwiązania optymalnego wynosi $2^n-1$.\newline
+
+Kolejne wartości zmiennych $x_1,x_2,x_3,x_4$ po kolejnych iteracjach ilustrują działanie algorytmu dla przykładu Clausena dla $n=4$:
+\begin{center}$
+\begin{array}{cccccc}
+0:&x_1=0&x_2=0&x_3=0&x_4=0&c^{\top}x=0\\
+1:&x_1=1&x_2=0&x_3=0&x_4=0&c^{\top}x=1\\
+2:&x_1=1&x_2=2.5&x_3=0&x_4=0&c^{\top}x=3\\
+3:&x_1=0&x_2=5&x_3=0&x_4=0&c^{\top}x=4\\
+4:&x_1=0&x_2=5&x_3=12.5&x_4=0&c^{\top}x=12\\
+5:&x_1=1&x_2=2.5&x_3=15.625&x_4=0&c^{\top}x=13\\
+6:&x_1=1&x_2=0&x_3=21.875&x_4=0&c^{\top}x=15\\
+7:&x_1=0&x_2=0&x_3=25&x_4=0&c^{\top}x=16\\
+8:&x_1=0&x_2=0&x_3=25&x_4=62.5&c^{\top}x=48\\
+9:&x_1=1&x_2=0&x_3=21.875&x_4=66.40625&c^{\top}x=49\\
+10:&x_1=1&x_2=2.5&x_3=15.625&x_4=74.21875&c^{\top}x=51\\
+11:&x_1=0&x_2=5&x_3=12.5&x_4=78.125&c^{\top}x=52\\
+12:&x_1=0&x_2=5&x_3=0&x_4=109.375&c^{\top}x=60\\
+13:&x_1=1&x_2=2.5&x_3=0&x_4=113.28125&c^{\top}x=61\\
+14:&x_1=1&x_2=0&x_3=0&x_4=121.09375&c^{\top}x=63\\
+15:&x_1=0&x_2=0&x_3=0&x_4=125&c^{\top}x=64\\
+\end{array}$\end{center}
+
+Kolejne wartości zmiennych ustawiane są na liczby niezerowe i zera według kodu cyklicznego Graya, przyjmując wszystkie możliwe wariacje wartości (0, liczba dodatnia).\newline
+%
+ \chapter{Algorytmy wielomianowe}\label{r:wiel}
+  \section{Algorytm elipsoidy}
+Ten rozdział został napisany na podstawie \cite{SDK}
+   \subsection{Pomysł i geometria}
+Wymyślony przez Khachiyana w 1979 roku algorytm elipsoidy powstał w oparciu o badania rozwiązalności zagadnienia liniowego nierówności $Ax<b$ o całkowitych współczynnikach oraz wymiernym $x$
+i korzysta ze spostrzeżenia, że jeśli obszar dopuszczalności nie jest pusty,
+to istnieje w tym obszarze zbiór $S$ określonego rozmiaru leżący w skończonej odległości od początku układu współrzędnych.
+Metoda Khachiyana określa, czy układ ostrych nierówności liniowych $Ax<b$ posiada rozwiązania dopuszczalne i w przypadku pozytywnym znajduje jedno z nich.
+
+O ile założenie całkowitości lub wymierności wartości występujących w programie liniowym w teorii jest bardzo ograniczające, o tyle w skończonym sposobie zapisu jesteśmy w stanie zakodować
+jedynie przeliczalnie wiele różnych liczb (przeliczalność, jako granica po liczbach skończonych), dlatego też przy użyciu algorytmów komputerowych musimy ograniczyć się jedynie do przeliczalnej
+ilości wartościowań zmiennych, standardowo ograniczając się do zbioru liczb wymiernych (jako zbioru gęstego w $\mathbb{R}$ oraz łatwego do reprezentacji w systemie zmiennoprzecinkowym).
+Całkowitość współczynników w nierównościach można otrzymać poprzez przemnożenie wierszy przez ich wspólne mianowniki.
+
+Liczba oznaczająca rozmiar danych wejściowych programu liniowego w systemie binarnym jest równa 
+$L=\sum\limits_{i,j=1}^{m,n}\log_2{(|a_{ij}|+1)}+\sum\limits_{i=1}^{m}\log_2{(|b_i|+1)}+\log_2{(mn)}+1$.
+
+Zaczynając od sfery o środku w $0$ i promieniu wystarczająco dużym (na przykład wielkości $2^{\frac{L}{2}}$), by sfera zawierała część zbioru dopuszczalnego (o ile ten jest niepusty),
+algorytm Khachiyana w $k$--tym kroku generuje kolejną($k$--tą) elipsoidę, mniejszą pod względem objętości od poprzedniej, zawierającą wszystkie rozwiązania dopuszczalne elipsoidy $k-1$--szej,
+kończąc działanie, gdy środek rozpatrywanej elipsoidy będzie punktem dopuszczalnym.\newline
+Algorytmicznie, jeśli środek elipsoidy nie jest punktem dopuszczalnym, to dzielimy ją na pół (przechodzącą przez środek) hiperpłaszczyzną równoległą do któregoś z niespełnianych ograniczeń.
+Następnie nowa elipsoida jest najmniejszą taką, która zawiera tę połówkę starej, do której należą rozwiązania dopuszczalne.
+%
+   \subsection{Implementacja}
+\textbf{Algorytm 3. (Algorytm elipsoidy) -- pseudokod:}\newline\newline 
+Inicjalizacja: $k=0, x_k=0, A_k=2^{L}I_n$, gdzie $I_n$ to macierz jednostkowa stopnia $n$.
+\begin{enumerate}
+\item Jeśli $x_k$ jest dopuszczalne ($Ax_k<b$), zakończyć obliczenia -- znaleźliśmy rozwiązanie dopuszczalne.
+%
+\item Jeśli $k=6n^2L$, zakończyć obliczenia -- nie istnieje rozwiązanie dopuszczalne.
+%
+\item Wybieramy dowolną nierówność w $Ax<b$, która nie jest spełniona przez $x_k$ ($a_ix_k\ge b_i$, gdzie $a_i$ to $i$--ty wiersz macierzy $A$) i podstawiamy:\newline
+%
+$x_{k+1}=x_k-\frac{1}{n+1}\cdot\frac{A_ka_i^{\top}}{\sqrt{a_iA_ka_i^{\top}}},\quad
+A_{k+1}=\frac{n^2}{n^2-1}\cdot\left(A_k-\frac{2}{n+1}\cdot\frac{(a_iA_k)^{\top}(a_iA_k)}{a_iA_ka_i^{\top}}\right),\quad
+k=k+1$\newline\newline
+Wracamy do kroku 1. i kontynuujemy, aż algorytm zatrzyma się w kroku 1. znajdując rozwiązanie dopuszczalne lub w kroku 2. oznaczając sprzeczność programu.
+\end{enumerate}
+
+Geometrycznie: $x_k$ oznacza środek elipsoidy, podczas gdy do jej wnętrza należą punkty $x$ spełniające nierówność $(x-x_k)^{\top}A_k^{-1}(x-x_k)\le1$
+
+Aby znaleźć rozwiązanie optymalne (a nie tylko dopuszczalne) przy pomocy algorytmu elipsoidy, jednocześnie oprócz zagadnienia prymalnego rozwiązywane jest zagadnienie dualne.
+Ograniczenia $Ax\le b,$ $x\ge0$ uzupełniamy o $A^{\top}y\ge c,$ $y\ge0$, otrzymując nowe zagadnienie o postaci $c^{\top}x\ge b^{\top}y,$ $Ax\le b,$ $A^{\top}y\ge c,$ $x,y\ge0$, które ma rozwiązanie
+wtedy i tylko wtedy, gdy zagadnienie prymalne ma skończone maksimum. Jeśli algorytm znajdzie rozwiązanie dopuszczalne $(x,y)$, to $x$ jest rozwiązaniem optymalnym zagadnienia prymalnego.
+
+Żeby niepusty zbiór rozwiązań dopuszczalnych miał dodatnią miarę (brak zdegenerowania któregoś z wymiarów wielościanu) w algorytmie elipsoidy zakładana jest ostrość nierówności.\newline\newline
+%
+\textbf{Lemat 3.1.2.1.} Układ nierówności liniowych $a_ix\le b_i, i=1,...,m$ ma rozwiązanie wtedy i tylko wtedy, gdy rozwiązanie ma układ nierówności liniowych $a_ix<b_i+2^{-L}, i=1,...,m$.
+% w SDK ale bez dowodu
+   \subsection{Przykład}
+Przykład działania algorytmu (szukania rozwiązania dopuszczalnego) dla $-x_1<-2,-x_2<-2$, oraz sfery startowej o środku w 0 i promieniu 3
+(na potrzeby rysunku, lecz wystarczająco dużym, by sfera zawierała rozwiązania dopuszczalne).\newline\newline
+%
+$X_0=\left[\begin{array}{c}0\\0\end{array}\right],\quad A_0=\left[\begin{array}{cc}9&0\\0&9\end{array}\right]$ -- koło o promieniu 3 (objętość $V=9\pi\approx28.3$).\newline\newline
+%
+Wybieramy niespełnioną nierówność $-x_1<-2$\newline\newline
+$X_1=\left[\begin{array}{c}0\\0\end{array}\right]-\frac{1}{3}\cdot\left[\begin{array}{c}-3\\0\end{array}\right]=\left[\begin{array}{c}1\\0\end{array}\right],\quad
+A_1=\frac{4}{3}\left(\left[\begin{array}{cc}9&0\\0&9\end{array}\right]-\frac{2}{3}\cdot\left[\begin{array}{cc}9&0\\0&0\end{array}\right] \right)=
+\left[\begin{array}{cc}4&0\\0&12\end{array}\right]$\newline\newline
+-- elipsa o półosi pionowej(wielkiej)=$\sqrt{12}$, i poziomej(małej)=2 ($V=2\sqrt{12}\pi\approx21.8$)\newline
+%
+Wybieramy niespełnioną nierówność $-x_1<-2$\newline\newline
+$X_2=\left[\begin{array}{c}1\\0\end{array}\right]-\frac{1}{3}\cdot\left[\begin{array}{c}-2\\0\end{array}\right]=\left[\begin{array}{c}\frac{5}{3}\\0\end{array}\right],\quad
+A_2=\frac{4}{3}\left(\left[\begin{array}{cc}4&0\\0&12\end{array}\right]-\frac{2}{3}\cdot\left[\begin{array}{cc}4&0\\0&0\end{array}\right] \right)=
+\left[\begin{array}{cc}\frac{16}{9}&0\\0&16\end{array}\right]$\newline\newline
+-- elipsa o półosiach $4$ i $\frac{4}{3}$ ($V=\frac{16}{3}\pi\approx16.8$)\newline
+%
+Wybieramy niespełnioną nierówność $-x_2<-2$\newline\newline
+$X_3=\left[\begin{array}{c}\frac{5}{3}\\0\end{array}\right]-\frac{1}{3}\cdot\left[\begin{array}{c}0\\-4\end{array}\right]=\left[\begin{array}{c}\frac{5}{3}\\\frac{4}{3}\end{array}\right],\quad
+A_3=\frac{4}{3}\left(\left[\begin{array}{cc}\frac{16}{9}&0\\0&16\end{array}\right]-\frac{2}{3}\cdot\left[\begin{array}{cc}0&0\\0&16\end{array}\right] \right)=
+\left[\begin{array}{cc}\frac{64}{27}&0\\0&\frac{64}{9}\end{array}\right]$\newline\newline
+-- elipsa o półosiach $\frac{8}{3}$ i $\frac{8\sqrt{3}}{9}$ ($V=\frac{64\sqrt{3}}{27}\pi\approx12.9$)\newline
+%
+Wybieramy niespełnioną nierówność $-x_2<-2$\newline\newline
+$X_4=\left[\begin{array}{c}\frac{5}{3}\\\frac{4}{3}\end{array}\right]-\frac{1}{3}\cdot\left[\begin{array}{c}0\\-\frac{8}{3}\end{array}\right]=\left[\begin{array}{c}\frac{5}{3}\\\frac{20}{9}\end{array}\right],\quad
+A_4=\frac{4}{3}\left(\left[\begin{array}{cc}\frac{64}{27}&0\\0&\frac{64}{9}\end{array}\right]-\frac{2}{3}\cdot\left[\begin{array}{cc}0&0\\0&\frac{64}{9}\end{array}\right] \right)=
+\left[\begin{array}{cc}\frac{256}{81}&0\\0&\frac{256}{81}\end{array}\right]$\newline\newline
+-- koło o promieniu $\frac{16}{9}$ ($V=\frac{256}{81}\pi\approx9.9$)\newline
+%
+Nierówność $-x_2<-2$ jest już spełniona, więc wybieramy niespełnioną nierówność $-x_1<-2$\newline\newline
+$X_5=\left[\begin{array}{c}\frac{5}{3}\\\frac{20}{9}\end{array}\right]-\frac{1}{3}\cdot\left[\begin{array}{c}-\frac{16}{9}\\0\end{array}\right]=\left[\begin{array}{c}\frac{61}{27}\\\frac{20}{9}\end{array}\right],\quad
+A_5=\frac{4}{3}\left(\left[\begin{array}{cc}\frac{256}{81}&0\\0&\frac{256}{81}\end{array}\right]-\frac{2}{3}\cdot\left[\begin{array}{cc}\frac{256}{81}&0\\0&0\end{array}\right] \right)=
+\left[\begin{array}{cc}\frac{1024}{729}&0\\0&\frac{1024}{273}\end{array}\right]$\newline\newline
+-- elipsa o półosiach $\frac{32\sqrt{3}}{27}$ i $\frac{32}{27}$ ($V=\frac{1024\sqrt{3}}{729}\pi\approx7.6$)\newline
+%
+Środek $X_5$ spełnia obie nierówności, więc jest rozwiązaniem dopuszczalnym.\newline
+%
+\includegraphics[scale=0.72]{elipsoidy1.jpg}\newline
+%
+(Na rysunku $X_0,...,X_5$ oznaczają środki elipsoid, linie przerywane podziały elipsoid na połowy, zaś mniejsze kropki (3) punkty wspólne kolejnych dwóch elipsoid.\newline
+%
+   \subsection{Uwagi}
+Dla $n$ zmiennych, jeśli program po $6n^2L$ iteracjach nie znajdzie rozwiązania dopuszczalnego, to zbiór dopuszczalny jest pusty.
+
+Macierze $A_k$ są symetryczne, co umożliwia zmniejszenie używanej pamięci.
+
+Dla zastosowań teoretycznych algorytm Khachiyana służy jako dowód należenia programowania liniowego do klasy problemów rozwiązywalnych w czasie wielomianowym,
+bardzo rzadko jest jednak stosowany w praktyce ze względu na bardzo długi czas działania nawet w prostych przypadkach.
+
+Głównymi wadami metody wpływającymi na czas działania oraz ciężkość implementacji są:
+\begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+\item potrzeba dużej dokładności operacji, co może być trudne do otrzymania w środowisku komputerowym
+\item tendencja punktów $x_k$ do błędnego poruszania się wokół obszaru dopuszczalnego
+\item zagęszczanie się macierzy $A_k$ (osiąganie pełnej gęstości)
+\item szybkie zwiększanie się uwarunkowania macierzy $A_k$
+\end{itemize}
+%
+  \section{Algorytm punktu wewnętrznego}
+Ten rozdział został napisany na podstawie \cite{KAR}.\newline
+W przeciwieństwie do algorytmu elipsoidalnego nieznajdującego wielu zastosowań w praktyce, algorytm punktu wewnętrznego programowania liniowego wymyślony przez Karmarkara (w 1984)
+w niektórych implementacjach zachowuje się bardzo dobrze dla rzeczywistych danych (porównywalnie do algorytmu sympleks).
+%
+   \subsection{Pomysł i geometria}
+Metoda Karmarkara zajmuje się optymalizacją funkcji celu programu liniowego w postaci:
+\centerline{$
+\min c^{\top}x$}\newline
+\centerline{przy warunkach:$Ax=0,\sum x_i=1,x\ge0$,}
+a więc minimalizuje funkcję celu na przecięciu $\pi=\Omega\cap\Delta$ wielościanu $\Omega=\{x:Ax=0\}$ z sympleksem standardowym $\Delta=\{x:\sum x_i=1,x\ge0\}$
+
+Pomysł algorytmu oparty jest na optymalizacji funkcji celu na sferze, którą można wykonać poprzez rozwiązanie układu równań.
+Przecięcie sfery i przestrzeni afinicznej jest sferą niższego wymiaru,
+co sprawia, że problem staje się równy $\min c'^{\top}x$, przy $x\in S'$, gdzie $c'$ jest rzutem ortogonalnym $c$ na $\Omega$
+i ma proste rozwiązanie (punkt na sferze w kierunku $-c'$ od środka).
+
+Algorytm polega na wybraniu punktu wewnętrznego wielościanu dopuszczalnego oraz w kolejnych iteracjach:
+\begin{itemize}\itemsep0pt \parskip0pt \parsep0pt
+\item wybieraniu elipsoidy $E$ całkowicie zawartej w wielościanie, o środku w wybranym punkcie,
+\item optymalizacji funkcji celu na niej,
+\item wybraniu jako środka kolejnej elipsoidy punktu znalezionego w poprzednim kroku.
+\end{itemize}
+%
+Różnica między wartością optymalną a wartością w badanym punkcie zmniejsza się w każdym kroku w stosunku $1-\frac{1}{\nu}$, gdzie $\nu$ jest liczbą na tyle dużą,
+że $\nu E$ (elipsoida o tym samym środku co $E$, lecz wymiarach przemnożonych przez $\nu$) zawiera wielościan dopuszczalny.\newline
+%
+   \subsection{Przygotowanie do algorytmu}
+\begin{enumerate}
+\item W algorytmie używane są transformacje rzutowe $\mathbb{R}^n$: w ogólnej postaci zdefiniowane przez $x\rightarrow\frac{Cx+d}{f^{\top}x+g}$, zaś
+w przypadku transformacji sympleksu standardowego $x\rightarrow\frac{Cx}{e^{\top}Cx}$ (gdzie $e$ -- wektor złożony z samych jedynek, C -- macierz nieosobliwa n$\times$n).
+W szczególności używane są transformacja przekształcająca punkt wewnętrzny $a$ sympleksu na jego środek i zachowująca jego wierzchołki $x'_i=\frac{x_i/a_i}{\sum\limits_{j}x_j/a_j}$,\newline
+oraz jej odwrotność $x_i=\frac{a_ix'_i}{\sum\limits_{j}a_jx'_j}$, (gdzie $a_i$ -- współrzędne punktu $a$).
+%
+\item Przekształcenie problemu do postaci przyjmowanej przez algorytm (dla problemu minimalizacji):\newline
+Zaczynamy podobnie jak przy metodzie elipsoidy ($Ax\ge b,$ $A^{\top}y\le c$, $c^{\top}x-b^{\top}y=0,$ $x,y\ge0$),
+dodajemy zmienne wolne ($Ax-u=b,$ $A^{\top}y+v=c,$ $c^{\top}x-b^{\top}y=0,$ $x,y,u,v\ge0$)
+oraz sztuczną zmienną do utworzenia wewnętrznego punktu startowego ($x_0,y_0,u_0,v_0$ -- punkty o dodatnich współrzędnych)
+($\min \lambda$ przy warunkach
+\begin{center}$\left\{\begin{array}{c} 
+Ax-u+(b-Ax_0+u_0)\lambda=b\\
+A^{\top}y+v+(c-A^{\top}y_0)\lambda=c\\
+c^{\top}x-b^{\top}y+(-c^{\top}x_0+b^{\top}v_0)\lambda=0\\
+x,y,u,v,\lambda\ge0\\
+\end{array}\right.$).\end{center}
+%
+Problem ten możemy przepisać do postaci $\min c^{\top}x$ przy $Ax=b,$ $x\ge0$ poprzez zmianę notacji,
+a następnie przy pomocy transformacji rzutowej dodatniego ortantu (uogólnienia ćwiartki układu współrzędnych) w sympleks standardowy zadanej przez
+$x'_i=\frac{x_i/a_i}{\sum\limits_{j}(x_j/a_j)+1}$, dla $i=1,...,n$, $x'_{n+1}=1-\sum\limits_{i=1}^{n}x'_i$, oraz zadając $A'_i=a_iA_i,$ $i=1,...,n$, $A'_{n+1}=-b$\newline
+otrzymujemy $\min c'^{\top}x'$, przy $A'x'=0$, $x'\ge0$, $\sum\limits_{i=1}^{n+1}x'_i=1$, ze środkiem sympleksu, jako startowym punktem dopuszczalnym.
+\end{enumerate}
+   \subsection{Szkic algorytmu}
+Niech $a_0$ oznacza środek sympleksu standardowego.
+\begin{enumerate}
+\item Mając aktualny punkt $a_k$ wybieramy kolejny poprzez wykonanie serii działań:
+\begin{enumerate}
+\item D=diag$\{x_1,...,x_n\}$ -- macierz diagonalna złożona ze współrzędnych punktu $a_k$.
+\item B=$\left[\begin{array}{c}A\cdot D\\e^{\top}\end{array}\right]$ -- macierz n+1$\times$n (n pierwszych wierszy to $A\cdot D$ zaś ostatni to same jedynki).
+\item $c_p=\left[I-B^{\top}(BB^{\top})^{-1}B\right]Dc$ -- rzut $Dc$ na jądro $B$ (jako przekształcenia liniowego).
+\item $\hat{c}=\frac{c_p}{|c_p|}$ -- wektor jednostkowy o kierunku i zwrocie wektora $c_p$.
+\item $b'=a_k-\alpha r\hat{c}$ (gdzie r=$\frac{1}{\sqrt{n(n-1)}}$, $\alpha\in (0,1),$ $\alpha$ może być ustawiona na $\frac{1}{4}$) -- przesunięcie się od środka w kierunku $\hat{c}$ o $\alpha r$
+\item $a_{k+1}=\frac{Db'}{e^{\top}Db'}$ -- odwrotna transformacja rzutowa $b'$.
+\end{enumerate}
+%
+\item Sprawdzenie dopuszczalności:\newline
+$f(x)=\sum\limits_{i}\ln{\frac{c^{\top}x}{x_i}}$ -- funkcja "potencjału", co do której oczekujemy, że będzie się polepszała przy każdym kroku o $\delta$
+($\delta$ zależy od wyboru $\alpha$, dla $\alpha=\frac{1}{4}$ $\delta=\frac{1}{8}$). Jeśli $f(a_{k+1})>f(a_k)-\delta$, zatrzymujemy działanie algorytmu wnioskując,
+że oryginalny program liniowy nie posiada rozwiązania optymalnego (jest sprzeczny albo nieograniczony).\newline\newline
+%
+\item Sprawdzenie optymalności:\newline
+Krok robiony co jakiś czas (nie przy każdej iteracji, a jedynie kiedy czas od ostatniego sprawdzania przekracza czas wykonania samego sprawdzenia (ze względu na złożoność)).
+Sprawdzanie odbywa się przez przechodzenie z punktu wewnętrznego do punktu skrajnego bez zwiększania funkcji celu i testowanie punktu skrajnego ze względu na optymalność.\newline
+\end{enumerate}
+%
+ \chapter{Programowanie liniowe całkowitoliczbowe}\label{r:calk}
+Programowanie liniowe jest często wykorzystywane do otrzymywania optymalnych rozwiązań problemów ze świata rzeczywistego,
+w których to przypadkach niektóre ze zmiennych $x_1,...,x_n$ mogą reprezentować ilości dóbr niepodzielnych i wynik postaci 
+"należy wysłać $5$ i $\frac{1}{2}$ transportów pociągowych oraz $2$ i $\frac{1}{3}$ samolotowych",
+lub "należy zbudować $\frac{9}{4}$ fabryki typu A oraz $\frac{6}{5}$ typu B" są niezadowalające,
+zaś zaokrąglanie ułamkowych wartości zazwyczaj prowadzi do otrzymania rozwiązania nieoptymalnego (wśród całkowitoliczbowych) lub niedopuszczalnego.
+
+Aby rozwiązywać takie problemy wymyślone zostało programowanie liniowe całkowitoliczbowe, pozwalające znaleźć rozwiązanie optymalizujące funkcję celu na zbiorze rozwiązań należących do
+zbioru dopuszczalnego i spełniających nałożone dodatkowo założenie o należeniu odpowiednich zmiennych do zbioru liczb całkowitych.
+%
+   \section{Typy, postacie zadań i podstawowe pojęcia}
+W swojej najogólniejszej formie (i postaci standardowej) program liniowy całkowitoliczbowy przyjmuje postać:
+$
+\max \sum\limits_{j=1}^{n}c_jx_j$, z warunkami\newline
+\centerline{$\left\{\begin{array}{c}
+\forall_{i=1..m}$ $\sum\limits_{j=1}^{n} a_{ij}x_j\le b_i,\\
+\forall_{j=1..n}$ $x_j\ge0,\\
+\forall_{j=1..r}$ $x_j\in\mathbb{Z}, r\le n\\
+\end{array}\right.
+$.}\newline\newline
+Jednak zazwyczaj możliwość ciągłości niektórych zmiennych jest pomijana, co pozwala programowi przyjąć postać:\newline
+$
+\max c^{\top}x$, z warunkami\newline
+\centerline{$\left\{\begin{array}{c}
+Ax\le b,\\
+x\ge0,\\
+x\in\mathbb{Z}^n\\
+\end{array}\right.
+$.}\newline
+W wielu przypadkach na zmienne nakłada się górne ograniczenie symbolizujące maksymalną osiągalność środków reprezentowanych przez zmienne,
+szczególnie często używanym przypadkiem jest programowanie 0--1 reprezentujące problem wyboru unikalnych elementów ze zbioru.\newline\newline
+
+Programowanie 0--1 przyjmuje postać:\newline
+\centerline{$
+\max c^{\top}x$, z warunkami $\left\{\begin{array}{c}
+Ax\le b,\\
+x\in\{0,1\}^{n}\\
+\end{array}\right.
+$}\newline
+(programy z ograniczonymi zmiennymi można sprowadzić do programowania 0--1 poprzez rozbicie binarne zmiennych ($x_i=...+4\cdot x_{i,2}+2\cdot x_{i,1}+x_{i,0}$))\newline\newline
+%
+\textbf{Uwaga 4.1.1.} Programowanie liniowe całkowitoliczbowe należy do klasy problemów NP--zupełnych, co oznacza, że znalezienie algorytmu rozwiązującego ten problem w czasie wielomianowym
+względem rozmiaru danych wejściowych lub udowodnienie, że takowy nie istnieje było by rezultatem o ogromnym znaczeniu (hipoteza $P=NP$)
+(co oznacza, że nie istnieje ogólnie znany algorytm wielomianowy i nie należy spodziewać się, że zostanie on szybko znaleziony).\newline\newline
+% W ALG
+\textbf{Definicja 4.1.2.} Relaksacją programu liniowego nazywamy zagadnienie powstałe przez rozszerzenie zbioru punktów dopuszczalnych oryginalnego problemu bez zmiany funkcji celu.\newline
+
+Relaksacja zadania posiada kilka użytecznych własności:
+\begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+\item jeśli relaksacja problemu jest sprzeczna, to problem również jest sprzeczny,
+\item wartość funkcji celu relaksacji problemu stanowi górne ograniczenie wartości funkcji celu problemu,
+\item jeśli rozwiązanie optymalne relaksacji zadania jest dopuszczalne dla zadania to jest dla niego również optymalne.
+\end{itemize}
+
+W przypadku programów liniowych całkowitoliczbowych często stosowaną relaksacją jest opuszczenie założenia o całkowitoliczbowości zmiennych,
+a więc rozszerzenie do ciągłego programu liniowego.\newline\newline
+%
+\textbf{Definicja 4.1.3.} Relaksację nazywamy dokładną, jeśli wszystkie wierzchołki są dopuszczalne dla programu wyjściowego.\newline\newline
+% w ALG
+\textbf{Definicja 4.1.4.} Macierz $A$ nazywamy całkowicie unimodularną, jeśli dla każdej jej kwadratowej podmacierzy $A'$ $\det{A'}\in\{-1,0,1\}$
+%
+   \section{Metoda podziału i ograniczeń}
+Ten rozdział został napisany na podstawie \cite{ZO}.\newline
+Jednym z przykładów algorytmów całkowitoliczbowego programowania liniowego wykorzystującego ciągłe programowanie liniowe jest metoda podziału i ograniczeń.
+Metoda rozwiązuje program liniowy o niewygodnym zbiorze dopuszczalnym poprzez rozwiązywanie kolejnych łatwych (algorytmicznie) relaksacji coraz mniejszych fragmentów problemu
+do momentu otrzymania rozwiązania optymalnego dopuszczalnego dla wyjściowego programu liniowego.
+
+W efekcie działania algorytmu problem rozbijany jest na kilka mniejszych (pod względem rozmiaru zbioru dopuszczalnego). Podproblemy te tworzą strukturę drzewiastą, w której
+problemy z dwóch różnych poddrzew mają rozłączny zbiór rozwiązań dopuszczalnych
+i jednocześnie w każdym momencie suma zbiorów dopuszczalnych w liściach drzewa jest zbiorem dopuszczalnym problemu wyjściowego.
+
+Aby otrzymać rozwiązanie optymalne zadania algorytm w kolejnych krokach rozgałęzia problem leżący w liściu drzewa lub zamyka go, jeśli poprzez podział na podproblemy
+nie możemy spodziewać się poprawienia aktualnie najlepszego znanego rozwiązania dopuszczalnego (spełnione jest któreś z kryteriów).
+
+Istnieją 3 kryteria zamykania aktywnych podproblemów:\newline
+\textbf{KZ1}: Jeżeli relaksacja podproblemu jest sprzeczna, to podproblem uważamy za zamknięty.\newline
+\textbf{KZ2}: Jeżeli znamy pewne rozwiązanie dopuszczalne problemu wyjściowego oraz rozwiązanie optymalne relaksacji podproblemu ma mniejszą wartość funkcji celu,
+to ten podproblem można uznać za zamknięty.\newline
+\textbf{KZ3}: Jeżeli rozwiązanie optymalne relaksacji problemu należy do zbioru rozwiązań dopuszczalnych problemu to ten podproblem również można uznać za zamknięty.
+
+Algorytm kończy działanie, gdy wszystkie podproblemy występujące w liściach drzewa są zamknięte.\newline
+%
+    \subsection{Implementacja}
+W przypadku programowania liniowego całkowitoliczbowego i relaksacji usuwającej założenia całkowitoliczbowości jedną z najczęściej stosowanych metod podziału
+jest górne i dolne ograniczanie wartości zmiennych, tak aby niecałkowitoliczbowe rozwiązanie optymalne dzielonego problemu nie znalazło się w żadnej z części.
+Wybieramy $k$ (jedną lub więcej) zmiennych o wartościach niecałkowitoliczbowych w rozwiązaniu optymalnym i tworzymy nowe podproblemy przy pomocy kombinacji
+($k$ parami niesprzecznych) ograniczeń postaci:
+($x_i\le\lfloor x'_i\rfloor$) lub ($x_i\ge\lceil x'_i\rceil=\lfloor x'_i\rfloor+1$), gdzie $x'_i$ to wartość zmiennej $x_i$ w rozwiązaniu optymalnym rozważanego problemu.\
+
+Większa ilość zmiennych wybranych do tworzenia ograniczeń nie powoduje zwiększenia efektywności algorytmu (zależnie od przypadków polepsza lub pogarsza), dlatego też drzewo podproblemów
+można utrzymywać w postaci binarnej (wybierając zawsze jedną zmienną niecałkowitą), co może uprościć przechowywanie danych.
+
+Właściwy wybór kolejnych podproblemów do rozważenia może znacznie zmniejszyć ilość rozgałęzień a więc i skrócić czas działania algorytmu, jednak bez dodatkowych informacji znalezienie dobrego
+porządku może być bardzo trudne. Oznacza to, że nie posiadając takich danych można ograniczyć się do wybierania zawsze najpóźniej dodanego podproblemu
+(przechodzenie po drzewie DFS), przechowując aktywne podproblemy na stosie.\newline\newline
+%
+\textbf{Algorytm 4. (Podział i ograniczenia) -- pseudokod:}\newline\newline
+%
+\textbf{Przygotowanie --}
+wrzucamy zrelaksowany program wyjściowy na stos (program wyjściowy nie zmienia się w trakcie działania algorytmu, więc na stosie można przechowywać tylko dodatkowe ograniczenia).\newline\newline
+%
+W kolejnych iteracjach:
+\begin{enumerate}
+\item Jeżeli stos jest pusty to kończymy działanie algorytmu, w przeciwnym przypadku
+pobieramy podproblem ze stosu i rozwiązujemy go przy pomocy algorytmu programowania liniowego (na przykład algorytmu sympleks).
+%
+\item Jeżeli podproblem jest nieograniczony, to kończymy działanie algorytmu(można wykonać tylko przy pierwszej iteracji).
+%
+\item Jeżeli podproblem jest pusty to przechodzimy do kroku 1.
+%
+\item Jeżeli rozwiązanie optymalne podproblemu jest całkowitoliczbowe i wartość funkcji celu jest dla niego lepsza
+od wartości dla najlepszego dotychczas znalezionego rozwiązania, to zapamiętujemy je zamiast dotychczasowego.
+W obu (całkowitoliczbowych) przypadkach przechodzimy do kroku 1.
+%
+\item Jeżeli rozwiązanie optymalne podproblemu nie jest całkowitoliczbowe i wartość funkcji celu jest dla niego niewiększa od dotychczasowej, to przechodzimy do kroku 1, w przeciwnym przypadku
+wybieramy jedną ze zmiennych ($i$) dla której niespełnione jest założenie całkowitoliczbowości i tworzymy dwa nowe podproblemy poprzez dodanie do aktualnego odpowiednio ograniczeń
+$x_i\le\lfloor x'_i\rfloor$ i $x_i\ge\lceil x'_i\rceil$ (ewentualnie zamieniając=zaostrzając już istniejące ograniczenia na tę zmienną), oba wrzucamy na stos i przechodzimy do kroku 1.
+\end{enumerate}
+%
+\textbf{Uwaga 4.2.1.1.} Algorytm można stosować również w ogólnym przypadku programowania liniowego całkowitoliczbowego --
+wystarczy przy wszystkich sprawdzaniach całkowitości pomijać zmienne, od których jej nie wymagamy.\newline\newline
+%
+\textbf{Uwaga 4.2.1.2.} Poza patologicznymi przypadkami praktycznie nie do odtworzenia w postaci danych wejściowych algorytmu
+jeśli standardowa relaksacja jest nieograniczona zaś problem nie jest sprzeczny to jest on również nieograniczony.\newline
+%
+    \subsection{Przykład}
+Wyznaczymy\newline
+$
+\max$ $2x_1+3x_2$ przy założeniach
+\begin{center}
+$\left\{\begin{array}{c}
+2x_1+x_2\le 9\\
+4x_1+9x_2\le37\\
+x_1,x_2\ge0\\
+x_1,x_2\in\mathbb{Z}\\
+\end{array}\right.
+$.\end{center}
+\begin{itemize}
+\item Problem relaksujemy poprzez usunięcie założeń $x_1,x_2\in\mathbb{Z}$ i rozwiązujemy otrzymując rozwiązanie optymalne $x=[\begin{array}{cc}3\frac{1}{7}&2\frac{5}{7}\end{array}]^{\top}$,
+wybieramy niecałkowitą wartość $3\frac{1}{7}$ i tworzymy dwa podproblemy z ograniczeniami $x_1\le3$ oraz $x_1\ge4$ odpowiednio.
+\item Zajmując się pierwszym z podproblemów, otrzymujemy rozwiązanie optymalne \linebreak
+$x=[\begin{array}{cc}3&2\frac{7}{9}\end{array}]^{\top}$, wybieramy niecałkowitą wartość $2\frac{7}{9}$
+i tworzymy dwa nowe podproblemy z dodatkowymi ograniczeniami $x_2\le2$ i $x_2\ge3$ odpowiednio.
+\item Wybierając pierwszy z nich, otrzymujemy rozwiązanie optymalne dopuszczalne dla wyjściowego problemu $x=[\begin{array}{cc}3&2\end{array}]^{\top}$ o wartości funkcji celu $12$.
+Zapamiętujemy współrzędne $x$ oraz wartość funkcji celu a następnie zamykamy podproblem na podstawie KZ3.
+\item Rozwiązujemy podproblem $x_1\le3,x_2\ge3$ otrzymując rozwiązanie optymalne $x=[\begin{array}{cc}2\frac{1}{2}&3\end{array}]^{\top}$ o wartości funkcji celu $14>12$,
+wybieramy niecałkowitą wartość $2\frac{1}{2}$ i tworzymy dwa nowe podproblemy z odpowiednio zaostrzonym ograniczeniem $x_1\le2$ \linebreak i dodanym $x_1\ge 3$.
+\item Pierwszy z nich daje rozwiązanie $x=[\begin{array}{cc}2&3\frac{2}{9}\end{array}]^{\top}$ o wartości $13\frac{2}{3}>12$,
+tworzymy podproblemy z odpowiednio dodanym ograniczeniem $x_2\le 3$ i zaostrzonym $x_2\ge4$.
+\item Wybierając pierwszy z nich, otrzymujemy rozwiązanie całkowitoliczbowe $x=[\begin{array}{cc}2&3\end{array}]^{\top}$ o wartości $13>12$.
+Zastępujemy poprzednie dane i zamykamy podproblem na podstawie KZ3.
+\item Podproblem $x_1\le2,x_2\ge4$, ma rozwiązanie optymalne $x=[\begin{array}{cc}\frac{1}{4}&4\end{array}]^{\top}$ o wartości \linebreak $12\frac{1}{2}<13$,
+zamykamy go na podstawie KZ2.
+\item Podproblem $3\le x_1\le3,x_2\ge3$ jest pusty, więc zamykamy go z KZ1.
+\item Rozwiązujemy podproblem $x_1\ge4$ otrzymując rozwiązanie optymalne $x=[\begin{array}{cc}4&1\end{array}]^{\top}$ \linebreak o wartości funkcji celu $11<13$.
+Zamykamy podproblem na podstawie KZ2 lub KZ3.
+\end{itemize}
+%
+ \includegraphics[scale=0.3]{drzewo.jpg}\newline
+   \section{Przegląd pośredni dla programowania 0--1}
+Ten rozdział został napisany na podstawie \cite{SDK}.\newline
+Jedną z najprostszych a jednocześnie najkosztowniejszych metod rozwiązania programu liniowego całkowitoliczbowego o ograniczonych zmiennych jest
+sprawdzenie dopuszczalności i wartości funkcji celu dla wszystkich (skończenie wielu) możliwych wartościowań wektora $x$.
+Sposobem na ulepszenie tej trywialnej metody jest stosowanie odpowiednich technik przeglądu sterowanego, które na podstawie różnych cech pozwalają
+wyeliminować wiele przypadków bez potrzeby ich wyliczania, oraz pozostałe przeglądać w takiej kolejności, która pozwoli przejrzeć je jak najszybciej,
+lub też pomijać przypadki nierokujące szans na poprawienie aktualnie znalezionego najlepszego rozwiązania.\newline
+%
+    \subsection{Przygotowanie i analiza problemu}
+Rozpatrując problem minimalizacyjny:\newline
+$\min$ $\sum\limits_{j=1}^{n}c_jx_j$ przy warunkach\newline
+\centerline{$\forall_{i=1..m}\sum\limits_{j=1}^{n}a_{ij}x_j\le b_i,\forall_{j=1..n}x_j\in\{0,1\}$}\newline
+poprzez ewentualne podstawienia $x'_j=1-x_j$, doprowadzamy do sytuacji, w której $\forall_{j=1..n}c_j\ge0$, a więc do takiej, że zmiana dowolnego $x_j$ z $0$ na $1$ nie może powodować
+polepszenia funkcji celu.
+
+Kolejność przeglądania układów wartościowań $x$ może być przedstawiona za pomocą drzewa przeszukiwań, w którym węzeł odpowiada pewnemu potencjalnemu rozwiązaniu 0--1,
+a dwa węzły połączone gałęzią różnią się wartością jednej zmiennej. Każda zmienna może się znajdować w jednym z trzech stanów 0, 1, wartość swobodna, zaś nowy węzeł (odchodzący w dół)
+związany jest z ustaleniem wartości jednej zmiennej na 1 (krok do przodu) lub 0 (nawrót).
+
+Podstawowym schematem metody jest ustalanie wartości pewnej zmiennej swobodnej na 1, zbadanie możliwości uzyskania rozwiązań dopuszczalnych i poprawienia aktualnie znalezionego
+najlepszego rozwiązania, następnie rekurencyjne wybranie kolejnej zmiennej, zaś po powrocie powtórzenie operacji dla wartości 0 oraz powrócenie do poprzedniego węzła.
+
+Dla konkretnego węzła algorytmu definiujemy $J$ jako zbiór indeksów zmiennych ustalonych (nie swobodnych), \quad $y_i=b_i-\sum\limits_{j\in J}a_{ij}x_j$, $z=\sum\limits_{j\in J}c_jx_j$,\newline
+\centerline{$T=\{t:x_t\text{ jest swobodne, }z+c_t<\tilde{z},$ $a_{it}<0\text{ dla pewnego i, takiego że }y_i<0\}$,}\newline
+czyli zbiór zmiennych, których ustalenie na 1
+może zmniejszyć stopień niedopuszczalności któregoś z niespełnianych założeń, jednocześnie dając szansę na poprawienie wartości $\tilde{z}$ -- aktualnie znanego najlepszego rozwiązania.
+Dla konkretnych zmiennych swobodnych (w ustalonym węźle) zbiór $M_j=\{i:y_i-a_{ij}<0\}$ i wartość $v_j=\sum\limits_{i\in M_j}(y_i-a_{ij})$ wyznaczającą sumaryczną niedopuszczalność.
+%
+    \subsection{Szkic algorytmu}
+Zaczynając od samych zmiennych swobodnych oraz $\tilde{z}=\infty$, w kolejnych węzłach:
+\begin{enumerate}
+\item Obliczamy $y_i$, oraz $z$, jeżeli $\forall_{i}y_i\ge0$ oraz $z<\tilde{z}$, to przyjmujemy $\tilde{z}=z,\tilde{x}=x$ --
+nowe potencjalne rozwiązanie optymalne (ustawiając zmienne swobodne na 0) i cofamy się, w przeciwnym przypadku przechodzimy dalej.
+%
+\item Tworzymy podzbiór $T$ i jeśli jest pusty, to się cofamy, gdyż w obecnym poddrzewie nie możemy otrzymać rozwiązania dopuszczalnego.
+%
+\item (Test niedopuszczalności)\newline
+Sprawdzamy, czy istnieje takie $i$, że $y_i<0$ oraz $y_i-\sum\limits_{t\in T}\min{\{0,a_{it}\}}<0$ --
+warunek, który nie może być spełniony przy aktualnym wartościowaniu zmiennych ustalonych. Jeśli istnieje, to się cofamy.
+%
+\item (Test rozgałęzień Balasa)\newline
+Tworzymy zbiory $M_j$, jeżeli są puste, to się cofamy. W przeciwnym przypadku obliczamy wartości $v_j$ dla każdej zmiennej swobodnej i
+wybieramy tę zmienną $x_j$ jako następną (ustawiając na 1), dla której $v_j$ osiąga największą wartość i wracamy do kroku 1.
+\end{enumerate}
+
+Cofanie odbywa się poprzez powrót do węzła, który odpowiada najpóźniejszej (w kolejności wybierania) zmiennej ustawionej na 1
+(dlatego też oprócz aktualnych wartościowań zmiennych $x_j$ zapamiętujemy też kolejność ich wybierania), wszystkie późniejsze zmienne stają się z powrotem swobodne,
+zaś ona przyjmuje wartość 0. Jeśli nie było takiej zmiennej (ustalonej na 1), to kończymy działanie algorytmu.\newline
+%
+   \section{Przypadki szczególne i algorytmy aproksymacyjne}
+\textbf{Twierdzenie 4.4.1.} Jeżeli wektor $b$ jest całkowitoliczbowy zaś macierz $A$ całkowicie unimodularna, to program o warunkach $Ax\le b$ ma wierzchołki całkowitoliczbowe
+(czyli jest dokładną relaksacją programu liniowego całkowitoliczbowego).
+\begin{proof}[Dowód]
+Z reguł Kramera rozwiązanie systemu $n$ liniowo niezależnych równań (bazowe rozwiązanie dopuszczalne) $x_i=\frac{\det{A'_i}}{\det{A'}}$, gdzie $A'$ jest podmacierzą $A$ wyznaczoną
+przez te $n$ równań, zaś $A'_i$ podmacierzą $A$ z $i$--tą kolumną zastąpioną przez wektor $b$. $\det{A'_i}\in\mathbb{Z},\det{A'}\in\{-1,1\}$.
+\end{proof}
+% w ALG
+\noindent
+\textbf{Wniosek 4.4.2.} Jeśli program liniowy całkowitoliczbowy da się przedstawić w postaci z macierzą całkowicie unimodularną,
+to możemy rozwiązać go w czasie wielomianowym przy pomocy algorytmu programowania liniowego ciągłego.\newline\newline
+%
+\textit{Szkic dowodu}: Optymalne rozwiązanie znalezione na przykład przy pomocy algorytmu elipsoidy leży na "optymalnej ścianie" wielościanu, która jest prostopadła do wektora $c$.
+Ściana może być wyznaczona przy pomocy nierówności (typu $\sum\limits_{j=1}^{n}a_{ij}x_j\le b_i$ lub $x_i\ge0$) spełnianych jako równość.
+Poruszając się po ścianie w dowolnym kierunku aż natrafimy na jej krawędź -- czyli ścianę niższego wymiaru schodzimy w końcu do ściany wymiaru 0, czyli wierzchołka 
+(dochodzenie do krawędzi można uzyskać na wiele sposobów na przykład przy pomocy nowego programu liniowego z funkcją celu odpowiadającą wybranemu kierunkowi
+i przy założeniach równości dla nierówności wyznaczających ścianę jest to jednak drogi czasowo sposób, lecz cała konstrukcja może być przeprowadzona w czasie wielomianowym).
+
+Innym rozwiązaniem jest użycie wielomianowego algorytmu zawsze znajdującego rozwiązanie optymalne leżące w wierzchołku wielościanu dopuszczalnego.\newline\newline
+%
+\textbf{Definicja 4.4.3.} Algorytm wielomianowy nazwiemy $\alpha$--aproksymacyjnym, jeśli dla dowolnego wejścia $I$ algorytm zwraca rozwiązanie dopuszczalne spełniające nierówność
+$\frac{ALG(I)}{OPT(I)}\ge\alpha$ dla problemu maksymalizacji lub $\frac{ALG(I)}{OPT(I)}\le\alpha$ dla minimalizacji
+(gdzie $ALG(I)$ to wartość funkcji celu dla rozwiązania znalezionego przez algorytm dla wejścia $I$, zaś $OPT(I)$ wartość dla rozwiązania optymalnego).\newline
+
+Algorytmy aproksymacyjne wykorzystywane są, gdy algorytm znajdujący optymalne rozwiązania jest zbyt drogi czasowo
+(dla rzeczywistych danych niektóre algorytmy o złożoności wykładniczej mogą potrzebować czasu rzędu lat lub wieków),
+zaś optymalność rozwiązania nie jest szczególnie ważna i możemy zadowolić się najlepszym rozwiązaniem możliwym do znalezienia w określonym czasie.
+
+Problem plecakowy jest to szczególny (lecz bardzo częsty w praktyce) przypadek programowania 0--1 w którym każda zmienna reprezentuje przedmiot posiadający nieujemną wartość i wagę.
+Optymalnym rozwiązaniem problemu plecakowego jest taki wybór przedmiotów, aby suma ich wartości była maksymalna przy zachowaniu ograniczenia na sumę wag:\newline
+\centerline{$\max \sum\limits_{i=1}^{n}p_ix_i$ przy $\sum\limits_{i=1}^{n}w_ix_i\le W,\forall_{i=1..n}x_i\in\{0,1\}$.}\newline
+
+Prostym przykładem algorytmu $\frac{1}{2}$--aproksymacyjnego dla problemu plecakowego jest:\newline
+ułożenie wszystkich "mieszczących się" przedmiotów ($w_i\le W$) malejąco względem $\frac{p_i}{w_i}$($\frac{p_1}{w_1}\ge\frac{p_2}{w_2}\ge...\ge\frac{p_n}{w_n}$),
+następnie wybierać wszystkie przedmioty za kolejnością do momentu, gdy kolejny przedmiot jest zbyt duży by go wybrać
+(wybrane przedmioty $1,...,r$ : $\sum\limits_{i=1}^{r}w_i\le W,$ $\sum\limits_{i=1}^{r+1}w_i> W$), następnie wybieramy wartościowsze z dwóch:\{przedmioty $1,...,r$, przedmiot $r+1$\} 
+($\max\{\sum\limits_{i=1}^{r}p_i,p_{r+1}\}$).\newline
+Jest to $\frac{1}{2}$--aproksymacja ponieważ $ALG(I)=\max\{\sum\limits_{i=1}^{r}p_i,p_{r+1}\}\ge\frac{1}{2}\sum\limits_{i=1}^{r+1}p_i\ge\frac{1}{2}OPT(I)$.
+
+Istnieje też bardziej złożony program aproksymacyjny, jednak posiadający tę własność, że można sterować stopniem jego aproksymacji (lepszej aproksymacji odpowiada dłuższy czas działania).
+
+Rozważmy algorytm pomocniczy (zakładający, że wszystkie wartości przedmiotów $p_i$ są liczbami całkowitymi, a ich suma jest równa $P$):\newline
+Używając dynamicznego programowania tworzymy tablicę ($T[i,p]$ = minimalny rozmiar potrzebny by otrzymać wartość $\ge p$ używając tylko przedmiotów $1,...,i$), przy pomocy wzorów
+$T[i,p]=\min\{T[i-1,p],w_i+T[i-1,p-p_i]\}$ -- indukcyjnie po $i$ (wynikiem jest największe takie $p$, że $T[n,p]\le W$).
+Daje nam to algorytm optymalizacyjny o złożoności pseudowielomianowej O($n\cdot P$). Pseudo, gdyż $P$ może być wielkością wykładniczą względem $n$.
+
+Sposobem na poradzenie sobie z tym problemem jest: wyliczenie wartości $P=\sum\limits_{i=1}^{n}p_i$ (wszystkie możliwe wartości sum $p_i$ zawierają się w przedziale $[0,P]$),
+następnie podzielenie przedziału $[0,P]$ na $s$ równych segmentów i zaokrąglanie wartości należących do danych segmentów w dół do granicy między segmentami
+($p'_i=\lfloor\frac{p_i}{P}\cdot s\rfloor$) oraz wykonanie poprzedniego algorytmu dla nowych całkowitoliczbowych wartości $p'_i$ (teraz rolę całkowitoliczbowego $P$ spełnia liczba $s$).
+Otrzymujemy tym sposobem algorytm działający w czasie O($n\cdot s$).\newline
+Wówczas:
+\begin{align*}
+ALG & \ge OPT'\text{ (optimum dla zmienionych wartości) } \\
+& \ge\sum\limits_{i\in O}p'_i\text{(suma wartości zmienionych dla rozwiązania optymalnego oryginalnego zadania)}\\
+& \ge \sum\limits_{i\in O}p_i-\frac{n\cdot P}{s}=OPT-\frac{n\cdot P}{s}\ge \left(1-\frac{n^2}{s}\right)\cdot OPT.
+\end{align*}
+Oznacza to, że jeśli chcemy otrzymać (1-$\varepsilon$)--aproksymację, wybieramy $s=\frac{n^2}{\varepsilon}$ i otrzymujemy algorytm działający w czasie O($\frac{n^3}{\varepsilon}$).
+(Jest to w pełni wielomianowy schemat aproksymacji).
+%
+  \chapter{Zastosowania programowania liniowego}\label{r:zast}
+Programowanie liniowe posiada wiele zastosowań. Istnieje wiele znanych problemów algorytmicznych, które mogą zostać wyrażone w postaci programu liniowego lub
+częściej w postaci programu liniowego całkowitoliczbowego. Poprzez redukcję problemów do postaci maksymalizowanej bądź minimalizowanej funkcji liniowej, oraz przedstawienie
+podstawowych założeń rozważanego problemu do równań i nierówności liniowych można otrzymać nowe metody rozwiązywania, czasem prostsze lub stanowiące punkt wyjścia do stworzenia
+nowego, bazującego na wykorzystywanych metodach rozwiązywania programowania liniowego algorytmu dostosowanego do specyfiki problemu.
+Drugim przedstawionym sposobem wykorzystywania programowania liniowego jest uzyskiwanie $\alpha$--aproksymacji problemów, których dokładne rozwiązanie jest zbyt kosztowne czasowo
+aby było używane w praktyce.\newline
+%
+   \section{Redukcje do programów liniowych}
+    \subsection{Min--Cost Max--Flow}
+Problem maksymalnego przepływu w grafie zajmuje się wyznaczeniem wielkości przepływów, jakie należy puścić po krawędziach grafu, aby łączna wielkość przesłana ze źródła
+do ujścia była największa możliwa.
+Problem maksymalnego przepływu o minimalnym koszcie w grafie zajmuje się wyznaczeniem takiego wśród maksymalnych przepływów, który minimalizuje łączny koszt przesłania.
+
+Problem zdefiniowany jest przy pomocy $n$--tki : $(G,s,t,c,w)$, gdzie:\newline
+$G$ -- graf, czyli zbiór wierzchołków połączonych krawędziami ($V(G)$ -- zbiór wierzchołków grafu E(G) -- zbiór krawędzi grafu), $s$ -- źródło, $t$ -- ujście,
+$c$ -- funkcja przyporządkowująca krawędziom (czyli uporządkowanym parom wierzchołków) koszt przesłania pojedynczej jednostki przepływu,
+$w$ -- funkcja przyporządkowująca krawędziom maksymalną przepuszczalność (maksymalną ilość jednostek przepływu, które można przesłać przez daną krawędź).
+
+Istnieją dwa podejścia do redukcji MIN--COST MAX--FLOW do programowania liniowego:
+\begin{enumerate}
+\item Wyliczyć $F=\max \sum\limits_{v: (s,v)\in E(G)}f_{(s,v)}$ przy warunkach:\newline
+\centerline{$\left\{\begin{array}{c}
+\forall_{(u,v)\in E(G)} f_{(u,v)}\le c_{(u,v)}\\
+\forall_{v\in V(G)\backslash\{s,t\}}\sum\limits_{(u,v)\in E(G)}f_{(u,v)}-\sum\limits_{(v,w)\in E(G)}f_{(v,w)}=0\\
+\forall_{(u,v)\in E(G)} f_{(u,v)}\le 0
+\end{array}\right.$,}\newline
+czyli maksymalną wartość przepływu ($f_{(u,v)}$ oznacza wartość przepływu przesyłanego po krawędzi $(u,v)\in E(G)$,
+założenie 1 zapewnia, że wartość przepływu nie przekroczy ograniczeń, warunek 2 zapewnia, że z każdego węzła wpływa tyle ile wypływa, zaś 3 zabrania przesyłania wartości negatywnych).
+Następnie uruchamiamy drugi program liniowy: $\min \sum\limits_{(u,v)\in E(G)}c_{(u,v)}\cdot f_{(u,v)}$ przy warunkach:\newline
+\centerline{$\left\{\begin{array}{c}
+\forall_{(u,v)\in E(G)} f_{(u,v)}\le c_{(u,v)}\\
+\forall_{v\in V(G)\backslash\{s,t\}}\sum\limits_{(u,v)\in E(G)}f_{(u,v)}-\sum\limits_{(v,w)\in E(G)}f_{(v,w)}=0\\
+\forall_{(u,v)\in E(G)} f_{(u,v)}\le 0\\
+\sum\limits_{v: (s,v)\in E(G)}f_{(s,v)}\ge F
+\end{array}\right.$}
+%
+\item Innym podejściem jest dodanie do grafu krawędzi $(t,s)$ o ujemnym koszcie\newline
+\centerline{$c_{(t,s)}\le-\max\limits_{(u,v)\in E(G)}\{|c_{(u,v)}|\}$}\newline
+(jeżeli już istniała taka krawędź, to możemy ją zastąpić, gdyż nadanie jej dodatniego przepływu zaprzecza jego maksymalności) i rozwiązanie programu:\newline
+$\min \sum\limits_{(u,v)\in E(G)}c_{(u,v)}\cdot f_{(u,v)}$ przy warunkach:\newline
+\centerline{$\left\{\begin{array}{c}
+\forall_{(u,v)\in E(G)} f_{(u,v)}\le c_{(u,v)}\\
+\forall_{v\in V(G)}\sum\limits_{(u,v)\in E(G)}f_{(u,v)}-\sum\limits_{(v,w)\in E(G)}f_{(v,w)}=0\\
+\forall_{(u,v)\in E(G)} f_{(u,v)}\le 0\\
+\end{array}\right.$}
+\end{enumerate}
+%
+    \subsection{Cykl Hamiltona}
+Cyklem Hamiltona w grafie nazywamy taki cykl krawędziowy, który odwiedza każdy wierzchołek grafu dokładnie raz.
+(Problem znajdowania cyklu Hamiltona w grafie jest NP--zupełny)
+
+Rozważmy graf nieskierowany ($(u,v)=(v,u)$). Wówczas
+programem liniowym całkowitoliczbowym rozwiązującym problem cyklu Hamiltona jest:\newline
+\centerline{$\max \sum\limits_{(u,v)\in E(G)}x_{(u,v)}$ przy założeniach:
+$\left\{\begin{array}{c}
+\forall_{u\in V(G)} \sum\limits_{v:(u,v)\in E(G)}x_{(u,v)}\le 2\\
+\forall_{(u,v)\in E(G)}$ $x_{(u,v)}\in\{0,1\}
+\end{array}\right.$.}\newline
+Zaś programem liniowym (ciągłym) jest:\newline
+\centerline{$\max \sum\limits_{(u,v)\in E(G)}x_{(u,v)}$ przy założeniach:
+$\left\{\begin{array}{c}
+\forall_{(u,v)\in E(G)}$ $0\le x_{(u,v)}\le1\\
+\forall_{u\in V(G)} \sum\limits_{v:(u,v)\in E(G)}x_{(u,v)}\le 2\\
+\forall_{S\subsetneq V}\sum\limits_{v\in S,w\notin S}x_{(v,w)}\ge1
+\end{array}\right.$.}\newline
+(Rozmiar ostatniego warunku jest wykładniczy).
+
+W obu programach graf zawiera cykl Hamiltona jeśli $\max=|V(G)|$.\newline
+%
+    \subsection{Max--Matching}
+Skojarzeniem w grafie (nieskierowanym) nazywamy taki zbiór krawędzi, w którym żadne dwie nie mają wspólnego końca.
+Relaksacją programu liniowego całkowitoliczbowego znajdującego maksymalne (w sensie liczności) skojarzenie do programu liniowego ciągłego jest:\newline
+\centerline{$\max\sum\limits_{(u,v)\in E(G)}x_{(u,v)}$ przy założeniach: 
+$\left\{\begin{array}{c}
+\forall_{(u,v)\in E(G)}0\le x_{(u,v)}\le 1\\
+\forall_{v\in V(G)}\sum\limits_{u:(u,v)\in E(G)}x_{(u,v)}\le 1\\
+\end{array}\right.$.}\newline
+W przypadku grafów dwudzielnych (graf, w którym wierzchołki można podzielić na dwie grupy, takie że w grafie nie ma krawędzi pomiędzy wierzchołkami z tej samej grupy)
+Macierz $A$ jest całkowicie unimodularna, więc rozwiązanie programu liniowego jest całkowitoliczbowe.\newline
+%
+   \section{Aproksymacje z użyciem programowania liniowego}
+    \subsection{Vertex Cover}
+Pokryciem wierzchołkowym w grafie nazywamy taki zbiór jego wierzchołków, że dla każdej krawędzi grafu przynajmniej jeden jej koniec należy do tego zbioru.
+NP--zupełny problem Vertex Cover zajmuje się znajdowaniem pokrycia wierzchołkowego o minimalnej wadze (każdy wierzchołek $v$ posiada wagę $w(v)$).\newline
+
+Programem liniowym całkowitoliczbowym dla Vertex Cover jest:\newline
+\centerline{$\min\sum\limits_{v\in V(G)}w(v)x_v$ przy założeniach: 
+$\left\{\begin{array}{c}
+\forall_{(u,v)\in E(G)}x_u+x_v\ge1\\
+\forall_{v\in V(G)}x_{v}\in\{0,1\}
+\end{array}\right.$.}\newline
+Po opuszczeniu całkowitoliczbowości otrzymujemy:\newline
+\centerline{$\min\sum\limits_{v\in V(G)}w(v)x_v$ przy założeniach: 
+$\left\{\begin{array}{c}
+\forall_{(u,v)\in E(G)}x_u+x_v\ge1\\
+\forall_{v\in V(G)}x_v\ge0
+\end{array}\right.$}\newline
+(założenie $x_v\le1$ jest niepotrzebne, gdyż dla rozwiązania optymalnego będzie i tak spełnione).\newline
+Jeśli otrzymane rozwiązanie ($x'$) pozaokrąglamy do wartości całkowitoliczbowych ($x_v=1$ dla $x'_v\ge\frac{1}{2}$ oraz $x_v=0$ dla $x'_v<\frac{1}{2}$)
+rozwiązanie jest dopuszczalne (zbiór $A=\{v:x_v=1\}$ jest pokryciem wierzchołkowym).\newline
+Co więcej $w(A)=\sum\limits_{v\in V(G)}w(v)x_v\le\sum\limits_{v\in V(G)}w(v)x'_v=2 OPT'\le2 OPT$, jest to więc 2--aproksymacja.\newline
+%
+    \subsection{Set Cover}
+Mając daną rodzinę $m$ zbiorów pokryciem zbioru nazywamy taką podrodzinę, której suma jest równa sumie całej rodziny ($U=\bigcup\limits_{i=1}^{m}S_i$).
+NP--zupełny problem Set Cover zajmuje się znajdowaniem pokrycia zbioru o minimalnej wadze (każdy zbiór $S_i$ posiada wagę $w(i)$).\newline
+
+Programem liniowym całkowitoliczbowym dla Set Cover jest:\newline
+\centerline{$\min\sum\limits_{i=1}^{m}w(i)x_i$ przy założeniach: 
+$\left\{\begin{array}{c}
+\forall_{e\in U}\sum\limits_{i:S_i\ni e}x_i\ge1\\
+\forall_{i=1,...,m}x_i\in\{0,1\}
+\end{array}\right.$.}\newline
+Po opuszczeniu całkowitoliczbowości otrzymujemy:\newline
+\centerline{$\min\sum\limits_{i=1}^{m}w(i)x_i$ przy założeniach: 
+$\left\{\begin{array}{c}
+\forall_{e\in U}\sum\limits_{i:S_i\ni e}x_i\ge1\\
+\forall_{i=1,...,m}x_i\ge0
+\end{array}\right.$.}
+
+Tym razem proste zaokrąglanie nie działa, gdyż możemy otrzymać rozwiązanie niedopuszczalne, jeśli natomiast założymy, że liczba wystąpień dowolnego elementu w rodzinie
+(liczba zbiorów go zawierających) jest ograniczona przez $k$, to stosując zaokrąglenie ($x_i=1$ dla $x'_i\ge\frac{1}{k}$ oraz $x_i=0$ dla $x'_i<\frac{1}{k}$)
+otrzymamy $k$--aproksymację. Niestety stworzenie lepszej, niezależnej od $k$ aproksymacji jest wysoce nieprawdopodobne.\newline\newline
+%
+(\textbf{Twierdzenie 5.2.2.1.} (Raz, Safra 1997) Nie istnieje algorytm o($\log|U|$)--aproksymacyjny dla problemu pokrycia zbioru, o ile $P\neq NP$.)\newline
+%
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Bibliografia}
+
+\bibitem[SDK]{SDK} Maciej M. Sysło, Narsingh Deo, Janusz S. Kowalik,
+\textit{Algorytmy optymalizacji dyskretnej},
+Wydawnictwo naukowe PWN, Warszawa 1995. 
+
+\bibitem[ZO]{ZO} Krystian Zorychta, Włodzimierz Ogryczak,
+\textit{Programowanie liniowe i całkowitoliczbowe. Metoda podziału i ograniczeń},
+Wydawnictwo Naukowo--Techniczne, Warszawa 1981.
+
+\bibitem[ALG]{ALG} Krzysztof Diks, Łukasz Kowalik, Wojciech Rytter, Piotr Sankowski -- Uniwersytet Warszawski, Wydział Matematyki, Informatyki i Mechaniki,
+\textit{Zaawansowane algorytmy i struktury danych},
+\url{http://smurf.mimuw.edu.pl/zaawansowane_algorytmy}
+
+\bibitem[OPT]{OPT} Andrzej Strojnowski,
+\textit{Optymalizacja I},\newline
+\url{http://mst.mimuw.edu.pl/lecture.php?lecture=op1}
+
+
+\bibitem[KAR]{KAR} Narendra Karmarkar,
+\textit{A new polynomial--time algorithm for linear programming.}
+In \textit{Combinatorica Volume 4 Issue 4,}
+pp. 373 - 395,
+Springer-Vergal New York, Inc. Secaucus, NJ, USA Dec. 1984
+
+
+%\bibitem[KAR]{KAR} Narendra Karmarkar,
+%\textit{A new polynomial--time algorithm for linear programming},
+%\url{http://retis.sssup.it/~bini/teaching/optim2010/karmarkar.pdf}
+
+
+
+
+\end{thebibliography}
+
+\end{document}

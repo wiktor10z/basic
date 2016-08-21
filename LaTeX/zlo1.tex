@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{eurosym}
+\begin{document}
+
+Wiktor Zuba 320501\newline
+
+Sortowanie w $LogSpace$\newline
+
+Dowód należenia do klasy poprzez pokazanie algorytmu opisującego
+maszynę Turinga o taśmie roboczej długości logarytmicznej względem taśmy wejściowej.\newline
+
+Na taśmie roboczej przechowuje 3 logarytmicznej wielkości wskaźniki na pola na taśmie wejściowej
+(wystarczy wskazywanie na odpowiednie znaki \officialeuro).\newline
+Pierwszy wskaźnik wskazuje na znak \officialeuro$ $ przed liczbą ostatnio wypisaną na taśmę wyjściową.\newline
+Drugi wskażnik wskazuje na znak \officialeuro$ $ przed aktualnie znaną najmniejszą liczbą jeszcze nie wypisaną.\newline
+Trzeci wskaźnik jest roboczy -- wskazuje liczbę, którą aktualnie porównujemy z innymi.\newline
+W stanie będę pamiętać czy wskaźnik pierwszy na coś wskazuje czy jeszcze nie.\newline
+
+Pseudokod wysokopoziomowy (niżej przetłumaczenie rzeczy prostych na trywialne):\newline
+Ustawiam pierwszy wskaźnik na nieważny, drugi i trzeci wskażnik wskazują na pierwszą liczbę.\newline
+W pętli:\newline
+Porównuję liczby wskazywane przez znaczniki i jeżeli trzecia jest większa od pierwszej (lub równa i wskaźnik trzeci jest dalej niż wskaźnik pierwszy)
+i mniejsza od drugiej, to drugi wskaźnik staje się kopią trzeciego.\newline
+Przestawiam trzeci wskażnik tak, żeby wskazywał kolejną liczbę.
+Kiedy trzeci wskaźnik dojdzie do końca słowa wypisuję na taśmę wyjściową liczbę wskazywaną przez drugi wskaźnik,
+a następnie pierwszy wskaźnik staje się kopią drugiego.
+Drugi wskaźnik wędruje na początek słowa i odczytuje kolejne liczby aż trafi na większą od wskazywanej przez pierwszy wskaźnik,
+lub równą, ale dalej położoną w słowie. Wskaźnik trzeci staje się kopią drugiego i wracam do początku pętli.
+Pętla kończy się gdy drugi wskaźnik wyjdzie poza słowo (może się to stać tylko w trakcie wyszukiwania słowa większego niż dopiero co wypisane).\newline
+
+Zapis pseudokodu w formie programistycznej
+($l[i]$ - liczba wskazywana przez wskaźnik $i$ $|$ $i1,i2,i3$ -- wskaźniki,
+$i++$ -- przeniesienie wskaźnika tak aby wskazywał na następny znak różny od $0,1$):\newline\newline
+$
+i1=null,i2=\vdash,i3=\vdash;\newline
+while(i2!=\dashv)\{\newline\hspace{1cm}
+\hspace*{16pt} if((l[i3]<l[i2])\&\&((l[i3]>l[ii])||((l[i3]==l[i1])\&\&(i3>i1))))\{\newline
+\hspace*{32pt} i2=i3;\newline
+\hspace*{16pt}\}\newline
+\hspace*{16pt} i3++;\newline
+\hspace*{16pt} if(i3==\dashv)\{\newline
+\hspace*{16pt} wypisz(l[i2]);\newline
+\hspace*{16pt} i1=i2;\newline
+\hspace*{16pt} i2=\vdash;\newline
+\hspace*{16pt} while((l[i2]<l[i1])||((l[i2]==l[i1])\&\&(i2<=i1)))\{\newline
+\hspace*{32pt} i2++;\newline
+\hspace*{16pt}\}\newline
+\hspace*{16pt} i3=i2;\newline
+\hspace*{16pt} \}\newline
+\}\newline
+$
+\newline
+
+Uwagi:\newline
+Jeżeli wskaźnik jest nulem, to liczba przez niego wskazywana jest mniejsza od wszystkich innych
+(jednyny przypadek, to porównanie liczby ostatnio wypisanej jeżeli jeszcze nic nie wypisano).\newline
+W stanie oprócz ważności pierwszego wskaźnika pamiętamy aktualnie wykonywaną instrukcję alogrytmu (pseudokodu),
+plus to co jest potrzebne do zapamiętania w stanie podczas wykonywania podprocedur.\newline
+Na taśmie roboczej pamiętamy 3 wskaźniki logarytmicznej długości plus dla ułatwienia wskaźnik głowicy taśmy wejściowej
+plus to co jest potrzebne w aktualnie wykonywanej podprocedurze, łącznie pamięć logarytmiczna
+(po skończeniu wykonywania podprocedury tylko te 4 wskaźniki zostają).\newline
+
+Poprawność algorytmu:\newline
+Liczby zostaną wypisane w kolejności niemalejącej --
+wypisywane są tylko liczby na które wskazuje drugi wskaźnik.
+Na początku pętli wskaźnik ten wskazuje na liczbę niemniejszą niż ostatnio wypisana, w trakcie przesuwania wskaźnika trzeciego,
+liczba wskazywana może zmaleć, ale tylko na taką która również jest niemniejsza niż ostatnio wypisana.
+Po wypisaniu liczby wskaźnik jest przestawiany, aż niezmiennik staje się prawdziwy.
+Dodatkowo jeżeli istnieją dwie takie same liczby, to zostaną wypisane w taj samej kolejności w jakiej znajdują się na taśmie wejściowej
+(z konstrukcji porównań).\newline
+Każda liczba z taśmy wejściowej zostanie wypisana dokładnie raz --
+wskaźnik drugi nie może wskazywać tego samego co pierwszy poza fragmentem na końcu pętli,
+co w połączeniu ze stabilnością daje niemożliwość wypisania dwa razy tej samej liczby (przy rozróżnieniu liczb o tej samej wartości).
+Każdy element musi zostać wypisany, gdyż gdyby się tak nie stało,
+to w odpowiednim kroku algorytmu musiałby zostać wybrany element większy od niego,
+co przeczy poprawności procedury przejścia trzeciego wskaźnika po słowie z porównaniami.\newline
+
+Szczegóły implementacyjne podprocedur:\newline
+Porównanie wskaźników
+(wskaźniki są binarnym zapisem ilości liter przed nimi w słowie z wiodącymi zerami długości dokładnie $\lceil\log(n)\rceil$)
+-- idąc po taśmie roboczej porównuje bit po bicie oba zapisy wskaźników (korzystając z dodatkowej pamięci $loglog(n)$), wynik w stanie.\newline
+Skopiowanie jednego wskaźnika na drugi -- przepisanie bit po bicie (korzystacjąc z dodatkowej pamięci $loglog(n)$).\newline
+Przesunięcie wskaźnika $i$ aby wskazywał na następną liczbę -- przeniesienie głowicy aż jej wskaźnik będzie równy wskaźnikowi $i$,
+przesunięcie głowicy w prawo do napotkania znaku \officialeuro, skopiowanie wskaźnika głowicy na wskaźnik $i$.\newline
+Porównanie wskazywanych liczb -- najpierw porównanie ich długości, a następnie w przypadku równej długości porównanie bit po bicie
+(dodatkowa pamięć $log(n)$), wynik w stanie.\newline
+Wypisanie wskazywanej liczby -- przesunięcie głowicy na początek tej liczby i przepisanie bit po bicie na taśmę wyjściową.\newline
+Sprawdzanie i ustawianie wskaźników na końce słowa -- przy pomocy głowicy.
+\end{document}

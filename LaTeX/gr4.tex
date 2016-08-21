@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 4.2.
+\newline
+\newline
+$[X,Y]_f=X(Yf)-Y(Xf)=X(\sin(x)\frac{\partial f}{\partial x}+xy\frac{\partial f}{\partial y})-Y(2x\frac{\partial f}{\partial x}+y^2\frac{\partial f}{\partial y})=
+2x\cos(x)\frac{\partial f}{\partial x}+2xy\frac{\partial f}{\partial y}+2x^2y\frac{\partial^2 f}{\partial x\partial y}+\sin(x)y^2\frac{\partial^2 f}{\partial x\partial y}+
+xy^2\frac{\partial f}{\partial y}-2\sin(x)\frac{\partial f}{\partial x}-\sin(x)y^2\frac{\partial^2 f}{\partial x\partial y}-2x^2y\frac{\partial^2 f}{\partial x\partial y}-
+2xy^2\frac{\partial f}{\partial y}=\newline
+(2x\cos(x)-2\sin(x))\frac{\partial f}{\partial x}+(2xy-xy^2)\frac{\partial f}{\partial y}\newline
+\omega([X,Y])=-x(2x\cos(x)-2\sin(x))dx(\frac{\partial}{\partial x})+y((2xy-xy^2))dy(\frac{\partial}{\partial y})=
+2x^2\cos(x)-2x\sin(x)+2xy^2-xy^3\newline
+i_X\eta(Z)=\eta(X,Z)=(-xy^3dx+2x^2ydy)(Z)\newline
+\omega\wedge i_X\eta=(-2x^3y+xy^4)dx\wedge dy\newline
+d\omega=(\frac{\partial -x}{\partial y}-\frac{\partial -y}{\partial x})dx\wedge dy=0$
+\newline
+
+Zadanie 4.3.
+\newline
+\newline
+Dla gładkich $\omega$ i $X$ $i_X\omega$ jest gładka z definicji gładkości. Przekształcenie jest różnowartościowe, ponieważ dla $i_X\omega=i_Y\omega$ $i_{X-Y}\omega=0$
+z $n$ liniowości formy $\omega$, a więc dla $X\neq Y$ przeczyłoby to założeniu o niezerowości.
+Przekształcenie jest na ponieważ przeprowadza przestrzeń $n$ wymiarową na $n-1$ wymiarową, oraz ma zerowe jądro.
+\newline
+
+Zadanie 4.4.
+\newline
+\newline
+Wiązka orientowalna jest trywialna, ponieważ posiada 1 przekrój (liniowo niezależny = niezerowy), jest więc izomorficzna z produktową, gdyż rzutowanie jest
+wyznaczone na $\mathbb{R}$ jednoznacznie, oraz dyfemorfizm na wiązkę produktową spełnia założenia.\newline
+Wiązka trywialna jest orientowalna ponieważ wiązka produktowa rangi 1 jest orientowalna, zaś izomorfizm zachowuje tą orientację.
+\end{document}

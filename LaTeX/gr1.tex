@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 1.1.
+\newline
+\newline
+SL(2)=$\left\{\left|\begin{array}{cc}a&b\\c&d\end{array}\right|:ad-bc=1\right\}$\newline
+istnieje atlas złożony z dwóch map z SL(2) w $\mathbb{R}^3$ :
+$\varphi(\left|\begin{array}{cc}a&b\\c&d\end{array}\right|)=(a,b,c)$ dla $a\neq0$,
+$\psi(\left|\begin{array}{cc}a&b\\c&d\end{array}\right|)=(a,b,d)$ dla $b\neq0$.
+Mapy łącznie pokrywają całe SL(2), gdyż dla $a=b=0$ wyznacznik również byłby równy $0$
+Parametryzacje przyjmują postaci $\varphi^{-1}(a,b,c)=\left|\begin{array}{cc}a&b\\c&\frac{1+bc}{a}\end{array}\right|$,
+$\psi^{-1}(a,b,d)=\left|\begin{array}{cc}a&b\\\frac{ad-1}{b}&d\end{array}\right|$,
+a więc wyrażone są tylko poprzez funkcje wymierne, które są gładkie, więc SL(2) jest gładką rozmaitością różniczkową.\newline
+$\psi\circ\varphi^{-1}(a,b,c)=(a,b,\frac{1+bc}{a})$, jest dyfeomorfizmem gładkim, odwrotny do niego również jest gładki ($(a,b,\frac{ad-1}{b})$), więc mapy są zgodne.
+\newline
+
+Zadanie 1.3.
+\newline
+\newline
+$\eta(x,y,z)=(\frac{x}{1-z},\frac{y}{1-z})$\newline
+$f\circ\eta(x,y,z)=(\frac{x^3-3xy^2}{(1-z)^3},\frac{3x^2y-y^3}{(1-z)^3})$\newline
+$\eta^{-1}\circ f\circ\eta(x,y,z)=
+(\frac{2(x^3-3xy^2)(1-z)^3}{(x^2+y^2)^3+(1-z)^6},\frac{2(3x^2y-y^3)(1-z)^3}{(x^2+y^2)^3+(1-z)^6},\frac{(x^2+y^2)^3-(1-z)^6}{(x^2+y^2)^3+(1-z)^6})$\newline
+$F$ jest oczywiście gładkie w $S^2\backslash\{N\}$. Granica funkcji po argumentach dążących do $\{N\}$ jest równa $(0,0,1)$ (z lematu d'Hospitala),
+jest więc ono ciągłe też tam, a jako funkcja wymierna jest więc też gładkie. Przekształcenie $\eta$ jest na $\mathbb{R}^2$, zaś $\eta^{-1}$ na $S^2\backslash\{N\}$,
+więc z surjektywności $f$ wynika również suriektywność $F$
+\newline
+
+Zadanie 1.4.
+\newline
+\newline
+a) Gdyby dla pewnego $p$ zbiór punktów $\pi^{-1}\circ\pi(p)$ był nieskończony, to gdyby ułożyć go w ciąg ze zwartości $W$
+istniałby w tym ciągu podciąg zbieżny. Oznaczałoby to, że w dowolnie bliskim otoczeniu punktu do którego zbiega ten podciag
+nieskończenie wiele punktów przyjmuję tę samą wartość przy przekształceniu $\pi$, a więc $\pi$ nie byłoby lokalnie różnowartościowe,
+co przeczy byciu lokalnym dyfeomorfizmem.\newline
+b) (ilość$\circ\pi^{-1}$) jest przekształceniem ciągłym (a przynajmniej lokalnie), ze zbioru spójnego w dyskretny,
+a więc z jednej z definicji spójności przekształceniem stałym.\newline
+c) z treści zadania mamy lokalną dyfeomorficzność,
+zaś z podpunktów a) i b) równoliczność przeciwobrazów punktów i ich dyskretność, a więc $\pi$ jest nakryciem.\newline
+d) identyczność z otwartej półprostej $W=(0,\infty)$ w $M=\mathbb{R}$.
+Jest lokalnym dyfeomorfizmem i niewątpliwie jest to przekształcenie gładkie,
+jednak nie jest nakryciem, gdyż $\pi^{-1}$ moze przyjmować 1 lub 0 wartości.
+\end{document}

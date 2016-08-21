@@ -1,0 +1,47 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 2.2.
+\newline
+\newline
+$A=F^{-1}(0,1)$ jest wyznaczone przez równiania $y=-x^2,x^4+s^2+t^2=1$ (taka zdeformowana sfera).
+Jeśli przeskalujemy współrzędną $x$ pierwiastkowo (punktowi $x_0$ przyporządkowujemy punkt $sgn(x_0)\cdot\sqrt{|x_0|}$)
+otrzymamy w ten sposób $A={y=-|x|,x^2+y^2+z^2=1}$ (mniej zdeformowana sfera) - na tym można już łatwo zdefiniować przejście $f(x,y,s,t)=(x,s,t)$
+Złożnie dwóch funkcji klasy $C^{r}$ jest też taka funkcją, ich odwrotnosci również są tej klasy - funkcja przejścia miedzy dwoma rozmaitościami
+jest różnowartościowa i na (zdefiniowana przez $g(x,y,s,t)=(x\cdot|x|,s,t)$), a więc są one dyfeomorficzne
+(skoro przekształcenie miedzy nimi jest klasy $C^1$, to złożenia z mapami też są mapami conajmniej $C^1$).
+\newline
+
+Zadanie 2.3.
+\newline
+\newline
+Mnożenie macierzy wyrażane jest wzorem zawierającym dla kazdej komórki wyłącznie sumy iloczynów (wielomiany), a więc jest przekształceniem gładkim.\newline
+Macierzą odwrotną do macierzy ortogonalnej jest jeje transpozycja, która jest gładkim przekształceniem macierzy.\newline
+Ponieważ zbiór tych macierzy jest ograniczony równaniami $\forall_i \sum\limits_{j=1}^{n}a_{ij}^2=1,\forall_{i\neq k}\sum\limits_{j=1}^{n}a_{ij}a_{ik}=0$,
+to jeżeli jest on rozmiatością, to spodzeiwamy sie, że o strukturze $\mathbb{R}^{\frac{n(n-1)}{2}}$.
+Narzucającym się wyborem mapy jest przypisanie kolejnym zmiennym w $\mathbb{R}^{\frac{n(n-1)}{2}}$ wartości komórek w górnym trójkącie macierzy (bez przekątnej),
+jest ono przekształceniem gładkim. Wyznaczenie macierzy odwrotnej odbywałoby się "rekurencyjnie" -> mamy $a_{11}^2=1-\sum\limits_{j=2}^{n}a_{1j}^2=c_1$,
+następnie mając $a_11$ otrzymujemy równania $a_{11}*a_{21}+a_{12}a_{22}=c_2,a_{21}^2+a_{22}^2=c_3$ za każdym razem otrzymując przecięcie sfery z prostą
+(jako przecięciem przestrzeni wymiaru n niezależnych liniowo), co za każdym razem daje nam conajwyżej 2 możliwości
+(i conajmniej 1 o ile wystartowaliśmy z poprawnej macierzy) - tutaj wprowadzamy binarne rozróżnienie map -> pierwsza grupa to ta,
+dla której wybieramy punkt leksykograficznie mniejszy, zaś druga leksykograficznie większy - kontynuując podział wynikający z kolejnych kroków algorytmu.\newline
+przekształcenie jest gładkie, i atlas pokrywa całą rozmaitość, pozostaje sprawdzić, czy mpay się zgadzają na swoim przecięciu
+(dwie mapy się przecinają tam, gdzie w $k$-tym kroku algorytmu mamy wybór jednostkowy (chodzi o ostatni taki wybór)
+- to są te dwie mapy które powstały w $k$-tym kroku podziału atlasu)
+przekształcenie pomiędzy tymi mapami jes gładkie, ponieważ jest identycznością (mapy różnią się tylko tym, że ich odwroności zawierają funkcje (min/max)).
+\newline
+
+Zadanie 2.?.
+\newline
+\newline
+
+
+\end{document}

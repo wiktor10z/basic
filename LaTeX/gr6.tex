@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+
+Zadanie 6.1.
+\newline
+\newline
+$K=-\frac{y"(s)}{y(s)}$\newline
+Dla danego punktu w $\mathbb{R}^3$ i ustalonych wartości $n$ i $s$ dobieramy tak układ współrzednych aby wpółrzedna z była prostopadła do tego "wybieranego" kątu
+oraz aby $y_k(s)\neq 0$ dla każdego $k\in\{0..n-1\}$, gdzie $y_k(s)=r(s)*\sin(\omega_k(s))=r(s)*\sin(\omega(s)+\frac{2k\pi}{n})$.\newline
+Wtedy $y"(s)=r"(s)\sin(\omega_k(s))+2r'(s)\cos(\omega_k(s))\omega'(s)-r(s)\sin(\omega_k(s))(\omega'(s))^2+r(s)\cos(\omega_k(s))\omega"(s)$\newline
+$K_k(s)=a(s)+b(s)\ctg(\omega_k(s))$.\newline
+$\frac{1}{n}\sum\limits_{k=0}^{n-1}K_k(s)=a(s)+\frac{1}{n}b(s)*\sum\limits_{n=0}^{k-1}\ctg(\omega+\frac{2k\pi}{n})=a(s)+\frac{1}{n}b(s)\cdot 0=a(s)$
+(Z GAL1 dla takich $\omega$, że $\ctg$ dobrze określony - zgodnie z założeniami to zachodzi).
+\newline
+
+Zadanie 6.3.
+\newline
+\newline
+Prowadząc wszystkie obliczenia (pomijając wypiwanie części):\newline
+$p_u=(\cos(v),\sin(v),0),p_v=(-u\sin(v),u\cos(v),1),q_u=(\cos(v),\sin(v),\frac{1}{u}),q_v=(-u\sin(v),u\cos(v),0)$
+$\det(M(G_p))=\det(M(G_v))=u^2+1,\newline
+N_p=(\sin(v),-\cos(v),u)\cdot(u^2+1)^{-\frac{1}{2}},N_q=(-\cos(v),\sin(v),u)\cdot(u^2+1)^{-\frac{1}{2}}$\newline
+$\det(M(B_p))=\det(M(B_q))=(-1)\cdot(u^2+1)^{-1}\Rightarrow K_p(u,v)=K_q(u,v)=-\frac{1}{(u^2+1)^2}$\newline
+Dwa punkty odpowiedające w hipotetycznych izometrycznych wewnętrznie podzbiorach muszą mieć tą samą krzywiznę, a więc tą samą współrzędną $u$.
+Dla obszaru dwuwymiarowego jedna ze współrzędnych rozpinających jest ustalona ($u$),
+więc długość drogi po drugiej musiałaby być taka sama dla obu obszarów (podzbiorów), jednak nie jest, gdyż dla stałego $u$ tylko $v$ moze się zmieniać,
+a dla zmiany $v$ w rozmaitości wyznaczonej przez $q$ poruszamy się tylko po okregu, zaś dla tej z $p$ po spirali o tym samym promieniu, a więc obie drogi nie
+są izomorficzne, co przeczy izomorficzności obszarów.
+\newline
+
+Zadanie 6.5.
+\newline
+\newline
+Podobnie jak w przypadku stożka geodezyjna nie będąca południkiem najpierw zbliża się do "wierzchołka" paraboloidy,
+a później się oddala przecinając swoją część ze zbliżania (kierunek obrotu wokół osi jest zachowany), jednak inaczej niż w przypadku stożka geodezyjna obiegnie
+środek nieskończenie wiele razy w obu częściach wyznaczonych poprzez rozdzielenie w punkcie najblizszym "wierzchołka",
+a więc i przecięcie nastąpi nieskończenie wiele razy.\newline
+Nieskończenie wiele okrążeń osi obrotu paraboloidy przez geodezyjną można wywieść z tego, że podczas gdy dla stożka geodezyjna staje się w końcu równoległa do
+pewnego południka, to w paraboloidzie odchylenie spada wraz z oddalaniem się od "wierzchołka", przez co "prędkość obrotowa"
+nie ma możliwości spaść do 0 w skończonym czasie co więcej ponieważ jest jak $\frac{1}{x}$, które nie jest całkowalne na żadnym przedziele $(a,\infty)$
+(z analizy matematycznej).
+
+\end{document}

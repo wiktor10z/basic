@@ -1,0 +1,82 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501\newline
+
+Zadanie 1\newline
+
+Algorytm sprawdzania czy dany język regularny akceptuje słowo posiadające $1$ na miejscach o indeksach będących kwadratami liczb naturalnych
+i $0$ na pozostałych (czyli $1001(00)^2...1(00)^n1(00)^{n+1}...$).\newline
+
+Zaczynając od krawędziowego deterministycznego automatu z warunkiem Mullera otrzymanego z wejściowego automatu z warunkeim Buchiego przeprowadzam szereg redukcji:\newline
+Rozdzielenie automatu na kilka odpowiadających każdemu zbiorowi krawędzi akceptujących i sprawdzenie dla każdego takiego automatu osobno.\newline
+(Jeżeli w trakcie redukcji automatu usuwamy krawędź akceptującą lub okazuje się, że ze stanu w którym się znajdujemy nie można odczytać właściwego znaku,
+to automat nie akceptuje naszego słowa)\newline
+Korzystając z deterministyczności automatu dochodzimy do miejsca $n^2$, gdzie $n$ to liczba stanów automatu. Występujące od tego miejsca ciągi $0$ są tak długie,
+że pomiędzy kolejnymi $1$ musi wystąpić cykl na którym czytane są $0$ - z deterministyczności automatu czytając $0$ nie możemy wyjść z cyklu,
+tak więc od tego momentu przechodzenie po stanach wygląda następująco: przemieszczamy się po ścieżce krawędziami $0$, dochodzimy do cyklu i po kilku obrotach
+wychodzmy z niego ścieżką $1$ do nowego początku ścieżki (być może zerowej długości - czyli bezpośrednio w jakiś cykl).
+Wszystkie wierzchołki z których nie wychodzi krawędź $0$ mozna usunąć, mozna też usunąć wszystkie krawędzie $1$ nie wychodzące z cyklu zerowego oraz
+wszystkie wierzchołki nieosiągalne (aż do fix-pointu).\newline
+Zaczynając z nowego stanu początkowego (po przejściu $n^2$ kroków w automacie wyjściowym) chodzimy po nowym automacie złożonym z krawędzi $1$,
+których odwiedzenie implikuje odwiedzenie całej ścieżki $0$ z nich wychodzącej, oraz cyklu ją kończącego. Możemy więc zająć się jedynie tymi krawędziami
+i funkcją przejścia między nimi (która jest modulo długość odpowiedniego cyklu, a więc jest modulo NWW długości wszystkich cykli
+(których jest mniej niż krawędzi)). Jeśli po przeczytaniu $k*$NWW $1$ wrócimy do tego samego stanu, to oznacza to, że znajdujemy się na cyklu.
+Ponieważ ilość krawędzi $1$ jest ograniczona przez $n$, to po $n$ przeczytaniach po NWW $1$ wychodząc z nowego stanu początkowego
+któryś stan będący następnikiem $n+k*$NWW-szej $1$ musi się powtórzyć - mając cykl długości $k*$NWW przechodzimy go jeszcze raz sprawdzając czy przechodzimy przez wszystkie krawędzie akceptujące
+(i tylko takie).\newline\newline
+
+Uwaga: Redukcja poza początkowym rozdzieleniem nie jest konieczna.
+Pozwala tylko usystematyzować strukturę automatu na którym lepiej widać zasadność kolejnych kroków.\newpage
+
+Wiktor Zuba 320501\newline
+
+Zadanie 2\newline
+
+Determinizacja niedeterministycznego automatu z warunkiem Buchiego.\newline
+
+Algorytm :\newline
+1. Przekształcam wyjściowy automat w deterministyczny automat z warunkiem Mullera i akceptującą rodziną zbiorów stanów $\Gamma'$.\newline
+2. Usuwam z $\Gamma'$ zbiory nieosiągalne lub  nie silnie spójne, otrzymując rodzinę $\Gamma$.\newline
+3. Dla każdego zbioru stanów $F\in\Gamma,E\notin\Gamma,F\subseteq E$ jeśli $E$ jest silnie spójny,
+to nie istnieje deterministyczny automat z warunkiem Buchiego, który akceptuje ten sam język, co automat wyjściowy.\newline
+4. Jeżeli determinizacja nie została odrzucona na etapie 3, to deterministycznym automatem Buchiego akceptującym ten sam język
+jest automat powstający z automatu Mullera poprzez rozmnożenie stanów, tak by pamiętały one jakie stany w oryginalnym automacie Mullera zostały odwiedzone.
+Stanami akceptującymi są stany postaci $(p,X)$, takie że $F\subseteq X$ dla pewnego $F\in\Gamma$.
+Tranzycje powstają poprzez przerobienie tranzycji $p\rightarrow q$ z automatu z warunkiem Mullera
+na tranzycję $(p,X)\rightarrow (q,X\cup\{q\})$(o ile stan $(p,X)$ nie był akceptujący) lub $(p,X)\rightarrow (q,\{q\})$ (o ile był).\newline
+
+Dowód poprawności:\newline
+Uwaga : Deterministyczny automat z warunkiem Mullera i rodziną akceptującą $\{E\}$ ($E\subseteq Q$) akceptuje język niepusty wtedy i tylko wtedy,
+gdy podgraf automatu generowany przez $E$ jest silnie spójny oraz osiągalny ze stanu początkowego.\newline
+Krok 1 : Z wykładu.\newline
+Krok 2 : Jeśli do rodziny akceptującej automatu dodamy lub zabierzemy zbiór który nie spełnia własności z uwagi,
+to nie zmieni się język akceptowany przez automat (automaty z rodzinami $\Gamma'$ oraz $\Gamma$ są równoważne).\newline
+Krok 3 : Załóżmy, że w automacie $\exists E\notin\Gamma,F\in\Gamma,F\subseteq E$, spełniające własność z uwagi
+(istnieje słowo akceptowalne przez ten zbiór := takie które odwiedza dokładniete te stany $\infty$ wiele razy).\newline
+Załóżmy, że istnieje deterministyczny automat z warunkiem Buchiego, który akceptuje słowa akceptowalne przez $F$ w automacie z warunkiem Mullera,
+ale nie akceptuje tych akceptowalnych przez $E$.
+Automat z warunkiem Buchiego ma skończenie wiele stanów ($k$), dlatego też jeżeli weźmiemy słowo ostatecznie okresowe,
+to po conajwyzej $k$ pełnych odczytaniach okresu wylądujemy w tym samym stanie i będziemy się przemieszczeć po stałym cyklu stanów (z deterministyczności).
+Definiuje słowo $w$ jako takie, którego początek powstaje przez dojście w automacie z warunkiem Mullera do zbioru stanów $F$,
+a następnie wykonanie $k$ cykli przechodzących po wszystkich stanach należących do $F$. Gdyby powtórzyć cykl nie $k$ a $\infty$ wiele razy
+słowo było by akceptowalne przez $F$, a więc w automacie z warunkiem Buchiego na cyklu po którym by krążyło musi istnieć co najmniej jeden stan akceptujących
+(zostaje on odwiedzony w podanym prefiksie słowa $w$). Kolejny fragment słowa $w$ powstaje poprzez wykonanie jednego cyklu
+w automacie z warunkiem Mullera po wszystkich stanach z $E$ i kolejnych $k$ po stanach z $F$.
+Analogicznie do poprzedniego rozumowania w automacie z warunkiem Buchiego odwiedzony jest co najmniej jeden stan akceptujący.
+Powtarzając konstrukcję $\infty$ wiele razy słowo $w$ odwiedza w automacie z warunkiem Mullera $\infty$ wiele razy stany $F\cup E=E$,
+jednak jest akceptowane przez automat z warunkiem Buchiego, co daje nam sprzeczność.\newline
+Krok 4 : Automat z warunkiem Buchiego jest deterministyczny ponieważ automat z warunkiem Mullera taki był.\newline
+Jeśli automat z warunkiem Mullera akceptuje jakieś słowo zbiorem stanów $F$,
+to w automacie z warunkiem Buchiego $\infty$ wiele razy pojawi się stan akceptujący (pojawi się stan pamiętający nadzbiór $F$).\newline
+Jeśli automat z warunkiem Buchiego akceptuje jakieś słowo, to któryś stan jest odwiedzany $\infty$ wiele razy $\Rightarrow$ w automacie Mullera
+pewien zbiór stanów $F\in\Gamma$ został odwiedzony $\infty$ wiele razy, więc słowo jest akceptowalne przez pewien nadzbiór $F$,
+a więc jest akceptowane przez automat z warunkiem Mullera.
+
+
+\end{document}

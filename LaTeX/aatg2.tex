@@ -1,0 +1,134 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage[pdftex]{graphicx}
+\begin{document}
+
+Wiktor Zuba 320501
+\newline
+Zadanie 2.2. (NP-zupełność "niezwykłej" gry parzystości)
+\newline
+\newline
+NP:\newline
+Jeżeli gracz $\exists$ posiada strategię wygrywającą, to posiada pozycyjną strategię wygrywającą (w przeciwieństwie do gracza $\forall$) -
+dowód jak w zwykłej grze parzystości - wierzchołki odwiedzane $\infty$ wiele razy tworzą silnie spójną składową = kilka połączonych cykli.
+Jeżeli gracz wygrywa na tym zbiorze cykli, to zbiór ten zawiera wierzchołek należący do zbioru $E_i$ i nie zawiera ze zbioru $F_i$, dla pewnego $i$,
+więc jest to również prawda dla pewnego pojedyńczego cyklu z tego zbioru cykli (reszta dowodu jest już analogiczna do standardowego).\newline 
+Wielomianowym świadkiem będzie strategia gracza $\exists$.\newline
+Dla uproszczonego grafu (z usuniętymi krawędziami wychodzącymi z wierzchołków gracza $\exists$ nienależącymi do strategii)
+w czasie wielomianowym sprawdzam czy gracz $\forall$ może wygrać startując z wierzchołka $v$:\newline
+Dzielę podgraf osiągalny z $v$ na maksymalne silnie spójne składowe i sprawdzam każdą z nich osobno (wygrana jako OR po wygranych w składowych).\newline
+Sprawdzam czy jeżeli inf jest równe wszystkim wierzchołkom w tej składowej, to gracz $\forall$ wygrywa, jeśli nie, to istnieje takie $i$, że
+inf$\cap E_i\neq\emptyset$ i inf$\cap F_i=\emptyset$ - usuwam wierzchołki neleżące do $E_i$, znów dzielę (tę składową, bez $E_i$)
+na maksymalne silnie spójne składowe itd. Algorytm ten jest $O(n^2)$, dla n - wielkości grafu (w każdym liniowym kroku usuwam conajmniej 1 wierzchołek).\newline
+Poprawność algorytmu: jeżeli w algorytmie wyjdzie, że gracz $\forall$ może wygrać, to znajduje on silnie spójną składową (może nie maksymalną),
+osiągalną z $v$ chodząc po której gracz wygrywa (oczywiście nie rozważam składowych wielkości 1, chyba, że jest to cykl do siebie samego).
+Jeżeli algorytm wskazuje, że gracz $\forall$ nie może wygrać, to znaczy, że nie istnieje taka silnie spójna składowa
+(niezależnie od wyboru (kolejności) odpowiedniego zbioru $E_i$ do usunięcia w całej składowej nie ma wierzchołków z $F_i$,
+więc i tak nie będą one mogły być odwiedzane - zbiór $E_i$ będzie musiał być usunięty).\newline\newline
+NP-trudność:\newline
+Redukcja problemu SAT - dla każdej zmiennej binarnej $X_i$ występującej w formule CNF tworzymy wierzchołki $x_i$ i $\neg x_i$ oraz
+dla każdej klauzuli tworzymy wierzchołek $Y_j$ jak na obrazku:\newline
+\includegraphics[scale=0.9]{aatg_rys2.jpg}\newline
+Gdzie wierzchołki okrągłe należą do gracza $\exists$, zaś kwadratowy do gracza $\forall$.
+Dla każdego literału $a_k$ w klauzuli $Y_j$ dobieramy zbiory $E_{jk}=\{Y_j\},F_{jk}=\{\neg a_k\}$, gdzie $a_k=x_l$ lub $a_k=\neg x_l$.\newline
+Gracz $\exists$ wygrywa w tej grze wtedy i tylko wtedy gdy istnieje wartościowanie spełniające formułę.\newline
+Intuicyjnie gracz $\exists$ wybiera wartościowanie, zaś gracza $\forall$ wskazuje klauzulę która nie jest spełniona przy tym wartościowaniu.\newline
+Jeśli istnieje wartościowanie spełniające formułę, to dla każdej zmiennej $x_i=1$ gracz $\exists$ przy wyborze wierzchołka $x_i$ lub $\neg x_i$ wybiera $x_i$
+i odwrotnie w przeciwnym przypadku - wtedy niezależnie jaki zbiór klauzul nieskończenie często wybiera gracz $\forall$ któryś element każdej alternatywy jest prawdziwy
+- istnieje zbiór $F_l$ o pustym przecięciu ze zbiorem inf, dla pewnego $E_l=\{Y_i\}$ odwiedzanego $\infty$ wiele razy
+(czyli dla $Y_i$ wybieranego).
+Jeżeli takie wartościowanie nie istnieje, to przy każdym ruchu gracz $\forall$ wybiera klauzulę niespełnianą,
+przez ostatnio wybrane przez gracza $\exists$ wartościowanie.
+Przy tej strategii gracza $\forall$ jeżeli klauzula $Y_i$ zostanie odwiedzona $\infty$ wiele razy, to również $\infty$ wiele razy zostanie wybrane wartościowanie
+jej nie spełniające, czyli $\infty$ wiele razy zostaną wybrane wierzchołki przeciwne literałom należącym do tej klauzuli, a więc i wszystkie zbiory 
+$F_l$ odpowiadające zbiorom $E_l=\{Y_i\}$ odwiedzanym. Ponieważ jest tak dla każdej klauzuli, to dla każdego odwiedzanego $\infty$ wiele razy zbioru $E_l$ rownież zbiór $F_l$
+jest odwiedzany, czyli gracz $\forall$ wygrywa.\newline
+Alternatywną strategią dla gracza $\forall$ jest wybieranie wszystkich klauzul w pętli (nie zmienia to analizy poprawności). 
+\newpage
+Zadanie 2.3. (liniowe rozwiązywanie nudnych gier parzystości)
+\newline
+\newline
+Preprocessing:\newline
+1. Znajduję maksymalne silnie spójne składowe grafu gry (bez zwracania uwagi na właściciela wierzchołka) w czasie liniowym.\newline
+2. Dla każdej silnie spójnej składowej znajduję maksymalny priorytet
+lub maksymalny priorytet na dowolnym cyklu w niej występującym i jego parzystość zapamiętuję dla tej składowej
+(ponieważ gra jest nudna oba sposoby dadzą tą samą parzystość).\newline
+3. Dla każdej silnie spójnej składowej zapamiętuję ilość krawędzi z niej wychodzących,
+te silnie spójne składowe z których nie da się wyjść dodatkowo zapamiętuję (na przykład na kolejce).\newline
+4. Dla każdego wierzchołka zapamiętuję krawędzi do niego wchodzące.\newline
+5. Dla każdego wierzchołka zapamiętuję dodatkowo krawędzi z niego wychodzące.\newline
+\newline
+Właściwy algorytm:\newline
+Wybieramy jedną (nieopróżnioną wcześniej) spójną składową która nie ma krawędzi wychodzących, dla każdego wierzchołka w niej zawartego,
+bez przypisanej strategii wybieramy dowolny ruch pozostający w tej samej spójnej składowej
+(do wierzchołka do niej należącego i nie wyrzuconego we wcześniejszym przebiegu).
+Przy każdym przypisaniu strategii dla wierzchołka przeglądamy jego poprzedników odejmując u nich jedną krawędź
+wychodzącą odpowiedniego typu. Jeżeli właściciel takiego poprzednika należącego do innej silnie spójnej składowej
+preferuję parzystość taką jak parzystość tej składowej,
+to wybranie rozważanego wcześniej wierzchołka jest dobrym wyborem strategii, a więc przypisujemy strategię temu poprzednikowi.
+W przeciwnym przypadku (inna parzystość) sprawdzamy, czy w tym wierzchołku została niezerowa ilość krawędzi wychodzących
+dowolnego typu, jeśli nie to również dobieramy ten ruch jako wybór strategii (jedyny pozostały).
+Jeżeli na jeden z tych sposobów któremuś wierzchołkowi z innej spójnej składowej została przypisana strategia,
+to niejako przypisujemy go do tej spójnej składowej (nadajemy mu jej parzystość i usuwamy go z jego składowej nie rozważając go w przyszłych krokach)
+i podobnie jak dla wierzchołków należących do niej oryginalnie przeglądamy ich poprzedników (czyli po prostu znajdujemy atraktor).\newline
+Jednocześnie ze zmniejszaniem liczby krawędzi wychodzących z wierzchołków, zmniejszamy liczbę krawędzi wychodzących
+ze spójnej składowej do której należą (tylko w przypadku krawędzi miedzy składowymi).
+Jeżeli dla spójnej składowej nie ma już krawędzi wychodzących poza nią, to jak w preprocessingu zapamiętujemy ją.\newline
+Algorytm powtarzamy w pętli, aż nie będzie żadnej silnie spójnej składowej bez krawędzi wychodzących (a więc żadnych).\newline
+\newline
+Analiza złożoności:\newline
+Krok 1 - Liniowy ze względu na rozmiar grafu.\newline
+Krok 2 - Co najwyżej przeglądnięcie każdego wierzchołka raz - czas liniowy ze względu na ilość wierzchołków.\newline
+Krok 3 - Przeglądnięcie każdej krawędzi raz (+ po 2 sprawdzenia w których składowych znajdują się końce) -
+czas liniowy ze względu na ilość krawędzi.\newline
+Krok 4 - Czas liniowy ze względu na ilość krawędzi.\newline
+Krok 5 - Czas liniowy ze względu na rozmiar grafu.\newline
+Pętla - Wybranie silnie spójnej składowej bez krawędzi wychodzących i zapamiętanie nowej w czasie stałym
+- silnie spójnych składowych jest niewięcej niż wierzchołków, więc liniowe ze względu na ilość wierzchołków.
+Skreslanie krawędzi (zapominanie) i zmniejszanie liczników krawędzi wychodzących w czasie liniowym ze względu na ilość krawędzi. 
+Ustalanie strategii dla wierzchołków, sprawdzanie parzystości silnie spójnej składowej, zmienianie parzystości itp.
+w czasie liniowym ze względu na rozmiar grafu.\newline
+Łącznie czas $O(|V|+|E|)$\newline
+\newline\newline
+Analiza poprawności:\newline
+W czasie działania algorytmu każdemu wierzchołkowi zostaje przypisana strategia i parzystość
+(parzystość silnie spójnej składowej, lub nadpisana w trakcie działania algorytmu).
+Parzystość wierzchołka oznacza który gracz wygrywa startując z tego wierzchołka.
+Strategia wierzchołka zawsze kieruje gracza do wierzchołka o tej samej parzystości
+(w konstrukcji albo zostajemy na zawsze w silniej spójnej składowej - pozostałej
+po usunięciu wierzchołków w trakcie wykonania pętli dla innych składowych,
+albo wierzchołkowi zostaje nadpisana parzystość na taką jaką ma jego następnik w strategii).
+Pozostaje udowodnić, że gracz wygrywa w wierzchołku dla oryginalnej gry parzystości wtedy i
+tylko wtedy gdy parzystość wierzchołka jest na jego korzyść.
+Określona parzystość dla wierzchołka oznacza, że jeśli obaj gracze będą grali z wyznaczoną strategią,
+to gra dojdzie do pewnej silnie spójnej składowej o tej parzystości i już z niej nie wyjdzie, a więc wygra gracz preferujący tą parzystość.
+Aby gracz zmieniając strategię (przy zachowanej strategii przeciwnika) mógł wygrać
+w wierzchołku ustalonym dla niego jako niekorzystny musiałby dojść przy nowej strategii w skończonym czasie do wierzchołka o korzystnej parzystości,
+a więc po którymś kroku parzystość musiałaby się zmienić na korzyść gracza.
+Jeżeli z wierzchołka gracza z inną parzystością niż ustalona dało by się przejść do wierzchołka z parzystością korzystną dla gracza,
+to w konstrukcji byłaby mu przypisana inna parzystość.\newline
+\newline
+Część 2 - Czas działania algorytmu rekurencyjnego dla nudnych gier parzystości.\newline
+\newline
+Algorytm rekurencyjny na nudnych grach również osiąga pesymistyczną złożoność wykładniczą - przykład:\newline
+\includegraphics[scale=0.9]{aatg_przyklad.jpg}\newline
+Graf w którym gra tylko gracz parzysty (i wygrywa w każdym punkcie) składający się z jednej ścieżki złożonej z wierzchołków o malejących nieparzystych wagach,
+zakończonej cyklem zerowym oraz z dołączonymi cyklami jedynkowymi (graf ten spełnia założenia nudności).\newline
+Algorytm rekurencyjny wywoła się rekurencyjnie na grafie gry bez jednego (górnego lewego) wierzchołka o maksymalnym priorytecie
+(sam jest swoim całym atraktorem), a następnie nastąpi drugie rekurencyjne wywołanie na grafie bez dolnego lewego wierzchołka
+(czyli zbioru wygrywającego dla gracza nieparzystego w grze bez wierzchołka górnego lewego, będącego swoim całym atraktorem w oryginalnej grze).
+Daje nam to po 2 wywołania na grafach bedących ścieżką o 1 krótszą (plus kilka dodatkowych na innych grafach), a więc w tym przypadku złożoność $\Omega(2^n)$, gdzie $2n$,
+to ilość wierzchołków w grafie.
+
+
+
+
+
+
+
+
+\end{document} 

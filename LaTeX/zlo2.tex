@@ -1,0 +1,76 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{eurosym}
+\usepackage[pdftex]{graphicx}
+\begin{document}
+
+Wiktor Zuba 320501\newline
+
+OR po przedziałach początkowych w $O(n)$ drutów i wysokości $O(1)$\newline
+
+Konstrukcję da się zrobić bardziej efektywnie, jednak przedstawione rozbicie, redukcje i podziały pozwalają łatwiej przedstawić koncepcję
+i policzyć złożoność.\newline
+
+Po pierwsze w trywialny sposób można rozwiązać zadanie przy użyciu ${n\choose2}$ drutów w wysokości 1
+(każde wyjście jest bramką OR po wszystkich bramkach wejściowych od pierwszej do tej o indeksie takim jak tej bramki). Daje to zbyt dużo drutów,
+żeby użyć tego globalnie, jednak jeżeli zostanie to użyte tylko na stałej ilości bloków wielkości $\sqrt{n}$,
+nie zepsuje to globalnej liniowości liczby drutów.\newline
+\begin{center}\includegraphics[scale=0.75]{ZLO_zad2_triv.jpg}\end{center}
+
+Definiuję standardowo bramkę XOR o dwóch wejściach (np. przy pomocy bramki OR, NOT i 2 AND, przy 7 drutach i wysokości 3).\newline
+\begin{center}\includegraphics[scale=0.75]{ZLO_zad2_xor.jpg}\end{center}\newpage
+
+Uproszczenie problemu:\newline
+Po podziale na bloki długości $\sqrt{n}$ wyliczam OR po blokach (przy pomocy $\sqrt{n}$ bramek i $\sqrt{n}\cdot\sqrt{n}=n$ drutów).
+Następnie w trywialny sposób buduję obwód dla tych bramek OR (dla kazdego bloku otrzymuję informację,
+czy w tym bloku lub wcześniej wystąpiła $1$ na wejściu).\newline
+Dla każdego bloku sprawdzam, czy to on jest pierwszym takim, w którym pojawiła się $1$, przy pomocy bramki XOR z informacji,
+czy do końca tego bloku zdarzyła się $1$ i tej samej informacji dla poprzedniego bloku.\newline
+Spośród tych bramek XOR conajwyżej jedna uzyska wartość $1$ (ta odpowiadająca blokowi w którym wystąpiła pierwsza bramka wejściowa o wartości 1).\newline
+Tworzę $n$ bramek wyjściowych, z których każda jest bramką AND z odpowiedniej bramki wejściowej i bramki XOR dla bloku do którego należy.\newline\newline
+W ten sposób otrzymuję uproszczenie problemu do takiego, który tylko w conajwyżej jednym bloku ma na wejściu wartości 1
+(wyjście problemu dla tak zmienionego wejścia jest identyczne jak dla oryginalnego -- tak na prawdę liczy się tylko miejsce pierwszego wystąpienia 1).
+Redukcja odbywa się przy pomocy $n+{\sqrt{n}\choose2}+7(\sqrt{n}-1)+2n\le5n$ drutów
+(OR po blokach, problem główny po OR-ach z bloków, XOR-y, wyjście) i wysokości $\le4$ ($\le6$ przy rozbiciu XOR).\newline\newline
+\begin{center}\includegraphics[scale=0.75]{ZLO_zad2_upr.jpg}\end{center}\newpage
+
+
+Na uproszczonym wejściu:\newline
+Wyliczam OR-y po całych blokach (te same wartości, co bramki XOR z upraszczania) i na nich używam trywialnego schematu
+(te same wartości co na wejściach do tamtych XOR-ów).\newline
+Równolegle wyliczam OR-y, po odpowiednich elementach z bloków
+(OR pierwszych elementów z każdego bloku, OR drugich elementów z każdego bloku, ... 
+jako że wszystkie oprócz co najwyżej jednego bloki są puste, to blok stworzony z tych bramek OR ma dokładnie te wartości co ten wyróżniony blok)
+i na nich również trywialnym sposobem obliczam alternatywy logiczne początków.\newline
+Następnie konstruuje bramki wyjściowe - dla bramek z bloków przed wyróżnionym wartościami będą same $0$, dla tych po nim same $1$,
+tak więc dla każdego elementu konstruuje bramkę AND po wartości alternatyw logicznych blokowych i elementowych (odpowiednich),
+daje to dokładną wartość dla bramek wyjściowych z bloku wyróżnionego i wcześniejszych (dla wcześniejszych wartość blokowa jest równa 0,
+dla wyróżnionego jest są to wartości z alternatyw przedziałowych bloku).\newline
+Na najwyższym poziomie bramką wyjściową jest OR po wartości bramki
+z poziomu niżej, oraz wartości dla bloku poprzedniego (dla bloków po wyróżnionym daje to więc same wartości 1, oraz nic nie zmienia w pozostałych).
+Złożonościowo dodaje to 4 poziomy oraz $n+2\cdot{\sqrt{n}\choose2}+2n+2(n-\sqrt{n})\approx6n$.
+Co daje łącznie nie więcej niż $11n$ drutów i głębokość $10$.
+\begin{center}\includegraphics[scale=0.75]{ZLO_zad2_end.jpg}\end{center}
+Warto jeszcze wspomnieć, że dla wejścia złożonego z samych wartości 0, pomimo, że formalnie nie ma bloku z pierwszą jedynką,
+to po prostu wszystkie wartości w całym obwodzie będą równe 0 (poza bramkami NOT wewnątrz definicji bramek XOR).\newline
+Jeśli ilość bramek wejściowych nie jest kwadratem liczby naturalnej, to albo można dodać odpowiednią ilość bramek o wartości 0
+(złożoność o $C\cdot\sqrt{n}$ większa), albo odrobinę efektywniej niektóre bloki mogą mieć mniej elementów
+(oznacza to branie mniejszej ilości elementów do OR-ów odpowiednich elementów z bloku oraz przy budowaniu wyjścia -- również tego pośredniego).
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

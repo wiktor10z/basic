@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\usepackage{eurosym}
+\usepackage[pdftex]{graphicx}
+\begin{document}
+
+Wiktor Zuba 320501\newline
+
+$PP$ zupełność MAJ-EVAL\newline
+
+MAJ-EVAL $\in PP$\newline
+
+Zakładam, że w obwodzie występują tylko bramki logiczne OR, AND i NOT.\newline
+Słowem wejściowym do maszyny jest kod obwodu w postaci ciągu krotek opisujących fragmenty obwodu
+(indeks bramki,rodzaj,lista indeksów bramek wejściowych) ułożonego warstwami od dołu (wszystko odpowiednio pooddzielane, indeksy zapisane binarnie).\newline
+Taśma robocza zawiera ciąg wartości kolejno ponumerowanych bramek w obwodzie (również od dołu) -- inicjalnie pusta.\newline
+
+Maszyna w trakcie działania najpierw przepisuje otrzymane bity losowe na pierwsze pozycje na taśmie roboczej (pozycje bramek wejściowych obwodu),
+a następnie czytając wejście zapamiętuje w stanie rodzaj operacji i przesuwa głowicę po pozycjach na liście indeksów aż ustali wartość
+(nie trzeba pamiętać wartości bramek wejściowych, a jedynie czytać albo aż napotka się 1 w przypadku OR, 0 w przypadku AND albo końca listy),
+i zapisuje wartość pod wskazanym adresem.
+
+Gdy maszyna skończy czytać słowo odczytuje wartość z ostatniej pozycji
+(zawierającej wartość bramki wyjściowej obwodu) i przechodzi do stanu akceptującego lub odrzucającego dla wartości 1 lub 0 odpowiednio.\newline
+
+Redukcja jest wielomianowa -- długość słowa wejściowego jest logarytmicznie większa od wielkości obwodu,
+maszyna działa w czasie wielomianowym od wejścia -- każda krotka jest obsługiwana raz --
+czas obsługi jednej krotki jest liniowy ze względu na jej krotność razy czas odszukania bramki na taśmie roboczej (liniowy ze względu na ilość bramek).\newline
+
+(Maszyna otrzymana w redukcji jest ogólna dla problemu zaś konkretny obwód podawany jest jako wejście. 
+Redukcję można przeprowadzić nieco inaczej -- kodując obwód w stanach i funkcji przejścia,
+jednak ta redukcja byłaby o wiele brzydsza, a nawet trudna do spójnego opisania.)\newline\newline\newline
+
+MAJ-EVAL -- $PP$-trudne\newline
+
+Mając daną maszynę Turinga (działającą w czasie ograniczonym przez wielomian $P(n)$) i słowo na wejściu buduję obwód logiczny.\newline
+W pierwszej warstwie znajduje się wejście do obwodu (bity losowe maszyny)
++ bramki zawierające binarne reprezentacje kolejnych znaków wejścia (wartości stałe łatwo otrzymać przy pomocy bramek wejściowych).\newline
+
+W kolejnych warstwach zapamiętywany jest stan taśmy roboczej w kolejnych momentach wykonania.
+Pojedyncze pole taśmy roboczej zapisane jest przy pomocy kilku bramek --
+(bramki na litery -- logiczny zapis czy ta litera znajduje się w tym miejscu + bramka zapamiętująca czy głowica znajduje się w tym miejscu),
+dodatkowo osobno w warstwie znajdują się bramki reprezentujące stan (jedna bramka dla każdego możliwego stanu)
++ miejsce głowicy na taśmie wejściowej (jedna bramka dla każdej pozycji na taśmie wejściowej).
+Dodatkowo aby poruszać się tylko w obrębie dwóch sąsiednich warstw można dodać bramki na taśmę wejściową -- zawsze kopiować poprzednią warstwę.\newline\newline
+Pomiędzy poziomami znajdują się dodatkowe bramki służące wykonaniu funkcji przejścia (bardziej skomplikowanych niż AND,OR,NOT).\newline
+Wyliczana tam jest litera znajdująca się aktualnie pod głowicą
+(jedna dla taśmy wejściowej, jedna dla roboczej) wyliczana jest ona przy pomocy funkcji --
+dla każdej bramki oznaczającej binarnie czy litera jest pod głowicą i której wynikiem jest OR po pozycjach taśmy funkcji
+(AND po bramce zapamiętującej czy głowica znajduje się w tej pozycji i po bramce pamiętającej czy ta litera znajduje się w tej pozycji
+-- jak w zadaniu domowym 2).\newline
+Mając stan i litery pod głowicami wyliczane są wartości kolejnych bramek -- bramki oznaczające przesunięcie pozycji konkretnych głowic +
+bramki oznaczające literę zapisywaną pod głowicą na taśmie roboczej w kolejnym stanie maszyny + nowy stan
+(podobwód to wyliczający jest zależny od kodu maszyny -- reprezentuje on funkcję przejścia w maszynie i jest wielkości wielomianowej względem kodu maszyny).\newline
+
+Kolejna warstwa wyliczana jest na podstawie poprzedniej i wyników funkcji pośrednich:\newline
+Pozycja głowicy jest OR-em po 3 AND-ach binarnych (zmiana w prawo/lewo/zostaje -- wyznaczone przez podobwód funkcji przejścia
++ czy głowica znajdowała się na odpowiedniej pozycji w warstwie poprzedniej). Na taśmie roboczej litera jest równa starej jeśli bramka głowicy miała wartość 0,
+i równa literze wyznaczonej przez podobwód funkcji przejścia gdy miała wartość 1.\newline
+Nowy stan jest wyliczany w podobwodzie funkcji przejścia.\newline
+
+Obwód ma $P(n)$ warstw -- tak żeby wystarczyło na obliczenia maszyny w każdym biegu na słowie wejściowym.
+
+Pozostaje wygenerować wartość bramki wyjściowej -- jest to OR po bramkach reprezentujących stan akceptujący we wszystkich warstwach
+(maszyna się nie pętli i nie może wyjść ze stanu akceptującego czy odrzucającego,
+dlatego nie ma możliwości aby weszła do stanu odrzucającego, a potem akceptującego).\newline
+
+Jako, że obwód dokładnie symuluje działanie maszyny poprawność redukcji wynika prosto z jej konstrukcji.\newline
+Wielomianowość redukcji (w tym przypadku wyznaczana przez wielkość obwodu) wynika z tego, że występuje w nim
+$P(n)$ warstw głównych -- złożonych z bramek o ilości ograniczonej przez
+(rozmiar alfabetów+1)*(długość taśmy wejściowej+roboczej)+(ilość możliwych stanów).
+Warstwy pośrednie mają rozmiar (stała)*(rozmiary alfabetów)+(stała)*(ilość możliwych stanów)*(rozmiar alfabetów+1) --
+wykorzystywane na poznanie litery pod głowicą + wyznaczenie konkretnego argumentu funkcji przejścia
+(mając znany argument bezpośrednio wyznaczana jest nowa litera, stan i przesunięcia,
+zaś prawdziwy wynik funkcji jest OR-em po wyjściach dla wszystkich możliwych argumentów).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

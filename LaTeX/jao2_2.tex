@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501\newline
+
+Zadanie 6 (o distance automaton)\newline
+
+Dla zadanego $n$ - liczba liczników i $m\in\mathbb{N}$ - limit.\newline
+
+Wartością ścieżki jest tablica długości n o wartościach od 0 do m, której wartość powstaje poprzez
+zaaplikowanie funkcji przejścia po krawędziach (nic , inkrementacja , reset), jeżeli zwiększamy element równy m,
+to pozostaje on równy m(m oznacza $\ge m$ -
+prawdziwa wartość nas nie interesuje gdyż jedynym sposobem na zmniejszenie wartości jest jej wyzerowanie, zaś m jest już przekroczeniem limitu).\newline
+
+Konstrukcja gry:\newline
+Definiuję grę odległości częściowo analogicznie do gry zdefiniowanej na wykładzie:\newline
+
+Jak w normalnej grze w danym wierzchołku gracz Input wybiera literę, natomiast gracz Automat wybiera podzbiór krawędzi wychodzących
+ze stanów automatu pamiętanych w wierzchołku tworząc nowy stan.\newline
+
+W przeciwieństwie do klasycznej gry po przeczytaniu $k$ liter nie
+ma jednej najlepszej ścieżki do wierzchołka (łatwy przykład), dlatego wybieram kilka ścieżek dojścia do stanu,
+a żeby nie musieć pamietać wszystkich tych scieżek wystarczy że w wierzchołku gry zapamiętuję wartości tych ścieżek.
+Ponieważ dowolny licznik może zostać zresetowany samo to, że w wierzchołku gry dla któregoś stanu występuje wartościowanie w
+którym pewien licznik został przekroczony nie oznacza przegranej gracza Automat (ścieżka o tej wartości może być prefiksem ścieżki poprawnej).
+Prawdziwnym warunkiem wygranej gracza Input jest to żeby dla każdego stanu akceptującego we wszystkich pamiętanych wartościowaniach
+przekroczony został któryś licznik (lub stan był nieosiągalny = brak wartościowań).
+Ponieważ w tej grze wybór kilku ścieżek dojścia do stanu pomaga nie graczowi Input (jak w normalnej) a graczowi Automat
+(chociaż jedna ścieżka jest dobra = wierzchołek nie jest przegrywający), to wybór wszystkich krawędzi jest dla niego zawsze najlepszy
+(pozwala to uprościć grę).\newline
+
+Zredukowana gra:\newline
+
+Wierzchołkiem grafu gry należącym do gracza Input jest [funkcja ze stanów automatu w podzbiory wartościowań].
+Z wierzchołków wychodzą krawędzie odpowiadające literom alfabetu do wierzchołków o funkcjach zdefiniowanych następująco:\newline
+mając funkcję $f$ dla poprzedniego wierzchołka i literę $a$ zaczynamy od funkcji $g$ stałej w zbiór pusty, a następnie dla każdej krawędzi
+$p\xrightarrow{a}q$ należącej do automatu do wyniku $g(q)$ dodajemy teoriomnogościowo każdy element zbioru
+$f(p)$ po zaaplikowaniu do niego funkcji przejścia po tej krawędzi (nic , inkrementacja , reset).
+Wierzchołkiem startowym jest funkcja ze stanu początkowego automatu w zbiór jednoelementowy (wartościowanie zerowe) i pusty dla innych stanów.
+Gracz Input wygrywa grę jeśli doprowadzi do wierzchołka o funkcji $f$, takiej że dla każdego stanu akceptującego $p$ $f(p)$
+nie zawiera żadnego wartościowania w którym każda współrzędna jest $<m$, zaś gracz Automat wygrywa jeśli gra się nie kończy.
+Gra jest zdeterminowana pozycyjnie - gracz Input wygrywa w atraktorze wierzchołków wygrywających
+i rozwiązywalna w skończonym czasie (wierzchołków jest skończenie wiele).\newline
+
+Jeśli gracz Automat wygrywa grę (ciężko mówić o posiadaniu strategii skoro nie należą do niego żadne wierzchołki),
+to dla wybranego słowa po wybraniu przez gracza Input kolejnych jego liter w grze dochodzimy do wierzchołka w którym
+zapamietane jest wartościowanie pewnej ścieżki akceptującej to słowo, która nie przekracza żadnego limitu, a więc taka ścieżka istnieje.\newline
+
+Załóżmy, że wygrywa gracz Input. Ponieważ on w pełni decyduje o przebiegu rozgrywki, to istnieje dobrze zdefiniowana sekwencja liter
+(tworząca słowo), której wybranie doprowadza do wierzchołka w którym nie jest zapamiętana żadna
+wartość ścieżki akceptującej nieprzekraczająca limitu, a więc (ponieważ gracz Automat nie odrzuca żadnej ścieżki)
+nie istnieje taka ścieżka akceptująca to słowo w automacie.
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

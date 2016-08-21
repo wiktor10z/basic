@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath}
+\usepackage{anysize}
+\usepackage{amssymb}
+\begin{document}
+
+Wiktor Zuba 320501\newline
+
+Zadanie 1\newline
+
+Algorytm bardzo zgrubny:
+
+Startując od deterministycznego automatu z wartunkiem Mullera o n stanach
+czytamy najpierw $n^2$ znaków - czyli $n$ bloków $1(00)^k)$. Następnie czytając po $n!$ bloków $1(00)^k$
+zapamiętujemy stan do którego wchodzimy po przeczytaniu $1$,
+jeśli po kilku takich krokach napotkamy wcześniej już zapamiętany stan, to znaleźliśmy cykl ruchów po automacie -
+czytając słowo dalej będziemy się poruszać zawsze po dokładnie tych stanach które zostały odwiedzone pomiędzy miejscem w którym zapamiętaliśmy
+stan i kiedy się on powtórzył(jest to skończona liczba ruchów) sprawdzamy czy stany odwiedzane w tej sekwencji tworzą
+zbiór zawarty w rodzinie akceptującej automatu.\newline\newline
+
+Dowód poprawności:\newline
+a) Algorytm się zatrzyma po skończonej liczbie kroków - stanów automatu jest $n$, więc po przeczytaniu maksymalnie $n\cdot n!$
+bloków musimy napotkać znów ten sam stan, więc przeczytamy maksymalnie $n+n\cdot n!$ bloków, czyli $(n+n\cdot n!)^2$ liter +
+zapamiętywanie stanów z przejścia czytającego niewięcej niż $n\cdot n!$ bloków, o analogicznym koszcie co wcześniejsza część algorytmu.\newline
+b) Będziemy nieskończenie wiele razy chodzić dokładnie po stanach ze znalezionej sekwencji:\newline
+Po przeczytaniu $n^2$ liter czytając resztę słowa będziemy się już poruszać w stałym schemacie:
+przeczytanie $1$, dojście po krawędziach o etykietach $0$ do cyklu złożonego z krawędzi o etykietach $0$ - przejście tego cyklu kilka razy
+(conajmniej raz) i wyjście z cyklu przy przeczytaniu kolejnej litery $1$, co wynika z deterministyczności automatu i tego,
+że musimy przeczytać więcej $0$ pod rząd niż liczba stanów automatu.
+Jeśli po przeczytaniu $1$ trafiamy do stanu $x$ a następnie przeczytaniu $2l$ liter $0$ wychodzimy z cyklu krawędzią $1$ do stanu $y$,
+to po przeczytniu $2l+k\cdot a$, (gdzie $a$ jest długością cyklu) również musielibyśmy trafić do tego samego stanu $y$ (z deterministyczności),
+w szczególności po przeczytaniu $2l+2n!$ stanie się tak zawsze (nie musimy więc znać długości cyklu).
+Jeśli po przeczytaniu dokładnie $k\cdot n!$ bloków trafimy do tego samego stanu po przeczytaniu $1$,
+to przy przeczytaniu tego bloku przejdziemy po tej samej ścieżce, po tym samym cyklu (więcej razy) i wyjdziemy z niego tą samą krawędzią o etykiecie $1$,
+do następnego stanu który znajduje się w dokładnie takiej samej sytuacji (powtórzył się po przeczytaniu dokładnie $k\cdot n!$ bloków).
+\end{document}
