@@ -3,6 +3,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{multicol}
 
 \author{Wiktor Zuba}
 
@@ -52,7 +54,7 @@ Instytut Informatyki}
   W każdym modelu danych wykorzystywanym do wyliczania możliwych ocen przedmiotów lub sporządzania list rekomendacji
   występują użytkownicy i przedmioty, oraz pewne niepełne informacje na temat ich powiązań ze sobą.
   Aby móc przewidzieć czy dany nie oceniony jeszcze przedmiot zainteresuje konkretnego użytkownika trzeba dla obu określić preferencje na podstawie 
-  załączonych opisów, znanych interakcji tego użytkownika z innymi przedmiotami i przedmiotu z innymi uzytkownikami, lub też obu informacji na raz.
+  załączonych opisów, znanych interakcji tego użytkownika z innymi przedmiotami i przedmiotu z innymi użytkownikami, lub też obu informacji na raz.
   
   
   \section{Podstawowe definicje}
@@ -62,7 +64,7 @@ Instytut Informatyki}
    \textbf{Definicja 1.1.2.} Przedmiot -- rzecz która jest używana (czasem też oceniana) przez użytkowników.\newline
    
     Przedmiot musi być reużywalny (np. filmy do oglądnięcia, książki do przeczytania, strony internetowe do odwiedzenia),
-    lub występujący w wielu identycznych egzemplarzach (przedmioty w sklepach), aby użycie przez innego uzytkownika nie wyczerpało jego zasobu
+    lub występujący w wielu identycznych egzemplarzach (przedmioty w sklepach), aby użycie przez innego użytkownika nie wyczerpało jego zasobu
     (wtedy rekomendacja nie miała by sensu, skoro przedmiot nie istnieje) i dało miarodajne informacje na jego temat.
     Przedmiot jest rzeczą, której ocenę przez użytkownika chcemy przewidzieć, lub którą chcemy mu zarekomendować.\newline\newline
    %
@@ -77,7 +79,7 @@ Instytut Informatyki}
     (kupienie towaru, obejrzenie filmu, wypożyczenie książki, odwiedzenie strony).\newline
     
     Informacje bezwarunkowe, których główną zaletą jest łatwość ich zbierania
-    (dzieje się to automatycznie, bez dodatkowych akcji ze strony uzytkownika, a czasem i bez jego wiedzy),
+    (dzieje się to automatycznie, bez dodatkowych akcji ze strony użytkownika, a czasem i bez jego wiedzy),
     są niestety bardzo narażone na przekłamania odnośnie preferencji użytkownika.
     Po pierwsze zarejestrowanie uzycia przez system wcale nie musi oznaczać faktycznego użycia
     (przypadkowe kliknięcie linku, pomyłka we wpisywaniu nazwy, zrezygnowanie po przeczytaniu opisu), 
@@ -130,12 +132,12 @@ Instytut Informatyki}
      by przekroczyć limity zabezpieczające algorytmy przed sytuacjami trudnymi nie dają się zaklasyfikować odpowiednio.
      Osobie która niejako działa przeciwko systemowi rekomendacyjnemu ciężko przyporządkować trafne propozycje.
      Dopasowanie parametrów algorytmu tak, żeby zoptymalizować funkcje miary jakości,
-     obejmujące tych uzytkowników może wpłynąć negatywnie również na rekomendacje dla standardowych użytkowników na normalnych przedmiotach.
-    \item asymetria pomiedzy ilością przedmiotów ocenionych przez uzytkowników -- w przypadku danych explicite często zachodzi sytuacja,
+     obejmujące tych użytkowników może wpłynąć negatywnie również na rekomendacje dla standardowych użytkowników na normalnych przedmiotach.
+    \item asymetria pomiedzy ilością przedmiotów ocenionych przez użytkowników -- w przypadku danych explicite często zachodzi sytuacja,
      gdy kilku aktywnych użytkowników wystawia dużo ocen, zaś reszta zaledwie pojedyncze.\newline
      W takiej sytuacji program rekomendujący również powinien być w stanie przydzielić propozycje mniej aktywnym użytownikom.
      Zasadniczym problemem w takiej sytuacji jest to, że ocena jakości w niektórych (zazwyczaj dobrych)
-     miarach może być zawyżona przy dobrym dopasowaniu się do tych pojedynczych uzytkowników,
+     miarach może być zawyżona przy dobrym dopasowaniu się do tych pojedynczych użytkowników,
      jendocześnie przypasowującej mniej aktywnym oceny bliskie losowym. % może podać/rozrysować przykład
     \item sytuacja w której nie da się już nic zaproponować -- jeśli użytkownik użył znaczną ilość przedmiotów,
      system nie może nic zaproponować albo ponieważ nie ma już wystarczająco dużo przedmiotów nieużytych,
@@ -220,7 +222,7 @@ Instytut Informatyki}
    Podobieństwo kosinusowe jest bardziej odporne na szczególne przypadki w danych,
    dlatego jest często wykorzystywane przy bardzo rzadkich danych (kiedy takie przypadki często występują).
    Oba podobieństwa nie sprawdzają się zbyt dobrze w przypadku gdy użytkownik wystawia wszystkim przedmiotom takie same oceny,
-   oraz premiują podobieństwo pomiedzy uzytkownikami z pojedynczymi wspólnie ocenionymi przedmiotami (przy jednym wspólnym przedmiocie podobieństwo kosinusowe = 1),
+   oraz premiują podobieństwo pomiedzy użytkownikami z pojedynczymi wspólnie ocenionymi przedmiotami (przy jednym wspólnym przedmiocie podobieństwo kosinusowe = 1),
    dlatego, stosowane są często dodatkowe wagi ze względu na ilość wspólnie ocenionych przedmiotów lub odgraniczenia na ich minimalną ilość.
    Jeśli założenia funkcji nie są spełnione (za mało wspólnych przedmiotów), lub wartość jest bez sensu (np. $\frac{0}{0}$)
    funkcja przyjmuje wartość odpowiadającą brakowi podobieństwa (zazwyczaj 0).\newline\newline
@@ -316,7 +318,7 @@ Instytut Informatyki}
      {\scriptsize
       stała $\alpha$ oznacza szybkość uczenia (powinna więc zależeć od ilości przewidzianych iteracji = dostępnego czasu na działanie algorytmu uczącego)\newline
       stałe $\lambda_*$ służą lepszemu dostosowaniu algorytmu do problemu i powinny zostać ustalone tak, by optymalizowały funkcje oceny na zbiorze testowym\newline
-      wartości początkowe wektorów $p_*$ i $y_*$ powinny zostać wylosowane np. z rozkładu standardowego
+      wartości początkowe wektorów $p_*$ i $y_*$ powinny zostać wylosowane np. z rozkładu normalnego
       (jeśli wszystkie wektory początkowe mają wartość $0$ na tej samej współrzędnej to tak pozostanie,
       jeśli wszystkie wektory mają te same wartości na określonych współrzędnych, to nie będą mogły się zróżnicować i będą redundantne)
      }\newline
@@ -324,7 +326,74 @@ Instytut Informatyki}
      
   %TODO wspomnieć, że mogą być oceny poza zakresem 
   
-  %TODO BPR
+   \subsection{Spersonalizowany ranking Bayesa}
+    W przypadku dostępu do danych wyłącznie typu implicite popularną metodą tworzenia spersonalizowanych list rekomendacyjnych jest
+    faktoryzacja macierzy oparta o analizę bayesowską prawdopodobieństw.\newline
+    Mając dostępną binarną macierz użyć przedmiotów traktujemy negatywne wartości bardziej jako wartość nieznaną niż jako stwierdzenie,
+    że dany przedmiot nie podobał się użytkownikowi. Aby uzyskać więcej niż dwie wartości, a przez to i rozróżnienie w obrębie przedmiotów nieznanych
+    model BPR (Bayesian personalized ranking) stara się oszacować dla danego użytkownika i każdej pary przedmiotów prawdopodobieństwo,
+    że preferuje on pierwszy z nich. Aby uzystać początkowe dane używane do filtrowania kolaboratywnego pomiedzy użytkownikami
+    przyjmujemy, że te już użyte są bardziej preferowane od nieznanych i dla każdego wiersza macierzy tworzymy nową macierz kwadratową.
+    \begin{multicols}{3}
+     \begin{tabular}{c|c|c|c|c|c|}
+       & i1 & i2 & i3 & i4 & i5 \\
+      \hline
+      u1 & + & ? & ? & ? & + \\
+      \hline
+      u2 & ? & ? & + & ? & + \\    
+      \hline
+      u3 & + & + & + & ? & ? \\    
+      \hline
+      u4 & ? & ? & ? & ? & + \\    
+     \end{tabular}
+     \begin{center}
+      \includegraphics[scale=0.72]{strzalka.jpg}\newline
+      %TODO zmienić tę strzałkę tak żeby wskazywała z wiersza u2, być może jakieś rozszerzenie zamiast strzałki
+      $i>_{u_2}j$
+     \end{center}
+     \begin{tabular}{c|c|c|c|c|c|}
+       & j1 & j2 & j3 & j4 & j5 \\
+      \hline
+      i1 & X & ? & - & ? & - \\
+      \hline
+      i2 & ? & X & - & ? & - \\    
+      \hline
+      i3 & + & + & X & + & ? \\    
+      \hline
+      i4 & ? & ? & - & X & - \\
+      \hline
+      i5 & + & + & ? & + & X \\ 
+     \end{tabular}
+    \end{multicols}
+    Decyzję o tym czy przedmiot $i$ jest bardziej pasujący do użytkownika $u$ od przedmiotu $j$ jest podejmowana na podstawie prawdopodobieństwa warunkowego
+    $\mathbb{P}(i>_u j|\Theta)$, gdzie $\Theta$ jest modelem wygenerowanym przez algorytm.
+    Podobnie jak w przypadku modelu SVD $\Theta$ składa się z wektorów
+    $p_u,q_i\in\mathbb{R}^f$ oraz wartości $b_i\in\mathbb{R}$, oraz powstaje poprzez iterowaną
+    optymalizację funkcji celu:
+    \begin{center}
+     $\sum\limits_{(u,i,j)\in D_K}\ln{(\sigma(\tilde{s}_{uij}))}-\lambda\lVert\Theta\rVert^2$
+    \end{center}
+    gdzie $D_K=\{(u,i,j):i\in N(u) \& j\notin N(u)\}, \tilde{s}_{u,i,j}=\tilde{r}_{ui}-\tilde{r}_{uj}, \lVert\Theta\rVert^2=(b_i^2+\lVert p_u\rVert^2+\lVert q_i\rVert^2)$,
+    $\sigma(x)=\frac{1}{1+e^{-x}}$\newline
+    Zaś przewidywana ocena przedmiotu (opisująca wyłącznie kolejność preferencji) jest równa $\tilde{r}_{ui}=b_i+p_u\cdot q_i$
+    ($\mu$ oraz $b_u$ nie mają tutaj sensu)\newline
+    Algorytm iterowanego poprawiania modelu wygląda podobnie do tego z SVD:\newline\newline
+    %
+    \hspace*{16pt}	for $I$ iterations\{\newline
+    \hspace*{32pt}		wylosuj $(u,i,j)$ z $D_K$\{\newline   
+    \hspace*{48pt}			$\tilde{s}=b_i-b_j+p_u\cdot(q_i-q_j)$\newline
+    \hspace*{48pt}			$err=\frac{e^{-\tilde{s}}}{1+e^{-\tilde{s}}}$\newline
+    \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
+    \hspace*{48pt}			$b_j=b_j+\alpha\cdot(-err-\lambda_2\cdot b_j)$\newline
+    \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot (q_i-q_j)-\lambda_3\cdot p_u)$\newline
+    \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot p_u-\lambda_4\cdot q_i)$\newline
+    \hspace*{48pt}			$q_j=q_j+\alpha\cdot(-err\cdot p_u-\lambda_4\cdot q_j)$\newline
+    \hspace*{32pt}		\}\newline
+    \hspace*{16pt}	\}\newline
+    %TODO czy za każdym razem pisać definicje zmiennych czy raz wystarczy (zalezy czy ktoś czyta wyrywkowo czy całość)
+    W tym algorytmie trójki $(u,i,j)\in D_K$ są wybierane losowo, gdyż jest ich na ogół o wiele wiecej niż par $(u,i)\in K$
+    i przez to już jedna iteracja po wszystkich mogła by być zbyt droga obliczeniowo.
+   
   \section{Filtrowanie na podstawie opisów} %TODO jakieś lepsze tłumaczenie
 
 \begin{thebibliography}{99}%TODO
