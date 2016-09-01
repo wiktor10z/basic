@@ -395,7 +395,43 @@ Instytut Informatyki}
     i przez to już jedna iteracja po wszystkich mogła by być zbyt droga obliczeniowo.
    
   \section{Filtrowanie na podstawie opisów} %TODO jakieś lepsze tłumaczenie
-
+   Gdy do danych o przedmiotach i/lub użytkownikach dołączone są dodatkowe informacje podobieństwo
+   można wywnioskowac na podstawie właśnie tych opisów.\newline
+   W przypadku przedmiotów najczęściej spotykanymi formami opisów są:
+   \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+    \item przypasowanie do kategorii
+     (często dany przedmiot może należeć do kilku kategorii na raz jak na przykład film może być jednocześnie komedią i science fiction)
+    \item słowa opisujące -- tagi (w przeciwieństwie do kategorii tagi mogą nie mieć stałej struktury)
+    \item opis tekstowy (streszczenie/specyfikacja)
+   \end{itemize}
+   W przypadku użytkowników:
+   \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+    \item kategorie oznaczone przez użytkownika jako ulubione
+    \item opis (rzadko samego użytkownika, częściej upodobań związanych z przedmiotami w serwisie)
+    \item powiązania z innymi użytkownikami (częstość kontaktów, informacje z innych źródeł jak serwisy społecznościowe)
+   \end{itemize}
+   %
+   Systemy generujące rekomendacje oparte o dane wyczerpujących opisów mogą dawać dobre wyniki już przy najprostszych użytych technikach.
+   Algorytm zaproponuj najpopularniejsze przedmioty z ulubionych kategorii użytkownika nie jest wiele bardziej skomplikowany od niespersonalizowanego,
+   a jednocześnie daje lepsze wyniki (choć dzieli też większość jego wad).
+   Dane zamieszczone są jednak rzadko wystarczające, aby zbudować dobry system tylko na opisach, które są często niekompletne
+   (szczególnie w przypadku użytkowników -- wielu nie wprowadza informacji o sobie) niedokładne lub wręcz błędne.
+   Dlatego częściej wykorzystywane są w połączeniu z danymi o użyciach przedmiotu. Dane te mogą posłużyć jako miara podobieństwa:
+   przedmioty z tych samych kategorii powinny być podobne do siebie
+   (w przypadku przypisań do wielu kategorii można również definiować podobieństwa przechodnie,
+   a w przypadku wielu kategorii użyć również podobieństw pomiędzy nimi).
+   Użytkownicy przypisujący przedmiotom takie same tagi, czy tworzący o
+   nich podobne komentarze również mogą zostać zakwalifikowani jako sąsiedzi w grafie podobieństw.
+   W przypadku danych tekstowych zbieżności można wyciągnąć dzięki zastosowaniu technik text miningowych,
+   co może prowadzić do nietrywialnych wniosków na temat przedmiotów i pomóc stworzyć lepszą ich klasyfikację.\newline
+   %
+   Posiadanie informacji o przedmiotach pozwala również na stworzenie systemów rekomendacyjnych współpracujących z użytkownikiem.
+   W przypadku usystematyzowanych danych o parametrach przedmiotów (cena, lokalizacja, dostępność, itp.)
+   można pozwolić użytkownikowi na wybranie które cechy są dla niego najbardziej istotne i albo zawęzić wyszukiwanie albo też
+   dostosować różne stałe w algorytmach (aby podobieństwo pod danym względem miało większą wagę).
+   
+   
+   
 \begin{thebibliography}{99}%TODO
 \addcontentsline{toc}{chapter}{Bibliografia}
 
