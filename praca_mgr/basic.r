@@ -23,12 +23,21 @@ read_ml_file=function(file){
   
   users<<-ml_usermax
   movies<<-ml_moviemax
+  items<<-ml_moviemax
   observations<<-nrow(ml)
   mov_means<<-apply(ml_matrix,2,mean1)
   us_means<<-apply(ml_matrix,1,mean1)
   glob_mean<<-mean(mov_means)
 }
-
+read_ml_test=function(file){
+  ml_test<<-read.csv(file,header=FALSE,sep="\t")
+  ml_test_bin<<-ml_test[,1:2]
+  ml_matrix1=matrix(0L,nrow=ml_usermax,ncol=ml_moviemax)
+  for(i in 1:100000){
+    ml_matrix1[ml[i,1],ml[i,2]]=ml[i,3]
+  }
+  ml_test_matrix<<-ml_matrix1
+}
 
 #system.time({
 #  ml100k_SVD = svd(ml100k_matrix)
@@ -46,7 +55,16 @@ non_personalized_recs=function(n){
   lapply(1:users,function(u) non_personalized(u,n)) 
 }
 
-# przekształcenie
+# przekształcenia
+
+normalize_rating=function(rat,min1,max1){
+  return(matrix(sapply(sapply(rat,function(x){min(max1,x)}),function(x){max(min1,x)}),nrow=nrow(rat)))
+}
+
+rating_MSE=function(rating,test){
+  return(sqrt(sum(apply(test,1,function(x){(x[3]-rating[x[1],x[2]])*(x[3]-rating[x[1],x[2]])}))/nrow(test)))
+}
+
 rating_to_propos1=function(u,n){
   return(head(order(remove_viewed(ml_matrix[u,],predicted_ratings[u,]),decreasing=TRUE),n))
 }
@@ -54,4 +72,6 @@ rating_to_propos=function(ratings,n){
   predicted_ratings<<-ratings
   lapply(1:users,function(u) rating_to_propos1(u,n))
 }
+
+
 

@@ -2,13 +2,13 @@ viewed_both=function(x,y){
   return ((x!=0)&(y!=0))
 }
 
-# podobieństwo kowariancyjne Paersona
-cov_similarity_vec=function(x,y){
+# podobieństwo korelacji Paersona
+cor_similarity_vec=function(x,y){
   viewed=viewed_both(x,y)
   x2=x-mov_means
   y2=y-mov_means
-  if(sum(viewed)<2){
-    return(0)
+  if(sum(viewed)<1){#TODO tylko 1, trzeba sprawdzić, ćzy ocenili po conajmniej 2 - przy tych danych zawsze prawda
+    return(0)       #TODO również trzeba sprawdzić, czy któryś użytkownik nie ma równej średniej i tych właśnie przedmiotów -> 0 w mianowniku
   }else{
     return((sum(viewed*x2*y2))/(sqrt(sum(viewed*x2*x2)*sum(viewed*y2*y2))))
   }
@@ -24,8 +24,8 @@ cos_similarity_vec=function(x,y){
   }
 }
 
-cov_similarity=function(i,j){
-  return(cov_similarity_vec(ml_matrix[i,],ml_matrix[j,]))
+cor_similarity=function(i,j){
+  return(cor_similarity_vec(ml_matrix[i,],ml_matrix[j,]))
 }
 cos_similarity=function(i,j){
   return(cos_similarity_vec(ml_matrix[i,],ml_matrix[j,]))
