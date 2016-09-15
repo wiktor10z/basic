@@ -52,7 +52,6 @@ neighbours2=function(u,n,x,it){
   return(list[-(match(u,list,nomatch=length(list)))])
 }
 
-
 CF_predict=function(u){
   mean_u=us_means[u]
   rating=numeric(length=movies)
@@ -76,23 +75,6 @@ CF_predict_all=function(sim_mat){
   similarity_matrix<<-sim_mat
   return(matrix(sapply(1:users,CF_predict),byrow=TRUE,nrow=users))
 }
-
-if(FALSE){
-  cor_similarity_vec=function(x,y){
-    viewed=viewed_both(x,y)
-    if(sum(viewed)<1){#TODO tylko 1, trzeba sprawdzić, ćzy ocenili po conajmniej 2 - przy tych danych zawsze prawda
-      return(0)       #TODO również trzeba sprawdzić, czy któryś użytkownik nie ma równej średniej i tych właśnie przedmiotów -> 0 w mianowniku
-    }else{
-      return((sum(viewed*x2*y2))/(sqrt(sum(viewed*x2*x2)*sum(viewed*y2*y2))))
-    }
-  }
-  
-  cos_similarity_vec=function(x,y){
-    viewed=viewed_both(x,y)
-    if(sum(viewed)<1){
-      return(0)
-    }else{
-      return((sum(viewed*x*y))/(sqrt(sum(viewed*x*x)*sum(viewed*y*y))))
-    }
-  }
+CF_ratings=function(sim_fun){
+  return(CF_predict_all(make_sim_matrix(sim_fun)))
 }

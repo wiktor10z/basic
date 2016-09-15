@@ -88,7 +88,7 @@ SVDpp_ratings=function(Iter,f2,alpha2){
 #inits
 if(FALSE){
 SVD1=function(Iter,f,N){
-  alpha<<-0.07
+  alpha<<-0.03
   r<<-ml_matrix
   #r2<<-matrix(0L,nrow=users,ncol=movies)
   p<<-matrix(rnorm(users*f,mean=0,sd=1),users,f)
@@ -98,6 +98,7 @@ SVD1=function(Iter,f,N){
   for(I in 1:Iter){
     for(j in 1:N){
       if((sum(is.nan(p))==0)&&(sum(is.infinite(p))==0)&&(sum(p>10e+10)==0)&&(sum(p<(-10e+10))==0)){
+        j2<<-j
        SVD_item(ml_bin[j,1],ml_bin[j,2])       
       }
     }

@@ -7,13 +7,11 @@ non_per_rating=rep(1,users)%*%t.default(mov_means)
 trivial_rating=((rep(1,users)%*%t.default(mov_means))+(us_means%*%t.default(rep(1,items))))/2
 non_per_propos=non_personalized_recs(10)
 system.time({
-  cor_matrix=make_sim_matrix(cor_similarity)
-  cos_matrix=make_sim_matrix(cos_similarity)
+  cor_rating=CF_ratings(cor_similarity)
+  cos_rating=CF_ratings(cos_similarity)
 })
-system.time({
-  cor_rating=CF_predict_all(cor_matrix)
-  cos_rating=CF_predict_all(cos_matrix)
-})
+
+
 CF_propos=rating_to_propos(CF_predicted_ratings,10)
 
 SVD(1,10,0.03)
@@ -33,7 +31,7 @@ BPR=function(Iter,f2,alpha2){
     u=sample(1:users,1)
     i=sample(c(1:items)[ml_bin_matrix[u,]],1)
     j=sample(c(1:items)[ml_bin_matrix[u,]==FALSE],1)
-    s2=b[j]-b[i]+sum(p[u,]*(q1[j,]-q1[i,]))
+    s2=b2[j]-b2[i]+sum(p[u,]*(q1[j,]-q1[i,]))
     err=exp(s2)/(1+exp(s2))
     b2[i]<<-b2[i]+alpha*err
     b2[j]<<-b2[j]-alpha*err
@@ -52,6 +50,13 @@ BPR_pseudo_ratings=function(Iter,f2,alpha2){
   }
   return(r2)
 }
+
+BPR_rating1=BPR_pseudo_ratings(1,10,0.03)
+
+system.time({
+MSE1=count_MSE(SVDpp_ratings,c(1,10,0.01))
+})
+
 
 if(FALSE){
 f=3
