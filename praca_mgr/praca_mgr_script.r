@@ -11,7 +11,8 @@ system.time({
   cos_matrix=make_sim_matrix(cos_similarity)
 })
 system.time({
-  CF_predicted_ratings=CF_predict_all(cor_matrix)
+  cor_rating=CF_predict_all(cor_matrix)
+  cos_rating=CF_predict_all(cos_matrix)
 })
 CF_propos=rating_to_propos(CF_predicted_ratings,10)
 

@@ -2,20 +2,7 @@ viewed_both=function(x,y){
   return ((x!=0)&(y!=0))
 }
 
-# podobieństwo korelacji Paersona
-cor_similarity_vec=function(x,y){
-  viewed=viewed_both(x,y)
-  x2=x-mov_means
-  y2=y-mov_means
-  if(sum(viewed)<1){#TODO tylko 1, trzeba sprawdzić, ćzy ocenili po conajmniej 2 - przy tych danych zawsze prawda
-    return(0)       #TODO również trzeba sprawdzić, czy któryś użytkownik nie ma równej średniej i tych właśnie przedmiotów -> 0 w mianowniku
-  }else{
-    return((sum(viewed*x2*y2))/(sqrt(sum(viewed*x2*x2)*sum(viewed*y2*y2))))
-  }
-}
-# podobieństwo kosinusowe
-
-cos_similarity_vec=function(x,y){
+similarity_vec=function(x,y){
   viewed=viewed_both(x,y)
   if(sum(viewed)<1){
     return(0)
@@ -24,11 +11,14 @@ cos_similarity_vec=function(x,y){
   }
 }
 
+# podobieństwo korelacji Paersona
 cor_similarity=function(i,j){
-  return(cor_similarity_vec(ml_matrix[i,],ml_matrix[j,]))
+  return(similarity_vec(ml_matrix[i,]-us_means[i],ml_matrix[j,]-us_means[j]))
 }
+
+# podobieństwo kosinusowe
 cos_similarity=function(i,j){
-  return(cos_similarity_vec(ml_matrix[i,],ml_matrix[j,]))
+  return(similarity_vec(ml_matrix[i,],ml_matrix[j,]))
 }
 
 make_sim_matrix=function(sim_fun){
@@ -41,25 +31,25 @@ make_sim_matrix=function(sim_fun){
   return(matrix1)
 }
 
-neighbours=function(i,n,x){
-  all=sum(similarity_matrix[i,]>x)
+neighbours=function(u,n,x){
+  all=sum(similarity_matrix[u,]>x)
   if(all<n){
-    list=head(order(similarity_matrix[i,],decreasing=TRUE),all)
+    list=head(order(similarity_matrix[u,],decreasing=TRUE),all)
   }else{
-    list=head(order(similarity_matrix[i,],decreasing=TRUE),n+1)
+    list=head(order(similarity_matrix[u,],decreasing=TRUE),n+1)
   }
-  return(list[-(match(i,list,nomatch=length(list)))])
+  return(list[-(match(u,list,nomatch=length(list)))])
 }
 
-neighbours2=function(i,n,x,it){
-  sim2=similarity_matrix[i,]*(ml_matrix[,it]!=0)
+neighbours2=function(u,n,x,it){
+  sim2=similarity_matrix[u,]*(ml_matrix[,it]!=0)
   all=sum(sim2>x)
   if(all<n){
     list=head(order(sim2,decreasing=TRUE),all)
   }else{
     list=head(order(sim2,decreasing=TRUE),n+1)
   }
-  return(list[-(match(i,list,nomatch=length(list)))])
+  return(list[-(match(u,list,nomatch=length(list)))])
 }
 
 
@@ -87,4 +77,22 @@ CF_predict_all=function(sim_mat){
   return(matrix(sapply(1:users,CF_predict),byrow=TRUE,nrow=users))
 }
 
-
+if(FALSE){
+  cor_similarity_vec=function(x,y){
+    viewed=viewed_both(x,y)
+    if(sum(viewed)<1){#TODO tylko 1, trzeba sprawdzić, ćzy ocenili po conajmniej 2 - przy tych danych zawsze prawda
+      return(0)       #TODO również trzeba sprawdzić, czy któryś użytkownik nie ma równej średniej i tych właśnie przedmiotów -> 0 w mianowniku
+    }else{
+      return((sum(viewed*x2*y2))/(sqrt(sum(viewed*x2*x2)*sum(viewed*y2*y2))))
+    }
+  }
+  
+  cos_similarity_vec=function(x,y){
+    viewed=viewed_both(x,y)
+    if(sum(viewed)<1){
+      return(0)
+    }else{
+      return((sum(viewed*x*y))/(sqrt(sum(viewed*x*x)*sum(viewed*y*y))))
+    }
+  }
+}
