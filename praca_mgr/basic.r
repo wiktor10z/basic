@@ -54,20 +54,25 @@ read_ml_test=function(file){
   ml_test_bin_matrix<<-(ml_test_matrix!=0)
 }
 
-#system.time({
-#  ml100k_SVD = svd(ml100k_matrix)
-#})
-
 remove_viewed=function(x,y){
   return ((x==0)*y)
 }
-# non-personalized
+
+# trivial recomendations
+
 non_personalized=function(u,n){
   return(head(order(remove_viewed(ml_matrix[u,],mov_means),decreasing=TRUE),n))
 }
-
 non_personalized_recs=function(n){
   lapply(1:users,function(u) non_personalized(u,min(n,items-us_viewed[[u]])))
+}
+
+optimal_recs=function(n){
+  propos=list(list())
+  for(u in 1:users){
+    propos[[u]]=head(order(ml_test_matrix[u,]-ml_matrix[u,],decreasing=TRUE),min(n,items-us_viewed[[u]]))
+  }
+  return(propos)
 }
 
 random_recs=function(n){
@@ -87,41 +92,6 @@ affine_rating=function(rat){
   return(matrix(sapply(rat,function(x){f1*(x-min1)+1}),nrow=nrow(rat)))
 }
 
-rating_MSE=function(rating,test){
-  return(sqrt(sum(apply(test,1,function(x){(x[3]-rating[x[1],x[2]])*(x[3]-rating[x[1],x[2]])}))/nrow(test)))
-}
-
-count_MSE=function(rating_function,args){
-  value=0
-  for(t1 in 1:5){
-    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
-    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
-    rating=arguments_from_list(rating_function,args)
-    value=value+rating_MSE(rating,ml_test)
-  }
-  return(value/5)
-}
-count_ROC_rating=function(rating_function,args,resolution){
-  roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
-  for(t1 in 1:5){
-    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
-    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
-    propos=rating_to_propos(arguments_from_list(rating_function,args),items)
-    roc_sum=roc_sum+propos_ROC(propos,resolution)
-  }
-  return(roc_sum/5)
-}
-count_ROC_recs=function(recs_function,resolution){
-  roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
-  for(t1 in 1:5){
-    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
-    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
-    propos=recs_function(items)
-    roc_sum=roc_sum+propos_ROC(propos,resolution)
-  }
-  return(roc_sum/5)
-}
-
 rating_to_propos1=function(u,n){
   return(head(order(remove_viewed(ml_matrix[u,],predicted_ratings[u,]),decreasing=TRUE),min(n,items-us_viewed[[u]])))
 }
@@ -130,8 +100,10 @@ rating_to_propos=function(ratings,n){
   lapply(1:users,function(u) rating_to_propos1(u,n))
 }
 
-normalized_AUC=function(roc,resolution){
-  return(sum(roc[,2])/resolution)
+# funkcje oceny
+
+rating_MSE=function(rating,test){
+  return(sqrt(sum(apply(test,1,function(x){(x[3]-rating[x[1],x[2]])*(x[3]-rating[x[1],x[2]])}))/nrow(test)))
 }
 
 trivial_roc=function(resolution){
@@ -164,10 +136,47 @@ propos_ROC=function(propos,resolution){
   roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
   for(u in 1:users){
     hit_vec=ml_test_bin_matrix[u,propos[[u]]]
-    roc1=data.frame(cumsum(hit_vec)/sum(hit_vec),cumsum(!hit_vec)/sum(!hit_vec))
+    roc1=data.frame(cumsum(!hit_vec)/sum(!hit_vec),cumsum(hit_vec)/sum(hit_vec))
     roc_sum=roc_sum+normalize_roc(roc1,resolution)
   }
   return(roc_sum/users)
 }
 
+normalized_AUC=function(roc,resolution){
+  return(sum(roc[,2])/resolution)
+}
 
+# ocena systemu
+
+count_MSE=function(rating_function,args){
+  value=0
+  for(t1 in 1:5){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    rating=arguments_from_list(rating_function,args)
+    value=value+rating_MSE(rating,ml_test)
+  }
+  return(value/5)
+}
+
+count_ROC_rating=function(rating_function,args,resolution){
+  roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
+  for(t1 in 1:5){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    propos=rating_to_propos(arguments_from_list(rating_function,args),items)
+    roc_sum=roc_sum+propos_ROC(propos,resolution)
+  }
+  return(roc_sum/5)
+}
+
+count_ROC_recs=function(recs_function,resolution){
+  roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
+  for(t1 in 1:5){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    propos=recs_function(items)
+    roc_sum=roc_sum+propos_ROC(propos,resolution)
+  }
+  return(roc_sum/5)
+}

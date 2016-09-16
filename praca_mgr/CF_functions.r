@@ -75,6 +75,7 @@ CF_predict_all=function(sim_mat){
   similarity_matrix<<-sim_mat
   return(matrix(sapply(1:users,CF_predict),byrow=TRUE,nrow=users))
 }
+
 CF_ratings=function(sim_fun){
   return(CF_predict_all(make_sim_matrix(sim_fun)))
 }

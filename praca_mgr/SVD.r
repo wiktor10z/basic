@@ -21,6 +21,7 @@ SVDpp_item=function(u,i){
   }  
 }
 
+# rozkłady SVD
 
 SVD=function(Iter,f2,alpha2){
   f<<-f2
@@ -40,6 +41,7 @@ SVD=function(Iter,f2,alpha2){
     #}
   #}
 }
+
 SVDpp=function(Iter,f2,alpha2){
   f<<-f2
   alpha<<-alpha2
@@ -61,6 +63,29 @@ SVDpp=function(Iter,f2,alpha2){
   #}
 }
 
+BPR=function(Iter,f2,alpha2){
+  f<<-f2
+  alpha<<-alpha2
+  r<<-ml_bin_matrix
+  p<<-matrix(rnorm(users*f,mean=0,sd=1),users,f)
+  q1<<-matrix(0,movies,f)
+  b2<<-rep(0L,items)
+  for(I in 1:Iter){
+    u=sample(1:users,1)
+    i=sample(c(1:items)[ml_bin_matrix[u,]],1)
+    j=sample(c(1:items)[ml_bin_matrix[u,]==FALSE],1)
+    s2=b2[j]-b2[i]+sum(p[u,]*(q1[j,]-q1[i,]))
+    err=exp(s2)/(1+exp(s2))
+    b2[i]<<-b2[i]+alpha*err
+    b2[j]<<-b2[j]-alpha*err
+    p[u,]<<-p[u,]+alpha*err*(q1[i,]-q1[j,])
+    q1[i,]<<-q1[i,]+alpha*err*p[u,]
+    q1[j,]<<-q1[j,]-alpha*err*p[u,]
+  }
+}
+
+# ratings
+
 SVD_ratings=function(Iter,f2,alpha2){
   SVD(Iter,f2,alpha2)
   r2=matrix(0L,nrow=users,ncol=movies)
@@ -71,6 +96,7 @@ SVD_ratings=function(Iter,f2,alpha2){
   }
   return(r2)
 }
+
 SVDpp_ratings=function(Iter,f2,alpha2){
   SVDpp(Iter,f2,alpha2)
   r2=matrix(0L,nrow=users,ncol=movies)
@@ -83,6 +109,18 @@ SVDpp_ratings=function(Iter,f2,alpha2){
   }
   return(r2)
 }
+
+BPR_pseudo_ratings=function(Iter,f2,alpha2){
+  BPR(Iter,f2,alpha2)
+  r2=matrix(0L,nrow=users,ncol=movies)
+  for(u in 1:users){
+    for(i in 1:items){
+      r2[u,i]=b2[i]+sum(q1[i,]*p[u,])
+    }
+  }
+  return(r2)
+}
+
 
 
 if(FALSE){
