@@ -17,6 +17,23 @@ CF_propos=rating_to_propos(CF_predicted_ratings,10)
 SVD(1,10,0.03)
 SVDpp(1,3,0.01)
 
+system.time({
+  roc3=propos_ROC(prop1,1000)
+})
+roc0=propos_ROC(random_recs(items),1000)
+non_per=non_personalized_recs(items)
+roc4=propos_ROC(non_per,1000)
+plot(roc3,type="l",col="green")
+par(new=TRUE)
+plot(trivial_roc(1000),type="l",col="red")
+par(new=TRUE)
+plot(roc4,type="l",col="blue")
+normalized_AUC(roc3,1000)
+normalized_AUC(roc4,1000)
+normalized_AUC(trivial_roc(1000),1000)
+
+roc6=count_ROC_rating(SVD_ratings,c(1,7,0.02),1000)
+
 
 #BPR
 

@@ -21,6 +21,7 @@ SVDpp_item=function(u,i){
   }  
 }
 
+
 SVD=function(Iter,f2,alpha2){
   f<<-f2
   alpha<<-alpha2
@@ -82,10 +83,8 @@ SVDpp_ratings=function(Iter,f2,alpha2){
   }
   return(r2)
 }
-#TODO obcięcie do <min,max>
 
 
-#inits
 if(FALSE){
 SVD1=function(Iter,f,N){
   alpha<<-0.03
@@ -110,51 +109,14 @@ SVD1=function(Iter,f,N){
     #}
   #}
 }
+
+f=3
+alpha=0.1
+us_viewed_root1=apply(us_viewed,FUN=function(x){return(1/sqrt(x))})
 pprim=matrix(rnorm(users*f,mean=0,sd=1),users,f)
 yprim=matrix(rnorm(movies*f,mean=0,sd=1),movies,f)
 {
-us_viewed_root1=apply(us_viewed,FUN=function(x){return(1/sqrt(x))})
-f=3
-#r[u,i]=ml_matrix[u,i] lub ml_bin_matrix[u,i]
-r=ml_matrix
-r2=matrix(0L,nrow=users,ncol=movies)
-b=rep(0L,users)
-b2=rep(0L,movies)
-p=matrix(0.001,nrow=users,ncol=f)
-q=matrix(0.001,nrow=movies,ncol=f)
-y=matrix(0.001,nrow=movies,ncol=f)
-alpha=0.1
-SVDpp_item0=function(u,i){#to jest dla f=1
-  sum_y=us_viewed_root1[[u]]*sum(y*ml_bin_matrix[u,])
-  r2[u,i]<<-glob_mean+b[u]+b2[i]+q[i]*(p[u]+sum_y)
-  err=r[u,i]-r2[u,i]
-  b[u]<<-b[u]+alpha*err
-  b2[i]<<-b2[i]+alpha*err
-  p[u]<<-p[u]+alpha*(err*q[i])
-  q[i]<<-q[i]+alpha*(err*(p[u]+sum_y))
-  for(j in us_view_list[u]){
-    y[j]<<-alpha*(err*us_viewed_root1[[u]]*q[i])
-  }
-}
-apply(ml_bin,1,FUN=function(x){SVDpp_item(x[1],x[2])})
-}
-{
-pprim=matrix(rnorm(users*f,mean=0,sd=1),users,f)
-
-alpha=0.1
-f=4
-r=ml_matrix
-r2=matrix(0L,nrow=users,ncol=movies)
-p=pprim
-q=matrix(0,movies,f)#TODO może jednak jakoś inaczej zainicjować
-b=rep(0L,users)
-b2=rep(0L,movies)
-}
-{
   #init
-  alpha=0.1
-  us_viewed_root1=lapply(us_viewed,FUN=function(x){return(1/sqrt(x))})
-  f=3
   r=ml_matrix
   r2=matrix(0L,nrow=users,ncol=movies)
   p=pprim

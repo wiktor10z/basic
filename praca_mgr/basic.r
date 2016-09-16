@@ -51,6 +51,7 @@ read_ml_test=function(file){
     ml_matrix1[ml_test[i,1],ml_test[i,2]]=ml_test[i,3]
   }
   ml_test_matrix<<-ml_matrix1
+  ml_test_bin_matrix<<-(ml_test_matrix!=0)
 }
 
 #system.time({
@@ -66,7 +67,11 @@ non_personalized=function(u,n){
 }
 
 non_personalized_recs=function(n){
-  lapply(1:users,function(u) non_personalized(u,n)) 
+  lapply(1:users,function(u) non_personalized(u,min(n,items-us_viewed[[u]])))
+}
+
+random_recs=function(n){
+  lapply(1:users,function(u){head(sample((1:items)[!ml_bin_matrix[u,]]),min(n,us_viewed[[u]]))})
 }
 
 # przekształcenia
@@ -96,11 +101,73 @@ count_MSE=function(rating_function,args){
   }
   return(value/5)
 }
+count_ROC_rating=function(rating_function,args,resolution){
+  roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
+  for(t1 in 1:5){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    propos=rating_to_propos(arguments_from_list(rating_function,args),items)
+    roc_sum=roc_sum+propos_ROC(propos,resolution)
+  }
+  return(roc_sum/5)
+}
+count_ROC_recs=function(recs_function,resolution){
+  roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
+  for(t1 in 1:5){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    propos=recs_function(items)
+    roc_sum=roc_sum+propos_ROC(propos,resolution)
+  }
+  return(roc_sum/5)
+}
 
 rating_to_propos1=function(u,n){
-  return(head(order(remove_viewed(ml_matrix[u,],predicted_ratings[u,]),decreasing=TRUE),n))
+  return(head(order(remove_viewed(ml_matrix[u,],predicted_ratings[u,]),decreasing=TRUE),min(n,items-us_viewed[[u]])))
 }
 rating_to_propos=function(ratings,n){
   predicted_ratings<<-ratings
   lapply(1:users,function(u) rating_to_propos1(u,n))
 }
+
+normalized_AUC=function(roc,resolution){
+  return(sum(roc[,2])/resolution)
+}
+
+trivial_roc=function(resolution){
+  roc1=data.frame(rep(0,resolution),rep(0,resolution))
+  for(j1 in 1:resolution){
+    roc1[j1,1]=(j1/resolution)
+    roc1[j1,2]=((j1-1)/resolution)
+  }
+  return(roc1)
+}
+
+normalize_roc=function(roc1,resolution){
+  if((sum(is.nan(roc1[,1]))>0)||(sum(is.nan(roc1[,2]))>0)){
+    return(trivial_roc(resolution))
+  }else{
+    roc2=data.frame(rep(0,resolution),rep(0,resolution))
+    k1=1
+    for(j1 in 1:resolution){
+      while(roc1[k1,1]<(j1/resolution)){
+        k1=k1+1
+      }
+      roc2[j1,1]=(j1/resolution)
+      roc2[j1,2]=roc1[k1,2]
+    }  
+    return(roc2)
+  }
+}
+
+propos_ROC=function(propos,resolution){
+  roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
+  for(u in 1:users){
+    hit_vec=ml_test_bin_matrix[u,propos[[u]]]
+    roc1=data.frame(cumsum(hit_vec)/sum(hit_vec),cumsum(!hit_vec)/sum(!hit_vec))
+    roc_sum=roc_sum+normalize_roc(roc1,resolution)
+  }
+  return(roc_sum/users)
+}
+
+
