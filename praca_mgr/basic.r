@@ -54,10 +54,6 @@ read_ml_test=function(file){
   ml_test_bin_matrix<<-(ml_test_matrix!=0)
 }
 
-remove_viewed=function(x,y){
-  return ((x==0)*y)
-}
-
 # trivial recomendations
 
 non_personalized=function(u,n){
@@ -85,15 +81,19 @@ normalize_rating=function(rat,min1,max1){
   return(matrix(sapply(rat,function(x){max(min1,min(max1,x))}),nrow=nrow(rat)))
 }
 
-affine_rating=function(rat){
-  min1=min(rat)
-  max1=max(rat)
-  f1=4/(max1-min1)
-  return(matrix(sapply(rat,function(x){f1*(x-min1)+1}),nrow=nrow(rat)))
+affine_rating=function(rat,min1,max1){
+  min2=min(rat)
+  max2=max(rat)
+  f1=(max1-min1)/(max2-min2)
+  return(matrix(sapply(rat,function(x){f1*(x-min2)+min1}),nrow=nrow(rat)))
+}
+
+remove_viewed=function(x,y){
+  return ((x==0)*y)
 }
 
 rating_to_propos1=function(u,n){
-  return(head(order(remove_viewed(ml_matrix[u,],predicted_ratings[u,]),decreasing=TRUE),min(n,items-us_viewed[[u]])))
+  return(head(order(remove_viewed(ml_matrix[u,],affine_rating(predicted_ratings[u,],1,2)),decreasing=TRUE),min(n,items-us_viewed[[u]])))
 }
 rating_to_propos=function(ratings,n){
   predicted_ratings<<-ratings

@@ -1,3 +1,16 @@
+init_SVD=function(f2,alpha2){
+  f<<-f2
+  alpha<<-alpha2
+  us_viewed_root1<<-lapply(us_viewed,FUN=function(x){return(1/sqrt(x))})
+  r<<-ml_matrix
+  #r2<<-matrix(0L,nrow=users,ncol=movies)
+  p<<-matrix(rnorm(users*f,mean=0,sd=1),users,f)
+  q1<<-matrix(0,movies,f)
+  y<<-matrix(rnorm(movies*f,mean=0,sd=1),movies,f)
+  b<<-rep(0L,users)
+  b2<<-rep(0L,movies)
+}
+
 
 SVD_item=function(u,i){
   r2=glob_mean+b[u]+b2[i]+sum(q1[i,]*p[u,])
@@ -24,52 +37,21 @@ SVDpp_item=function(u,i){
 # rozkłady SVD
 
 SVD=function(Iter,f2,alpha2){
-  f<<-f2
-  alpha<<-alpha2
-  r<<-ml_matrix
-  #r2<<-matrix(0L,nrow=users,ncol=movies)
-  p<<-matrix(rnorm(users*f,mean=0,sd=1),users,f)
-  q1<<-matrix(0,movies,f)
-  b<<-rep(0L,users)
-  b2<<-rep(0L,movies)
+  init_SVD(f2,alpha2)
   for(I in 1:Iter){
     apply(ml_bin,1,FUN=function(x){SVD_item(x[1],x[2])})    
   }
-  #for(u in 1:users){
-    #  for(i in 1:items){
-      #r2[u,i]=glob_mean+b[u]+b2[i]+sum(q1[i,]*p[u,])
-    #}
-  #}
 }
 
 SVDpp=function(Iter,f2,alpha2){
-  f<<-f2
-  alpha<<-alpha2
-  us_viewed_root1<<-lapply(us_viewed,FUN=function(x){return(1/sqrt(x))})
-  r<<-ml_matrix
-  #r2<<-matrix(0L,nrow=users,ncol=movies)
-  p<<-matrix(rnorm(users*f,mean=0,sd=1),users,f)
-  q1<<-matrix(0,movies,f)
-  y<<-matrix(rnorm(movies*f,mean=0,sd=1),movies,f)
-  b<<-rep(0L,users)
-  b2<<-rep(0L,movies)
+  init_SVD(f2,alpha2)
   for(I in 1:Iter){
     apply(ml_bin,1,FUN=function(x){SVDpp_item(x[1],x[2])})    
   }
-  #for(u in 1:users){
-  #for(i in 1:items){
-  #r2[u,i]=glob_mean+b[u]+b2[i]+sum(q1[i,]*p[u,])
-  #}
-  #}
 }
 
 BPR=function(Iter,f2,alpha2){
-  f<<-f2
-  alpha<<-alpha2
-  r<<-ml_bin_matrix
-  p<<-matrix(rnorm(users*f,mean=0,sd=1),users,f)
-  q1<<-matrix(0,movies,f)
-  b2<<-rep(0L,items)
+  init_SVD(f2,alpha2)
   for(I in 1:Iter){
     u=sample(1:users,1)
     i=sample(c(1:items)[ml_bin_matrix[u,]],1)
