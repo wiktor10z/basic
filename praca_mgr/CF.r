@@ -54,8 +54,8 @@ neighbours2=function(u,n,x,it){
 
 CF_predict=function(u){
   mean_u=us_means[u]
-  rating=numeric(length=movies)
-  for(i in 1:movies){
+  rating=numeric(length=items)
+  for(i in 1:items){
     neighbours_ui=neighbours2(u,30,0,i)
     if(length(neighbours_ui)>0){
       sum1=0

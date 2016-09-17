@@ -1,5 +1,5 @@
 source("basic.r")
-source("CF_functions.R")
+source("CF.r")
 source("SVD.r")
 
 read_ml_file("ml-100k/u.data")
@@ -16,15 +16,14 @@ system.time({
   cos_rating=CF_ratings(cos_similarity)
 })
 
-
-CF_propos=rating_to_propos(CF_predicted_ratings,10)
+CF_recs=rating_to_recs(CF_predicted_ratings,10)
 
 SVD(1,10,0.03)
 SVDpp(1,3,0.01)
 
-roc0=propos_ROC(random_recs(items),1000)
+roc0=recs_ROC(random_recs(items),1000)
 non_per=non_personalized_recs(items)
-roc4=propos_ROC(non_per,1000)
+roc4=recs_ROC(non_per,1000)
 plot(roc3,type="l",col="green")
 par(new=TRUE)
 plot(trivial_roc(1000),type="l",col="red")

@@ -3,14 +3,12 @@ init_SVD=function(f2,alpha2){
   alpha<<-alpha2
   us_viewed_root1<<-lapply(us_viewed,FUN=function(x){return(1/sqrt(x))})
   r<<-ml_matrix
-  #r2<<-matrix(0L,nrow=users,ncol=movies)
   p<<-matrix(rnorm(users*f,mean=0,sd=1),users,f)
-  q1<<-matrix(0,movies,f)
-  y<<-matrix(rnorm(movies*f,mean=0,sd=1),movies,f)
+  q1<<-matrix(0,items,f)
+  y<<-matrix(rnorm(items*f,mean=0,sd=1),items,f)
   b<<-rep(0L,users)
-  b2<<-rep(0L,movies)
+  b2<<-rep(0L,items)
 }
-
 
 SVD_item=function(u,i){
   r2=glob_mean+b[u]+b2[i]+sum(q1[i,]*p[u,])
@@ -70,7 +68,7 @@ BPR=function(Iter,f2,alpha2){
 
 SVD_ratings=function(Iter,f2,alpha2){
   SVD(Iter,f2,alpha2)
-  r2=matrix(0L,nrow=users,ncol=movies)
+  r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     for(i in 1:items){
       r2[u,i]=glob_mean+b[u]+b2[i]+sum(q1[i,]*p[u,])
@@ -81,7 +79,7 @@ SVD_ratings=function(Iter,f2,alpha2){
 
 SVDpp_ratings=function(Iter,f2,alpha2){
   SVDpp(Iter,f2,alpha2)
-  r2=matrix(0L,nrow=users,ncol=movies)
+  r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     sum_y=us_viewed_root1[[u]]*colSums(y*ml_bin_matrix[u,])
     p_plus_y=sum_y+p[u,]
@@ -94,7 +92,7 @@ SVDpp_ratings=function(Iter,f2,alpha2){
 
 BPR_pseudo_ratings=function(Iter,f2,alpha2){
   BPR(Iter,f2,alpha2)
-  r2=matrix(0L,nrow=users,ncol=movies)
+  r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     for(i in 1:items){
       r2[u,i]=b2[i]+sum(q1[i,]*p[u,])
@@ -109,11 +107,10 @@ if(FALSE){
 SVD1=function(Iter,f,N){
   alpha<<-0.03
   r<<-ml_matrix
-  #r2<<-matrix(0L,nrow=users,ncol=movies)
   p<<-matrix(rnorm(users*f,mean=0,sd=1),users,f)
-  q1<<-matrix(0,movies,f)#TODO może jednak jakoś inaczej zainicjować
+  q1<<-matrix(0,items,f)#TODO może jednak jakoś inaczej zainicjować
   b<<-rep(0L,users)
-  b2<<-rep(0L,movies)
+  b2<<-rep(0L,items)
   for(I in 1:Iter){
     for(j in 1:N){
       if((sum(is.nan(p))==0)&&(sum(is.infinite(p))==0)&&(sum(p>10e+10)==0)&&(sum(p<(-10e+10))==0)){
@@ -134,16 +131,16 @@ f=3
 alpha=0.1
 us_viewed_root1=apply(us_viewed,FUN=function(x){return(1/sqrt(x))})
 pprim=matrix(rnorm(users*f,mean=0,sd=1),users,f)
-yprim=matrix(rnorm(movies*f,mean=0,sd=1),movies,f)
+yprim=matrix(rnorm(items*f,mean=0,sd=1),items,f)
 {
   #init
   r=ml_matrix
-  r2=matrix(0L,nrow=users,ncol=movies)
+  r2=matrix(0L,nrow=users,ncol=items)
   p=pprim
-  q1=matrix(0,movies,f)#TODO może jednak jakoś inaczej zainicjować
+  q1=matrix(0,items,f)#TODO może jednak jakoś inaczej zainicjować
   y=yprim
   b=rep(0L,users)
-  b2=rep(0L,movies)
+  b2=rep(0L,items)
 }
 
 }
