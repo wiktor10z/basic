@@ -106,7 +106,7 @@ rating_to_recs=function(ratings,n=items){
 
 # funkcje oceny
 
-rating_MSE=function(rating,test){#mean square error
+rating_MSE=function(rating,test=ml_test){#mean square error
   return(sqrt(sum(apply(test,1,function(x){(x[3]-rating[x[1],x[2]])*(x[3]-rating[x[1],x[2]])}))/nrow(test)))
 }
 
@@ -156,8 +156,8 @@ normalized_AUC=function(roc,resolution=1000){#area under curve
 }
 
 
-
-
+#TODO zrobić to dobrze
+{
 
 recs_precision1=function(recs,u){
   hit_vec=c(ml_test_bin_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))
@@ -201,6 +201,7 @@ recs_MAP2=function(recs){
   #  MAP_sum=MAP_sum+AveP
   #}
   #return(MAP_sum/users)
+}
 }
 # ocena systemu
 

@@ -16,6 +16,7 @@ system.time({
   cos_rating=CF_ratings(cos_similarity)
   item_cor_rating=item_CF_ratings(item_cor_similarity)
   item_cos_rating=item_CF_ratings(item_cos_similarity)
+  SO_rating1=SO_ratings()
 })
 
 CF_recs=rating_to_recs(CF_predicted_ratings,10)

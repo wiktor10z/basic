@@ -142,3 +142,61 @@ item_CF_ratings=function(item_sim_fun){
   return(item_CF_predict_all(item_make_sim_matrix(item_sim_fun)))
 }
 
+#slope one
+
+items_difference=function(i,j){
+  return(sum(ml_matrix[,i]*(ml_matrix[,j]!=0)-ml_matrix[,j]*(ml_matrix[,i]!=0))/sum((ml_matrix[,i]!=0)*(ml_matrix[,j]!=0)))
+}
+
+make_difference_matrix=function(x=1){
+  matrix1=matrix(0L,nrow=items,ncol=items)
+  if(x==1){
+    for(i in 1:items){
+      for(j in 1:items){
+        matrix1[i,j]=sum(ml_matrix[,i]*(ml_matrix[,j]!=0)-ml_matrix[,j]*(ml_matrix[,i]!=0))
+      } 
+    }
+  }else{
+    for(i in 1:items){
+      for(j in 1:items){
+        matrix1[i,j]=sum((ml_matrix[,i]!=0)*(ml_matrix[,j]!=0))
+      } 
+    }    
+  }
+  return(matrix1)
+}
+
+SO_predict=function(u){
+  used=us_view_list[[u]]
+  not_used=(1:items)[-used]
+  rating=numeric(length=items)
+  for(i in not_used){
+    sum1=0
+    sum2=0
+    for(j in used){
+      sum1=sum1+difference_matrix[i,j]+ml_matrix[u,j]*intersections_matrix[i,j]
+      sum2=sum2+intersections_matrix[i,j]
+    }
+    if(sum2!=0){
+      rating[i]=(sum1/sum2)
+    }else{ # to może zajść ekstremalnie rzadko
+      rating[i]=0
+    }
+  }
+  for(i in used){
+    rating[i]=ml_matrix[u,i]
+  }
+  return(rating)
+}
+
+SO_predict_all=function(x=0){
+  difference_matrix<<-make_difference_matrix(1)
+  intersections_matrix<<-make_difference_matrix(2)
+  return(matrix(sapply(1:users,SO_predict),byrow=TRUE,nrow=users))
+}
+SO_ratings=SO_predict_all
+
+
+
+
+
