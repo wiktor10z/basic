@@ -56,6 +56,9 @@ read_ml_test=function(file){
 
 # trivial recomendations
 
+non_personalized_rating=function(x=0){
+  return(((rep(1,users)%*%t.default(mov_means))+(us_means%*%t.default(rep(1,items))))/2)
+}
 non_personalized=function(u,n=items,popularity=FALSE){#TODO może jakieś ważenie popularności i średniej
   if(popularity){
     score=mov_pop
@@ -68,6 +71,9 @@ non_personalized_recs=function(n=items,popularity=FALSE){
   lapply(1:users,function(u) non_personalized(u,min(n,items-us_viewed[[u]]),popularity))
 }
 
+optimal_rating=function(x=0){
+  return(ml_matrix+ml_test_matrix)
+}
 optimal_recs=function(n=items){
   recs=list(list())
   for(u in 1:users){
@@ -76,6 +82,9 @@ optimal_recs=function(n=items){
   return(recs)
 }
 
+random_rating=function(min1=1,max1=5){
+  return(matrix(runif(users*items,min=min1,max=max1),users,items))
+}
 random_recs=function(n=items){
   lapply(1:users,function(u){head(sample((1:items)[!ml_bin_matrix[u,]]),min(n,us_viewed[[u]]))})
 }
