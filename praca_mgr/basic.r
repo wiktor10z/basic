@@ -8,7 +8,7 @@ mean1=function(x){
 arguments_from_list=function(fun,args){
   l=length(args)
   if(l==0){#TODO jak zero, to powinno byc fun(0) - inna funkcja wywoływana dopiero w tym momencie
-    return(fun)
+    return(fun(0))
   }else if(l==1){
     return(fun(args[[1]]))
   }else if(l==2){
@@ -58,14 +58,14 @@ read_ml_test=function(file){
 
 non_personalized=function(u,n=items,popularity=FALSE){#TODO może jakieś ważenie popularności i średniej
   if(popularity){
-      score=mov_pop
+    score=mov_pop
   }else{
     score=mov_means
   }
   return(head(order(remove_viewed(ml_matrix[u,],score),decreasing=TRUE),n))
 }
 non_personalized_recs=function(n=items,popularity=FALSE){
-  lapply(1:users,function(u) non_personalized(u,min(n,items-us_viewed[[u]],popularity)))
+  lapply(1:users,function(u) non_personalized(u,min(n,items-us_viewed[[u]]),popularity))
 }
 
 optimal_recs=function(n=items){
@@ -244,7 +244,7 @@ count_precision_rating=function(rating_function,args){
     read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
     read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
     recs=rating_to_recs(arguments_from_list(rating_function,args),items)
-    precision_sum=precision_sum+recs_precision_vector(recs)
+    precision_sum=precision_sum+recs_precision(recs)
   }
   return(precision_sum/5)
 }
@@ -255,7 +255,96 @@ count_precision_recs=function(recs_function){
     read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
     read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
     recs=recs_function(items)
-    precision_sum=precision_sum+recs_precision_vector(recs)
+    precision_sum=precision_sum+recs_precision(recs)
   }
   return(precision_sum/5)
+}
+
+multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
+  l=1+4*(!quick)
+  len=length(functions_list)
+  results=matrix(list(),nrow=4,ncol=length(functions_list))
+  rownames(results)=c("MSE","ROC","quality ROC","Precision")
+  names=list()
+  for(i in 1:len){
+    names[i]=functions_list[[i]][[1]]
+    results[[1,i]]=0
+    results[[2,i]]=data.frame(rep(0,resolution),rep(0,resolution))
+    results[[3,i]]=data.frame(rep(0,resolution),rep(0,resolution))
+    results[[4,i]]=rep(0,items)
+  }
+  colnames(results)=names
+  for(t1 in 1:l){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    for(i in 1:len){
+      rating=arguments_from_list(functions_list[[i]][[2]],functions_list[[i]][[3]])
+      recs=rating_to_recs(rating,items)
+      results[[1,i]]=results[[1,i]]+rating_MSE(rating,ml_test)
+      results[[2,i]]=results[[2,i]]+recs_ROC(recs,resolution,quality=FALSE)
+      results[[3,i]]=results[[3,i]]+recs_ROC(recs,resolution,quality=TRUE)
+      results[[4,i]]=results[[4,i]]+recs_precision(recs)
+    }
+  }
+  for(i in 1:len){
+    results[1,i]=results[[1,i]]/l
+    results[[2,i]]=results[[2,i]]/l
+    results[[3,i]]=results[[3,i]]/l
+    results[[4,i]]=results[[4,i]]/l   
+  }
+  return(results)
+}
+
+multi_plot=function(df_list,title){
+  l=length(df_list)
+  ymax=max(unlist(df_list))
+  par(mar=c(3,3,3,5.5)) 
+  for(i in 1:l){
+    plot(df_list[[i]],type="l",col=rainbow(l)[i],main=title,xlab="",ylab="",ylim=c(0,ymax),bty="L")
+    par(new=TRUE)
+  }
+  legend("bottomright",inset=c(-0.3,-0.3),xpd=TRUE,legend=names(df_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent")
+  par(new=FALSE)
+}
+
+if(FALSE){
+  multi_evaluation_rating=function(rating_function,args,resolution=1000,quick=FALSE){
+    l=1+4*(!quick)
+    mse=0
+    roc=data.frame(rep(0,resolution),rep(0,resolution))
+    quality_roc=data.frame(rep(0,resolution),rep(0,resolution))
+    precision=rep(0,items)
+    for(t1 in 1:l){
+      read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+      read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+      rating=arguments_from_list(rating_function,args)
+      recs=rating_to_recs(rating,items)
+      mse=mse+rating_MSE(rating,ml_test)
+      roc=roc+recs_ROC(recs,resolution,quality=FALSE)
+      quality_roc=quality_roc+recs_ROC(recs,resolution,quality=TRUE)
+      precision=precision+recs_precision(recs)
+    }
+    eval_mse<<-mse/l
+    eval_roc<<-roc/l
+    eval_quality_roc<<-quality_roc/l
+    eval_precision<<-precision/l
+  }
+  
+  multi_evaluation_recs=function(recs_function,args,resolution=1000,quick=FALSE){
+    l=1+4*(!quick)
+    roc=data.frame(rep(0,resolution),rep(0,resolution))
+    quality_roc=data.frame(rep(0,resolution),rep(0,resolution))
+    precision=rep(0,items)
+    for(t1 in 1:l){
+      read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+      read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+      recs=recs_function(items)
+      roc=roc+recs_ROC(recs,resolution,quality=FALSE)
+      quality_roc=quality_roc+recs_ROC(recs,resolution,quality=TRUE)
+      precision=precision+recs_precision(recs)
+    }
+    eval_roc<<-roc/l
+    eval_quality_roc<<-quality_roc/l
+    eval_precision<<-precision/l
+  }
 }

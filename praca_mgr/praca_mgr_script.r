@@ -41,6 +41,25 @@ roc7=count_ROC_rating(BPR_pseudo_ratings,c(1,7,0.02),1000)
 
 BPR_rating1=BPR_pseudo_ratings(1,10,0.03)
 
+
+c1=list(list(list()))
+c1[[1]][[1]]="SVD"
+c1[[1]][[2]]=SVD_ratings
+c1[[1]][[3]]=c(1,4,0.01)
+functions_list=c1
+c1[[1]][[1]]="SVD++"
+c1[[1]][[2]]=SVDpp_ratings
+c1[[1]][[3]]=c(1,4,0.01)
+functions_list=c(functions_list,c1)
+c1[[1]][[1]]="BPR"
+c1[[1]][[2]]=BPR_pseudo_ratings
+c1[[1]][[3]]=c(1,4,0.01)
+functions_list=c(functions_list,c1)
+results_matrix=multi2_evaluation_rating(functions_list,quick=TRUE)
+
+multi_plot(results_matrix[4,],rownames(results_matrix)[4])
+
+
 system.time({
 MSE1=count_MSE(SVDpp_ratings,c(1,10,0.01))
 })
