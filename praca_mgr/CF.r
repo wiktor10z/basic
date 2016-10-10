@@ -197,6 +197,16 @@ SO_predict_all=function(x=0){
 SO_ratings=SO_predict_all
 
 
+#dalsze podobieństwo
 
-
+COMPLEX_pseudo_ratings=function(weight_list){
+  m3=matrix(0,nrow=users,ncol=users)
+  m1=ml_like_matrix %*% t(ml_like_matrix)
+  m2=diag(users)
+  for(w in weight_list){
+    m2=m2 %*% m1
+    m3=m3+w*m2
+  }
+  return(affine_rating2(m3 %*% ml_like_matrix))
+}
 

@@ -32,6 +32,11 @@ read_ml_file=function(file){
   }
   ml_matrix<<-ml_matrix1
   ml_bin_matrix<<-(ml_matrix!=0)
+  ml_like_matrix<<-matrix(sapply(ml_matrix,function(x){
+    if(x==0){return(0)}
+    else if(x>=3){return(1)}
+    else{return(-1)}})
+    ,nrow=users,ncol=items)
   us_view_list<<-list(list())
   us_viewed<<-list()  
   for(i in 1:users){
@@ -52,6 +57,7 @@ read_ml_test=function(file){
   }
   ml_test_matrix<<-ml_matrix1
   ml_test_bin_matrix<<-(ml_test_matrix!=0)
+  ml_test_best_matrix<<-(ml_test_matrix==5)
 }
 
 # trivial recomendations
@@ -86,7 +92,7 @@ random_rating=function(min1=1,max1=5){
   return(matrix(runif(users*items,min=min1,max=max1),users,items))
 }
 random_recs=function(n=items){
-  lapply(1:users,function(u){head(sample((1:items)[!ml_bin_matrix[u,]]),min(n,us_viewed[[u]]))})
+  lapply(1:users,function(u){head(sample((1:items)[!ml_bin_matrix[u,]]),min(n,items-us_viewed[[u]]))})
 }
 
 # przekształcenia
@@ -95,11 +101,21 @@ normalize_rating=function(rat,min1=1,max1=5){
   return(matrix(sapply(rat,function(x){max(min1,min(max1,x))}),nrow=nrow(rat)))
 }
 
-affine_rating=function(rat,min1=1,max1=5){
+affine_rating=function(rat,min1=1,max1=5){#cała macierz
   min2=min(rat)
   max2=max(rat)
   f1=(max1-min1)/(max2-min2)
   return(matrix(sapply(rat,function(x){f1*(x-min2)+min1}),nrow=nrow(rat)))
+}
+
+affine_rating0=function(rat0,min1=1,max1=5){
+  min2=min(rat0)
+  max2=max(rat0)
+  f1=(max1-min1)/(max2-min2) 
+  return(sapply(rat0,function(x){f1*(x-min2)+min1}))
+}
+affine_rating2=function(rat,min1=1,max1=5){#każdy użytkownik osobno
+  return(t(apply(rat,1,function(x){affine_rating0(x,min1,max1)})))
 }
 
 remove_viewed=function(x,y){
@@ -145,12 +161,14 @@ normalize_roc=function(roc1,resolution=1000){
   }
 }
 
-recs_ROC=function(recs,resolution=1000,quality=FALSE){#receiver operating characteristic
+recs_ROC=function(recs,resolution=1000,quality=0){#receiver operating characteristic
   roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
-  if(quality){
+  if(quality==0){
     matrix1=ml_test_matrix
-  }else{
+  }else if(quality==1){
     matrix1=ml_test_bin_matrix
+  }else{
+    matrix1=ml_test_best_matrix
   }
   for(u in 1:users){
     hit_vec=matrix1[u,recs[[u]]]
@@ -169,10 +187,15 @@ normalized_AUC=function(roc,resolution=1000){#area under curve
 {
 
 recs_precision1=function(recs,u){
-  hit_vec=c(ml_test_bin_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))
+  hit_vec=c(test_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))
   return(cumsum(hit_vec)/cumsum(rep(1,items)))
 }
-recs_precision=function(recs){
+recs_precision=function(recs,only_best=FALSE){
+  if(only_best){
+    test_matrix<<-ml_test_best_matrix   
+  }else{
+    test_matrix<<-ml_test_bin_matrix
+  }
   return(colSums(do.call(rbind,lapply(1:users,function(u){recs_precision1(recs,u)})))/users)
 }
 
@@ -225,7 +248,7 @@ count_MSE=function(rating_function,args){
   return(value/5)
 }
 
-count_ROC_rating=function(rating_function,args,resolution=1000,quality=FALSE){
+count_ROC_rating=function(rating_function,args,resolution=1000,quality=0){
   roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
   for(t1 in 1:5){
     read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
@@ -236,7 +259,7 @@ count_ROC_rating=function(rating_function,args,resolution=1000,quality=FALSE){
   return(roc_sum/5)
 }
 
-count_ROC_recs=function(recs_function,resolution=1000,quality=FALSE){
+count_ROC_recs=function(recs_function,resolution=1000,quality=0){
   roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
   for(t1 in 1:5){
     read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
@@ -247,24 +270,24 @@ count_ROC_recs=function(recs_function,resolution=1000,quality=FALSE){
   return(roc_sum/5)
 }
 
-count_precision_rating=function(rating_function,args){
+count_precision_rating=function(rating_function,args,only_best=FALSE){
   precision_sum=rep(0,items)
   for(t1 in 1:5){
     read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
     read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
     recs=rating_to_recs(arguments_from_list(rating_function,args),items)
-    precision_sum=precision_sum+recs_precision(recs)
+    precision_sum=precision_sum+recs_precision(recs,only_best)
   }
   return(precision_sum/5)
 }
 
-count_precision_recs=function(recs_function){
+count_precision_recs=function(recs_function,only_best=FALSE){
   precision_sum=rep(0,items)
   for(t1 in 1:5){
     read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
     read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
     recs=recs_function(items)
-    precision_sum=precision_sum+recs_precision(recs)
+    precision_sum=precision_sum+recs_precision(recs,only_best)
   }
   return(precision_sum/5)
 }
@@ -273,14 +296,16 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
   results=matrix(list(),nrow=4,ncol=length(functions_list))
-  rownames(results)=c("MSE","ROC","quality ROC","Precision")
+  rownames(results)=c("MSE","ROC","quality ROC","best ROC","Precision","best Precision")
   names=list()
   for(i in 1:len){
     names[i]=functions_list[[i]][[1]]
     results[[1,i]]=0
     results[[2,i]]=data.frame(rep(0,resolution),rep(0,resolution))
     results[[3,i]]=data.frame(rep(0,resolution),rep(0,resolution))
-    results[[4,i]]=rep(0,items)
+    results[[4,i]]=data.frame(rep(0,resolution),rep(0,resolution))
+    results[[5,i]]=rep(0,items)
+    results[[5,i]]=rep(0,items)
   }
   colnames(results)=names
   for(t1 in 1:l){
@@ -290,9 +315,11 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
       rating=arguments_from_list(functions_list[[i]][[2]],functions_list[[i]][[3]])
       recs=rating_to_recs(rating,items)
       results[[1,i]]=results[[1,i]]+rating_MSE(rating,ml_test)
-      results[[2,i]]=results[[2,i]]+recs_ROC(recs,resolution,quality=FALSE)
-      results[[3,i]]=results[[3,i]]+recs_ROC(recs,resolution,quality=TRUE)
-      results[[4,i]]=results[[4,i]]+recs_precision(recs)
+      results[[2,i]]=results[[2,i]]+recs_ROC(recs,resolution,quality=0)
+      results[[3,i]]=results[[3,i]]+recs_ROC(recs,resolution,quality=1)
+      results[[4,i]]=results[[4,i]]+recs_ROC(recs,resolution,quality=2)
+      results[[5,i]]=results[[5,i]]+recs_precision(recs,only_best=FALSE)
+      results[[6,i]]=results[[6,i]]+recs_precision(recs,only_best=TRUE)
     }
   }
   for(i in 1:len){
@@ -329,8 +356,8 @@ if(FALSE){
       rating=arguments_from_list(rating_function,args)
       recs=rating_to_recs(rating,items)
       mse=mse+rating_MSE(rating,ml_test)
-      roc=roc+recs_ROC(recs,resolution,quality=FALSE)
-      quality_roc=quality_roc+recs_ROC(recs,resolution,quality=TRUE)
+      roc=roc+recs_ROC(recs,resolution,quality=0)
+      quality_roc=quality_roc+recs_ROC(recs,resolution,quality=1)
       precision=precision+recs_precision(recs)
     }
     eval_mse<<-mse/l
@@ -339,7 +366,7 @@ if(FALSE){
     eval_precision<<-precision/l
   }
   
-  multi_evaluation_recs=function(recs_function,args,resolution=1000,quick=FALSE){
+  multi_evaluation_recs=function(recs_function,args,resolution=1000,quick=0){
     l=1+4*(!quick)
     roc=data.frame(rep(0,resolution),rep(0,resolution))
     quality_roc=data.frame(rep(0,resolution),rep(0,resolution))
@@ -348,8 +375,8 @@ if(FALSE){
       read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
       read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
       recs=recs_function(items)
-      roc=roc+recs_ROC(recs,resolution,quality=FALSE)
-      quality_roc=quality_roc+recs_ROC(recs,resolution,quality=TRUE)
+      roc=roc+recs_ROC(recs,resolution,quality=0)
+      quality_roc=quality_roc+recs_ROC(recs,resolution,quality=1)
       precision=precision+recs_precision(recs)
     }
     eval_roc<<-roc/l
