@@ -188,52 +188,74 @@ Instytut Informatyki}
    że przedmioty użyte tylko przez jednego z nich byłyby podobnie ocenione i przez drugiego.
    %TODO może jakieś gładkie przejście z opisu do algorytmów
    \subsection{Colaborative Filtering}
-   Najprostszym algorytmem realizującym ideę filtorwania kolaboratywnego jest zdefiniowanie funkcji podobieństwa pomiędzy użytkownikami
-   oraz wystawienie przedmiotowi oceny jako pewnej średniej z ocen najbardziej podobnych użytkowników, którzy ten przedmiot ocenili.\newline
-   Do najpowszechniej stosowanych funkcji podobieństwa należą:
-   \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
-    \item Współczynnik korelacji liniowej Paersona:
-     \begin{center}
-      $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})(r_{vi}-\overline{r_v})}
-      {\sqrt{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})^2\sum\limits_{i\in R_{uv}}(r_{vi}-\overline{r_v})^2}}$
-     \end{center}
-     Wyliczane dla par użytkowników, którzy ocenili po conajmniej dwa przedmioty, w tym conajmniej jeden wspólny.
-    \item podobieństwo kosinusowe:
-     \begin{center}
-      $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}r_{ui}\cdot r_{vi}}
-      {\sqrt{\sum\limits_{i\in R_{uv}}r_{ui}^2\sum\limits_{i\in R_{uv}}r_{vi}^2}}$
-     \end{center}
-     Wyliczane dla par użytkowników, którzy ocenili conajmniej jeden wspólny przedmiot.
-    %\item podobieństwo implicite\newline % jak się nazywa przecięcie przez suma - odpowiednik f-score
-     %begin{center}
-      %$S_{uv}=\frac{|R_{uv}|}{|R_{u}\cup R_{v}|}$\newline
-      %Używane gdy dostępne są jedynie informacje implicite.
-     %end{center} 
-   \end{itemize}
-   {\scriptsize
-   $S_{u,v}$ -- podobieństwo użytkowników $u$ i $v$, $R_{uv}$ -- zbiór przedmiotów, które ocenili zarówno użytkownik $u$ jak i $v$,\newline
-   $r_{ui}$ -- ocena przedmiotu $i$ wystawiona przez użytkownika $u$, $\overline{r_{u}}$ -- średnia ocen wystawionych przez użytkownika $u$
-   %,\newline$R_{u}$ -- zbiór przedmiotów, ocenionych przez użytkownika $u$
-   }\newline
-   Najczęściej stosowany jest współczynnik korelacji Paersona, jako że jest trafny w większości przypadków.
-   Odjęcie średniej od oceny pozwala poradzić sobie z często spotykanym zjawiskiem spłaszczenia ocen (używanie przez użytkownika ocen tylko po jednej stronie skali),
-   może jednak spowodować nieważność funkcji podobieństwa w przypadku gdy użytkownik ocenił tylko jeden przedmiot,
-   lub wszystkie wspólnie ocenione przedmioty mają ocenę równą średniej (wtedy $S_{uv}=\frac{0}{0}$).
-   Podobieństwo kosinusowe jest bardziej odporne na szczególne przypadki w danych,
-   dlatego jest często wykorzystywane przy bardzo rzadkich danych (kiedy takie przypadki często występują).
-   Oba podobieństwa nie sprawdzają się zbyt dobrze w przypadku gdy użytkownik wystawia wszystkim przedmiotom takie same oceny,
-   oraz premiują podobieństwo pomiedzy użytkownikami z pojedynczymi wspólnie ocenionymi przedmiotami (przy jednym wspólnym przedmiocie podobieństwo kosinusowe = 1),
-   dlatego, stosowane są często dodatkowe wagi ze względu na ilość wspólnie ocenionych przedmiotów lub odgraniczenia na ich minimalną ilość.
-   Jeśli założenia funkcji nie są spełnione (za mało wspólnych przedmiotów), lub wartość jest bez sensu (np. $\frac{0}{0}$)
-   funkcja przyjmuje wartość odpowiadającą brakowi podobieństwa (zazwyczaj 0).\newline\newline
-   Do wyliczenia przewidzianej oceny przedmiotu używa się ważonej średniej z ocen wystarczająco podobnych użytkowników
+    Najprostszym algorytmem realizującym ideę filtorwania kolaboratywnego jest zdefiniowanie funkcji podobieństwa pomiędzy użytkownikami
+    oraz wystawienie przedmiotowi oceny jako pewnej średniej z ocen najbardziej podobnych użytkowników, którzy ten przedmiot ocenili.\newline
+    Do najpowszechniej stosowanych funkcji podobieństwa należą:
+    \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+     \item Współczynnik korelacji liniowej Paersona:
+      \begin{center}
+       $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})(r_{vi}-\overline{r_v})}
+       {\sqrt{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})^2\sum\limits_{i\in R_{uv}}(r_{vi}-\overline{r_v})^2}}$
+      \end{center}
+      Wyliczane dla par użytkowników, którzy ocenili po conajmniej dwa przedmioty, w tym conajmniej jeden wspólny.
+     \item podobieństwo kosinusowe:
+      \begin{center}
+       $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}r_{ui}\cdot r_{vi}}
+       {\sqrt{\sum\limits_{i\in R_{uv}}r_{ui}^2\sum\limits_{i\in R_{uv}}r_{vi}^2}}$
+      \end{center}
+      Wyliczane dla par użytkowników, którzy ocenili conajmniej jeden wspólny przedmiot.
+     %\item podobieństwo implicite\newline % jak się nazywa przecięcie przez suma - odpowiednik f-score
+      %begin{center}
+       %$S_{uv}=\frac{|R_{uv}|}{|R_{u}\cup R_{v}|}$\newline
+       %Używane gdy dostępne są jedynie informacje implicite.
+      %end{center} 
+    \end{itemize}
+    {\scriptsize
+     $S_{u,v}$ -- podobieństwo użytkowników $u$ i $v$, $R_{uv}$ -- zbiór przedmiotów, które ocenili zarówno użytkownik $u$ jak i $v$,\newline
+     $r_{ui}$ -- ocena przedmiotu $i$ wystawiona przez użytkownika $u$, $\overline{r_{u}}$ -- średnia ocen wystawionych przez użytkownika $u$
+     %,\newline$R_{u}$ -- zbiór przedmiotów, ocenionych przez użytkownika $u$
+    }\newline
+    Najczęściej stosowany jest współczynnik korelacji Paersona, jako że jest trafny w większości przypadków.
+    Odjęcie średniej od oceny pozwala poradzić sobie z często spotykanym zjawiskiem spłaszczenia ocen (używanie przez użytkownika ocen tylko po jednej stronie skali),
+    może jednak spowodować nieważność funkcji podobieństwa w przypadku gdy użytkownik ocenił tylko jeden przedmiot,
+    lub wszystkie wspólnie ocenione przedmioty mają ocenę równą średniej (wtedy $S_{uv}=\frac{0}{0}$).
+    Podobieństwo kosinusowe jest bardziej odporne na szczególne przypadki w danych,
+    dlatego jest często wykorzystywane przy bardzo rzadkich danych (kiedy takie przypadki często występują).
+    Oba podobieństwa nie sprawdzają się zbyt dobrze w przypadku gdy użytkownik wystawia wszystkim przedmiotom takie same oceny,
+    oraz premiują podobieństwo pomiedzy użytkownikami z pojedynczymi wspólnie ocenionymi przedmiotami (przy jednym wspólnym przedmiocie podobieństwo kosinusowe = 1),
+    dlatego, stosowane są często dodatkowe wagi ze względu na ilość wspólnie ocenionych przedmiotów lub odgraniczenia na ich minimalną ilość.
+    Jeśli założenia funkcji nie są spełnione (za mało wspólnych przedmiotów), lub wartość jest bez sensu (np. $\frac{0}{0}$)
+    funkcja przyjmuje wartość odpowiadającą brakowi podobieństwa (zazwyczaj 0).\newline\newline
+    Do wyliczenia przewidzianej oceny przedmiotu używa się ważonej średniej z ocen wystarczająco podobnych użytkowników
    (obcięcie listy użytkowników według wartości funkcji podobieństwa, ilości najbliższych sąsiadów, lub obu), zadanej wzorem:\newline
-   \begin{center}
-    $r'_{u,i}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{vi}-\overline{r_v})S_{uv}}{\sum\limits_{v\in N_u}S_{uv}}$
-   \end{center}
-   {\scriptsize
-   $N_u$ -- zbiór sąsiadów (najbardziej podobnych użytkowników)
-   }\newline
+    \begin{center}
+     $r'_{ui}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{vi}-\overline{r_v})S_{uv}}{\sum\limits_{v\in N_u}S_{uv}}$
+    \end{center}
+    {\scriptsize
+     $N_u$ -- zbiór sąsiadów (najbardziej podobnych użytkowników)
+    }\newline
+   %TODO napisać, że można też zamienić role użytkowników i przedmiotów - silnie zaznaczyć - slope one zakłada, że jest to wiadome
+   %TODO we wzorach z wieloma indeksami dolnymi utrzymać spójne oznaczenia
+   %- albo z przecinkiem albo bez (jak gdzieś indeksy nie 1 literowe, to lepiej z przecinkiem)
+   \subsection{Slope One}
+    Popularnym algorytmem wykorzystującym podobieństwo pomiędzy parami przedmiotów w nieco inny sposób jest Slope One.
+    Algorytm zamiast stosować wyszukane miary podobieństwa statystycznego wektorów dla każdej pary przedmiotów zapamiętuje jedynie ilość
+    użytkowniów którzy ocenili oba i sumaryczną różnicę w ich ocenach.\newline
+    Predykcja ocen przedmiotów nieocenionych przebiega w tej metodzie również trochę inaczej.
+    Zamiast wyciągania średniej z podobnych przedmiotów model przyjmuje,
+    że skoro rozważany przedmiot był oceniany wyżej od podobnego (takiego, który użyty był przez wielu wspólnych użytkowników),
+    to i użytkownik, który go jeszcze nie ocenił przypisze mu ocenę wyższą o podobną wartość.
+    Takie podejście do problemu daje następujący wzór:\newline
+    \begin{center}
+     $r'_{ui}=\frac{\sum\limits_{j\in R_u}(\text{diff}_{ij}+r_{uj})\cdot|R_{ij}|}{\sum\limits_{j\in R_u}|R_{ij}|}$
+    \end{center}
+    {\scriptsize
+     $R_{ij}$ -- zbiór użytkowników, którzy ocenili zarówno przedmiot $i$ jak i $j$,\newline
+     $\text{diff}_{ij}$ -- średnia różnica ocen pomiedzy przedmiotami $i$ oraz $j$ (w przeciwieństwie do wszystkich podobieństw antysymetryczna)
+    }\newline
+    W przeciwieństwie do algorytmu CF który tak na prawdę do predykcji ocen wykorzystuje regresję liniową ($f(x)=ax+b$),
+    SO wykorzysutje prostszą regresję jedno parametrową ($f(x)=x+b$). Użycie tak prostego modelu czyni algorytm o wiele bardziej odpornym na przeuczenie.
+    %TODO może rozwinąć temat definicji overfittingu - nie wiem czy uznać problem przeuczenia jako oczywisty
    \subsection{Rozkład według wartości osobliwych}
     Rozkład SVD (Singular Value Decomposition) macierzy $m\times n$ przedstawiony jest wzorem:
     $M=U\Sigma V^*$\newline
@@ -380,15 +402,14 @@ Instytut Informatyki}
     Algorytm iterowanego poprawiania modelu wygląda podobnie do tego z SVD:\newline\newline
     %
     \hspace*{16pt}	for $I$ iterations\{\newline
-    \hspace*{32pt}		wylosuj $(u,i,j)$ z $D_K$\{\newline   
-    \hspace*{48pt}			$\tilde{s}=b_i-b_j+p_u\cdot(q_i-q_j)$\newline
-    \hspace*{48pt}			$err=\frac{e^{-\tilde{s}}}{1+e^{-\tilde{s}}}$\newline
-    \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
-    \hspace*{48pt}			$b_j=b_j+\alpha\cdot(-err-\lambda_2\cdot b_j)$\newline
-    \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot (q_i-q_j)-\lambda_3\cdot p_u)$\newline
-    \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot p_u-\lambda_4\cdot q_i)$\newline
-    \hspace*{48pt}			$q_j=q_j+\alpha\cdot(-err\cdot p_u-\lambda_4\cdot q_j)$\newline
-    \hspace*{32pt}		\}\newline
+    \hspace*{32pt}		wylosuj $(u,i,j)$ z $D_K$\newline 
+    \hspace*{32pt}		$\tilde{s}=b_i-b_j+p_u\cdot(q_i-q_j)$\newline
+    \hspace*{32pt}		$err=\frac{e^{-\tilde{s}}}{1+e^{-\tilde{s}}}$\newline
+    \hspace*{32pt}		$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
+    \hspace*{32pt}		$b_j=b_j+\alpha\cdot(-err-\lambda_2\cdot b_j)$\newline
+    \hspace*{32pt}		$p_u=p_u+\alpha\cdot(err\cdot (q_i-q_j)-\lambda_3\cdot p_u)$\newline
+    \hspace*{32pt}		$q_i=q_i+\alpha\cdot(err\cdot p_u-\lambda_4\cdot q_i)$\newline
+    \hspace*{32pt}		$q_j=q_j+\alpha\cdot(-err\cdot p_u-\lambda_4\cdot q_j)$\newline
     \hspace*{16pt}	\}\newline
     %TODO czy za każdym razem pisać definicje zmiennych czy raz wystarczy (zalezy czy ktoś czyta wyrywkowo czy całość)
     W tym algorytmie trójki $(u,i,j)\in D_K$ są wybierane losowo, gdyż jest ich na ogół o wiele wiecej niż par $(u,i)\in K$
