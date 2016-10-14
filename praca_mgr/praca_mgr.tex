@@ -227,7 +227,7 @@ Instytut Informatyki}
     Jeśli założenia funkcji nie są spełnione (za mało wspólnych przedmiotów), lub wartość jest bez sensu (np. $\frac{0}{0}$)
     funkcja przyjmuje wartość odpowiadającą brakowi podobieństwa (zazwyczaj 0).\newline\newline
     Do wyliczenia przewidzianej oceny przedmiotu używa się ważonej średniej z ocen wystarczająco podobnych użytkowników
-   (obcięcie listy użytkowników według wartości funkcji podobieństwa, ilości najbliższych sąsiadów, lub obu), zadanej wzorem:\newline
+    (obcięcie listy użytkowników według wartości funkcji podobieństwa, ilości najbliższych sąsiadów, lub obu), zadanej wzorem:\newline
     \begin{center}
      $r'_{ui}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{vi}-\overline{r_v})S_{uv}}{\sum\limits_{v\in N_u}S_{uv}}$
     \end{center}
@@ -450,14 +450,106 @@ Instytut Informatyki}
    W przypadku usystematyzowanych danych o parametrach przedmiotów (cena, lokalizacja, dostępność, itp.)
    można pozwolić użytkownikowi na wybranie które cechy są dla niego najbardziej istotne i albo zawęzić wyszukiwanie albo też
    dostosować różne stałe w algorytmach (aby podobieństwo pod danym względem miało większą wagę).
-   
-   
-   
+ \chapter{TODO - ulepszenia}
+  \section{TODO - podsekcja o ulepszeniach o danym typie}
+   \subsection{Complex}
+    %TODOTODO wpisać w opisie problemu jako jeden z możliwych celów znajdowanie tylko najlepiej ocenianych przedmiotów - połączenie wyniku implicit i explicit
+    Standardową reprezentacją danych rozważanych w filtorwaniu kolaboratywnym jest macierz użyć przedmiotów (lub lista ocen pozwalająca zaoszczędzić pamięć).
+    %TODO inną formą brzmi trochę jakby ta macierz była formą wizualizacji - można by spróbować lepiej to ująć
+    Inną formą wizualizacji danych jest graf w którym wierzchołkami są użytkownicy i przedmioty, zaś krawędzie między nimi oznaczają powiązania miedzy nimi
+    -- oceny wystawione przez użytkowników przedmiotom lub znane podobieństwo. Zazwyczaj informacje zawarte w krawędziach mogą zostać spłaszczone do
+    rzeczywistej wartości liczbowej oznaczającej upodobanie użytkownika do przedmiotu lub podobieństwo przedmiot-przedmiot użytkownik-uzytkownik,
+    w przypadku braku informacji na temat interakcji krawędź nie istnieje.
+    Klasyczne algorytmy bazujące na podobieństwie pomiędzy użytkownikami lub przedmiotami skupiają się w większości na wyliczeniu tych podobieństw
+    dla każdej pary (sporządzeniu maciery podobieństwa) i w celu predykcji nowej oceny aplikują pewną funkcję agregującą oceny podobnych instancji.
+    Przy spojrzeniu na nie z perspektywy grafu algorytmy te skupiają się na stworzeniu brakującej krawędzi pomiędzy użytkownikiem i przedmiotem na podstawie
+    ścieżek długości 3 między nimi.\newline
+    Podstawowym problemem tego podejścia jest to, że w przypadku rzadkich macierzy użyć przedmiotów (w zastosowaniach macierze te są zazwyczaj bardzo rzadkie)
+    ścieżek takich może być bardzo mało, co oznacza małą wiarygodność predykcji, zaś brak ścieżek uniemożliwia jakąkolwiek predykcję.
+    Jednym z rozwiązań problemu jest posłużenie się również dłuższymi ścieżkami, takie podejście może jednak napotkać barierę złożonościową
+    (algorytmy CF i SO do wyliczenia wszystkich ocen potrzebują czasu $O(m^2n^2)$ dla macierzy o rozmiarach $m\times n$ badając tylko bardzo krótkie ścieżki,
+    przy dłuższych ten czas ulegałby potęgowaniu), dlatego aby uzyskać lepsze wyniki w rozsądnym czasie model podobieństwa musi zostać uproszczony.
+    %tutaj już można o COMPLEX
+    Jeden z modeli wykorzystujących dalsze podobieństwo w praktyce został zaproponowany w \cite{205}. Algorytm Complex upodobanie użytkownika do przedmiotu
+    predykuje jako sumę wartości po ścieżkach wiodących od użytkownika do tego przedmiotu aplikując do nich wagi zmniejszające się wraz z rosnącą ich długością.
+    Twórcy algorytmu wykorzystują model grafowy w którym upodobanie oznaczone jest poprzez krawędzie skierowane
+    od użytkownika do przedmiotu z pojedynczą wartością rzeczywistą i uogólniają na dłuższe ścieżki mnożąc wartości z krawędzi zgodnie ze schematem:\newline
+    TODO obrazek jak w pracy TODO \newline\newline
+    %
+    %
+    %
+    %
+    Ze schematu można wywnioskować następujące reguły:
+    \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+     \item $\omega_{similar}=-\omega^2_{like}$
+     \item $\omega_{like}=\omega_{similar}\cdot\omega_{like}$
+     \item $\omega_{similar}=\omega^2_{similar}$
+    \end{itemize}
+    Z reguł wynika, że ograniczenie do wartości rzeczywistych nie wystarcza, jednak stosując wartości zespolone otrzymuje się wygodny model,
+    w którym wartości podobieństwa wyrażone są liczbami rzeczywistymi, zaś upodobanie wartościami czysto zespolonymi (stąd też pochodzi nazwa algorytmu).
+    Dzięki takiej interpretacji sumy wartości ścieżek długości $l$ mogą zostać wyliczone dzięki zwykłemu przemnożeniu przez siebie macierzy zawierającej
+    wartości dla pojedynczych krawędzi $l$ krotnie.\newline
+    Aby zastosować algorytm do prawdziwych danych należy uwzględnić kilka rzeczy -- doprowadzić macierz ocen do odpowiedniego stanu,
+    można też przy okazji dokonać kilku uproszczeń.
+    Jako, że aby dodawanie ścieżek różnych długości miało jakąkolwiek możliwość utrzymania wiadomości
+    o prawdziwych ocenach wystawionych przez użytkowników przedmiotom trzeba by zastosować bardzo skomplikowane wagi na konkretnych krawędzich
+    (jeżeli użytkownik ocenił dużo przedmiotów lub przedmiot był licznie używany, związane z nim oceny mają rosnący wpływ na dłuższe ścieżki)
+    algorytm sprawdza się dobrze tylko w celu stworzenia list rekomendacji.
+    Jeżeli unormalizować wartości podobieństw w macierzy tak aby, zrównoważyć wykładniczo szybko rosnącą ilość ścieżek wraz ich długością
+    (dzieląc w podstawowej macierzy wartości przez rozmiar macierzy) narzucającą się macierzą wynikową było by $I+A+\frac{1}{2}A^2+...=e^{A}$,
+    jednak ponieważ ścieżki większych długości są mniej istotne dla prawdziwych wartości (nawet po zniwelowaniu oddziaływania ilościowego)
+    w praktyce lepiej stosować wagi, które bardziej premiują krótkie ścieżki.
+    Jeśli model danych nie posiada żadnych krawędzi pomiędzy użytkownikami lub przedmiotami macierz grafu (dwudzielnego)
+    można zapisać w uproszczony sposób:\newline
+    $A=
+     \left[\begin{array}{cc}
+     A_{UU}&A_{UI}\\
+     A_{IU}&A_{II}
+     \end{array}\right]
+     =
+     \left[\begin{array}{cc}
+     0&A_{UI}\\
+     A_{IU}&0
+     \end{array}\right]
+     =
+     \left[\begin{array}{cc}
+     0&jB\\
+     -jB^\bot&0
+     \end{array}\right]
+     \Rightarrow\newline
+     A^{2k}=
+     \left[\begin{array}{cc}
+     (BB^\bot)^k&0\\
+     0&(B^\bot B)^k
+     \end{array}\right],
+     A^{2k+1}=
+     \left[\begin{array}{cc}
+     0&j(BB^\bot)^kB\\
+     -j(B^\bot B)^kB^\bot&0
+     \end{array}\right]
+    $\newline
+    Ponieważ przy odczytywaniu wyników interesujące są jedynie ścieżki od użytkownika do przedmiotu (prawa górna podmacierz)
+    macierz przechowująca wynik przyjmuje postać $C=\sum\limits_{k=0}^{\infty}a_k(BB^\bot)^kB$, gdzie $a_k$ to odpowiednie wagi,
+    zaś $B$ to odpowiednio zmodyfikowana macierz ocen wystawionych przez użytkowników przedmiotom.
+    Autorzy pracy w której przedstawiony został algorytm przyjęli model w którym negatywna ocena wystawiona przez użytkownika
+    oznacza mniejsze upodobanie w przedmiocie niż brak jego użycia, jednocześnie celując w rekomendację tylko przedmiotów,
+    które użytkownik powinien ocenić pozytywnie (podejście pośrednie pomiędzy predykcją ocen przy użyciu informacji explicite
+    i tworzenia list na podstawie informacji implicite) stąd oceny można w macierzy spłaszczyć do $1$ w przypadku pozytywnej i $-1$ negatywnej
+    i $0$ w przypadku braku oceny/użycia (neutralną najlepiej zakwalifikować jako pozytywną -- bardziej lubiane niż w przypadku braku użycia).
+    %TODO może już tutaj podać pseudokod lub szczególy implementacji jak wagi
+    % TODO mnożenie macierzy -> dobrze pooptymalizowane -> szybkie -> wręcz tak szybkie jak algorytmy niespersonalizowane
+    
+    
+    
 \begin{thebibliography}{99}%TODO
 \addcontentsline{toc}{chapter}{Bibliografia}
-
-
-
+  %praca o complex
+  %my media literowe
+  %ewentualnie wikipedia - nie wiem czy trzeba podstrony - podstawowe algorytmy jak SO,CF
+  \bibitem[205]{205} Feng Xie, Zhen Chen, Jiaxing, Xiaoping Feng, Wenliang Huang, Jun Li,
+  "A Link Prediction Approach for Item Recommendation with Complex Number"
+  \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
+  pp. 205 - 212
 
 
 
