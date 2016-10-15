@@ -52,11 +52,15 @@ c1[[1]][[1]]="SVD++"
 c1[[1]][[2]]=SVDpp_ratings
 c1[[1]][[3]]=c(1,4,0.01)
 functions_list=c(functions_list,c1)
+c1[[1]][[1]]="gSVD++"
+c1[[1]][[2]]=gSVDpp_ratings
+c1[[1]][[3]]=c(1,4,0.01)
+functions_list=c(functions_list,c1)
 c1[[1]][[1]]="BPR"
 c1[[1]][[2]]=BPR_pseudo_ratings
 c1[[1]][[3]]=c(1,4,0.01)
 functions_list=c(functions_list,c1)
-results_matrix=multi2_evaluation_rating(functions_list,quick=TRUE)
+results_matrix=multi_evaluation_rating(functions_list,quick=TRUE)
 
 multi_plot(results_matrix[4,],rownames(results_matrix)[4])
 

@@ -51,12 +51,12 @@ read_ml_file=function(file){
 }
 read_meta_file=function(file,names_file=NULL){
   ml_meta_data<<-read.csv(file,header=FALSE,sep="|")
-  ml_genres<<-ml_meta_data[,6:24]
+  item_genres<<-data.matrix(ml_meta_data[,6:24])
   if(is.null(names_file)){
-    colnames(ml_genres)<<-c(1:19)
+    colnames(item_genres)<<-c(1:19)
   }else{
     genre_names=read.csv(names_file,header=FALSE,sep="|")
-    colnames(ml_genres)<<-genre_names[,1]
+    colnames(item_genres)<<-genre_names[,1]
   }
 }
 read_ml_test=function(file){
@@ -306,7 +306,7 @@ count_precision_recs=function(recs_function,only_best=FALSE){
 multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
-  results=matrix(list(),nrow=4,ncol=length(functions_list))
+  results=matrix(list(),nrow=6,ncol=length(functions_list))
   rownames(results)=c("MSE","ROC","quality ROC","best ROC","Precision","best Precision")
   names=list()
   for(i in 1:len){
@@ -316,9 +316,10 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
     results[[3,i]]=data.frame(rep(0,resolution),rep(0,resolution))
     results[[4,i]]=data.frame(rep(0,resolution),rep(0,resolution))
     results[[5,i]]=rep(0,items)
-    results[[5,i]]=rep(0,items)
+    results[[6,i]]=rep(0,items)
   }
   colnames(results)=names
+  read_meta_file("ml-100k/u.item","ml-100k/u.genre")
   for(t1 in 1:l){
     read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
     read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
@@ -342,6 +343,7 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
   return(results)
 }
 
+#TODO np. dla precision można by dać opcję dającą tylko początek itp.
 multi_plot=function(df_list,title){
   l=length(df_list)
   ymax=max(unlist(df_list))
