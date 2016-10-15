@@ -3,6 +3,7 @@ source("CF.r")
 source("SVD.r")
 
 read_ml_file("ml-100k/u.data")
+read_meta_file("ml-100k/u.item","ml-100k/u.genre")
 read_ml_file(paste("ml-100k/u1.base",sep=""))
 read_ml_test(paste("ml-100k/u1.test",sep=""))
 

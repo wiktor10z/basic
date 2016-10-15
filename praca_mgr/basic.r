@@ -20,6 +20,7 @@ arguments_from_list=function(fun,args){
 
 items=1682
 users=943
+genres=19
 
 # wczytanie
 read_ml_file=function(file){
@@ -47,6 +48,16 @@ read_ml_file=function(file){
   mov_pop<<-apply(ml_bin_matrix,2,sum)
   us_means<<-apply(ml_matrix,1,mean1)
   glob_mean<<-mean(mov_means[mov_means>0])
+}
+read_meta_file=function(file,names_file=NULL){
+  ml_meta_data<<-read.csv(file,header=FALSE,sep="|")
+  ml_genres<<-ml_meta_data[,6:24]
+  if(is.null(names_file)){
+    colnames(ml_genres)<<-c(1:19)
+  }else{
+    genre_names=read.csv(names_file,header=FALSE,sep="|")
+    colnames(ml_genres)<<-genre_names[,1]
+  }
 }
 read_ml_test=function(file){
   ml_test<<-read.csv(file,header=FALSE,sep="\t")
