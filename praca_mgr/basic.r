@@ -39,11 +39,12 @@ read_ml_file=function(file){
     else{return(-1)}})
     ,nrow=users,ncol=items)
   us_view_list<<-list(list())
-  us_viewed<<-list()  
+  us_viewed=list()  
   for(i in 1:users){
     us_view_list[[i]]<<-which(ml_matrix[i,]!=0)
-    us_viewed[i]<<-length(us_view_list[[i]])
+    us_viewed[i]=length(us_view_list[[i]])
   }
+  us_viewed<<-unlist(us_viewed)
   mov_means<<-apply(ml_matrix,2,mean1)
   mov_pop<<-apply(ml_bin_matrix,2,sum)
   us_means<<-apply(ml_matrix,1,mean1)

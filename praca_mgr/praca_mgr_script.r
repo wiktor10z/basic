@@ -60,6 +60,10 @@ c1[[1]][[1]]="BPR"
 c1[[1]][[2]]=BPR_pseudo_ratings
 c1[[1]][[3]]=c(1,4,0.01)
 functions_list=c(functions_list,c1)
+c1[[1]][[1]]="MABPR"
+c1[[1]][[2]]=MABPR_pseudo_ratings
+c1[[1]][[3]]=c(1,4,0.01)
+functions_list=c(functions_list,c1)
 results_matrix=multi_evaluation_rating(functions_list,quick=TRUE)
 
 multi_plot(results_matrix[4,],rownames(results_matrix)[4])
