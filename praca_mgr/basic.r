@@ -327,7 +327,7 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
     for(i in 1:len){
       rating=arguments_from_list(functions_list[[i]][[2]],functions_list[[i]][[3]])
       recs=rating_to_recs(rating,items)
-      results[[1,i]]=results[[1,i]]+rating_MSE(rating,ml_test)
+      results[[1,i]]=results[[1,i]]+rating_MSE(normalize_rating(rating,1,5),ml_test)
       results[[2,i]]=results[[2,i]]+recs_ROC(recs,resolution,quality=0)
       results[[3,i]]=results[[3,i]]+recs_ROC(recs,resolution,quality=1)
       results[[4,i]]=results[[4,i]]+recs_ROC(recs,resolution,quality=2)
@@ -336,10 +336,12 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
     }
   }
   for(i in 1:len){
-    results[1,i]=results[[1,i]]/l
+    results[[1,i]]=results[[1,i]]/l
     results[[2,i]]=results[[2,i]]/l
     results[[3,i]]=results[[3,i]]/l
-    results[[4,i]]=results[[4,i]]/l   
+    results[[4,i]]=results[[4,i]]/l
+    results[[5,i]]=results[[5,i]]/l 
+    results[[6,i]]=results[[6,i]]/l 
   }
   return(results)
 }

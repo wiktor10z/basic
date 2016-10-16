@@ -57,7 +57,7 @@ gSVDpp_item=function(u,i){
     y[j,]<<-y[j,]+alpha*(err*us_viewed_root1[u]*q_plus_x)
   }
   if(!sum(item_genres[i,])){
-    x=x+item_genres[i,]%*%t(err/sum(item_genres[i,])*p_plus_y)
+    x=x+item_genres[i,]%*%t(err*item_genres_norm1[i]*p_plus_y)
   }
 }
 # rozkłady SVD
@@ -110,6 +110,7 @@ MABPR_learn_weights=function(Iter){
     w[u,]<<-w[u,]+alpha*err*(item_genres[i,]-item_genres[j,])
   }
 }
+
 MABPR=function(Iter,f2,alpha2){
   init_SVD(f2,alpha2)
   MABPR_learn_weights(Iter)
@@ -136,6 +137,47 @@ MABPR=function(Iter,f2,alpha2){
   }
 }
 
+MABPR_gSVDpp=function(Iter,f2,alpha2){
+  init_SVD(f2,alpha2)
+  MABPR_learn_weights(Iter)
+  for(I in 1:Iter){
+    u=sample(1:users,1)
+    i=sample(c(1:items)[ml_bin_matrix[u,]],1)
+    j=sample(c(1:items)[-i],1)
+    if(ml_bin_matrix[u,j]){
+      wi=item_genres_norm1[i]*sum(item_genres[i,]*w[u,])
+      wj=item_genres_norm1[j]*sum(item_genres[j,]*w[u,])
+      if(wj>wi){
+        k=i
+        i=j
+        j=k
+      }
+    }
+  }
+  y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
+  x_sum1=item_genres_norm1[i]*colSums(x*item_genres[i,])
+  x_sum2=item_genres_norm1[j]*colSums(x*item_genres[j,])
+  p_plus_y=p[u,]+y_sum
+  q_plus_x1=q1[i,]+x_sum1
+  q_plus_x2=q1[j,]+x_sum2
+  q_diff=q_plus_x2-q_plus_x1
+  s2=b2[j]-b2[i]+sum(q_diff*p_plus_y)
+  err=exp(s2)/(1+exp(s2))
+  b2[i]<<-b2[i]+alpha*err
+  b2[j]<<-b2[j]-alpha*err
+  p[u,]<<-p[u,]+alpha*err*q_diff
+  q1[i,]<<-q1[i,]+alpha*err*p_plus_y
+  q1[j,]<<-q1[j,]-alpha*err*p_plus_y
+  for(k in us_view_list[u]){
+    y[k,]<<-y[k,]+alpha*err*us_viewed_root1[u]*q_diff
+  }
+  if(!sum(item_genres[i,])){
+    x=x+item_genres[i,]%*%t(err*item_genres_norm1[i]*p_plus_y)
+  }
+  if(!sum(item_genres[j,])){
+    x=x-item_genres[j,]%*%t(err*item_genres_norm1[j]*p_plus_y)
+  }
+}
 # ratings
 
 SVD_ratings=function(Iter,f2,alpha2){
@@ -185,7 +227,7 @@ BPR_pseudo_ratings=function(Iter,f2,alpha2){
       r2[u,i]=b2[i]+sum(q1[i,]*p[u,])
     }
   }
-  return(r2)
+  return(affine_rating(r2,1,5))
 }
 
 MABPR_pseudo_ratings=function(Iter,f2,alpha2){
@@ -196,9 +238,23 @@ MABPR_pseudo_ratings=function(Iter,f2,alpha2){
       r2[u,i]=b2[i]+sum(q1[i,]*p[u,])
     }
   }
-  return(r2)
+  return(affine_rating(r2,1,5))
 }
 
+MABPR_gSVDpp_pseudo_ratings=function(Iter,f2,alpha2){
+  MABPR_gSVDpp(Iter,f2,alpha2)
+  r2=matrix(0L,nrow=users,ncol=items)
+  for(u in 1:users){
+    y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
+    x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
+    p_plus_y=p[u,]+y_sum
+    q_plus_x=q1[i,]+x_sum
+    for(i in 1:items){
+      r2[u,i]=glob_mean+b[u]+b2[i]+sum(q_plus_x*p_plus_y)
+    }
+  }
+  return(affine_rating(r2,1,5))
+}
 
 if(FALSE){
 SVD1=function(Iter,f,N){
