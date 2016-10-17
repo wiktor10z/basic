@@ -89,8 +89,8 @@ BPR=function(Iter,f2,alpha2){
     u=sample(1:users,1)
     i=sample(c(1:items)[ml_bin_matrix[u,]],1)
     j=sample(c(1:items)[ml_bin_matrix[u,]==FALSE],1)
-    s2=b2[j]-b2[i]+sum(p[u,]*(q1[j,]-q1[i,]))
-    err=exp(s2)/(1+exp(s2))
+    s2=b2[i]-b2[j]+sum(p[u,]*(q1[i,]-q1[j,]))
+    err=1/(1+exp(s2))
     b2[i]<<-b2[i]+alpha*err
     b2[j]<<-b2[j]-alpha*err
     p[u,]<<-p[u,]+alpha*err*(q1[i,]-q1[j,])
@@ -127,8 +127,8 @@ MABPR=function(Iter,f2,alpha2){
         j=k
       }
     }
-    s2=b2[j]-b2[i]+sum(p[u,]*(q1[j,]-q1[i,]))
-    err=exp(s2)/(1+exp(s2))
+    s2=b2[i]-b2[j]+sum(p[u,]*(q1[i,]-q1[j,]))
+    err=1/(1+exp(s2))
     b2[i]<<-b2[i]+alpha*err
     b2[j]<<-b2[j]-alpha*err
     p[u,]<<-p[u,]+alpha*err*(q1[i,]-q1[j,])
@@ -160,9 +160,9 @@ MABPR_gSVDpp=function(Iter,f2,alpha2){
   p_plus_y=p[u,]+y_sum
   q_plus_x1=q1[i,]+x_sum1
   q_plus_x2=q1[j,]+x_sum2
-  q_diff=q_plus_x2-q_plus_x1
-  s2=b2[j]-b2[i]+sum(q_diff*p_plus_y)
-  err=exp(s2)/(1+exp(s2))
+  q_diff=q_plus_x1-q_plus_x2
+  s2=b2[i]-b2[j]+sum(q_diff*p_plus_y)
+  err=1/(1+exp(s2))
   b2[i]<<-b2[i]+alpha*err
   b2[j]<<-b2[j]-alpha*err
   p[u,]<<-p[u,]+alpha*err*q_diff

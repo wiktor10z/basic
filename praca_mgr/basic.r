@@ -307,17 +307,20 @@ count_precision_recs=function(recs_function,only_best=FALSE){
 multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
-  results=matrix(list(),nrow=6,ncol=length(functions_list))
-  rownames(results)=c("MSE","ROC","quality ROC","best ROC","Precision","best Precision")
+  results=matrix(list(),nrow=9,ncol=length(functions_list))
+  rownames(results)=c("MSE","ROC","AUC","quality ROC","quality AUC","best ROC","best AUC","Precision","best Precision")
   names=list()
   for(i in 1:len){
     names[i]=functions_list[[i]][[1]]
     results[[1,i]]=0
     results[[2,i]]=data.frame(rep(0,resolution),rep(0,resolution))
-    results[[3,i]]=data.frame(rep(0,resolution),rep(0,resolution))
+    results[[3,i]]=0
     results[[4,i]]=data.frame(rep(0,resolution),rep(0,resolution))
-    results[[5,i]]=rep(0,items)
-    results[[6,i]]=rep(0,items)
+    results[[5,i]]=0
+    results[[6,i]]=data.frame(rep(0,resolution),rep(0,resolution))
+    results[[7,i]]=0
+    results[[8,i]]=rep(0,items)
+    results[[9,i]]=rep(0,items)
   }
   colnames(results)=names
   read_meta_file("ml-100k/u.item","ml-100k/u.genre")
@@ -329,34 +332,48 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
       recs=rating_to_recs(rating,items)
       results[[1,i]]=results[[1,i]]+rating_MSE(normalize_rating(rating,1,5),ml_test)
       results[[2,i]]=results[[2,i]]+recs_ROC(recs,resolution,quality=0)
-      results[[3,i]]=results[[3,i]]+recs_ROC(recs,resolution,quality=1)
-      results[[4,i]]=results[[4,i]]+recs_ROC(recs,resolution,quality=2)
-      results[[5,i]]=results[[5,i]]+recs_precision(recs,only_best=FALSE)
-      results[[6,i]]=results[[6,i]]+recs_precision(recs,only_best=TRUE)
+      results[[4,i]]=results[[4,i]]+recs_ROC(recs,resolution,quality=1)
+      results[[6,i]]=results[[6,i]]+recs_ROC(recs,resolution,quality=2)
+      results[[8,i]]=results[[8,i]]+recs_precision(recs,only_best=FALSE)
+      results[[9,i]]=results[[9,i]]+recs_precision(recs,only_best=TRUE)
     }
   }
   for(i in 1:len){
     results[[1,i]]=results[[1,i]]/l
     results[[2,i]]=results[[2,i]]/l
-    results[[3,i]]=results[[3,i]]/l
+    results[[3,i]]=normalized_AUC(results[[2,i]],resolution)
     results[[4,i]]=results[[4,i]]/l
-    results[[5,i]]=results[[5,i]]/l 
-    results[[6,i]]=results[[6,i]]/l 
+    results[[5,i]]=normalized_AUC(results[[4,i]],resolution)
+    results[[6,i]]=results[[6,i]]/l
+    results[[7,i]]=normalized_AUC(results[[6,i]],resolution)
+    results[[8,i]]=results[[8,i]]/l 
+    results[[9,i]]=results[[9,i]]/l 
   }
   return(results)
 }
 
-#TODO np. dla precision można by dać opcję dającą tylko początek itp.
-multi_plot=function(df_list,title){
+#legenda powinna wyglądać dobrze również, a może szczególnie na powiększeniu
+multi_plot=function(df_list,title,points_list=c(-items*1000)){
   l=length(df_list)
-  ymax=max(unlist(df_list))
-  par(mar=c(3,3,3,5.5)) 
-  for(i in 1:l){
-    plot(df_list[[i]],type="l",col=rainbow(l)[i],main=title,xlab="",ylab="",ylim=c(0,ymax),bty="L")
-    par(new=TRUE)
+  if((typeof(df_list[[1]])=="list")||(length(df_list[[1]]>1))){
+    ymax=max(unlist(df_list))
+    par(mar=c(3,3,3,5.5)) 
+    for(i in 1:l){
+      if(is.null(ncol(df_list[[i]]))){
+        plot(df_list[[i]][points_list],type="l",col=rainbow(l)[i],main=title,xlab="",ylab="",ylim=c(0,ymax),bty="L")
+      }else{
+        plot(df_list[[i]][points_list,],type="l",col=rainbow(l)[i],main=title,xlab="",ylab="",ylim=c(0,ymax),bty="L")
+      }
+      par(new=TRUE)
+    }
+    if(l>1){
+      legend("bottomright",inset=c(-0.3,-0.3),xpd=TRUE,legend=names(df_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent")
+    }
+    par(new=FALSE)
+  }else{
+    plot1<-barplot(unlist(df_list),col=rainbow(l),main=title)
+    text(plot1,round(unlist(df_list),digits=2),labels=round(unlist(df_list),digits=2),pos=1)
   }
-  legend("bottomright",inset=c(-0.3,-0.3),xpd=TRUE,legend=names(df_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent")
-  par(new=FALSE)
 }
 
 if(FALSE){
