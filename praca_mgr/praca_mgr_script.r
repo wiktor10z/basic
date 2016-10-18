@@ -72,7 +72,9 @@ results_matrix3=multi_evaluation_rating(functions_list,quick=TRUE)
 
 multi_plot(results_matrix[4,],rownames(results_matrix)[4])
 
-
+png("1.png")
+multi_plot(results_matrix[5,],rownames(results_matrix)[5])
+dev.off()
 system.time({
 MSE1=count_MSE(SVDpp_ratings,c(1,10,0.01))
 })

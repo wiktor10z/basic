@@ -352,26 +352,59 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
   return(results)
 }
 
-#legenda powinna wyglądać dobrze również, a może szczególnie na powiększeniu
-multi_plot=function(df_list,title,points_list=c(-items*1000)){
+#legenda powinna wyglądać dobrze również, a może szczególnie na powiększeniu - jak się nie da pogodzić, to wybierana opcja
+multi_plot=function(df_list,title,point_list=c(-items*1000),big=FALSE,color=TRUE){
   l=length(df_list)
-  if((typeof(df_list[[1]])=="list")||(length(df_list[[1]]>1))){
+  if((typeof(df_list[[1]])=="list")||(length(df_list[[1]])>1)){#jeżeli lista punktów to 1, to wykres słupkowy 
     ymax=max(unlist(df_list))
-    par(mar=c(3,3,3,5.5)) 
+    if(is.null(ncol(df_list[[1]]))){
+     ylim1=c(0,max(unlist(df_list)))
+     if(length(point_list)>1){
+       xlim1=c(min(point_list),max(point_list))#TODO to nie tyle 1 items co min i max listy punktów lub min i max długości jeżeli tamta niezdef.
+     }else{
+       xlim1=c(1,length(df_list[[1]]))
+     }
+    }else{
+      ylim1=c(0,max(unlist(df_list)))
+      xlim1=c(0,max(unlist(df_list)))
+    }
+    par(mar=c(3,3,3,5.5))#mozna uzależnić od najdłuższej nazwy - wtedy zawsze legenda się zmieści
     for(i in 1:l){
       if(is.null(ncol(df_list[[i]]))){
-        plot(df_list[[i]][points_list],type="l",col=rainbow(l)[i],main=title,xlab="",ylab="",ylim=c(0,ymax),bty="L")
+        if(length(point_list)>1){
+          df1=data.frame(point_list,df_list[[i]][point_list])
+          df2=df1[(c(0:10)+i/l)*(nrow(df1)/10),]
+        }else{
+          df1=df_list[[i]][point_list]
+          df2=data.frame((c(0:10)+i/l)*(length(df1)/10),df1[(c(0:10)+i/l)*(length(df1)/10)])
+        }
       }else{
-        plot(df_list[[i]][points_list,],type="l",col=rainbow(l)[i],main=title,xlab="",ylab="",ylim=c(0,ymax),bty="L")
+        df1=df_list[[i]][point_list,]
+        df2=df1[(c(0:10)+i/l)*(nrow(df1)/10),]
+      }
+      if(color){
+        plot(df1,type="l",col=rainbow(l)[i],main=title,xlab="",ylab="",xlim=xlim1,ylim=ylim1,bty="L")
+      }else{
+        plot(df1,type="l",main=title,xlab="",ylab="",xlim=xlim1,ylim=ylim1,bty="L",lty=i)
+        par(new=TRUE)
+        plot(df2,type="p",main=title,xlab="",ylab="",xlim=xlim1,ylim=ylim1,pch=i,bty="L")
       }
       par(new=TRUE)
     }
     if(l>1){
-      legend("bottomright",inset=c(-0.3,-0.3),xpd=TRUE,legend=names(df_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent")
+      if(color){
+        legend("bottomright",inset=c(-0.3,-0.3),xpd=TRUE,legend=names(df_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent")
+      }else{
+        legend("bottomright",inset=c(-0.3,-0.3),xpd=TRUE,legend=names(df_list),box.lwd=0,lty=c(1:l),pch=c(1:l),bg="transparent")
+      }
     }
     par(new=FALSE)
   }else{
-    plot1<-barplot(unlist(df_list),col=rainbow(l),main=title)
+    if(color){
+      plot1<-barplot(unlist(df_list),col=rainbow(l),main=title)
+    }else{
+      plot1<-barplot(unlist(df_list),main=title)
+    }
     text(plot1,round(unlist(df_list),digits=2),labels=round(unlist(df_list),digits=2),pos=1)
   }
 }
