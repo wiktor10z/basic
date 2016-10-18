@@ -352,15 +352,14 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
   return(results)
 }
 
-#legenda powinna wyglądać dobrze również, a może szczególnie na powiększeniu - jak się nie da pogodzić, to wybierana opcja
-multi_plot=function(df_list,title,point_list=c(-items*1000),big=FALSE,color=TRUE){
+multi_plot=function(df_list,title,point_list=c(-items*1000),big=0,color=TRUE){
   l=length(df_list)
   if((typeof(df_list[[1]])=="list")||(length(df_list[[1]])>1)){#jeżeli lista punktów to 1, to wykres słupkowy 
     ymax=max(unlist(df_list))
     if(is.null(ncol(df_list[[1]]))){
-     ylim1=c(0,max(unlist(df_list)))
+     ylim1=c(0,max(unlist(df_list)))#TODO można dla point_list mniejszego zmienić max, żeby był miarodajny
      if(length(point_list)>1){
-       xlim1=c(min(point_list),max(point_list))#TODO to nie tyle 1 items co min i max listy punktów lub min i max długości jeżeli tamta niezdef.
+       xlim1=c(min(point_list),max(point_list))
      }else{
        xlim1=c(1,length(df_list[[1]]))
      }
@@ -368,7 +367,25 @@ multi_plot=function(df_list,title,point_list=c(-items*1000),big=FALSE,color=TRUE
       ylim1=c(0,max(unlist(df_list)))
       xlim1=c(0,max(unlist(df_list)))
     }
-    par(mar=c(3,3,3,5.5))#mozna uzależnić od najdłuższej nazwy - wtedy zawsze legenda się zmieści
+    if(big==1){
+      inset1=c(-0.28,-0.15)
+      seglen1=1
+      xinter1=0.3
+      cex1=1
+      par(mar=c(3,3,3,9)) 
+    }else if(big==2){
+      inset1=c(-0.15,-0.07)
+      seglen1=3
+      xinter1=1
+      cex1=1.7
+      par(mar=c(3,3,3,10))
+    }else{
+      inset1=c(-0.3,-0.3)
+      seglen1=2
+      xinter1=1
+      cex1=1
+      par(mar=c(3,3,3,5.5))
+    }
     for(i in 1:l){
       if(is.null(ncol(df_list[[i]]))){
         if(length(point_list)>1){
@@ -393,9 +410,9 @@ multi_plot=function(df_list,title,point_list=c(-items*1000),big=FALSE,color=TRUE
     }
     if(l>1){
       if(color){
-        legend("bottomright",inset=c(-0.3,-0.3),xpd=TRUE,legend=names(df_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent")
+        legend("bottomright",inset=inset1,xpd=TRUE,legend=names(df_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent",seg.len=seglen1,x.intersp=xinter1,cex=cex1)
       }else{
-        legend("bottomright",inset=c(-0.3,-0.3),xpd=TRUE,legend=names(df_list),box.lwd=0,lty=c(1:l),pch=c(1:l),bg="transparent")
+        legend("bottomright",inset=inset1,xpd=TRUE,legend=names(df_list),box.lwd=0,lty=c(1:l),pch=c(1:l),bg="transparent",seg.len=seglen1,x.intersp=xinter1,cex=cex1)
       }
     }
     par(new=FALSE)
