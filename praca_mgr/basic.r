@@ -13,8 +13,10 @@ arguments_from_list=function(fun,args){
     return(fun(args[[1]]))
   }else if(l==2){
     return(fun(args[[1]],args[[2]]))
-  }else{
+  }else if(l==3){
     return(fun(args[[1]],args[[2]],args[[3]]))
+  }else{
+    return(fun(args[[1]],args[[2]],args[[3]],args[[4]]))    
   }
 }
 
@@ -156,6 +158,7 @@ trivial_roc=function(resolution=1000){
   return(roc1)
 }
 
+#TODO to jest ekstremalnie wolne
 normalize_roc=function(roc1,resolution=1000){
   if((sum(is.nan(roc1[,1]))>0)||(sum(is.nan(roc1[,2]))>0)){
     return(trivial_roc(resolution))
@@ -197,7 +200,7 @@ normalized_AUC=function(roc,resolution=1000){#area under curve
 
 #TODO zrobić to dobrze
 {
-
+# precision=hits rate
 recs_precision1=function(recs,u){
   hit_vec=c(test_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))
   return(cumsum(hit_vec)/cumsum(rep(1,items)))
@@ -248,6 +251,18 @@ recs_MAP2=function(recs){
 }
 }
 # ocena systemu
+
+recs_coverage=function(recs){
+  cov1=lapply(1:items,function(i){unique(unlist(lapply(recs,function(x){x[i]})))})
+  cov2=list(list())
+  cov2[1]=cov1[1]
+  for(i in 2:items){
+    cov2[[i]]=unique(unlist(c(cov2[i-1],cov1[i])))
+  }
+  return(unlist(lapply(cov2,length))/items)
+}
+#TODO przetestowac czy jakieś algorytmy się istotnie różnią
+
 
 count_MSE=function(rating_function,args){
   value=0
@@ -304,11 +319,11 @@ count_precision_recs=function(recs_function,only_best=FALSE){
   return(precision_sum/5)
 }
 
-multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
+multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
-  results=matrix(list(),nrow=9,ncol=length(functions_list))
-  rownames(results)=c("MSE","ROC","AUC","quality ROC","quality AUC","best ROC","best AUC","Precision","best Precision")
+  results=matrix(list(),nrow=10,ncol=length(functions_list))
+  rownames(results)=c("MSE","ROC","AUC","quality ROC","quality AUC","best ROC","best AUC","Precision","best Precision","Coverage")
   names=list()
   for(i in 1:len){
     names[i]=functions_list[[i]][[1]]
@@ -321,6 +336,7 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
     results[[7,i]]=0
     results[[8,i]]=rep(0,items)
     results[[9,i]]=rep(0,items)
+    results[[10,i]]=rep(0,items)
   }
   colnames(results)=names
   read_meta_file("ml-100k/u.item","ml-100k/u.genre")
@@ -336,6 +352,7 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
       results[[6,i]]=results[[6,i]]+recs_ROC(recs,resolution,quality=2)
       results[[8,i]]=results[[8,i]]+recs_precision(recs,only_best=FALSE)
       results[[9,i]]=results[[9,i]]+recs_precision(recs,only_best=TRUE)
+      results[[10,i]]=results[[10,i]]+recs_coverage(recs)
     }
   }
   for(i in 1:len){
@@ -347,27 +364,57 @@ multi_evaluation_rating=function(functions_list,resolution=1000,quick=FALSE){
     results[[6,i]]=results[[6,i]]/l
     results[[7,i]]=normalized_AUC(results[[6,i]],resolution)
     results[[8,i]]=results[[8,i]]/l 
-    results[[9,i]]=results[[9,i]]/l 
+    results[[9,i]]=results[[9,i]]/l
+    results[[10,i]]=results[[10,i]]/l 
   }
   return(results)
 }
 
-multi_plot=function(df_list,title,point_list=c(-items*1000),big=0,color=TRUE){
-  l=length(df_list)
-  if((typeof(df_list[[1]])=="list")||(length(df_list[[1]])>1)){#jeżeli lista punktów to 1, to wykres słupkowy 
-    ymax=max(unlist(df_list))
-    if(is.null(ncol(df_list[[1]]))){
-     ylim1=c(0,max(unlist(df_list)))#TODO można dla point_list mniejszego zmienić max, żeby był miarodajny
-     if(length(point_list)>1){
-       xlim1=c(min(point_list),max(point_list))
-     }else{
-       xlim1=c(1,length(df_list[[1]]))
-     }
+cut_result1=function(df1,point_list=c(-items*1000)){
+  if(is.null(ncol(df1))){
+    if(length(point_list)==1){
+      return(data.frame(c(1:length(df1)),df1[point_list]))      
     }else{
-      ylim1=c(0,max(unlist(df_list)))
-      xlim1=c(0,max(unlist(df_list)))
+      return(data.frame(point_list,df1[point_list]))
     }
-    if(big==1){
+  }else{
+    return(df1[point_list,])
+  }
+}
+
+cut_result=function(result_list,point_list=c(-items*1000)){
+  lapply(result_list,function(x){cut_result1(x,point_list)})
+}
+
+cut_to_bar=function(result_list,point){
+  if(is.null(ncol(result_list[[1]]))){
+    return(lapply(result_list,function(x){x[point]}))
+  }else{
+    return(lapply(result_list,function(x){x[point,2]}))
+  }
+}
+
+multi_plot=function(result_list,title,point_list=c(-items*1000),big=0,color=TRUE){#TODO zmienić nazwę df_list, na coś bardziej pasującego
+  l=length(result_list)
+  if((length(point_list)==1)&&(point_list!=c(-items*1000))){
+    title=paste(title," at ",point_list[[1]])
+    #TODO w ROC powinno być podzielone przez resolution - czyli wyifowanie czy ncol null...
+    result_list=cut_to_bar(result_list,point_list[1])
+  }
+  if((typeof(result_list[[1]])=="double")&&(length(result_list[[1]])==1)){
+    if(color){
+      plot1<-barplot(unlist(result_list),col=rainbow(l),main=title)
+    }else{
+      plot1<-barplot(unlist(result_list),main=title)
+    }
+    text(plot1,round(unlist(result_list),digits=3),labels=round(unlist(result_list),digits=3),pos=1)
+  }else{
+    result_list=cut_result(result_list,point_list)
+    xlim1=c(min(result_list[[1]][,1]),max(result_list[[1]][,1]))
+    ymin1=min(unlist(lapply(result_list,function(x){min(x[,2])})))
+    ymax1=max(unlist(lapply(result_list,function(x){max(x[,2])})))
+    ylim1=c(ymin1,ymax1)
+    if(big==1){# TODO os jeszcze nie działa
       inset1=c(-0.28,-0.15)
       seglen1=1
       xinter1=0.3
@@ -387,18 +434,8 @@ multi_plot=function(df_list,title,point_list=c(-items*1000),big=0,color=TRUE){
       par(mar=c(3,3,3,5.5))
     }
     for(i in 1:l){
-      if(is.null(ncol(df_list[[i]]))){
-        if(length(point_list)>1){
-          df1=data.frame(point_list,df_list[[i]][point_list])
-          df2=df1[(c(0:10)+i/l)*(nrow(df1)/10),]
-        }else{
-          df1=df_list[[i]][point_list]
-          df2=data.frame((c(0:10)+i/l)*(length(df1)/10),df1[(c(0:10)+i/l)*(length(df1)/10)])
-        }
-      }else{
-        df1=df_list[[i]][point_list,]
-        df2=df1[(c(0:10)+i/l)*(nrow(df1)/10),]
-      }
+      df1=result_list[[i]]
+      df2=df1[(c(0:10)+i/l)*(nrow(df1)/10),]
       if(color){
         plot(df1,type="l",col=rainbow(l)[i],main=title,xlab="",ylab="",xlim=xlim1,ylim=ylim1,bty="L")
       }else{
@@ -410,21 +447,15 @@ multi_plot=function(df_list,title,point_list=c(-items*1000),big=0,color=TRUE){
     }
     if(l>1){
       if(color){
-        legend("bottomright",inset=inset1,xpd=TRUE,legend=names(df_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent",seg.len=seglen1,x.intersp=xinter1,cex=cex1)
+        legend("bottomright",inset=inset1,xpd=TRUE,legend=names(result_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent",seg.len=seglen1,x.intersp=xinter1,cex=cex1)
       }else{
-        legend("bottomright",inset=inset1,xpd=TRUE,legend=names(df_list),box.lwd=0,lty=c(1:l),pch=c(1:l),bg="transparent",seg.len=seglen1,x.intersp=xinter1,cex=cex1)
+        legend("bottomright",inset=inset1,xpd=TRUE,legend=names(result_list),box.lwd=0,lty=c(1:l),pch=c(1:l),bg="transparent",seg.len=seglen1,x.intersp=xinter1,cex=cex1)
       }
     }
     par(new=FALSE)
-  }else{
-    if(color){
-      plot1<-barplot(unlist(df_list),col=rainbow(l),main=title)
-    }else{
-      plot1<-barplot(unlist(df_list),main=title)
-    }
-    text(plot1,round(unlist(df_list),digits=2),labels=round(unlist(df_list),digits=2),pos=1)
   }
 }
+
 
 if(FALSE){
   multi_evaluation_rating=function(rating_function,args,resolution=1000,quick=FALSE){
@@ -465,5 +496,18 @@ if(FALSE){
     eval_roc<<-roc/l
     eval_quality_roc<<-quality_roc/l
     eval_precision<<-precision/l
+  }
+  # to wystarczy w większości przypadków - jak jest mniej niż item-resolution przedmiotów dla klienta w testowym
+  # ale nie jest wcale szybsze
+  normalize_roc2=function(roc1,resolution=1000){
+    if((sum(is.nan(roc1[,1]))>0)||(sum(is.nan(roc1[,2]))>0)){
+      return(trivial_roc(resolution))
+    }else{
+      #roc3=data.frame(rep(0,resolution),rep(0,resolution))    
+      roc2=data.frame(t(apply(roc1,1,function(l){c(round(resolution*l[1])/resolution,l[2])})))
+      colnames(roc2)<-c("FP","TP")
+      roc3=do.call(rbind, by(roc2, roc2$FP, FUN=function(X) X[which.min(X$TP),]))
+      return(roc3[1:resolution,])
+    }
   }
 }
