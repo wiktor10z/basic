@@ -96,11 +96,16 @@ Instytut Informatyki}
   \section{Przeznaczenie systemów}
    Istnieją dwa główne cele postawione przed systemami rekomendacyjnymi:
    \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
-    \item zbudowanie listy rekomendacyjnej konkretnej długości
-    \item przewidzenie niewprowadzonych ocen przedmiotów
+    \item przewidzenie niewprowadzonych ocen przedmiotów   
+    \item zbudowanie listy rekomendacyjnej konkretnej długości:
+      \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+	\item lista przedmiotów, które powinny być użyte (jak w przypadku informacji implicite)
+	\item lista przedmiotów, które powinny zostać najwyżej ocenione (niekoniecznie często uzywane)
+	\item lista przedmiotów, które powinny być użyte i jednocześnie pozytywnie ocenione (rozwiązanie pośrednie)
+      \end{itemize}
    \end{itemize}
    Oczywiście jeżeli system przewidzi oceny wszystkich nieocenionych przedmiotów,
-   łatwo można je uszeregować malejąco i obciąć listę w odpowiednim miejscu otrzymując listę rekomendacji pożądanej długości.\newline
+   łatwo można je uszeregować malejąco i obciąć listę w odpowiednim miejscu otrzymując listę rekomendacji (typu najwyżej ocenione) pożądanej długości.\newline
    Konwersja w drugą stronę jest znacznie trudniejsza, a bez dodatkowych informacji praktycznie niemożliwa.\newline
    Posiadanie przewidzianych ocen przedmiotów może być bardzo przydatne -- serwis proponujący przedmioty może przedstawiać użytkownikowi
    rekomendacje mocniejsze i słabsze w inny sposób, lub też obciąć listę rekomendacji tylko do przedmiotów o przewidzianej ocenie powyżej pewnego poziomu.
@@ -258,32 +263,31 @@ Instytut Informatyki}
     %TODO może rozwinąć temat definicji overfittingu - nie wiem czy uznać problem przeuczenia jako oczywisty
    \subsection{Rozkład według wartości osobliwych}
     Rozkład SVD (Singular Value Decomposition) macierzy $m\times n$ przedstawiony jest wzorem:
-    $M=U\Sigma V^*$\newline
+    $M=U\Sigma V^\bot$\newline
     gdzie $U$ -- macierz unitarna $m\times m$, $\Sigma$ -- macierz diagonalna zawierająca wartości własne macierzy $M$,
     $V$ -- macierz unitarna $n\times n$\newline
     (w przypadku macierzy nad ciałem rzeczywistym macierze unitarne są ortogonalne)\newline\newline
     Rozkład SVD stosowany jest między innymi do kompresji macierzy:\newline
     %można to zrobić jako lematy
-    W przypadku gdy $m>n$ ($m<n$) $m-n$ ostatnich kolumn macierzy $U$ ($n-m$ ostatnich wierszy macierzy $V^*$) jest nieistotne,
+    W przypadku gdy $m>n$ ($m<n$) $m-n$ ostatnich kolumn macierzy $U$ ($n-m$ ostatnich wierszy macierzy $V^\bot$) jest nieistotne,
     gdyż są mnożone zawsze przez wektor $0$, więc można ich nie przechowywać w pamięci.\newline
     Podobnie dzieje się w przypadku wierszy (kolumn) przypadających na zerowe wartości własne w macierzy $\Sigma$.\newline
-    Zastosowanie jednej permutacji do wierszy macierzy $U$, kolumn macierzy $V^*$, oraz wartości własnych w macierzy $\Sigma$ nie zmienia ich iloczynu.\newline
-    Po zastosowaniu tych przekształceń dla $r=$rank$(M)$ otrzymujemy rozkład $M=U'\Sigma'V'^{*}$, gdzie macierz $U'$ ma wymiary $m\times r$ $\Sigma'$
-    jest macierzą diagonalną rozmiaru $r\times r$, zaś $V'^{*}$ macierzą rozmiaru $r\times n$
+    Zastosowanie jednej permutacji do kolumn macierzy $U$, wierszy macierzy $V^\bot$, oraz wartości własnych w macierzy $\Sigma$ nie zmienia ich iloczynu.\newline
+    Po zastosowaniu tych przekształceń dla $r=$rank$(M)$ otrzymujemy rozkład $M=U'\Sigma'V'^\bot$, gdzie macierz $U'$ ma wymiary $m\times r$ $\Sigma'$
+    jest macierzą diagonalną rozmiaru $r\times r$, zaś $V'^\bot$ macierzą rozmiaru $r\times n$
     (a więc rozkład pozwala na przechowywanie mniejszej ilości danych dla $r<\frac{mn}{m+n+1}$).\newline
     Norma Frobeniusa macierzy: $\lVert M \rVert_F=\sqrt{\sum\limits_{i=1}^{m}\sum\limits_{j=1}^{n}|m_{ij}|^2}$\newline
     \textbf{Twierdzenie 2.2.2.1.} (Eckhart-Young 1936) Dla dowolnego $r<$rank$(M)$
-    macierz $\tilde{M}=U\Sigma_r V^*$,
+    macierz $\tilde{M}=U\Sigma_r V^\bot$,
     (gdzie $\Sigma_r$, to macierz $\Sigma$ z pozostawionymi jedynie $r$ wartościami własnymi o największych wartościach bezwzględnych)
     jest najlepszym przybliżeniem macierzy $M$ pod względem normy Frobeniusa, wśród macierzy o rzędzie $\le r$.\newline
-    Zastosowanie rozkładu SVD i Twierdzenia Eckharta-Younga pozwala na stratną kompresję macierzy.\newline\newline
-    %
-    Algorytm rekomendacyjne z grupy SVD polegają na wygenerowaniu mozliwie
-    najlepszych macierzy $U'$ i $V'^{*}$ dla zadanego $r$ reprezentującymi pełną macierz ocen użytkownik--przedmiot
-    (wiersz zawiera oceny wystawione przez jednego użytkownika, zaś kolumna oceny wystawione jednemu przedmiotowi)
-    na podstawie rzadkiej macierzy znanych już ocen.
-    %być może przydałaby się unifikacja r i f -- raz rząd a raz faktor, ale tylko jedno mogłoby być czytelne
+    Zastosowanie rozkładu SVD i Twierdzenia Eckharta-Younga pozwala na stratną kompresję macierzy.
+    %TODO być może przydałaby się unifikacja r i f -- raz rząd a raz faktor, ale tylko jedno mogłoby być czytelne
     \subsubsection{Model SVD}
+     Algorytmy rekomendacyjne z grupy SVD mają na celu wygenerowaniu mozliwie
+     najlepszych macierzy $U'$ i $V'^\bot$ dla zadanego $r$ reprezentujących pełną macierz ocen użytkownik--przedmiot
+     (wiersz zawiera oceny wystawione przez jednego użytkownika, zaś kolumna oceny wystawione jednemu przedmiotowi)
+     na podstawie rzadkiej macierzy znanych już ocen.\newline
      Oznaczenia:\newline
      $p_u\in\mathbb{R}^f$ -- wektor związany z użytkownikiem $u$\newline
      $b_u\in\mathbb{R}$ -- podstawa oceny związana z użytkownikiem $u$\newline
@@ -294,6 +298,7 @@ Instytut Informatyki}
      $\lambda_{*}$ -- różne stałe użyte do regularyzacji (ustawiane w celu optymalizacji pożądanych miar jakości predykcji)\newline 
      $r_{ui}$ -- prawdziwa ocena wystawiona przedmiotowi $i$ przez użytkownika $u$\newline
      $\tilde{r}_{ui}$ -- przewidziana przez system ocena przypisana użytkownikowi $u$ i przedmiotowi $i$\newline
+     $\alpha$ -- prędkość uczenia (zazwyczaj mała stała rzędu 0.01)\newline
      %
      \begin{center}
      $\tilde{r}_{ui}=\mu+b_u+b_i+p_u\cdot q_i$
@@ -302,14 +307,31 @@ Instytut Informatyki}
      \begin{center}
      $\sum\limits_{(u,i)\in K}(r_{ui}-\mu-b_u-b_i-p_u\cdot q_i)^2+\lambda\cdot(b_u^2+b_i^2+\lVert p_u\rVert^2+\lVert q_i\rVert^2)$
      \end{center}
-     Dla $f=$rank$(M)$ pierwsza część funkcji byłby zerowa dla wektorów $p$ i $q$ będących wierszami macierzy $U$ i $V$
+     %TODO ta lambda może być duża żeby odróżnić od tych dla zmiennych
+     Dla $f=$rank$(M)$ można znaleźć optymalną wartość dla wektorów $p$ i $q$ będących wierszami macierzy $U$ i $V$
      (macierz $\Sigma$ wmnożona w pozostałe) z rozkładu SVD macierzy $M$ (z dowolnymi wartościami zastępuącymi nieznane).
      Ustawienie $f$ na odpowiednią wielkość pozwala uzyskać z jednej strony model wystarczająco prosty do wyliczenia,
      oraz wystarczająco skomplikowany, aby wektory $p_*$ i $q_*$ mogły oddać profile użytkowników i przedmiotów.
      Wartość $f$ odpowiednio mniejsza od rank$(M)$ uniemożliwia modelowi przeuczenie się znanych ocen i powodując uproszczenie modelu
      ustala wartości $\tilde{r}_{ui}$ na najmniej komplikujące model.
      Ustawienie stałej $\lambda$ na niezerową pozwala uniknąć optymalizacji funkcji w skrajnych, oddalonych wartościach wektorów
-     (co mogłoby wynikać z zaburzeń w danych).
+     (co mogłoby wynikać z zaburzeń w danych).\newline
+     Ze względu na brakujące wartości w macierzy nie mogą zostać zastosowane standardowe metody rozkładu dlatego też stosowane jest
+     schodzenie po gradiencie iterowane po znanych wartościach macierzy.
+     Wartości $\mu,b_u,b_i$ stosowane są aby macierz będąca iloczynem macierzy złożonych z wektorów $p_*$ i $q_*$ była możliwie bliska zerowej
+     dzięki czemu można uzyskać większą dokładność oraz uniknąć osiągania dużych wartości mogących wpłynąć na stabilność zbieżności.\newline
+     Zgodnie z określonymi wytycznymi zmienne w algorytmach klasy SVD optymalizowane są
+     poprzez wielokrotne przeprowadzenie procesu opisanego pseudokodem:\newline\newline
+     %
+     \hspace*{16pt}	foreach $(u,i)\in K$\{\newline
+     \hspace*{32pt}		$err=\tilde{r}_{ui}-r_{ui}$\newline
+     \hspace*{32pt}		$x+=\alpha\cdot(err\cdot\frac{\partial err}{\partial x}-\lambda_{x}\cdot x)$\newline
+     \hspace*{16pt}	\}\newline    
+     Gdzie uaktualnienie $x$ oznacza zmianę każdej zmiennej zawartej we wzorze na błąd ($err$) -- dotyczy to również dodatkowych zmiennych dodanych
+     przez rozszerzenia podstawowego algorytmu.\newline
+     Warte wspomnienia jest również to, że w przypadku pełnej macierzy $M$ algorytmy te przy odpowiedniej liczbie iteracji i odpowiednio małej
+     prędkości uczenia w założeniu symulują proces dojścia do rozwiązania takiego jak w kompresji $SVD$.
+     %TODO ujednolicić literę oznaczającą macierz treningową - "M" "A" ...
     \subsubsection{Algorytm SVD++}
      Najczęściej uzywanym rozszerzeniem modelu SVD jest algorytm SVD++, korzystający również z informacji implicite.
      Do modelu dodane zostają wektory $y_i\in\mathbb{R}^f$ reprezentujące informacje o użyciach przedmiotów.
@@ -317,11 +339,11 @@ Instytut Informatyki}
      \begin{center}
       $\tilde{r}_{ui}=\mu+b_u+b_i+q_i\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
      \end{center}
-     gdzie $N(u)$ oznacza zbiór przedmiotów ocenionych przez użytkownika $u$.\newline
+     gdzie $N(u)$ oznacza zbiór przedmiotów użytych przez użytkownika $u$ (zarówno tych ocenionych jak i nie).\newline
      {\scriptsize
-      (dodawanie wektorów oznacza dodanie wyraz po wyrazie, zaś mnożenie iloczyn skalarny)
+      (dodawanie wektorów oznacza dodanie odpowiadających współrzędnych, zaś mnożenie iloczyn skalarny)
      }\newline
-     Parametry równań znajdowane są poprzez optymalizację modelu w procesie iteracyjnym opisanym pseudokodem:\newline\newline
+     Parametry równań w tym przypadku znajdowane są poprzez optymalizację modelu w procesie iteracyjnym opisanym pseudokodem:\newline\newline
      %
     \hspace*{16pt}	for $I$ iterations\{\newline
     \hspace*{32pt}		foreach $(u,i)\in K$\{\newline
@@ -450,10 +472,16 @@ Instytut Informatyki}
    W przypadku usystematyzowanych danych o parametrach przedmiotów (cena, lokalizacja, dostępność, itp.)
    można pozwolić użytkownikowi na wybranie które cechy są dla niego najbardziej istotne i albo zawęzić wyszukiwanie albo też
    dostosować różne stałe w algorytmach (aby podobieństwo pod danym względem miało większą wagę).
+  \section{Systemy hybrydowe}
+  %TODO gSVD++
+  %TODO zrobić w content-based tak, żeby hybrydowe tutaj pasowało
  \chapter{TODO - ulepszenia}
-  \section{TODO - podsekcja o ulepszeniach o danym typie}
+  \section{TODO - sekcja o ulepszeniach standardowych algorytmów}
+   \subsection{BPR}
+   %TODO MABPR
+   %TODO MABPR SVD++
+  \section{TODO - sekcja o ulepszeniach - zupełnie nowe algorytmy}
    \subsection{Complex}
-    %TODOTODO wpisać w opisie problemu jako jeden z możliwych celów znajdowanie tylko najlepiej ocenianych przedmiotów - połączenie wyniku implicit i explicit
     Standardową reprezentacją danych rozważanych w filtorwaniu kolaboratywnym jest macierz użyć przedmiotów (lub lista ocen pozwalająca zaoszczędzić pamięć).
     %TODO inną formą brzmi trochę jakby ta macierz była formą wizualizacji - można by spróbować lepiej to ująć
     Inną formą wizualizacji danych jest graf w którym wierzchołkami są użytkownicy i przedmioty, zaś krawędzie między nimi oznaczają powiązania miedzy nimi
@@ -546,6 +574,11 @@ Instytut Informatyki}
   %praca o complex
   %my media literowe
   %ewentualnie wikipedia - nie wiem czy trzeba podstrony - podstawowe algorytmy jak SO,CF
+  \bibitem[191]{191} Marcelo G. Manzato, Marcos A. Domingues, Solange O. Rezende,
+  "Optimizing Personalized Ranking in Recommender Systems with Metadata Awareness"
+  \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
+  pp. 191 - 197
+  
   \bibitem[205]{205} Feng Xie, Zhen Chen, Jiaxing, Xiaoping Feng, Wenliang Huang, Jun Li,
   "A Link Prediction Approach for Item Recommendation with Complex Number"
   \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
