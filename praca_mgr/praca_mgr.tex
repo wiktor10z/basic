@@ -49,7 +49,6 @@ Instytut Informatyki}
 \chapter*{Wprowadzenie}
 \addcontentsline{toc}{chapter}{Wprowadzenie}
 
-
  \chapter{Sformułowanie problemu}
   W każdym modelu danych wykorzystywanym do wyliczania możliwych ocen przedmiotów lub sporządzania list rekomendacji
   występują użytkownicy i przedmioty, oraz pewne niepełne informacje na temat ich powiązań ze sobą.
@@ -457,12 +456,6 @@ Instytut Informatyki}
    Systemy generujące rekomendacje oparte o dane wyczerpujących opisów mogą dawać dobre wyniki już przy najprostszych użytych technikach.
    Algorytm zaproponuj najpopularniejsze przedmioty z ulubionych kategorii użytkownika nie jest wiele bardziej skomplikowany od niespersonalizowanego,
    a jednocześnie daje lepsze wyniki (choć dzieli też większość jego wad).
-   Dane zamieszczone są jednak rzadko wystarczające, aby zbudować dobry system tylko na opisach, które są często niekompletne
-   (szczególnie w przypadku użytkowników -- wielu nie wprowadza informacji o sobie) niedokładne lub wręcz błędne.
-   Dlatego częściej wykorzystywane są w połączeniu z danymi o użyciach przedmiotu. Dane te mogą posłużyć jako miara podobieństwa:
-   przedmioty z tych samych kategorii powinny być podobne do siebie
-   (w przypadku przypisań do wielu kategorii można również definiować podobieństwa przechodnie,
-   a w przypadku wielu kategorii użyć również podobieństw pomiędzy nimi).
    Użytkownicy przypisujący przedmiotom takie same tagi, czy tworzący o
    nich podobne komentarze również mogą zostać zakwalifikowani jako sąsiedzi w grafie podobieństw.
    W przypadku danych tekstowych zbieżności można wyciągnąć dzięki zastosowaniu technik text miningowych,
@@ -473,8 +466,57 @@ Instytut Informatyki}
    można pozwolić użytkownikowi na wybranie które cechy są dla niego najbardziej istotne i albo zawęzić wyszukiwanie albo też
    dostosować różne stałe w algorytmach (aby podobieństwo pod danym względem miało większą wagę).
   \section{Systemy hybrydowe}
-  %TODO gSVD++
-  %TODO zrobić w content-based tak, żeby hybrydowe tutaj pasowało
+   Dane przypisane do użytkowników i przedmiotów rzadko są wystarczające, aby zbudować dobry system oparty tylko na opisach,
+   które są często niekompletne (szczególnie w przypadku użytkowników -- wielu nie wprowadza informacji o sobie) niedokładne lub wręcz błędne.
+   Dlatego częściej wykorzystywane są w połączeniu z danymi o użyciach przedmiotu. Dane te mogą posłużyć jako miara podobieństwa:
+   przedmioty z tych samych kategorii powinny być podobne do siebie
+   (w przypadku przypisań do wielu kategorii można również definiować podobieństwa przechodnie,
+   a w przypadku wielu kategorii użyć również podobieństw pomiędzy nimi).
+   Systemy używające zarówno filtrowania kolaboratywnego i opisów a czasem również danych demograficznych
+   (proponowanie produktów/obiektów dostępnych w okolicy użytkownika lub preferencje regionalne) zwane są hybrydowymi.
+   Łączenie kilku algorytmów (lub typów informacji) dokonywane jest standardowo na jeden z siedmiu sposobów:
+   \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+    \item Ważone -- wyniki rekomendacji lub przewidywania ocen są średnią ważoną z wyników podsystemów
+    \item Przełączane -- wybierany jest podsystem najlepiej pasujący do szczególnego przypadku w danych
+    \item Mieszane -- wyniki różnych rekomendacji są zwracane razem
+    \item Połączenie cech -- cechy z różnych źródeł wiedzy są wykorzystywane razem w jednym algorytmie
+    \item Uzupełnienie cech -- dodatkowy system generuje dane, które wzbogacają wejście do głównego algorytmu
+    \item Kaskadowy -- dodatkowy system rozstrzyga sytuacje, z którymi główny system nie może sobie dobrze poradzić
+    \item Meta-poziom -- jeden system generuje model, który stanowi wejście drugiego systemu
+   \end{itemize}
+   \subsection{gSVD++}
+    Jednym z podstawowych hybrydowych systemów rekomendacyjnych (typu połączenie cech) jest algorytm gSVD++ (generalized singular value decomposition),
+    będący wzbogaceniem podstawowego modelu SVD o informacje na temat kategorii do których należą przedmioty.
+    Algorytm zakłada, stałą niewielką liczbę kategorii, do której zakwalifikowane są przedmioty, przy czym jeden przedmiot może być zakwalifikowany do wielu
+    kategorii na raz.
+    %W przypadku danych filmowych jeden film może być na przykład jednocześnie sensacyjny, przygodowy oraz science-fiction.
+    %TODO gdzieś na początku - podstawowe informacje/wstęp umnieścić informacje o danych MovieLens
+    Dokładniej zakładane, jest że do każdego przedmiotu dołączona jest informacja o zbiorze kategorii przedmiot należy, a do których nie.\newline
+    Ocena przewidziana dla użytkownika i przedmiotu opisana jest wzorem
+    \begin{center}
+     $\tilde{r}_{ui}=\mu+b_u+b_i+\left(q_i+|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}\right)\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
+    \end{center}
+    Gdzie $G(i)$ oznacza zbiór kategorii do których nalezy przedmiot, zaś $x_{g}\in\mathbb{R}^f$ dodatkowym wektorem przypisanym kategorii
+    (w przypadku, gdy zbiór kategorii jest pusty wartość $|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}$ traktowana jest jako $0$ ).
+    Zmienne wysępujące we wzorach na przewidziane oceny optymalizowane są przez standardowy algorytm opisany pseudokodem:\newline
+    \hspace*{16pt}	for $I$ iterations\{\newline
+    \hspace*{32pt}		foreach $(u,i)\in K$\{\newline
+    \hspace*{48pt}			$py=p_u +|N(u)|^{-\frac{1}{2}}\cdot\sum\limits_{j\in N(u)}y_j$\newline
+    \hspace*{48pt}			$qx=q_i +|G(i))|^{-1}\cdot\sum\limits_{g\in G(i)}x_g$\newline
+    \hspace*{48pt}			$\tilde{r}_{ui}=\mu+b_u+b_i+qx\cdot py$\newline
+    \hspace*{48pt}			$err=\tilde{r}_{ui}-r_{ui}$\newline
+    \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_1\cdot b_u)$\newline
+    \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
+    \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot qx-\lambda_3\cdot p_u)$\newline
+    \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_4\cdot q_i)$\newline
+    \hspace*{48pt}			foreach $j\in N(u)$\{\newline
+    \hspace*{64pt}				$y_j=y_j+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot qx-\lambda_5\cdot y_j)$\newline
+    \hspace*{48pt}			\}\newline
+    \hspace*{48pt}			foreach $g\in G(i)$\{\newline
+    \hspace*{64pt}				$x_g=x_g+\alpha\cdot(err\cdot |G(i))|^{-1}\cdot py-\lambda_6\cdot x_g)$\newline
+    \hspace*{48pt}			\}\newline
+    \hspace*{32pt}		\}\newline
+    \hspace*{16pt}	\}\newline
  \chapter{TODO - ulepszenia}
   \section{TODO - sekcja o ulepszeniach standardowych algorytmów}
    \subsection{BPR}
@@ -574,6 +616,7 @@ Instytut Informatyki}
   %praca o complex
   %my media literowe
   %ewentualnie wikipedia - nie wiem czy trzeba podstrony - podstawowe algorytmy jak SO,CF
+  %wikipedia en - recemender system
   \bibitem[191]{191} Marcelo G. Manzato, Marcos A. Domingues, Solange O. Rezende,
   "Optimizing Personalized Ranking in Recommender Systems with Metadata Awareness"
   \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
