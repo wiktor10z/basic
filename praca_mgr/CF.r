@@ -198,7 +198,8 @@ SO_ratings=SO_predict_all
 
 
 #dalsze podobieństwo
-
+# można dodać te modyfikacje z pracy
+#sprawdzić też wersję z zastosowaniem macierzy binarnej normalnej
 COMPLEX_pseudo_ratings=function(weight_list){
   m3=matrix(0,nrow=users,ncol=users)
   m1=ml_like_matrix %*% t(ml_like_matrix)

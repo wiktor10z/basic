@@ -20,66 +20,69 @@ init_SVD=function(f2,alpha2){
   b<<-rep(0L,users)
   b2<<-rep(0L,items)
 }
-#TODO dodać te stałe w algorytmach - nawet tylko te z mymedialite i przetestować czy to coś daje
-SVD_item=function(u,i){
+
+SVD_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){#test 0.01 i 0.3 wyglądają na dobre w MyMediaLite 0.005 i 0.015
   r2=glob_mean+b[u]+b2[i]+sum(q1[i,]*p[u,])
   err=r[u,i]-r2
-  b[u]<<-b[u]+alpha*err
-  b2[i]<<-b2[i]+alpha*err
-  p[u,]<<-p[u,]+alpha*(err*q1[i])
-  q1[i,]<<-q1[i,]+alpha*(err*p[u,])
+  b[u]<<-b[u]+alpha*(err-l_b*b[u])
+  b2[i]<<-b2[i]+alpha*(err-l_b2*b2[i])
+  p[u,]<<-p[u,]+alpha*(err*q1[i]-l_p*p[u,])
+  q1[i,]<<-q1[i,]+alpha*(err*p[u,]-l_q*q1[i,])
 }
-SVDpp_item=function(u,i){
+
+SVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
   y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
   p_plus_y=p[u,]+y_sum
   r2=glob_mean+b[u]+b2[i]+sum(q1[i,]*p_plus_y)
   err=r[u,i]-r2
-  b[u]<<-b[u]+alpha*err
-  b2[i]<<-b2[i]+alpha*err
-  p[u,]<<-p[u,]+alpha*(err*q1[i,])
-  q1[i,]<<-q1[i,]+alpha*(err*p_plus_y)
+  b[u]<<-b[u]+alpha*(err-l_b*b[u])
+  b2[i]<<-b2[i]+alpha*(err-l_b2*b2[i])
+  p[u,]<<-p[u,]+alpha*(err*q1[i]-l_p*p[u,])
+  q1[i,]<<-q1[i,]+alpha*(err*p_plus_y-l_q*q1[i,])
   for(j in us_view_list[u]){
-    y[j,]<<-y[j,]+alpha*(err*us_viewed_root1[u]*q1[i,])
+    y[j,]<<-y[j,]+alpha*(err*us_viewed_root1[u]*q1[i,]-l_y*y[j,])
   }  
 }
-gSVDpp_item=function(u,i){
+
+gSVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.3){
   y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
   x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
   p_plus_y=p[u,]+y_sum
   q_plus_x=q1[i,]+x_sum
   r2=glob_mean+b[u]+b2[i]+sum(q_plus_x*p_plus_y)
   err=r[u,i]-r2
-  b[u]<<-b[u]+alpha*err
-  b2[i]<<-b2[i]+alpha*err
-  p[u,]<<-p[u,]+alpha*(err*q_plus_x)
-  q1[i,]<<-q1[i,]+alpha*(err*p_plus_y)
+  b[u]<<-b[u]+alpha*(err-l_b*b[u])
+  b2[i]<<-b2[i]+alpha*(err-l_b2*b2[i])
+  p[u,]<<-p[u,]+alpha*(err*q_plus_x-l_p*p[u,])
+  q1[i,]<<-q1[i,]+alpha*(err*p_plus_y-l_q*q1[i,])
   for(j in us_view_list[u]){
-    y[j,]<<-y[j,]+alpha*(err*us_viewed_root1[u]*q_plus_x)
+    y[j,]<<-y[j,]+alpha*(err*us_viewed_root1[u]*q_plus_x-l_y*y[j,])
   }
-  if(!sum(item_genres[i,])){
-    x=x+item_genres[i,]%*%t(err*item_genres_norm1[i]*p_plus_y)
+  if(sum(item_genres[i,])>0){
+    x<<-x*(1-alpha*l_x*item_genres[i,])+item_genres[i,]%*%t(alpha*err*item_genres_norm1[i]*p_plus_y)
   }
 }
 # rozkłady SVD
 
-SVD=function(Iter,f2,alpha2){
+
+SVD=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){
   init_SVD(f2,alpha2)
   for(I in 1:Iter){
-    apply(ml_bin,1,FUN=function(x){SVD_item(x[1],x[2])})    
+    apply(ml_bin,1,FUN=function(x){SVD_item(x[1],x[2],l_b,l_b2,l_p,l_q)})    
   }
 }
 
-SVDpp=function(Iter,f2,alpha2){
+SVDpp=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
   init_SVD(f2,alpha2)
   for(I in 1:Iter){
-    apply(ml_bin,1,FUN=function(x){SVDpp_item(x[1],x[2])})    
+    apply(ml_bin,1,FUN=function(x){SVDpp_item(x[1],x[2],l_b,l_b2,l_p,l_q,l_y)})    
   }
 }
 
-gSVDpp=function(Iter,f2,alpha2){
+gSVDpp=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.3){
   init_SVD(f2,alpha2)
   for(I in 1:Iter){
-    apply(ml_bin,1,FUN=function(x){gSVDpp_item(x[1],x[2])})    
+    apply(ml_bin,1,FUN=function(x){gSVDpp_item(x[1],x[2],l_b,l_b2,l_p,l_q,l_y,l_x)})    
   }
 }
 
@@ -172,16 +175,16 @@ MABPR_gSVDpp=function(Iter,f2,alpha2){
     y[k,]<<-y[k,]+alpha*err*us_viewed_root1[u]*q_diff
   }
   if(!sum(item_genres[i,])){
-    x=x+item_genres[i,]%*%t(err*item_genres_norm1[i]*p_plus_y)
+    x<<-x+item_genres[i,]%*%t(alpha*err*item_genres_norm1[i]*p_plus_y)
   }
   if(!sum(item_genres[j,])){
-    x=x-item_genres[j,]%*%t(err*item_genres_norm1[j]*p_plus_y)
+    x<<-x-item_genres[j,]%*%t(alpha*err*item_genres_norm1[j]*p_plus_y)
   }
 }
 # ratings
 
-SVD_ratings=function(Iter,f2,alpha2){
-  SVD(Iter,f2,alpha2)
+SVD_ratings=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){
+  SVD(Iter,f2,alpha2,l_b,l_b2,l_p,l_q)
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     for(i in 1:items){
@@ -191,8 +194,8 @@ SVD_ratings=function(Iter,f2,alpha2){
   return(r2)
 }
 
-SVDpp_ratings=function(Iter,f2,alpha2){
-  SVDpp(Iter,f2,alpha2)
+SVDpp_ratings=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
+  SVDpp(Iter,f2,alpha2,l_b,l_b2,l_p,l_q,l_y)
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
@@ -204,15 +207,15 @@ SVDpp_ratings=function(Iter,f2,alpha2){
   return(r2)
 }
 
-gSVDpp_ratings=function(Iter,f2,alpha2){
-  gSVDpp(Iter,f2,alpha2)
+gSVDpp_ratings=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.3){
+  gSVDpp(Iter,f2,alpha2,l_b,l_b2,l_p,l_q,l_y,l_x)
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
-    x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
     p_plus_y=p[u,]+y_sum
-    q_plus_x=q1[i,]+x_sum
     for(i in 1:items){
+      x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
+      q_plus_x=q1[i,]+x_sum     
       r2[u,i]=glob_mean+b[u]+b2[i]+sum(q_plus_x*p_plus_y)
     }
   }
@@ -246,10 +249,10 @@ MABPR_gSVDpp_pseudo_ratings=function(Iter,f2,alpha2){
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
-    x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
     p_plus_y=p[u,]+y_sum
-    q_plus_x=q1[i,]+x_sum
     for(i in 1:items){
+      x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
+      q_plus_x=q1[i,]+x_sum
       r2[u,i]=glob_mean+b[u]+b2[i]+sum(q_plus_x*p_plus_y)
     }
   }
@@ -294,6 +297,19 @@ yprim=matrix(rnorm(items*f,mean=0,sd=1),items,f)
   y=yprim
   b=rep(0L,users)
   b2=rep(0L,items)
+}
+
+SVDpp_item4=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
+  y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
+  p_plus_y=p[u,]+y_sum
+  r2=glob_mean+b[u]+b2[i]+sum(q1[i,]*p_plus_y)
+  err=r[u,i]-r2
+  b[u]<<-b[u]+alpha*(err-l_b*b[u])
+  b2[i]<<-b2[i]+alpha*(err-l_b2*b2[i])
+  p[u,]<<-p[u,]+alpha*(err*q1[i]-l_p*p[u,])
+  q1[i,]<<-q1[i,]+alpha*(err*p_plus_y-l_q*q1[i,])
+  delta=err*us_viewed_root1[u]*q1[i,]
+  y[us_view_list[[u]],]<<-y[us_view_list[[u]],]*(1-alpha*l_y)+alpha*(rep(1,us_viewed[u])%*%t(delta))
 }
 
 }

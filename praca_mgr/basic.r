@@ -17,8 +17,18 @@ arguments_from_list=function(fun,args){
     return(fun(args[[1]],args[[2]],args[[3]]))
   }else if(l==4){
     return(fun(args[[1]],args[[2]],args[[3]],args[[4]]))    
-  }else{
+  }else if(l==5){
     return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]])) 
+  }else if(l==6){
+    return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]],args[[6]])) 
+  }else if(l==7){
+    return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]],args[[6]],args[[7]]))  
+  }else if(l==8){
+    return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]],args[[6]],args[[7]],args[[8]]))  
+  }else if(l==9){
+    return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]],args[[6]],args[[7]],args[[8]],args[[9]]))  
+  }else if(l==10){
+    return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]],args[[6]],args[[7]],args[[8]],args[[9]],args[[10]]))  
   }
 }
 

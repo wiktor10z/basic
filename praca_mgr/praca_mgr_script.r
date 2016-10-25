@@ -1,11 +1,12 @@
 source("basic.r")
+source("evaluation.r")
 source("CF.r")
 source("SVD.r")
 
 read_ml_file("ml-100k/u.data")
 read_meta_file("ml-100k/u.item","ml-100k/u.genre")
-read_ml_file(paste("ml-100k/u1.base",sep=""))
-read_ml_test(paste("ml-100k/u1.test",sep=""))
+read_ml_file(paste("ml-100k/u3.base",sep=""))
+read_ml_test(paste("ml-100k/u3.test",sep=""))
 
 
 
@@ -44,10 +45,26 @@ BPR_rating1=BPR_pseudo_ratings(1,10,0.03)
 
 
 c1=list(list(list()))
+c1[[1]][[1]]="non per"
+c1[[1]][[2]]=non_personalized_rating
+c1[[1]][[3]]=c(0)
+functions_list=c1
+c1[[1]][[1]]="CF cor"
+c1[[1]][[2]]=CF_ratings
+c1[[1]][[3]]=c(cor_similarity)
+functions_list=c(functions_list,c1)
+c1[[1]][[1]]="CF cos"
+c1[[1]][[2]]=CF_ratings
+c1[[1]][[3]]=c(cos_similarity)
+functions_list=c(functions_list,c1)
+c1[[1]][[1]]="SO"
+c1[[1]][[2]]=SO_ratings
+c1[[1]][[3]]=c(0)
+functions_list=c(functions_list,c1)
 c1[[1]][[1]]="SVD"
 c1[[1]][[2]]=SVD_ratings
 c1[[1]][[3]]=c(1,4,0.01)
-functions_list=c1
+functions_list=c(functions_list,c1)
 c1[[1]][[1]]="SVD++"
 c1[[1]][[2]]=SVDpp_ratings
 c1[[1]][[3]]=c(1,4,0.01)
@@ -68,13 +85,58 @@ c1[[1]][[1]]="MABPR gSVD++"
 c1[[1]][[2]]=MABPR_gSVDpp_pseudo_ratings
 c1[[1]][[3]]=c(1,4,0.01)
 functions_list=c(functions_list,c1)
-results_matrix3=multi_evaluation_rating(functions_list,quick=TRUE)
+c1[[1]][[1]]="COMPLEX"
+c1[[1]][[2]]=COMPLEX_pseudo_ratings
+c1[[1]][[3]]=list(c(1,1e-06))
+functions_list=c(functions_list,c1)
+system.time({
+results_matrix=multi_evaluation_rating(functions_list,quick=TRUE)
+})
 
-multi_plot(results_matrix[4,],rownames(results_matrix)[4])
+mplot1=function(x){
+  multi_plot(results_matrix[x,],rownames(results_matrix)[x])
+}
+
+c1=list(list(list()))
+c1[[1]][[1]]="SVDpp"
+c1[[1]][[2]]=SVDpp_ratings
+c1[[1]][[3]]=c(20,5,0.01)
+functions_list=c1
+c1[[1]][[1]]="gSVDpp"
+c1[[1]][[2]]=gSVDpp_ratings
+c1[[1]][[3]]=c(20,5,0.01)
+functions_list=c(functions_list,c1)
+c1[[1]][[1]]="SVDpp0"
+c1[[1]][[2]]=SVDpp_ratings
+c1[[1]][[3]]=c(20,5,0.01,0,0,0,0,0)
+functions_list=c(functions_list,c1)
+c1[[1]][[1]]="gSVDpp0"
+c1[[1]][[2]]=gSVDpp_ratings
+c1[[1]][[3]]=c(20,5,0.01,0,0,0,0,0,0)
+functions_list=c(functions_list,c1)
+system.time({
+results_matrix23=multi_evaluation_rating(functions_list,quick=TRUE)
+})
+system.time({
+  roc2=recs_ROC(recs2)
+})
+
+system.time(SVDpp(20,5,0.01))
+system.time(SVDpp2(20,5,0.01))
+system.time(SVDpp3(20,5,0.01))
+system.time(SVDpp4(20,5,0.01))
+system.time(SVD(20,5,0.01))
+system.time(SVD2(20,5,0.01))
+system.time(gSVDpp(1,5,0.01))
+rat5=SVD_ratings3(40,5,0.03,3,6)
+#TODO można teraz przetestować, czy zwiększenie czybkości uczenia nie niszczy
+
+multi_plot(results_matrix4[2,],rownames(results_matrix4)[2])
 
 png("1.png",width=3000,height=1500,units="px",res=200)
-multi_plot(results_matrix[5,],rownames(results_matrix)[5],big=2,color=FALSE)
+multi_plot(results_matrix[6,],rownames(results_matrix)[6],big=2,color=FALSE)
 dev.off()
+
 system.time({
 MSE1=count_MSE(SVDpp_ratings,c(1,10,0.01))
 })
