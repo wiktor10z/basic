@@ -44,7 +44,7 @@ SVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
   }  
 }
 
-gSVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.3){
+gSVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.15){
   y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
   x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
   p_plus_y=p[u,]+y_sum
@@ -64,41 +64,44 @@ gSVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.3){
 }
 # rozkłady SVD
 
-
-SVD=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){
+SVD=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){
   init_SVD(f2,alpha2)
   for(I in 1:Iter){
     apply(ml_bin,1,FUN=function(x){SVD_item(x[1],x[2],l_b,l_b2,l_p,l_q)})    
   }
 }
 
-SVDpp=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
+SVDpp=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
   init_SVD(f2,alpha2)
   for(I in 1:Iter){
     apply(ml_bin,1,FUN=function(x){SVDpp_item(x[1],x[2],l_b,l_b2,l_p,l_q,l_y)})    
   }
 }
 
-gSVDpp=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.3){
+gSVDpp=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.15){
   init_SVD(f2,alpha2)
   for(I in 1:Iter){
     apply(ml_bin,1,FUN=function(x){gSVDpp_item(x[1],x[2],l_b,l_b2,l_p,l_q,l_y,l_x)})    
   }
 }
 
-BPR=function(Iter,f2,alpha2){
+BPR=function(Iter,f2,alpha2=0.04,unif_user=TRUE,l_b2=0.005,l_p=0.025,l_q1=0.025,l_q2=0.0025){
   init_SVD(f2,alpha2)
-  for(I in 1:Iter){
-    u=sample(1:users,1)
+  if(unif_user){
+    list1=sample(1:users,Iter*nrow(ml_bin),replace=TRUE)
+  }else{
+    list1=sample(1:users,Iter*nrow(ml_bin),replace=TRUE,prob=(us_viewed*(items-us_viewed)))
+  }
+  for(u in list1){
     i=sample(c(1:items)[ml_bin_matrix[u,]],1)
     j=sample(c(1:items)[ml_bin_matrix[u,]==FALSE],1)
     s2=b2[i]-b2[j]+sum(p[u,]*(q1[i,]-q1[j,]))
     err=1/(1+exp(s2))
-    b2[i]<<-b2[i]+alpha*err
-    b2[j]<<-b2[j]-alpha*err
-    p[u,]<<-p[u,]+alpha*err*(q1[i,]-q1[j,])
-    q1[i,]<<-q1[i,]+alpha*err*p[u,]
-    q1[j,]<<-q1[j,]-alpha*err*p[u,]
+    b2[i]<<-b2[i]+alpha*(err-l_b2*b2[i])
+    b2[j]<<-b2[j]+alpha*(-err-l_b2*b2[j])
+    p[u,]<<-p[u,]+alpha*(err*(q1[i,]-q1[j,])-l_p*p[u,])
+    q1[i,]<<-q1[i,]+alpha*(err*p[u,]-l_q1*q1[i,])
+    q1[j,]<<-q1[j,]+alpha*(-err*p[u,]-l_q2*q1[j,])
   }
 }
 
@@ -183,7 +186,7 @@ MABPR_gSVDpp=function(Iter,f2,alpha2){
 }
 # ratings
 
-SVD_ratings=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){
+SVD_ratings=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){
   SVD(Iter,f2,alpha2,l_b,l_b2,l_p,l_q)
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
@@ -194,7 +197,7 @@ SVD_ratings=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){
   return(r2)
 }
 
-SVDpp_ratings=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
+SVDpp_ratings=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
   SVDpp(Iter,f2,alpha2,l_b,l_b2,l_p,l_q,l_y)
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
@@ -207,7 +210,7 @@ SVDpp_ratings=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3
   return(r2)
 }
 
-gSVDpp_ratings=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.3){
+gSVDpp_ratings=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.15){
   gSVDpp(Iter,f2,alpha2,l_b,l_b2,l_p,l_q,l_y,l_x)
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
@@ -222,8 +225,8 @@ gSVDpp_ratings=function(Iter,f2,alpha2,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.
   return(r2)
 }
 
-BPR_pseudo_ratings=function(Iter,f2,alpha2){
-  BPR(Iter,f2,alpha2)
+BPR_pseudo_ratings=function(Iter,f2,alpha2=0.04,unif_user=TRUE,l_b2=0.005,l_p=0.025,l_q1=0.025,l_q2=0.0025){
+  BPR(Iter,f2,alpha2,unif_user,l_b2,l_p,l_q1,l_q2)
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     for(i in 1:items){
@@ -253,7 +256,7 @@ MABPR_gSVDpp_pseudo_ratings=function(Iter,f2,alpha2){
     for(i in 1:items){
       x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
       q_plus_x=q1[i,]+x_sum
-      r2[u,i]=glob_mean+b[u]+b2[i]+sum(q_plus_x*p_plus_y)
+      r2[u,i]=+b2[i]+sum(q_plus_x*p_plus_y)
     }
   }
   return(affine_rating(r2,1,5))
