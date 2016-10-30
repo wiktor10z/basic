@@ -105,23 +105,31 @@ BPR=function(Iter,f2,alpha2=0.04,unif_user=TRUE,l_b2=0.005,l_p=0.025,l_q1=0.025,
   }
 }
 
-MABPR_learn_weights=function(Iter){
+MABPR_learn_weights=function(Iter,unif_user=TRUE,l_w){
   w<<-matrix(0,users,genres)
-  for(I in 1:Iter){
-    u=sample(1:users,1)
+  if(unif_user){
+    list1=sample(1:users,Iter*nrow(ml_bin),replace=TRUE)
+  }else{
+    list1=sample(1:users,Iter*nrow(ml_bin),replace=TRUE,prob=(us_viewed*(items-us_viewed)))
+  }
+  for(u in list1){
     i=sample(c(1:items)[ml_bin_matrix[u,]],1)
     j=sample(c(1:items)[ml_bin_matrix[u,]==FALSE],1)
     s2=sum(w[u,]*(item_genres[i,]-item_genres[j,]))
     err=exp(s2)/(1+exp(s2))
-    w[u,]<<-w[u,]+alpha*err*(item_genres[i,]-item_genres[j,])
+    w[u,]<<-w[u,]+alpha*(err*(item_genres[i,]-item_genres[j,])-l_w*w[u,])
   }
 }
 
-MABPR=function(Iter,f2,alpha2){
+MABPR=function(Iter,f2,alpha2,unif_user=TRUE,l_w=0.075,l_b2=0.005,l_p=0.025,l_q1=0.025,l_q2=0.0025){
   init_SVD(f2,alpha2)
-  MABPR_learn_weights(Iter)
-  for(I in 1:Iter){
-    u=sample(1:users,1)
+  MABPR_learn_weights(Iter,unif_user,l_w)
+  if(unif_user){
+    list1=sample(1:users,Iter*nrow(ml_bin),replace=TRUE)
+  }else{
+    list1=sample(1:users,Iter*nrow(ml_bin),replace=TRUE,prob=us_viewed)
+  }
+  for(u in list1){
     i=sample(c(1:items)[ml_bin_matrix[u,]],1)
     j=sample(c(1:items)[-i],1)
     if(ml_bin_matrix[u,j]){
@@ -135,19 +143,23 @@ MABPR=function(Iter,f2,alpha2){
     }
     s2=b2[i]-b2[j]+sum(p[u,]*(q1[i,]-q1[j,]))
     err=1/(1+exp(s2))
-    b2[i]<<-b2[i]+alpha*err
-    b2[j]<<-b2[j]-alpha*err
-    p[u,]<<-p[u,]+alpha*err*(q1[i,]-q1[j,])
-    q1[i,]<<-q1[i,]+alpha*err*p[u,]
-    q1[j,]<<-q1[j,]-alpha*err*p[u,]
+    b2[i]<<-b2[i]+alpha*(err-l_b2*b2[i])
+    b2[j]<<-b2[j]+alpha*(-err-l_b2*b2[j])
+    p[u,]<<-p[u,]+alpha*(err*(q1[i,]-q1[j,])-l_p*p[u,])
+    q1[i,]<<-q1[i,]+alpha*(err*p[u,]-l_q1*q1[i,])
+    q1[j,]<<-q1[j,]+alpha*(-err*p[u,]-l_q2*q1[j,])
   }
 }
 
-MABPR_gSVDpp=function(Iter,f2,alpha2){
+MABPR_gSVDpp=function(Iter,f2,alpha2,unif_user=TRUE,l_w=0.075,l_b2=0.005,l_p=0.025,l_q1=0.025,l_q2=0.0025,l_y=0.006,l_x1=0.006,l_x2=0.006){
   init_SVD(f2,alpha2)
-  MABPR_learn_weights(Iter)
-  for(I in 1:Iter){
-    u=sample(1:users,1)
+  MABPR_learn_weights(Iter,unif_user,l_w)
+  if(unif_user){
+    list1=sample(1:users,Iter*nrow(ml_bin),replace=TRUE)
+  }else{
+    list1=sample(1:users,Iter*nrow(ml_bin),replace=TRUE,prob=us_viewed)
+  }
+  for(u in list1){
     i=sample(c(1:items)[ml_bin_matrix[u,]],1)
     j=sample(c(1:items)[-i],1)
     if(ml_bin_matrix[u,j]){
@@ -159,29 +171,29 @@ MABPR_gSVDpp=function(Iter,f2,alpha2){
         j=k
       }
     }
-  }
-  y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
-  x_sum1=item_genres_norm1[i]*colSums(x*item_genres[i,])
-  x_sum2=item_genres_norm1[j]*colSums(x*item_genres[j,])
-  p_plus_y=p[u,]+y_sum
-  q_plus_x1=q1[i,]+x_sum1
-  q_plus_x2=q1[j,]+x_sum2
-  q_diff=q_plus_x1-q_plus_x2
-  s2=b2[i]-b2[j]+sum(q_diff*p_plus_y)
-  err=1/(1+exp(s2))
-  b2[i]<<-b2[i]+alpha*err
-  b2[j]<<-b2[j]-alpha*err
-  p[u,]<<-p[u,]+alpha*err*q_diff
-  q1[i,]<<-q1[i,]+alpha*err*p_plus_y
-  q1[j,]<<-q1[j,]-alpha*err*p_plus_y
-  for(k in us_view_list[u]){
-    y[k,]<<-y[k,]+alpha*err*us_viewed_root1[u]*q_diff
-  }
-  if(!sum(item_genres[i,])){
-    x<<-x+item_genres[i,]%*%t(alpha*err*item_genres_norm1[i]*p_plus_y)
-  }
-  if(!sum(item_genres[j,])){
-    x<<-x-item_genres[j,]%*%t(alpha*err*item_genres_norm1[j]*p_plus_y)
+    y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
+    x_sum1=item_genres_norm1[i]*colSums(x*item_genres[i,])
+    x_sum2=item_genres_norm1[j]*colSums(x*item_genres[j,])
+    p_plus_y=p[u,]+y_sum
+    q_plus_x1=q1[i,]+x_sum1
+    q_plus_x2=q1[j,]+x_sum2
+    q_diff=q_plus_x1-q_plus_x2
+    s2=b2[i]-b2[j]+sum(q_diff*p_plus_y)
+    err=1/(1+exp(s2))
+    b2[i]<<-b2[i]+alpha*(err-l_b2*b2[i])
+    b2[j]<<-b2[j]+alpha*(-err-l_b2*b2[j])
+    p[u,]<<-p[u,]+alpha*(err*q_diff-l_p*p[u,])
+    q1[i,]<<-q1[i,]+alpha*(err*p_plus_y-l_q1*q1[i,])
+    q1[j,]<<-q1[j,]+alpha*(-err*p_plus_y-l_q2*q1[j,])
+    for(k in us_view_list[u]){
+      y[k,]<<-y[k,]+alpha*(err*us_viewed_root1[u]*q_diff-l_y*y[k,])
+    }
+    if(sum(item_genres[i,])>0){
+      x<<-x*(1-alpha*l_x1*item_genres[i,])+item_genres[i,]%*%t(alpha*err*item_genres_norm1[i]*p_plus_y)
+    }
+    if(sum(item_genres[j,])>0){
+      x<<-x*(1-alpha*l_x2*item_genres[j,])-item_genres[j,]%*%t(alpha*err*item_genres_norm1[j]*p_plus_y)
+    }
   }
 }
 # ratings
@@ -236,8 +248,8 @@ BPR_pseudo_ratings=function(Iter,f2,alpha2=0.04,unif_user=TRUE,l_b2=0.005,l_p=0.
   return(affine_rating(r2,1,5))
 }
 
-MABPR_pseudo_ratings=function(Iter,f2,alpha2){
-  MABPR(Iter,f2,alpha2)
+MABPR_pseudo_ratings=function(Iter,f2,alpha2=0.04,unif_user=TRUE,l_w=0.075,l_b2=0.005,l_p=0.025,l_q1=0.025,l_q2=0.0025){
+  MABPR(Iter,f2,alpha2,unif_user,l_w,l_b2,l_p,l_q1,l_q2)
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     for(i in 1:items){
@@ -247,8 +259,8 @@ MABPR_pseudo_ratings=function(Iter,f2,alpha2){
   return(affine_rating(r2,1,5))
 }
 
-MABPR_gSVDpp_pseudo_ratings=function(Iter,f2,alpha2){
-  MABPR_gSVDpp(Iter,f2,alpha2)
+MABPR_gSVDpp_pseudo_ratings=function(Iter,f2=0.04,alpha2,unif_user=TRUE,l_w=0.075,l_b2=0.005,l_p=0.025,l_q1=0.025,l_q2=0.0025,l_y=0.006,l_x1=0.006,l_x2=0.006){
+  MABPR_gSVDpp(Iter,f2,alpha2,unif_user,l_w,l_b2,l_p,l_q1,l_q2,l_y,l_x1,l_x2)
   r2=matrix(0L,nrow=users,ncol=items)
   for(u in 1:users){
     y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
@@ -256,7 +268,7 @@ MABPR_gSVDpp_pseudo_ratings=function(Iter,f2,alpha2){
     for(i in 1:items){
       x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
       q_plus_x=q1[i,]+x_sum
-      r2[u,i]=+b2[i]+sum(q_plus_x*p_plus_y)
+      r2[u,i]=b2[i]+sum(q_plus_x*p_plus_y)
     }
   }
   return(affine_rating(r2,1,5))
