@@ -196,18 +196,26 @@ SO_predict_all=function(x=0){
 }
 SO_ratings=SO_predict_all
 
-
 #dalsze podobieństwo
-# można dodać te modyfikacje z pracy
-#sprawdzić też wersję z zastosowaniem macierzy binarnej normalnej
-COMPLEX_pseudo_ratings=function(weight_list){
+
+COMPLEX_pseudo_ratings=function(weight_list=c(1),like=TRUE,item_reg=FALSE,user_reg=FALSE){
+  if(like){
+    m0=ml_like_matrix
+  }else{
+    m0=ml_bin_matrix
+  }
+  if(item_reg){#wartość dla użytkownika przez ilość przedmiotów
+    m0=t(apply(m0,1,vec_reg))
+  }
+  if(user_reg){#wartość dla przedmiotu przez ilość użytkowników
+    m0=apply(m0,2,vec_reg)
+  }
   m3=matrix(0,nrow=users,ncol=users)
-  m1=ml_like_matrix %*% t(ml_like_matrix)
+  m1=m0 %*% t(m0)
   m2=diag(users)
   for(w in weight_list){
     m2=m2 %*% m1
     m3=m3+w*m2
   }
-  return(affine_rating2(m3 %*% ml_like_matrix))
+  return(affine_rating2(m3 %*% m0))
 }
-

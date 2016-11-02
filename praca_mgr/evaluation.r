@@ -172,6 +172,27 @@ count_precision_recs=function(recs_function,only_best=FALSE){
   return(precision_sum/5)
 }
 
+multi_recs=function(functions_list,quick=FALSE){
+  l=1+4*(!quick)
+  len=length(functions_list)
+  recs=matrix(list(),nrow=l,ncol=length(functions_list))
+  names=list()
+  for(i in 1:len){
+    names[i]=functions_list[[i]][[1]]
+  }
+  colnames(recs)=names
+  read_meta_file("ml-100k/u.item","ml-100k/u.genre")
+  for(t1 in 1:l){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    for(i in 1:len){
+    rating=arguments_from_list(functions_list[[i]][[2]],functions_list[[i]][[3]])
+    recs[[t1,i]]=rating_to_recs(rating,items)
+    }
+  }
+  return(recs)
+}
+
 multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
@@ -201,8 +222,8 @@ multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
       recs=rating_to_recs(rating,items)
       results[[1,i]]=results[[1,i]]+rating_MSE(normalize_rating(rating,1,5),ml_test)
       results[[2,i]]=results[[2,i]]+recs_ROC(recs,resolution,quality=0)
-      #results[[4,i]]=results[[4,i]]+recs_ROC(recs,resolution,quality=1)
-      #results[[6,i]]=results[[6,i]]+recs_ROC(recs,resolution,quality=2)
+      results[[4,i]]=results[[4,i]]+recs_ROC(recs,resolution,quality=1)
+      results[[6,i]]=results[[6,i]]+recs_ROC(recs,resolution,quality=2)
       results[[8,i]]=results[[8,i]]+recs_precision(recs,only_best=FALSE)
       results[[9,i]]=results[[9,i]]+recs_precision(recs,only_best=TRUE)
       results[[10,i]]=results[[10,i]]+recs_coverage(recs)
@@ -310,6 +331,11 @@ multi_plot=function(result_list,title,point_list=c(-items*1000),big=0,color=TRUE
   }
 }
 
+plot_to_file=function(file_name,result_list,title,point_list=c(-items*1000),color=TRUE){
+  png(file_name,width=3000,height=1500,units="px",res=200)
+  multi_plot(result_list,title,point_list,big=2,color)
+  dev.off()
+}
 
 if(FALSE){
   multi_evaluation_rating=function(rating_function,args,resolution=1000,quick=FALSE){
