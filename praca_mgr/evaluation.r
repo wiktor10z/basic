@@ -59,7 +59,7 @@ hit_vector=function(recs,only_best=FALSE){
 }
 
 hit_precision=function(hit_vec){
-  return(do.call(rbind,lapply(1:users,function(u){cumsum(hit_vec[u])/cumsum(rep(1,items))})))
+  return(do.call(rbind,lapply(1:users,function(u){cumsum(hit_vec[[u]])/cumsum(rep(1,items))})))
 }
 
 recs_precision=function(recs,only_best=FALSE){
@@ -70,7 +70,7 @@ recs_AveP=function(recs,only_best=FALSE){#praca198
   hit_vec=hit_vector(recs,only_best)
   prec1=hit_precision(hit_vec)
   return(do.call(rbind,lapply(1:users,function(u){
-    if(s1[[u]]==0){
+    if(sum(hit_vec[[u]])==0){
       rep(0,items)
     }else{
       cumsum(prec1[u,]*hit_vec[[u]])/sum(hit_vec[[u]])
@@ -359,12 +359,11 @@ if(FALSE){
   recs_AveP2=function(recs,only_best=FALSE){#strona kaggle
     hit_vec=hit_vector(recs,only_best)
     prec1=hit_precision(hit_vec)
-    s1=rowSums(do.call(rbind,hit_vec))
     return(do.call(rbind,lapply(1:users,function(u){
-      if(s1[[u]]==0){
+      if(sum(hit_vec[[u]])==0){
         rep(0,items)
       }else{
-        cumsum(prec1[u,]*hit_vec[[u]])/pmin(s1[u],1:items)
+        cumsum(prec1[u,]*hit_vec[[u]])/pmin(sum(hit_vec[[u]]),1:items)
       }
     })))
   }

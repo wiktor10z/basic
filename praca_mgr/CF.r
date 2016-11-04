@@ -23,6 +23,26 @@ cos_similarity=function(u,v){
   return(similarity_vec(ml_matrix[u,],ml_matrix[v,]))
 }
 
+
+#praca 221
+
+alt_similarity=function(u,v){#TODO mozna zrobić ten drugi like_matrix(> zamiast >=)
+  viewed=viewed_both(ml_like_matrix[u,],ml_like_matrix[v,])
+  if(sum(viewed)<1){
+    return(0)
+  }else{
+    like_vec=ml_like_matrix[u,]*ml_like_matrix[v,]
+    dist=unlist(lapply(ml_matrix[u,]-ml_matrix[v,],abs))
+    return(sum(unlist(lapply((1:items)[viewed],function(i){
+      if(like_vec[i]==1){
+        return(1/(1+dist[i]))
+      }else{
+        return(0.5/(1+dist[i]))
+      }
+    })))/sum(viewed))
+  }
+}
+
 make_sim_matrix=function(sim_fun){#TODO można przyśpieszyć licząc tylko górny trójkąt - symetryczna
   matrix1=matrix(0L,nrow=users,ncol=users)
   for(i in 1:users){
@@ -141,6 +161,16 @@ item_CF_predict_all=function(item_sim_mat){
 item_CF_ratings=function(item_sim_fun){
   return(item_CF_predict_all(item_make_sim_matrix(item_sim_fun)))
 }
+
+
+
+
+
+
+
+
+
+
 
 #slope one
 
