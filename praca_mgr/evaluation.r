@@ -50,60 +50,36 @@ normalized_AUC=function(roc,resolution=1000){#area under curve
   return(sum(roc[,2])/resolution)
 }
 
-
-#TODO zrobić to dobrze
-{
-  # precision=hits rate
-  recs_precision1=function(recs,u){
-    hit_vec=c(test_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))
-    return(cumsum(hit_vec)/cumsum(rep(1,items)))
-  }
-  recs_precision=function(recs,only_best=FALSE){
-    if(only_best){
-      test_matrix<<-ml_test_best_matrix   
-    }else{
-      test_matrix<<-ml_test_bin_matrix
-    }
-    return(colSums(do.call(rbind,lapply(1:users,function(u){recs_precision1(recs,u)})))/users)
-  }
-  
-  recs_MAP=function(recs){#mean average precission
-    hit_vec=lapply(1:users,function(u){c(ml_test_bin_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))})
-    s1=rowSums(do.call(rbind,hit_vec))
-    MAP_sum=colSums(do.call(rbind,lapply(1:users,function(u){
-      if(s1[[u]]==0){
-        rep(0,items)
-      }else{
-        cumsum(recs_precision1(recs,u)*hit_vec[[u]])/s1[[u]]
-      }
-    })))
-    return(MAP_sum/users)
-  }
-  
-  recs_MAP2=function(recs){
-    hit_vec=lapply(1:users,function(u){c(ml_test_bin_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))})
-    s1=rowSums(do.call(rbind,hit_vec))
-    MAP_sum=colSums(do.call(rbind,lapply(1:users,function(u){
-      if(s1[[u]]==0){
-        rep(0,items)
-      }else{
-        cumsum(recs_precision1(recs,u))/pmin(s1[[u]],1:items)
-      }
-    })))
-    return(MAP_sum/users)
-  }
-  
-  {  #MAP_sum=rep(0,items)
-    #precision=recs_precision(recs)
-    #for(u in 1:users){
-    #  hit_vec=ml_test_bin_matrix[u,recs[[u]]]
-    #  AveP=(cumsum(precision[[u]]*hit_vec))/sum(hit_vec)
-    #  MAP_sum=MAP_sum+AveP
-    #}
-    #return(MAP_sum/users)
+hit_vector=function(recs,only_best=FALSE){
+  if(only_best){
+    return(lapply(1:users,function(u){c(ml_test_best_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))})) 
+  }else{
+    return(lapply(1:users,function(u){c(ml_test_bin_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))}))
   }
 }
-# ocena systemu
+
+hit_precision=function(hit_vec){
+  return(do.call(rbind,lapply(1:users,function(u){cumsum(hit_vec[u])/cumsum(rep(1,items))})))
+}
+
+recs_precision=function(recs,only_best=FALSE){
+  return(colSums(hit_precision(hit_vector(recs,only_best)))/users)
+}
+
+recs_AveP=function(recs,only_best=FALSE){#praca198
+  hit_vec=hit_vector(recs,only_best)
+  prec1=hit_precision(hit_vec)
+  return(do.call(rbind,lapply(1:users,function(u){
+    if(s1[[u]]==0){
+      rep(0,items)
+    }else{
+      cumsum(prec1[u,]*hit_vec[[u]])/sum(hit_vec[[u]])
+    }
+  })))
+}
+recs_MAP=function(recs,only_best=FALSE){
+  return(colSums(recs_AveP(recs,only_best))/users)
+}
 
 recs_coverage=function(recs){
   cov1=lapply(1:items,function(i){unique(unlist(lapply(recs,function(x){x[i]})))})
@@ -114,8 +90,8 @@ recs_coverage=function(recs){
   }
   return(unlist(lapply(cov2,length))/items)
 }
-#TODO przetestowac czy jakieś algorytmy się istotnie różnią
 
+# ocena systemu
 
 count_MSE=function(rating_function,args){
   value=0
@@ -172,6 +148,28 @@ count_precision_recs=function(recs_function,only_best=FALSE){
   return(precision_sum/5)
 }
 
+count_MAP_rating=function(rating_function,args,only_best=FALSE){
+  MAP_sum=rep(0,items)
+  for(t1 in 1:5){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    recs=rating_to_recs(arguments_from_list(rating_function,args),items)
+    MAP_sum=MAP_sum+recs_MAP(recs,only_best)
+  }
+  return(MAP_sum/5)
+}
+
+count_MAP_recs=function(recs_function,only_best=FALSE){
+  MAP_sum=rep(0,items)
+  for(t1 in 1:5){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    recs=recs_function(items)
+    MAP_sum=MAP_sum+recs_MAP(recs,only_best)
+  }
+  return(MAP_sum/5)
+}
+
 multi_recs=function(functions_list,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
@@ -196,8 +194,8 @@ multi_recs=function(functions_list,quick=FALSE){
 multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
-  results=matrix(list(),nrow=10,ncol=length(functions_list))
-  rownames(results)=c("MSE","ROC","AUC","quality ROC","quality AUC","best ROC","best AUC","Precision","best Precision","Coverage")
+  results=matrix(list(),nrow=12,ncol=length(functions_list))
+  rownames(results)=c("MSE","ROC","AUC","quality ROC","quality AUC","bests ROC","bests AUC","Precision","MAP","bests Precision","bests MAP","Coverage")
   names=list()
   for(i in 1:len){
     names[i]=functions_list[[i]][[1]]
@@ -211,6 +209,8 @@ multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
     results[[8,i]]=rep(0,items)
     results[[9,i]]=rep(0,items)
     results[[10,i]]=rep(0,items)
+    results[[11,i]]=rep(0,items)
+    results[[12,i]]=rep(0,items)
   }
   colnames(results)=names
   read_meta_file("ml-100k/u.item","ml-100k/u.genre")
@@ -225,8 +225,10 @@ multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
       results[[4,i]]=results[[4,i]]+recs_ROC(recs,resolution,quality=1)
       results[[6,i]]=results[[6,i]]+recs_ROC(recs,resolution,quality=2)
       results[[8,i]]=results[[8,i]]+recs_precision(recs,only_best=FALSE)
-      results[[9,i]]=results[[9,i]]+recs_precision(recs,only_best=TRUE)
-      results[[10,i]]=results[[10,i]]+recs_coverage(recs)
+      results[[9,i]]=results[[9,i]]+recs_MAP(recs,only_best=FALSE)     
+      results[[10,i]]=results[[10,i]]+recs_precision(recs,only_best=TRUE)
+      results[[11,i]]=results[[11,i]]+recs_MAP(recs,only_best=TRUE)
+      results[[12,i]]=results[[12,i]]+recs_coverage(recs)
     }
   }
   for(i in 1:len){
@@ -239,7 +241,9 @@ multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
     results[[7,i]]=normalized_AUC(results[[6,i]],resolution)
     results[[8,i]]=results[[8,i]]/l 
     results[[9,i]]=results[[9,i]]/l
-    results[[10,i]]=results[[10,i]]/l 
+    results[[10,i]]=results[[10,i]]/l
+    results[[11,i]]=results[[11,i]]/l 
+    results[[12,i]]=results[[12,i]]/l 
   }
   return(results)
 }
@@ -338,45 +342,6 @@ plot_to_file=function(file_name,result_list,title,point_list=c(-items*1000),colo
 }
 
 if(FALSE){
-  multi_evaluation_rating=function(rating_function,args,resolution=1000,quick=FALSE){
-    l=1+4*(!quick)
-    mse=0
-    roc=data.frame(rep(0,resolution),rep(0,resolution))
-    quality_roc=data.frame(rep(0,resolution),rep(0,resolution))
-    precision=rep(0,items)
-    for(t1 in 1:l){
-      read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
-      read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
-      rating=arguments_from_list(rating_function,args)
-      recs=rating_to_recs(rating,items)
-      mse=mse+rating_MSE(rating,ml_test)
-      roc=roc+recs_ROC(recs,resolution,quality=0)
-      quality_roc=quality_roc+recs_ROC(recs,resolution,quality=1)
-      precision=precision+recs_precision(recs)
-    }
-    eval_mse<<-mse/l
-    eval_roc<<-roc/l
-    eval_quality_roc<<-quality_roc/l
-    eval_precision<<-precision/l
-  }
-  
-  multi_evaluation_recs=function(recs_function,args,resolution=1000,quick=0){
-    l=1+4*(!quick)
-    roc=data.frame(rep(0,resolution),rep(0,resolution))
-    quality_roc=data.frame(rep(0,resolution),rep(0,resolution))
-    precision=rep(0,items)
-    for(t1 in 1:l){
-      read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
-      read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
-      recs=recs_function(items)
-      roc=roc+recs_ROC(recs,resolution,quality=0)
-      quality_roc=quality_roc+recs_ROC(recs,resolution,quality=1)
-      precision=precision+recs_precision(recs)
-    }
-    eval_roc<<-roc/l
-    eval_quality_roc<<-quality_roc/l
-    eval_precision<<-precision/l
-  }
   # to wystarczy w większości przypadków - jak jest mniej niż item-resolution przedmiotów dla klienta w testowym
   # ale nie jest wcale szybsze
   normalize_roc2=function(roc1,resolution=1000){
@@ -390,4 +355,20 @@ if(FALSE){
       return(roc3[1:resolution,])
     }
   }
+  
+  recs_AveP2=function(recs,only_best=FALSE){#strona kaggle
+    hit_vec=hit_vector(recs,only_best)
+    prec1=hit_precision(hit_vec)
+    s1=rowSums(do.call(rbind,hit_vec))
+    return(do.call(rbind,lapply(1:users,function(u){
+      if(s1[[u]]==0){
+        rep(0,items)
+      }else{
+        cumsum(prec1[u,]*hit_vec[[u]])/pmin(s1[u],1:items)
+      }
+    })))
+  }
+  recs_MAP2=function(recs,only_best=FALSE){
+    return(colSums(recs_AveP2(recs,only_best))/users)
+  }  
 }

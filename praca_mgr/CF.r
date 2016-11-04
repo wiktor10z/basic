@@ -198,7 +198,7 @@ SO_ratings=SO_predict_all
 
 #dalsze podobieństwo
 
-COMPLEX_pseudo_ratings=function(weight_list=c(1),like=TRUE,item_reg=FALSE,user_reg=FALSE){
+COMPLEX_pseudo_ratings=function(weight_list=c(1),like=TRUE,item_reg=TRUE,user_reg=TRUE){
   if(like){
     m0=ml_like_matrix
   }else{

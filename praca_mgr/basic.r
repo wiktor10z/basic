@@ -29,6 +29,10 @@ arguments_from_list=function(fun,args){
     return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]],args[[6]],args[[7]],args[[8]],args[[9]]))  
   }else if(l==10){
     return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]],args[[6]],args[[7]],args[[8]],args[[9]],args[[10]]))  
+  }else if(l==11){
+    return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]],args[[6]],args[[7]],args[[8]],args[[9]],args[[10]],args[[11]]))  
+  }else if(l==12){
+    return(fun(args[[1]],args[[2]],args[[3]],args[[4]],args[[5]],args[[6]],args[[7]],args[[8]],args[[9]],args[[10]],args[[11]],args[[12]]))  
   }
 }
 
@@ -77,7 +81,7 @@ read_meta_file=function(file,names_file=NULL){
 read_ml_test=function(file){
   ml_test<<-read.csv(file,header=FALSE,sep="\t")
   ml_test_bin<<-ml_test[,1:2]
-  ml_matrix1=matrix(0L,nrow=users,ncol=movies)
+  ml_matrix1=matrix(0L,nrow=users,ncol=items)
   for(i in 1:nrow(ml_test)){
     ml_matrix1[ml_test[i,1],ml_test[i,2]]=ml_test[i,3]
   }
@@ -122,6 +126,15 @@ random_recs=function(n=items){
 }
 
 # przekształcenia
+
+#TODO sprawdzić czy czyta pomiędzy plikami
+vec_reg=function(x){
+  if(sum(x)==0){
+    return(x)
+  }else{
+    return(x/sqrt(sum(x!=0)))
+  }
+}
 
 normalize_rating=function(rat,min1=1,max1=5){
   return(matrix(sapply(rat,function(x){max(min1,min(max1,x))}),nrow=nrow(rat)))
