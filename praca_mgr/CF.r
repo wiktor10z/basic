@@ -23,9 +23,7 @@ cos_similarity=function(u,v){
   return(similarity_vec(ml_matrix[u,],ml_matrix[v,]))
 }
 
-
 #praca 221
-
 alt_similarity=function(u,v){#TODO mozna zrobić ten drugi like_matrix(> zamiast >=)
   viewed=viewed_both(ml_like_matrix[u,],ml_like_matrix[v,])
   if(sum(viewed)<1){
@@ -161,16 +159,6 @@ item_CF_predict_all=function(item_sim_mat){
 item_CF_ratings=function(item_sim_fun){
   return(item_CF_predict_all(item_make_sim_matrix(item_sim_fun)))
 }
-
-
-
-
-
-
-
-
-
-
 
 #slope one
 

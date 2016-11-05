@@ -1,3 +1,7 @@
+rating_MAE=function(rating,test=ml_test){
+  return(sum(apply(test,1,function(x){abs(x[3]-rating[x[1],x[2]])}))/nrow(test))
+}
+
 rating_MSE=function(rating,test=ml_test){#mean square error
   return(sqrt(sum(apply(test,1,function(x){(x[3]-rating[x[1],x[2]])*(x[3]-rating[x[1],x[2]])}))/nrow(test)))
 }
@@ -92,6 +96,17 @@ recs_coverage=function(recs){
 }
 
 # ocena systemu
+
+count_MAE=function(rating_function,args){
+  value=0
+  for(t1 in 1:5){
+    read_ml_file(paste("ml-100k/u",t1,".base",sep=""))
+    read_ml_test(paste("ml-100k/u",t1,".test",sep=""))
+    rating=arguments_from_list(rating_function,args)
+    value=value+rating_MAE(rating,ml_test)
+  }
+  return(value/5)
+}
 
 count_MSE=function(rating_function,args){
   value=0
@@ -194,23 +209,25 @@ multi_recs=function(functions_list,quick=FALSE){
 multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
-  results=matrix(list(),nrow=12,ncol=length(functions_list))
-  rownames(results)=c("MSE","ROC","AUC","quality ROC","quality AUC","bests ROC","bests AUC","Precision","MAP","bests Precision","bests MAP","Coverage")
+  results=matrix(list(),nrow=13,ncol=length(functions_list))
+  rownames(results)=c("MAE","MSE","ROC","AUC","quality ROC","quality AUC","bests ROC",
+                      "bests AUC","Precision","MAP","bests Precision","bests MAP","Coverage")
   names=list()
   for(i in 1:len){
     names[i]=functions_list[[i]][[1]]
     results[[1,i]]=0
-    results[[2,i]]=data.frame(rep(0,resolution),rep(0,resolution))
-    results[[3,i]]=0
-    results[[4,i]]=data.frame(rep(0,resolution),rep(0,resolution))
-    results[[5,i]]=0
-    results[[6,i]]=data.frame(rep(0,resolution),rep(0,resolution))
-    results[[7,i]]=0
-    results[[8,i]]=rep(0,items)
+    results[[2,i]]=0
+    results[[3,i]]=data.frame(rep(0,resolution),rep(0,resolution))
+    results[[4,i]]=0
+    results[[5,i]]=data.frame(rep(0,resolution),rep(0,resolution))
+    results[[6,i]]=0
+    results[[7,i]]=data.frame(rep(0,resolution),rep(0,resolution))
+    results[[8,i]]=0
     results[[9,i]]=rep(0,items)
     results[[10,i]]=rep(0,items)
     results[[11,i]]=rep(0,items)
     results[[12,i]]=rep(0,items)
+    results[[13,i]]=rep(0,items)
   }
   colnames(results)=names
   read_meta_file("ml-100k/u.item","ml-100k/u.genre")
@@ -220,30 +237,32 @@ multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
     for(i in 1:len){
       rating=arguments_from_list(functions_list[[i]][[2]],functions_list[[i]][[3]])
       recs=rating_to_recs(rating,items)
-      results[[1,i]]=results[[1,i]]+rating_MSE(normalize_rating(rating,1,5),ml_test)
-      results[[2,i]]=results[[2,i]]+recs_ROC(recs,resolution,quality=0)
-      results[[4,i]]=results[[4,i]]+recs_ROC(recs,resolution,quality=1)
-      results[[6,i]]=results[[6,i]]+recs_ROC(recs,resolution,quality=2)
-      results[[8,i]]=results[[8,i]]+recs_precision(recs,only_best=FALSE)
-      results[[9,i]]=results[[9,i]]+recs_MAP(recs,only_best=FALSE)     
-      results[[10,i]]=results[[10,i]]+recs_precision(recs,only_best=TRUE)
-      results[[11,i]]=results[[11,i]]+recs_MAP(recs,only_best=TRUE)
-      results[[12,i]]=results[[12,i]]+recs_coverage(recs)
+      results[[1,i]]=results[[1,i]]+rating_MAE(normalize_rating(rating,1,5),ml_test)
+      results[[2,i]]=results[[2,i]]+rating_MSE(normalize_rating(rating,1,5),ml_test)
+      results[[3,i]]=results[[3,i]]+recs_ROC(recs,resolution,quality=0)
+      results[[5,i]]=results[[5,i]]+recs_ROC(recs,resolution,quality=1)
+      results[[7,i]]=results[[7,i]]+recs_ROC(recs,resolution,quality=2)
+      results[[9,i]]=results[[9,i]]+recs_precision(recs,only_best=FALSE)
+      results[[10,i]]=results[[10,i]]+recs_MAP(recs,only_best=FALSE)     
+      results[[11,i]]=results[[11,i]]+recs_precision(recs,only_best=TRUE)
+      results[[12,i]]=results[[12,i]]+recs_MAP(recs,only_best=TRUE)
+      results[[13,i]]=results[[13,i]]+recs_coverage(recs)
     }
   }
   for(i in 1:len){
     results[[1,i]]=results[[1,i]]/l
     results[[2,i]]=results[[2,i]]/l
-    results[[3,i]]=normalized_AUC(results[[2,i]],resolution)
-    results[[4,i]]=results[[4,i]]/l
-    results[[5,i]]=normalized_AUC(results[[4,i]],resolution)
-    results[[6,i]]=results[[6,i]]/l
-    results[[7,i]]=normalized_AUC(results[[6,i]],resolution)
-    results[[8,i]]=results[[8,i]]/l 
-    results[[9,i]]=results[[9,i]]/l
+    results[[3,i]]=results[[3,i]]/l
+    results[[4,i]]=normalized_AUC(results[[3,i]],resolution)
+    results[[5,i]]=results[[5,i]]/l
+    results[[6,i]]=normalized_AUC(results[[5,i]],resolution)
+    results[[7,i]]=results[[7,i]]/l
+    results[[8,i]]=normalized_AUC(results[[7,i]],resolution)
+    results[[9,i]]=results[[9,i]]/l 
     results[[10,i]]=results[[10,i]]/l
-    results[[11,i]]=results[[11,i]]/l 
+    results[[11,i]]=results[[11,i]]/l
     results[[12,i]]=results[[12,i]]/l 
+    results[[13,i]]=results[[13,i]]/l 
   }
   return(results)
 }
