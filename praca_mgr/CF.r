@@ -49,7 +49,7 @@ alt_similarity=function(u,v){#TODO mozna zrobić ten drugi like_matrix(> zamiast
       }else{
         return(0.5/(1+dist[i]))
       }
-    })))/sum(viewed))
+    })))/sum(viewed)-0.1)
   }
 }
 
@@ -61,7 +61,7 @@ make_sim_matrix=function(sim_fun,item_sim=FALSE,sym=1){
       matrix1[x,y]=sim_fun(x,y)
     } 
   }
-  if(sym=1){
+  if(sym==1){
     matrix1=matrix1+t(matrix1)
   }else{
     matrix1=matrix1-t(matrix1)
@@ -75,7 +75,7 @@ make_sim_matrix=function(sim_fun,item_sim=FALSE,sym=1){
 if(FALSE){
   neighbours=function(u,n=30,f=0){
     all=sum(similarity_matrix[u,]>x)
-    if(all<n){
+    if(all<=n){
       list=head(order(similarity_matrix[u,],decreasing=TRUE),all)
     }else{
       list=head(order(similarity_matrix[u,],decreasing=TRUE),n+1)
@@ -97,7 +97,7 @@ neighbours2=function(u,it,n=30,f=0){
 item_neighbours2=function(i,u,n=30,f=0){
   sim2=similarity_matrix[i,]*(ml_matrix[u,]!=0)
   all=sum(sim2>f)
-  if(all<n){
+  if(all<=n){
     list=head(order(sim2,decreasing=TRUE),all)
   }else{
     list=head(order(sim2,decreasing=TRUE),n+1)
@@ -105,7 +105,7 @@ item_neighbours2=function(i,u,n=30,f=0){
   return(list[-(match(i,list,nomatch=length(list)))])
 }
 
-CF_predict=function(u,n=30,f=0){
+CF_predict=function(u,n=30,f=0){#TODO dla alt_similarity przy użyciu inters_mat powinno sie odjąć 0.1 (można w def alt_sim)
   mean_u=us_means[u]
   rating=numeric(length=items)
   for(i in 1:items){
@@ -168,6 +168,70 @@ CF_predict_all=function(sim_mat,item_sim=FALSE,sim_fac=FALSE,n=30,f=0){
 
 CF_ratings=function(sim_fun,item_sim=FALSE,sim_fac=FALSE,n=30,f=0){
   return(CF_predict_all(make_sim_matrix(sim_fun,item_sim),item_sim,sim_fac,n,f))
+}
+
+#221 - mixed
+neighbours3=function(u,it,n=30,f=0){
+  sim2=alt_sim_matrix[u,]*(ml_matrix[,it]!=0) # TODO można by usunąć u już teraz albo generować w ogóle macierz podobieństwa z 0 na przekątnej
+  all=sum(sim2>f)
+  if(all<=n){
+    list=head(order(sim2,decreasing=TRUE),all)
+  }else{
+    list=head(order(sim2,decreasing=TRUE),n+1)
+  }
+  return(list[-(match(u,list,nomatch=length(list)))])
+}
+
+CF_predict_mixed=function(u,n=30,f=0){#TODO dla alt_similarity przy użyciu inters_mat powinno sie odjąć 0.1 (można w def alt_sim)
+  mean_u=us_means[u]
+  rating=numeric(length=items)
+  for(i in 1:items){
+    neighbours_ui=neighbours2(u,i,n,f)
+    sim_vec=similarity_matrix[u,]
+    if(length(neighbours_ui)==0){
+      neighbours_ui=neighbours3(u,i,n,f)
+      sim_vec=alt_sim_matrix[u,]
+    }
+    if(length(neighbours_ui)>0){
+      sum1=0
+      sum2=0
+      for(v in neighbours_ui){
+        sum1=sum1+sim_vec[v]*(ml_matrix[v,i]-us_means[v])
+        sum2=sum2+sim_vec[v]
+      }
+      rating[i]=mean_u+sum1/sum2
+    }else{
+      rating[i]=0 #TODO może średnia, z drugiej strony skoro nie ma podobnych, to znaczy, że raczej nieporządane
+    }
+  }
+  return(rating)
+}
+
+CF_ratings_mixed=function(sim_fac=FALSE,n=30,f=0){
+  if(sim_fac){
+    intersections_matrix=make_sim_matrix(used_by_both_count,FALSE)
+  }else{
+    intersections_matrix=matrix(1,nrow=users,ncol=users)
+  }
+  similarity_matrix<<-make_sim_matrix(cor_similarity,FALSE)*intersections_matrix
+  alt_sim_matrix<<-make_sim_matrix(alt_similarity,FALSE)*intersections_matrix
+  return(matrix(sapply(1:users,function(u){CF_predict_mixed(u,n,f)}),byrow=TRUE,nrow=users))
+}
+
+#221 - long distance
+
+make_further_sim_matrix=function(sim_mat){
+  mat1=sim_mat*(sim_mat>0)
+  mat2=mat1%*%mat1
+  mat3=mat1%*%(mat1>0)
+  return(mat2/mat3)
+}
+
+CF_ratings_further=function(n=30,f=0){
+  intersections_matrix=make_sim_matrix(used_by_both_count,FALSE)
+  similarity_matrix<<-make_sim_matrix(cor_similarity,FALSE)*intersections_matrix
+  alt_sim_matrix<<-make_further_sim_matrix(similarity_matrix)
+  return(matrix(sapply(1:users,function(u){CF_predict_mixed(u,n,f)}),byrow=TRUE,nrow=users))
 }
 
 #slope one
