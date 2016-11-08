@@ -65,6 +65,9 @@ Instytut Informatyki}
     Przedmiot musi być reużywalny (np. filmy do oglądnięcia, książki do przeczytania, strony internetowe do odwiedzenia),
     lub występujący w wielu identycznych egzemplarzach (przedmioty w sklepach), aby użycie przez innego użytkownika nie wyczerpało jego zasobu
     (wtedy rekomendacja nie miała by sensu, skoro przedmiot nie istnieje) i dało miarodajne informacje na jego temat.
+    Dodatkowo w większości zastosowań zakłada się, że użycie/posiadanie przedmiotów nie obniży użyteczności innych
+    (np. po kupnie mebla raczej nie będziemy potrzebowali w najbliższym czasie drugiego o podobnym zastosowaniu,
+    zaś w przypadku książki czy filmu po względnie krótkim czasie można użyć następnego w tym podobnego).
     Przedmiot jest rzeczą, której ocenę przez użytkownika chcemy przewidzieć, lub którą chcemy mu zarekomendować.\newline\newline
    %
    \textbf{Definicja 1.1.3.} Użycie przedmiotu -- zarejestrowana informacja o interakcji użytkownika z przedmiotem,
@@ -164,12 +167,6 @@ Instytut Informatyki}
    Dodatkowymi zaletami takiego rozwiązania jest łatwa przenośność, oraz rozpraszalność systemu (mały model może być przechowywany w wielu miejscach,
    podczas gdy pełna baza danych znajduje się tylko w jednym).
    
-   
-   
-   %TODO napisać w założeniach, że przy podobieństwie przedmiotów nie chcemy wykluczania podobnych - jak przy sprzętach, tylko chęć użycia nowego innego, ale podobnego
-   
-   
-   
 
 
  \chapter{Podstawowe techniki}
@@ -184,14 +181,14 @@ Instytut Informatyki}
    Pomimo swoich wad niespersonalizowane rekomendacje oprócz dobrego punktu odniesienia stanowią jedyny sposób przydziału rekomendacji nowym użytkownikom
    (brak opisu i za mało użytych przedmiotów by zastosować ine algorytmy).
    Cecha ta powoduje, że często stanowią one fragment innych algorytmów używany w skrajnych przypadkach. 
-  \section{Filtrowanie kolaboratywne}%TODO napisać, że raczej explicit feedback, choć dla implicit feedback też coś się da
+  \section{Filtrowanie kolaboratywne}
    Jedną z najbardziej podstawowych technik przewidywania ocen przedmiotów jest filtrowanie kolaboratywne polegające na wykorzystaniu wyłącznie informacji
    o użyciach przedmiotów (bez jawnych informacji o użytkownikach, czy przedmiotach). Predykcje tworzone są na podstawie założenia, że użytkownicy,
    którzy używali wych samych przedmiotów i podobnie je ocenili mają te same upodobania. Jeżeli ustali się na podstawie wspólnie ocenionych przedmiotów,
    że dwóch użytkowników jest bardzo podobnych można założyć,
    że przedmioty użyte tylko przez jednego z nich byłyby podobnie ocenione i przez drugiego.
    %TODO może jakieś gładkie przejście z opisu do algorytmów
-   \subsection{Colaborative Filtering}
+   \subsection{Colaborative Filtering}%TODO napisać, że raczej explicit feedback, choć dla implicit feedback też coś się da
     Najprostszym algorytmem realizującym ideę filtorwania kolaboratywnego jest zdefiniowanie funkcji podobieństwa pomiędzy użytkownikami
     oraz wystawienie przedmiotowi oceny jako pewnej średniej z ocen najbardziej podobnych użytkowników, którzy ten przedmiot ocenili.\newline
     Do najpowszechniej stosowanych funkcji podobieństwa należą:
@@ -237,8 +234,14 @@ Instytut Informatyki}
     \end{center}
     {\scriptsize
      $N_u$ -- zbiór sąsiadów (najbardziej podobnych użytkowników)
-    }\newline
-   %TODO napisać, że można też zamienić role użytkowników i przedmiotów - silnie zaznaczyć - slope one zakłada, że jest to wiadome
+    }\newline\newline
+    W prawdziwych danych występuje zazwyczaj dysproporcja pomiędzy użytkownikami i przedmiotami objawiająca się poza różnicą ilości także
+    ilością użyć oraz wielkością przecięć użyć (przedmioty ocenione przez dwóch konkretnych użytkowników,
+    lub użytkownicy którzy użyli dwóch konkretnych przedmiotów).
+    Jako że algorytm jest symetryczny ze względu na użytkowników i przedmioty ich rola może zostać zamieniona.    
+    Dzięki możliwości wyboru ról można uzyskać lepsze własności systemu jak szybkość przy dysporporcji rozmiarów macierzy użyć oraz zmniejszyć
+    ilość przypadków w ktorych algorytm sobie nie radzi (za mało sąsiadów o określonej własności).
+    
    %TODO we wzorach z wieloma indeksami dolnymi utrzymać spójne oznaczenia
    %- albo z przecinkiem albo bez (jak gdzieś indeksy nie 1 literowe, to lepiej z przecinkiem)
    \subsection{Slope One}
@@ -304,16 +307,15 @@ Instytut Informatyki}
      \end{center}
      zaś parametry ($b_*,p_*,q_*$) równań wyliczone są poprzez minimalizację funkcji kwadratowej:
      \begin{center}
-     $\sum\limits_{(u,i)\in K}(r_{ui}-\mu-b_u-b_i-p_u\cdot q_i)^2+\lambda\cdot(b_u^2+b_i^2+\lVert p_u\rVert^2+\lVert q_i\rVert^2)$
+     $\sum\limits_{(u,i)\in K}(r_{ui}-\mu-b_u-b_i-p_u\cdot q_i)^2+\Lambda\cdot(b_u^2+b_i^2+\lVert p_u\rVert^2+\lVert q_i\rVert^2)$
      \end{center}
-     %TODO ta lambda może być duża żeby odróżnić od tych dla zmiennych
      Dla $f=$rank$(M)$ można znaleźć optymalną wartość dla wektorów $p$ i $q$ będących wierszami macierzy $U$ i $V$
      (macierz $\Sigma$ wmnożona w pozostałe) z rozkładu SVD macierzy $M$ (z dowolnymi wartościami zastępuącymi nieznane).
      Ustawienie $f$ na odpowiednią wielkość pozwala uzyskać z jednej strony model wystarczająco prosty do wyliczenia,
      oraz wystarczająco skomplikowany, aby wektory $p_*$ i $q_*$ mogły oddać profile użytkowników i przedmiotów.
      Wartość $f$ odpowiednio mniejsza od rank$(M)$ uniemożliwia modelowi przeuczenie się znanych ocen i powodując uproszczenie modelu
      ustala wartości $\tilde{r}_{ui}$ na najmniej komplikujące model.
-     Ustawienie stałej $\lambda$ na niezerową pozwala uniknąć optymalizacji funkcji w skrajnych, oddalonych wartościach wektorów
+     Ustawienie stałej $\Lambda$ na dodatnią pozwala uniknąć optymalizacji funkcji w skrajnych, oddalonych wartościach wektorów
      (co mogłoby wynikać z zaburzeń w danych).\newline
      Ze względu na brakujące wartości w macierzy nie mogą zostać zastosowane standardowe metody rozkładu dlatego też stosowane jest
      schodzenie po gradiencie iterowane po znanych wartościach macierzy.
@@ -365,9 +367,9 @@ Instytut Informatyki}
       (jeśli wszystkie wektory początkowe mają wartość $0$ na tej samej współrzędnej to tak pozostanie,
       jeśli wszystkie wektory mają te same wartości na określonych współrzędnych, to nie będą mogły się zróżnicować i będą redundantne)
      }\newline
-
-     
-  %TODO wspomnieć, że mogą być oceny poza zakresem 
+     Rozszerzony algorytm jest częściej używany od czystego SVD nawet przy danych wyłącznie explicite,
+     jednak bez dodatkowych informacji implicite nie uzyskuje lepszych wyników.
+  %TODO wspomnieć, że mogą być oceny poza zakresem --> pewnie lepiej przy porównaniu wyników i porównaniach MAE i MSE, bo to dotyczy wszystkich
   
    \subsection{Spersonalizowany ranking Bayesa}
     W przypadku dostępu do danych wyłącznie typu implicite popularną metodą tworzenia spersonalizowanych list rekomendacyjnych jest
@@ -385,7 +387,7 @@ Instytut Informatyki}
       \hline
       u2 & ? & ? & + & ? & + \\    
       \hline
-      u3 & + & + & + & ? & ? \\    
+      u3 & + & + & + & ? & ? \\
       \hline
       u4 & ? & ? & ? & ? & + \\    
      \end{tabular}
@@ -414,12 +416,15 @@ Instytut Informatyki}
     $p_u,q_i\in\mathbb{R}^f$ oraz wartości $b_i\in\mathbb{R}$, oraz powstaje poprzez iterowaną
     optymalizację funkcji celu:
     \begin{center}
-     $\sum\limits_{(u,i,j)\in D_K}\ln{(\sigma(\tilde{s}_{uij}))}-\lambda\lVert\Theta\rVert^2$
+     $\sum\limits_{(u,i,j)\in D_K}\ln{(\sigma(\tilde{s}_{uij}))}-\Lambda\lVert\Theta\rVert^2$
     \end{center}
     gdzie $D_K=\{(u,i,j):i\in N(u) \& j\notin N(u)\}, \tilde{s}_{u,i,j}=\tilde{r}_{ui}-\tilde{r}_{uj}, \lVert\Theta\rVert^2=(b_i^2+\lVert p_u\rVert^2+\lVert q_i\rVert^2)$,
     $\sigma(x)=\frac{1}{1+e^{-x}}$\newline
-    Zaś przewidywana ocena przedmiotu (opisująca wyłącznie kolejność preferencji) jest równa $\tilde{r}_{ui}=b_i+p_u\cdot q_i$
-    ($\mu$ oraz $b_u$ nie mają tutaj sensu)\newline
+    Zaś przewidywana ocena przedmiotu jest równa $\tilde{r}_{ui}=b_i+p_u\cdot q_i$.\newline
+    Warto wspomnieć tu, że uzyskana w ten sposób wartość nie ma wiele wspólnego z używaną skalą ocen 
+    (w przypadku informacji wyłącznie implicite nie występującą) i jest używana wyłącznie do ustawienia przedmiotów w odpowiedniej kolejności
+    dla każdego użytkownika(dlatego też używane w SVD wartości $\mu$ oraz $b_u$ nie mają tutaj sensu).\newline
+    
     Algorytm iterowanego poprawiania modelu wygląda podobnie do tego z SVD:\newline\newline
     %
     \hspace*{16pt}	for $I$ iterations\{\newline
@@ -517,13 +522,21 @@ Instytut Informatyki}
     \hspace*{48pt}			\}\newline
     \hspace*{32pt}		\}\newline
     \hspace*{16pt}	\}\newline
+    %TODO jeśli część kodu wyjdzie poza stronę, to wypada zrobić jakieś wyrównanie, żeby lepiej się czytało
  \chapter{TODO - ulepszenia}
+  
+  % napisać ogólnie, że ulepszenia często rozważają lepsze wyniki w szczególnych przypadkach danych
   \section{TODO - sekcja o ulepszeniach standardowych algorytmów}
-   \subsection{BPR}
+   %Najprostszym sposobem stworzenia lepszego systemu rekomendacyjnego jest zmodyfikowanie istniejącego już systemu.
+   \subsection{ulepszenia CF}
+   % napisać o tym, że często robi się jakieś drobne ulepszenie znanego modelu jak SVD -> SVD++ lub dostosowanie znanego do innej/szczególnej
+   % sytuacji jak SVD->BPR, czy też możliwość wykorzystania dodatkowych danych SVD++->gSVD++, drobna modyfikacja CF -> praca 221
+   \subsection{MABPR}
    %TODO MABPR
    %TODO MABPR SVD++
   \section{TODO - sekcja o ulepszeniach - zupełnie nowe algorytmy}
    \subsection{Complex}
+    %TODO grafowa interpretacja jest też w dalszym podobieństwie CF trzeba to jakoś tak przedstawić, żeby dobrze brzmiało i tu i tu
     Standardową reprezentacją danych rozważanych w filtorwaniu kolaboratywnym jest macierz użyć przedmiotów (lub lista ocen pozwalająca zaoszczędzić pamięć).
     %TODO inną formą brzmi trochę jakby ta macierz była formą wizualizacji - można by spróbować lepiej to ująć
     Inną formą wizualizacji danych jest graf w którym wierzchołkami są użytkownicy i przedmioty, zaś krawędzie między nimi oznaczają powiązania miedzy nimi
@@ -537,7 +550,7 @@ Instytut Informatyki}
     Podstawowym problemem tego podejścia jest to, że w przypadku rzadkich macierzy użyć przedmiotów (w zastosowaniach macierze te są zazwyczaj bardzo rzadkie)
     ścieżek takich może być bardzo mało, co oznacza małą wiarygodność predykcji, zaś brak ścieżek uniemożliwia jakąkolwiek predykcję.
     Jednym z rozwiązań problemu jest posłużenie się również dłuższymi ścieżkami, takie podejście może jednak napotkać barierę złożonościową
-    (algorytmy CF i SO do wyliczenia wszystkich ocen potrzebują czasu $O(m^2n^2)$ dla macierzy o rozmiarach $m\times n$ badając tylko bardzo krótkie ścieżki,
+    (algorytmy CF i SO do wyliczenia wszystkich ocen potrzebują czasu $\Omega(m^2n)$ dla macierzy o rozmiarach $m\times n$ badając tylko bardzo krótkie ścieżki,
     przy dłuższych ten czas ulegałby potęgowaniu), dlatego aby uzyskać lepsze wyniki w rozsądnym czasie model podobieństwa musi zostać uproszczony.
     %tutaj już można o COMPLEX
     Jeden z modeli wykorzystujących dalsze podobieństwo w praktyce został zaproponowany w \cite{205}. Algorytm Complex upodobanie użytkownika do przedmiotu
@@ -608,7 +621,7 @@ Instytut Informatyki}
     i $0$ w przypadku braku oceny/użycia (neutralną najlepiej zakwalifikować jako pozytywną -- bardziej lubiane niż w przypadku braku użycia).
     %TODO może już tutaj podać pseudokod lub szczególy implementacji jak wagi
     % TODO mnożenie macierzy -> dobrze pooptymalizowane -> szybkie -> wręcz tak szybkie jak algorytmy niespersonalizowane
-    
+    %TODO resularyzacje user i item -> możliwe ulepszenie
     
     
 \begin{thebibliography}{99}%TODO
@@ -627,6 +640,10 @@ Instytut Informatyki}
   \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
   pp. 205 - 212
 
+  \bibitem[221]{221} Anna Satsiou and Leandros Tassiulas,
+  "Propagating Users’ Similarity towards improving Recommender Systems"
+  \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
+  pp. 221 - 228
 
 
 \end{thebibliography}
