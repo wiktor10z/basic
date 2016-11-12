@@ -46,6 +46,7 @@ Instytut Informatyki}
 
 \tableofcontents
 
+%TODO można dodać coś o systemach bazujących na "kuratorach" - osobach proponujących itp.
 \chapter*{Wprowadzenie}
 \addcontentsline{toc}{chapter}{Wprowadzenie}
 
@@ -524,18 +525,106 @@ Instytut Informatyki}
     \hspace*{16pt}	\}\newline
     %TODO jeśli część kodu wyjdzie poza stronę, to wypada zrobić jakieś wyrównanie, żeby lepiej się czytało
  \chapter{TODO - ulepszenia}
+  %TODO można zrobić tak żeby tutejsze podrozdziały były rozdziałami - jeżeli wyjdą duże te ok, a w spisie treści będzie lepiej wyglądało
+  %TODO napisać wstęp dlaczego są potrzebne + przejście ze zwykłego wymyślania nowych systemów do
   
   % napisać ogólnie, że ulepszenia często rozważają lepsze wyniki w szczególnych przypadkach danych
   \section{TODO - sekcja o ulepszeniach standardowych algorytmów}
-   %Najprostszym sposobem stworzenia lepszego systemu rekomendacyjnego jest zmodyfikowanie istniejącego już systemu.
-   \subsection{ulepszenia CF}
+   Najprostszym sposobem stworzenia lepszego systemu rekomendacyjnego jest zmodyfikowanie istniejącego już systemu.\newline
+   %TODO może wylistować jak będzie ze 4 rodzaje
+   Modyfikacją może być dodanie dodatkowego elementu do modelu (jak SVD $\rightarrow$ SVD++ $\rightarrow$ gSVD++)
+   zazwyczaj wynikające z posiadania dodatkowych danych niewykorzystywanych w bazowym systemie.
+   Można również zadziałać odwrotnie porzucając część algorytmu, która nie polepsza rezultatów, jedncześnie upraszczając model.
+   Takie działanie może istotnie przyspieszyć system pozwalająć użyć go na większych danych, lub wykorzystać czas w inny sposób
+   (np. stosując dodatkowe iteracje).
+   %TODO zmiana jak np. inne podobieństwo w CF
+   %TODO użycie czegoś w sposób nieprzewidziany - inny rodzaj danych, ale da się zrutować na coś pasującego
+   %TODO dostosowanie do rozkładu danych - rozmiary macierzy czy gęstość - to bardziej ogólne niż typ modyfikacji - albo na początku tej sekcji albo wręccz rozdziału
+   %TODO algorytmy przybliżone - szybsze = da się zastosować do większych danych
    % napisać o tym, że często robi się jakieś drobne ulepszenie znanego modelu jak SVD -> SVD++ lub dostosowanie znanego do innej/szczególnej
    % sytuacji jak SVD->BPR, czy też możliwość wykorzystania dodatkowych danych SVD++->gSVD++, drobna modyfikacja CF -> praca 221
+   \subsection{ulepszenia CF}
+   %TODO gdzieś w klasycznych algorytmach napisać, że CF ma tę zaletę, że można szybko zrobić dla jednego użytkownika a SVD nie - tutaj przy dalszym podobieńtwie ta przewaga zanikać
+    Największą niedoskonałością algorytmu Colaborative Filtering (poza złożonością czasową) jest słaba możliwość predykcji ocen w przypadku gdy użytkownik nie
+    ma sąsiadów którzy użyli dany przedmiot, takich sąsiadów jest mało,
+    lub też mimo podobieństwa w wybranej mierze użytkownik nie jest dobrym wyznaczikiem oceny.\newline
+    W pracy \cite{221} zaproponowano szereg ulepszeń klasycznego algorytmu CF mających na celu zminimalizowanie tych wad.
+    \subsubsection{alternatywne podobieństwo}
+     Najbardziej standardową zmianą jaką można dokonać w algorytmie CF jest zdefiniowanie własnej funkcji podobieństwa.\newline
+     %TODO następne zdanie odnosi się właściwie do wszystkich 3, więc można wyrzucić poziom wyżej
+     Największą wadą podobieństw korelacji Paersona oraz kosinusowego jest niedokładność lub wręcz brak możliwości określenia podobieństwa pomiedzy użytkownikami
+     w przypadku małej ilości wspólnych przedmiotów użytych lub spłaszczenia ocen.
+     Aby pokonać te ograniczenia zaproponowana została nowa miara podobieństwa pomiędzy dwoma użytkownikami:\newline
+     \begin{center}
+      $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}f(r_{ui}-r_{vi})}{|R_{uv}|}$\newline
+      $f(r_{ui},r_{vi})=\left\{\begin{array}{cc}
+                                 \frac{1}{|r_{ui}-r_{vi}|+1}& \text{ dla } (r_{ui}>\overline{r})\wedge(r_{vi}>\overline{r})\\
+                                 \frac{1}{|r_{ui}-r_{vi}|+1}& \text{ dla } (r_{ui}\le\overline{r})\wedge(r_{vi}\le\overline{r})\\
+                                 \frac{0.5}{|r_{ui}-r_{vi}|+1}& \text{ wp.p.}\\
+                                \end{array}\right.$\newline
+     {\scriptsize
+     $\overline{r}$ -- średnia ocena dostępna w systemie (neutralna)
+     }\newline    
+     \end{center}
+     %TODO dopilnować, żeby nie podzieliło tego brzydko
+     W ten sposób otrzymane podobieństwo przyjmuje wartości w przedziale $[0,1]$ i daje w miarę dobre informacje o podobieństwie dwóch użytkowników
+     już dla małych ilości wspólnie użytych przedmiotów oraz spłaszczonych rankingach,
+     w pozostałych przypadkach przegrywa jednak z korelacją Paersona.\newline
+     Biorąc pod uwagę te cechy proponowanym sposobem użycia alternatywnego podobieństwa jest używanie korelacji Paersona w normalnych przypadkach,
+     zaś tego podobieństwa gdy ilość wspólnie ocenionych przedmiotów jest niższa od określonej wartości lub dla zbyt małego zróżnicowania ocen
+     jednego z użytkowników dla których oceniane jest podobieństwo.
+    \subsubsection{współczynnik podobieństwa}
+     Głównym zagrożeniem wynikającym z obliczania standardowych funkcji podobieństwa dla małych ilości wspólnie ocenionych przedmiotów jest możliwość
+     zwrócenia dużego podobieństwa w sytuacji gdy tak na prawdę użytkownicy nie są wcale podobni
+     (w przypadku PC i kosinusowego dla jednego wspólnego przedmiotu wartość będzie zawsze równa $1$).
+     W takim przypadku przy predykcji oceny wartości wystawione przez tych sąsiadów mają duże znaczenie, zaburzając działanie systemu.
+     Sposobem poradzenia sobie z takimi przypadkami niewymagającym trudnych do zdefiniowania funkcji podobieństwa jest zmiana wag
+     wykorzystywanych do wyliczania ocen na zależne od ilości wspólnie ocenionych przedmiotów.
+     Zdefiniowany zostaje współczynnik podobieństwa:
+     \begin{center}
+      $SF_{uv}=\left\{\begin{array}{cc}
+       |R_{uv}|\cdot S_{uv}&\text{dla podobieństwa symetrycznego (PC lub kosinusowe)}\\
+       |R_{uv}|\cdot(S_{uv}-0.1)&\text{dla podobieństwa alternatywnego)}\\
+      \end{array}\right.$
+     \end{center}
+     Zaś ocena wystawiona przez algorytm zdefiniowana jest wzorem:
+     \begin{center}
+     $r'_{ui}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{vi}-\overline{r_v})SF_{uv}}{\sum\limits_{v\in N_u}SF_{uv}}$
+     \end{center}
+     Zbiór sąsiadów jest jednak nadal wyliczany na podstawie normalnych podobieństw między użytkownikami.
+    \subsubsection{dalsze podobieństwo}
+     W przypadku gdy pewien użytkownik nie posiada sąsiadów, którzy użyli dany przedmiot%TODO można zacytować ile procent dla PC w danych ml100k
+     można odnieść się do dalszych sąsiadów -- użytkowników bliskich według podobieństwa przechodniego (sąsiedzi sąsiadów),
+     które już dla ścieżek pomiędzy użytkownikami długości 2 powinny znacznie poprawić pokrycie przypadków występujących w danych.%TODO ponownie zacytować
+     Dalsze podobieństwo można odczytać z grafu w którym wierzchołkami są użytkownicy, zaś krawędziami wartości podobieństwa między nimi z odciętymi krawędziami
+     negatywnymi. W ten sposób podobieństwo można zdefiniować jako po pierwsze odległość w grafie, a w dalszej kolejności podobieństwo wynikające z wag krawędzi
+     na najkrótszej ścieżce.
+    \subsubsection{połączenie ulepszeń}
+     Łącząc przedstawione usprawnienia algorytmu CF w pracy \cite{221} zaproponowany został system CF-ADV.\newline
+     Dla zadanego użytkownika $u$ oraz przedmiotu $i$ jeżeli według podobieństwa zdefiniowanego wcześniej
+     (korelacja Paersona w przypadku zwyczajnym, alternatywne podobieństwo w skrajnych) użytkownik ma sąsiadów, którzy ocenili ten przedmiot,
+     to zwracana jest wartość otrzymana z ich ocen ważona współczynnikami podobieństwa.\newline
+     W przeciwnym przypadku sąsiedzi wyznaczani są poprzez przeszukiwanie grafu ze źródłem w użytkowniku $u$
+     -- użytkownicy ustawiani są w kolejności zgodnej z przeszukiwaniem BFS (najpierw ci z najkrótszą odległością od źródła),
+     aż do zadanej odległości maksymalnej $H$.
+     Sąsiedzi użytkownika $u$ na podstawie których wystawiana jest ocena dla przedmiotu $i$
+     wybierani są jako początek tej listy ograniczonej do użytkowników, dla których znana jest ocena tego przedmiotu.\newline
+     Aby móc zastosować średnią ważoną pozostaje jeszcze zdefiniować wagi
+     -- w tym przypadku dla użytkownika $v$ o najkrótszej ścieżce od źródła $u$ w grafie użytkowników długości $m$
+     na podstawie średniej z wag jego bezpośrednich poprzedników na wszystkich ścieżkach tej długości:
+     \begin{center}
+      $SF_{uv}=\frac{\sum_{w\in P_{uv}}(SF_{uw}\cdot SF_{wv})}{\sum_{w\in P_{uv}}SF_{uw}}$
+     \end{center}
+     {\scriptsize
+      ($P_{uv}$ -- zbiór wierzchołków oddalonych od $u$ o $m-1$, połączonych krawędzią z $v$)
+     }\newline
+     %TODO podać przykład grafowy i wyliczeniowy jak w pracy 221
    \subsection{MABPR}
    %TODO MABPR
    %TODO MABPR SVD++
   \section{TODO - sekcja o ulepszeniach - zupełnie nowe algorytmy}
    \subsection{Complex}
+    %TODO skoro to "ulepszenie", to warto napisać coś żeby to wyglądało na zmienienie pomysłu z CF - szybsze i usprawnione CF dla dalszych
     %TODO grafowa interpretacja jest też w dalszym podobieństwie CF trzeba to jakoś tak przedstawić, żeby dobrze brzmiało i tu i tu
     Standardową reprezentacją danych rozważanych w filtorwaniu kolaboratywnym jest macierz użyć przedmiotów (lub lista ocen pozwalająca zaoszczędzić pamięć).
     %TODO inną formą brzmi trochę jakby ta macierz była formą wizualizacji - można by spróbować lepiej to ująć
