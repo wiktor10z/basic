@@ -47,6 +47,7 @@ Instytut Informatyki}
 \tableofcontents
 
 %TODO można dodać coś o systemach bazujących na "kuratorach" - osobach proponujących itp.
+%TODO przy sumowaniach we wzorach zobaczyć czy lepiej dać \limits, czy bez i dać wszędzie tak samo
 \chapter*{Wprowadzenie}
 \addcontentsline{toc}{chapter}{Wprowadzenie}
 
@@ -378,15 +379,15 @@ Instytut Informatyki}
     Mając dostępną binarną macierz użyć przedmiotów traktujemy negatywne wartości bardziej jako wartość nieznaną niż jako stwierdzenie,
     że dany przedmiot nie podobał się użytkownikowi. Aby uzyskać więcej niż dwie wartości, a przez to i rozróżnienie w obrębie przedmiotów nieznanych
     model BPR (Bayesian personalized ranking) stara się oszacować dla danego użytkownika i każdej pary przedmiotów prawdopodobieństwo,
-    że preferuje on pierwszy z nich. Aby uzystać początkowe dane używane do filtrowania kolaboratywnego pomiedzy użytkownikami
+    że preferuje on pierwszy z nich. Aby uzyskać początkowe dane używane do filtrowania kolaboratywnego pomiedzy użytkownikami
     przyjmujemy, że te już użyte są bardziej preferowane od nieznanych i dla każdego wiersza macierzy tworzymy nową macierz kwadratową.
-    \begin{multicols}{3}
+     \begin{multicols}{3}
      \begin{tabular}{c|c|c|c|c|c|}
        & i1 & i2 & i3 & i4 & i5 \\
       \hline
       u1 & + & ? & ? & ? & + \\
       \hline
-      u2 & ? & ? & + & ? & + \\    
+      u2 & ? & + & + & ? & + \\    
       \hline
       u3 & + & + & + & ? & ? \\
       \hline
@@ -400,15 +401,15 @@ Instytut Informatyki}
      \begin{tabular}{c|c|c|c|c|c|}
        & j1 & j2 & j3 & j4 & j5 \\
       \hline
-      i1 & X & ? & - & ? & - \\
+      i1 & X & - & - & ? & - \\
       \hline
-      i2 & ? & X & - & ? & - \\    
+      i2 & + & X & ? & + & ? \\    
       \hline
-      i3 & + & + & X & + & ? \\    
+      i3 & + & ? & X & + & ? \\    
       \hline
-      i4 & ? & ? & - & X & - \\
+      i4 & ? & - & - & X & - \\
       \hline
-      i5 & + & + & ? & + & X \\ 
+      i5 & + & ? & ? & + & X \\ 
      \end{tabular}
     \end{multicols}
     Decyzję o tym czy przedmiot $i$ jest bardziej pasujący do użytkownika $u$ od przedmiotu $j$ jest podejmowana na podstawie prawdopodobieństwa warunkowego
@@ -560,7 +561,7 @@ Instytut Informatyki}
       $f(r_{ui},r_{vi})=\left\{\begin{array}{cc}
                                  \frac{1}{|r_{ui}-r_{vi}|+1}& \text{ dla } (r_{ui}>\overline{r})\wedge(r_{vi}>\overline{r})\\
                                  \frac{1}{|r_{ui}-r_{vi}|+1}& \text{ dla } (r_{ui}\le\overline{r})\wedge(r_{vi}\le\overline{r})\\
-                                 \frac{0.5}{|r_{ui}-r_{vi}|+1}& \text{ wp.p.}\\
+                                 \frac{0.5}{|r_{ui}-r_{vi}|+1}& \text{ w p.p.}\\
                                 \end{array}\right.$\newline
      {\scriptsize
      $\overline{r}$ -- średnia ocena dostępna w systemie (neutralna)
@@ -619,9 +620,130 @@ Instytut Informatyki}
       ($P_{uv}$ -- zbiór wierzchołków oddalonych od $u$ o $m-1$, połączonych krawędzią z $v$)
      }\newline
      %TODO podać przykład grafowy i wyliczeniowy jak w pracy 221
-   \subsection{MABPR}
-   %TODO MABPR
-   %TODO MABPR SVD++
+   \subsection{Wykorzystanie metadanych jako uzupełnienie danych implicite}
+    Przykład ulepszenia które można wprowadzić posiadając dodatkowe dane przedstawiony został w pracy \cite{191},
+    w której zajęto się poprawą algorytmu BPR.\newline
+    W metodzie spersonalizowanego rankingu Bayesa wykorzystywane jest założenie, że przedmiot użyty ma dla użytkownika większą wartość od takiego,
+    którego nie użył i na podstawie tych dwóch klas znajdowane są wartości odpowiednich wektorów z rozkładu SVD jak najbardziej uwidaczniające tą różnicę.
+    Tak wielkie spłaszczenie wejścia (2 klasy) jest spowodowane tym, że dostępne są dane wyłącznie implicite,
+    możliwe jest jednak uzyskanie większej różnorodności dzięki użyciu dodatkowych danych o przedmiotach nie wymagając równocześnie bardziej kosztownego
+    zbierania informacji od użytkowników.
+    W pracy \cite{191} zaproponowane zostały dwa algorytmy obudowujące standardowy algorytm BPR poprzez wprowadzenie rozróżnienia pomiędzy użytymi przedmiotami
+    uzyskanemu dzięki danym o należności przedmiotów do kategorii (takimi jak w algorytmi gSVD++).
+    \subsubsection{MABPR}
+     Pierwszy algorytm zakłada użycie standardowego BPR z rozszerzonym zbiorem $D_K$, z którego próbkowane są trójki
+     (użytkownik, przedmiot preferowany, przedmiot mniej lubiany).
+     Aby wprowadzić rozróżnienie na dwóch użytych przedmiotach stosowane są dane o tym do jakich kategorii należą,
+     a następnie sprawdzić, który zestaw kategorii powinien bardziej przypaść do gustu użytkownikowi.
+     Pozostaje jednak problem ustalenia tego które kategorie są przez użytkownika lubiane.
+     Ponieważ nie posiadamy o użytkowniku danych ponad to jakie przedmioty zostały przez niego użyte, to właśnie z tych danych należy uzyskać
+     pożądane informacje.
+     Przeprowadzony zostaje preprocesing mający na celu dla każdego użytkownika $u$ oraz kategorii $g$ uzyskać
+     wartość rzeczywistą $w_{ug}$, obrazującą jak bardzo dana kategoria jest przez użytkownika lubiana.
+     Zgodnie z podstawowym założeniem o większej wartości przedmiotu użytego wagi $w$ powinny zostać dobrane tak,
+     aby dla użytego przedmiotu $i$ oraz nieużytego $j$ zmaksymalizować wartość
+     \begin{center}
+      $\tilde{s}_{uij}=\tilde{r}_{ui}-\tilde{r}_{uj}=\sum_{g\in G}w_{ug}a_{ig}-\sum_{g\in G}w_{ug}a_{jg}=\sum_{g\in G}w_{ug}(a_{ig}-a_{jg})$
+     \end{center}
+     {\scriptsize
+      gdzie $G$ to zbiór kategorii, zaś $a_{ig}$ to binarna wartość przynależności przedmiotu $i$ do kategorii $g$
+     }\newline
+     Jak w pozostałych takich przypadkach wartości te są otrzymane poprzez zaaplikowanie algorytmu iteracyjnego zejścia po gradiencie dla tej funkcji:\newline
+     \hspace*{0pt} LearnBPR\{\newline
+     \hspace*{16pt}	for $I$ iterations\{\newline
+     \hspace*{32pt}		wylosuj $(u,i,j)$ z $D_K$\newline 
+     \hspace*{32pt}		$\tilde{s}=w_u\cdot(a_i-a_j)$\newline
+     \hspace*{32pt}		$err=\frac{e^{-\tilde{s}}}{1+e^{-\tilde{s}}}$\newline
+     \hspace*{32pt}		$w_u=w_u+\alpha\cdot(err\cdot (a_i-a_j)-\lambda_w\cdot w_u)$\newline
+     \hspace*{16pt}	\}\newline
+     \hspace*{0pt}\}\newline
+     {\scriptsize
+      gdzie $w_u,a_i,a_j$ to wektory długości $|G|$ (wartości $w_{ug}$ oraz binarne przynależności do kategorii $a_{ig}$)
+     }\newline
+     Dzięki tak wyliczonym wagom można utworzyć tabelkę porównań przedmiotów dla użytkownika z mniejszą ilością wartości nieznanych\newline
+     \begin{multicols}{3}
+      \begin{tabular}{c|c|c|c|c|c|}
+        & i1 & i2 & i3 & i4 & i5 \\
+       \hline
+       u1 & + & ? & ? & ? & + \\
+       \hline
+       u2 & ? & + & + & ? & + \\    
+       \hline
+       u3 & + & + & + & ? & ? \\
+       \hline
+       u4 & ? & ? & ? & ? & + \\    
+      \end{tabular}
+      \begin{center}
+       \includegraphics[scale=0.72]{strzalka.jpg}\newline
+       %TODO zmienić tę strzałkę tak żeby wskazywała z wiersza u2, być może jakieś rozszerzenie zamiast strzałki
+       $i>_{u_2}j$
+      \end{center}
+      \begin{tabular}{c|c|c|c|c|c|}
+          & j1 & j2 & 		j3 & 		j4 & j5 \\
+       \hline
+       i1 & X &	- &	 	 - &		 ? & - \\
+       \hline
+       i2 & + &	X &	 	 $\delta_{23}$ & + & $\delta_{25}$ \\    
+       \hline
+       i3 & + &	$\delta_{32}$ & X &		 + & $\delta_{35}$ \\    
+       \hline
+       i4 & ? &	- &	 	 - &		 X & - \\
+       \hline
+       i5 & + &	$\delta_{52}$ & $\delta_{53}$ & + & X \\ 
+      \end{tabular}
+     \end{multicols}
+     \begin{center}
+      $\delta_{ij}=\left\{\begin{array}{cc}
+       + &\text{ jeśli } \varphi(u,i)>\varphi(u,j)\\
+       - &\text{ jeśli } \varphi(u,i)<\varphi(u,j)\\
+       ? &\text{ w p.p }\\
+      \end{array}\right.$\quad\quad\quad\quad\quad\quad\quad
+      $\varphi(u,i)=\frac{1}{|G(i)|}\sum_{g\in G(i)}w_{ug}$
+     \end{center}
+     Po przeprowadzeniu takiego preprocesingu i ustaleniu nowego zbioru $D_K$ pseudo oceny ustalane są już przy pomocy niezmienionego BPR.
+    \subsubsection{MABPR gSVD++}
+     %TODO przepisać w ładniejszym języku
+     Kolejny algorytm również zakład wylicznie rozszerzonego zbioru $D_K$ (w ten sam sposób) przed wykonywaniem właściwej pracy,
+     jednak korzysta z danych o należności przedmiotów do kategorii dodatkowo i w właściwej swojej części.
+     MABPR gSVD++ łączy w sobie dwa ulepszenia jakimi są przejście z SVD do gSVD++ oraz z BPR do MABPR generując sztuczną ocenę przypisaną
+     użytkownikowi i przedmiotowi przy pomocy wzoru:
+     \begin{center}
+       $\tilde{r}_{ui}=b_i+\left(q_i+|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}\right)\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
+     \end{center}
+     czyli takiego jak w przypadku gSVD++, uproszczonego o nieistotne w BPR przesunięcia.
+     W takim przypadku maksymalizowane wartości różnic dla przedmiotów preferowanego $i$ i mniej lubianego $j$ przyjmują postać:
+     \begin{center}
+      $\tilde{s}_{uij}=\tilde{r}_{ui}-\tilde{r}_{uj}=b_i-b_j+
+      \left(q_i-q_j+|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}-|G(j)|^{-1}\sum\limits_{g\in G(j)}x_{g}\right)
+      \cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
+     \end{center}
+     Po połączeniu wszystkich tych komponentów uzyskuje się system MABPR gSVD++ w którym wartości zmiennych znajdowane są za pomocą iteracyjnego algorytmu:\newline
+     \hspace*{16pt}	LearnBPR()\newline
+     \hspace*{16pt}	for $I$ iterations\{\newline
+     \hspace*{32pt}		wylosuj $(u,i,j)$ z $D_K$\newline 
+     \hspace*{32pt}		$py=p_u +|N(u)|^{-\frac{1}{2}}\cdot\sum\limits_{j\in N(u)}y_j$\newline
+     \hspace*{32pt}		$qx1=q_i +|G(i))|^{-1}\cdot\sum\limits_{g\in G(i)}x_g$\newline
+     \hspace*{32pt}		$qx2=q_j +|G(j))|^{-1}\cdot\sum\limits_{g\in G(j)}x_g$\newline
+     \hspace*{32pt}		$\tilde{s}=b_i-b_j+(qx1-qx2)\cdot py$\newline   
+     \hspace*{32pt}		$err=\frac{e^{-\tilde{s}}}{1+e^{-\tilde{s}}}$\newline
+     \hspace*{32pt}		$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline     
+     \hspace*{32pt}		$b_j=b_j+\alpha\cdot(-err-\lambda_2\cdot b_j)$\newline
+     \hspace*{32pt}		$p_u=p_u+\alpha\cdot(err\cdot (qx1-qx2)-\lambda_3\cdot p_u)$\newline
+     \hspace*{32pt}		$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_4\cdot q_i)$\newline     
+     \hspace*{32pt}		$q_j=q_j+\alpha\cdot(-err\cdot py-\lambda_4\cdot q_j)$\newline
+     \hspace*{32pt}		foreach $k\in N(u)$\{\newline
+     \hspace*{48pt}			$y_k=y_k+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot(qx1-qx2)-\lambda_5\cdot y_k)$\newline
+     \hspace*{32pt}		\}\newline    
+     \hspace*{32pt}		foreach $g\in G(i)$\{\newline
+     \hspace*{48pt}			$x_g=x_g+\alpha\cdot(err\cdot |G(i))|^{-1}\cdot py-\lambda_6\cdot x_g)$\newline
+     \hspace*{32pt}		\}\newline
+     \hspace*{32pt}		foreach $g\in G(j)$\{\newline
+     \hspace*{48pt}			$x_g=x_g+\alpha\cdot(-err\cdot |G(j))|^{-1}\cdot py-\lambda_6\cdot x_g)$\newline
+     \hspace*{32pt}		\}\newline
+     \hspace*{16pt}	\}\newline
+    %TODO znów ładne łamanie strony
+    %TODO może indeksy qx1 na qx_1 - sprawdzić które lepiej wyglądają
+    %TODO indeksy przy lambdach we wszystkich wzorach
   \section{TODO - sekcja o ulepszeniach - zupełnie nowe algorytmy}
    \subsection{Complex}
     %TODO skoro to "ulepszenie", to warto napisać coś żeby to wyglądało na zmienienie pomysłu z CF - szybsze i usprawnione CF dla dalszych
@@ -630,7 +752,7 @@ Instytut Informatyki}
     %TODO inną formą brzmi trochę jakby ta macierz była formą wizualizacji - można by spróbować lepiej to ująć
     Inną formą wizualizacji danych jest graf w którym wierzchołkami są użytkownicy i przedmioty, zaś krawędzie między nimi oznaczają powiązania miedzy nimi
     -- oceny wystawione przez użytkowników przedmiotom lub znane podobieństwo. Zazwyczaj informacje zawarte w krawędziach mogą zostać spłaszczone do
-    rzeczywistej wartości liczbowej oznaczającej upodobanie użytkownika do przedmiotu lub podobieństwo przedmiot-przedmiot użytkownik-uzytkownik,
+    rzeczywistej wartości liczbowej oznaczającej upodobanie użytkownika do przedmiotu lub podobieństwo przedmiot-przedmiot użytkownik-użytkownik,
     w przypadku braku informacji na temat interakcji krawędź nie istnieje.
     Klasyczne algorytmy bazujące na podobieństwie pomiędzy użytkownikami lub przedmiotami skupiają się w większości na wyliczeniu tych podobieństw
     dla każdej pary (sporządzeniu maciery podobieństwa) i w celu predykcji nowej oceny aplikują pewną funkcję agregującą oceny podobnych instancji.
