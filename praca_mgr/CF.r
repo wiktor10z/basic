@@ -1,5 +1,3 @@
-#TODO można spróbować zespolić funkcje zwykłego podobieństwa i przedmiotów z ustawianym parametrem
-
 vec_and=function(x,y){
   return ((x!=0)&(y!=0))
 }
@@ -53,6 +51,17 @@ alt_similarity=function(u,v){#TODO mozna zrobić ten drugi like_matrix(> zamiast
   }
 }
 
+mixed_similarity=function(u,v){
+  viewed=vec_and(ml_bin_matrix[u,],ml_bin_matrix[v,])
+  if((sum(viewed)>4)&&(var(ml_matrix[u,]>0.15))&&(var(ml_matrix[v,]>0.15))){#TODOTODO płaskość - jak wyznaczyć
+    return(cor_similarity(u,v))
+  }else{
+    return(alt_similarity(u,v))
+  }
+}
+
+
+#TODO zrobić nowe prawdopodobieństwo poprzez pomieszanie PC i alt - jak w pracy 221
 make_sim_matrix=function(sim_fun,item_sim=FALSE,sym=1){
   if(item_sim){l=items}else{l=users}
   matrix1=matrix(0L,nrow=l,ncol=l)
@@ -85,7 +94,7 @@ if(FALSE){
 }
 
 neighbours2=function(u,it,n=30,f=0){
-  sim2=similarity_matrix[u,]*(ml_matrix[,it]!=0) # TODO można by usunąć u już teraz albo generować w ogóle macierz podobieństwa z 0 na przekątnej
+  sim2=similarity_matrix[u,]*(ml_matrix[,it]!=0)
   all=sum(sim2>f)
   if(all<=n){
     list=head(order(sim2,decreasing=TRUE),all)
@@ -105,7 +114,7 @@ item_neighbours2=function(i,u,n=30,f=0){
   return(list[-(match(i,list,nomatch=length(list)))])
 }
 
-CF_predict=function(u,n=30,f=0){#TODO dla alt_similarity przy użyciu inters_mat powinno sie odjąć 0.1 (można w def alt_sim)
+CF_predict=function(u,n=30,f=0){
   mean_u=us_means[u]
   rating=numeric(length=items)
   for(i in 1:items){
@@ -119,7 +128,7 @@ CF_predict=function(u,n=30,f=0){#TODO dla alt_similarity przy użyciu inters_mat
       }
       rating[i]=mean_u+sum1/sum2
     }else{
-      rating[i]=0 #TODO może średnia, z drugiej strony skoro nie ma podobnych, to znaczy, że raczej nieporządane
+      rating[i]=0
     }
   }
   return(rating)
@@ -170,9 +179,9 @@ CF_ratings=function(sim_fun,item_sim=FALSE,sim_fac=FALSE,n=30,f=0){
   return(CF_predict_all(make_sim_matrix(sim_fun,item_sim),item_sim,sim_fac,n,f))
 }
 
-#221 - mixed
+#221 - additional function
 neighbours3=function(u,it,n=30,f=0){
-  sim2=alt_sim_matrix[u,]*(ml_matrix[,it]!=0) # TODO można by usunąć u już teraz albo generować w ogóle macierz podobieństwa z 0 na przekątnej
+  sim2=alt_sim_matrix[u,]*(ml_matrix[,it]!=0)
   all=sum(sim2>f)
   if(all<=n){
     list=head(order(sim2,decreasing=TRUE),all)
@@ -182,7 +191,7 @@ neighbours3=function(u,it,n=30,f=0){
   return(list[-(match(u,list,nomatch=length(list)))])
 }
 
-CF_predict_mixed=function(u,n=30,f=0){#TODO dla alt_similarity przy użyciu inters_mat powinno sie odjąć 0.1 (można w def alt_sim)
+CF_predict_mixed=function(u,n=30,f=0){
   mean_u=us_means[u]
   rating=numeric(length=items)
   for(i in 1:items){
@@ -207,14 +216,14 @@ CF_predict_mixed=function(u,n=30,f=0){#TODO dla alt_similarity przy użyciu inte
   return(rating)
 }
 
-CF_ratings_mixed=function(sim_fac=FALSE,n=30,f=0){
+CF_ratings_mixed=function(sim_fun1=cor_similarity,sim_fun2=alt_similarity,sim_fac=FALSE,n=30,f=0){
   if(sim_fac){
     intersections_matrix=make_sim_matrix(used_by_both_count,FALSE)
   }else{
     intersections_matrix=matrix(1,nrow=users,ncol=users)
   }
-  similarity_matrix<<-make_sim_matrix(cor_similarity,FALSE)*intersections_matrix
-  alt_sim_matrix<<-make_sim_matrix(alt_similarity,FALSE)*intersections_matrix
+  similarity_matrix<<-make_sim_matrix(sim_fun1,FALSE)*intersections_matrix
+  alt_sim_matrix<<-make_sim_matrix(sim_fun2,FALSE)*intersections_matrix
   return(matrix(sapply(1:users,function(u){CF_predict_mixed(u,n,f)}),byrow=TRUE,nrow=users))
 }
 
@@ -229,11 +238,11 @@ make_further_sim_matrix=function(sim_mat){
 
 CF_ratings_further=function(n=30,f=0){
   intersections_matrix=make_sim_matrix(used_by_both_count,FALSE)
-  similarity_matrix<<-make_sim_matrix(cor_similarity,FALSE)*intersections_matrix
-  alt_sim_matrix<<-make_further_sim_matrix(similarity_matrix)
+  similarity_matrix=make_sim_matrix(cor_similarity,FALSE)
+  alt_sim_matrix<<-make_further_sim_matrix(similarity_matrix)*intersections_matrix
+  similarity_matrix<<-similarity_matrix*intersections_matrix
   return(matrix(sapply(1:users,function(u){CF_predict_mixed(u,n,f)}),byrow=TRUE,nrow=users))
 }
-
 #slope one
 
 items_difference=function(i,j){
@@ -303,7 +312,7 @@ if(FALSE){
     return(similarity_vec(ml_matrix[,i],ml_matrix[,j]))
   }
   
-  item_make_sim_matrix=function(item_sim_fun){#TODO można przyśpieszyć licząc tylko górny trójkąt - symetryczna
+  item_make_sim_matrix=function(item_sim_fun){
     matrix1=matrix(0L,nrow=items,ncol=items)
     for(i in 1:(items-1)){
       for(j in (i+1):items){
