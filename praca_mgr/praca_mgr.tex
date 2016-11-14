@@ -594,12 +594,13 @@ Instytut Informatyki}
      \end{center}
      Zbiór sąsiadów jest jednak nadal wyliczany na podstawie normalnych podobieństw między użytkownikami.
     \subsubsection{dalsze podobieństwo}
-     W przypadku gdy pewien użytkownik nie posiada sąsiadów, którzy użyli dany przedmiot%TODO można zacytować ile procent dla PC w danych ml100k
+     W przypadku gdy pewien użytkownik nie posiada sąsiadów, którzy użyli dany przedmiot %TODO można zacytować ile procent dla PC w danych ml100k
      można odnieść się do dalszych sąsiadów -- użytkowników bliskich według podobieństwa przechodniego (sąsiedzi sąsiadów),
      które już dla ścieżek pomiędzy użytkownikami długości 2 powinny znacznie poprawić pokrycie przypadków występujących w danych.%TODO ponownie zacytować
      Dalsze podobieństwo można odczytać z grafu w którym wierzchołkami są użytkownicy, zaś krawędziami wartości podobieństwa między nimi z odciętymi krawędziami
      negatywnymi. W ten sposób podobieństwo można zdefiniować jako po pierwsze odległość w grafie, a w dalszej kolejności podobieństwo wynikające z wag krawędzi
-     na najkrótszej ścieżce.
+     na najkrótszej ścieżce.\newline
+     \includegraphics[scale=0.72]{graf1(221).jpg}\newline
     \subsubsection{połączenie ulepszeń}
      Łącząc przedstawione usprawnienia algorytmu CF w pracy \cite{221} zaproponowany został system CF-ADV.\newline
      Dla zadanego użytkownika $u$ oraz przedmiotu $i$ jeżeli według podobieństwa zdefiniowanego wcześniej
@@ -610,6 +611,7 @@ Instytut Informatyki}
      aż do zadanej odległości maksymalnej $H$.
      Sąsiedzi użytkownika $u$ na podstawie których wystawiana jest ocena dla przedmiotu $i$
      wybierani są jako początek tej listy ograniczonej do użytkowników, dla których znana jest ocena tego przedmiotu.\newline
+     \includegraphics[scale=0.72]{graf2(221).jpg}\newline
      Aby móc zastosować średnią ważoną pozostaje jeszcze zdefiniować wagi
      -- w tym przypadku dla użytkownika $v$ o najkrótszej ścieżce od źródła $u$ w grafie użytkowników długości $m$
      na podstawie średniej z wag jego bezpośrednich poprzedników na wszystkich ścieżkach tej długości:
@@ -619,7 +621,15 @@ Instytut Informatyki}
      {\scriptsize
       ($P_{uv}$ -- zbiór wierzchołków oddalonych od $u$ o $m-1$, połączonych krawędzią z $v$)
      }\newline
-     %TODO podać przykład grafowy i wyliczeniowy jak w pracy 221
+     W przypadku z rysunku wartości wyniosą odpowiednio:\newline
+     $
+     SF_{AD}=\frac{SF_{AC}\cdot SF_{CD}}{SF_{AC}}=4\newline
+     SF_{AF}=\frac{SF_{AB}\cdot SF_{BF}+SF_{AC}\cdot SF_{CF}}{SF_{AB}+SF_{AC}}=\frac{61.92+442.68}{25.6}=19.71\newline
+     SF_{AG}=\frac{SF_{AD}\cdot SF_{DG}+SF_{AF}\cdot SF_{FG}}{SF_{AD}+SF_{AF}}=\frac{60.8+67.97}{23.71}=5.43\newline
+     $
+     %TODO zmienić wartości w grafach, tak żeby dały lepszy przykład
+     %TODO na rysunku 2 dać podział na warstwy
+     %TODO lepsze rozmieszczenie obrazków kontekstowo
    \subsection{Wykorzystanie metadanych jako uzupełnienie danych implicite}
     Przykład ulepszenia które można wprowadzić posiadając dodatkowe dane przedstawiony został w pracy \cite{191},
     w której zajęto się poprawą algorytmu BPR.\newline
