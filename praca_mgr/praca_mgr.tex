@@ -760,7 +760,7 @@ Instytut Informatyki}
     %TODO grafowa interpretacja jest też w dalszym podobieństwie CF trzeba to jakoś tak przedstawić, żeby dobrze brzmiało i tu i tu
     Standardową reprezentacją danych rozważanych w filtorwaniu kolaboratywnym jest macierz użyć przedmiotów (lub lista ocen pozwalająca zaoszczędzić pamięć).
     %TODO inną formą brzmi trochę jakby ta macierz była formą wizualizacji - można by spróbować lepiej to ująć
-    Inną formą wizualizacji danych jest graf w którym wierzchołkami są użytkownicy i przedmioty, zaś krawędzie między nimi oznaczają powiązania miedzy nimi
+    Inną formą wizualizacji danych jest graf w którym wierzchołkami są użytkownicy i przedmioty, zaś krawędzie oznaczają powiązania miedzy nimi
     -- oceny wystawione przez użytkowników przedmiotom lub znane podobieństwo. Zazwyczaj informacje zawarte w krawędziach mogą zostać spłaszczone do
     rzeczywistej wartości liczbowej oznaczającej upodobanie użytkownika do przedmiotu lub podobieństwo przedmiot-przedmiot użytkownik-użytkownik,
     w przypadku braku informacji na temat interakcji krawędź nie istnieje.
@@ -778,22 +778,18 @@ Instytut Informatyki}
     predykuje jako sumę wartości po ścieżkach wiodących od użytkownika do tego przedmiotu aplikując do nich wagi zmniejszające się wraz z rosnącą ich długością.
     Twórcy algorytmu wykorzystują model grafowy w którym upodobanie oznaczone jest poprzez krawędzie skierowane
     od użytkownika do przedmiotu z pojedynczą wartością rzeczywistą i uogólniają na dłuższe ścieżki mnożąc wartości z krawędzi zgodnie ze schematem:\newline
-    TODO obrazek jak w pracy TODO \newline\newline
-    %
-    %
-    %
-    %
+     \includegraphics[scale=0.72]{graf1(191).jpg}\newline
     Ze schematu można wywnioskować następujące reguły:
     \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+     \item $\omega_{similar}=\omega^2_{similar}$    
      \item $\omega_{similar}=-\omega^2_{like}$
      \item $\omega_{like}=\omega_{similar}\cdot\omega_{like}$
-     \item $\omega_{similar}=\omega^2_{similar}$
     \end{itemize}
     Z reguł wynika, że ograniczenie do wartości rzeczywistych nie wystarcza, jednak stosując wartości zespolone otrzymuje się wygodny model,
     w którym wartości podobieństwa wyrażone są liczbami rzeczywistymi, zaś upodobanie wartościami czysto zespolonymi (stąd też pochodzi nazwa algorytmu).
     Dzięki takiej interpretacji sumy wartości ścieżek długości $l$ mogą zostać wyliczone dzięki zwykłemu przemnożeniu przez siebie macierzy zawierającej
     wartości dla pojedynczych krawędzi $l$ krotnie.\newline
-    Aby zastosować algorytm do prawdziwych danych należy uwzględnić kilka rzeczy -- doprowadzić macierz ocen do odpowiedniego stanu,
+    Aby zastosować algorytm do prawdziwych danych należy uwzględnić kilka rzeczy = doprowadzić macierz ocen do odpowiedniego stanu,
     można też przy okazji dokonać kilku uproszczeń.
     Jako, że aby dodawanie ścieżek różnych długości miało jakąkolwiek możliwość utrzymania wiadomości
     o prawdziwych ocenach wystawionych przez użytkowników przedmiotom trzeba by zastosować bardzo skomplikowane wagi na konkretnych krawędzich
@@ -855,16 +851,23 @@ Instytut Informatyki}
      (podobnie jak w przypadku wektorów $y$ w SVD++).
      W przypadku algorytmu Complex regularyzacja taka sprowadza się do podzielenia wartości w wierszach (lub kolumnach) macierzy przez pierwiastek liczby
      niezerowych elementów w tym wierszu (tej kolumnie). Dokładniej wartości występujące w macierzy macierzy $A$ w różnych wariantach przyjmują odpowiednio
-     wartości:\newline
-     \begin{tabular}{|c|c|c|c|c|}
-      \hline
+     wartości:
+     \begin{center}
+      \begin{tabular}{|c|c|c|c|c|}
+       \hline
          & brak reg. & reg. przedmiotów & reg. użytkowników & reg. uż. i przed. \\
-      \hline
-      lubi & i &  $\frac{\text{i}}{\sqrt{N_{i}(u)}}$& $\frac{\text{i}}{\sqrt{N_{u}(i)}}$ & $\frac{\text{i}}{\sqrt{N_{u}(i)\cdot N_{i}(u)}}$  \\
-      \hline
-      nie lubi & -i & $-\frac{\text{i}}{\sqrt{N_{i}(u)}}$ &  $-\frac{\text{i}}{\sqrt{N_{u}(i)}}$ & $-\frac{\text{i}}{\sqrt{N_{u}(i)\cdot N_{i}(u)}}$  \\    
-      \hline
-     \end{tabular}
+       \hline
+        lubi & i &  $\frac{\text{i}}{\sqrt{N_{i}(u)}}$& $\frac{\text{i}}{\sqrt{N_{u}(i)}}$ & $\frac{\text{i}}{\sqrt{N_{u}(i)\cdot N_{i}(u)}}$  \\
+       \hline
+        nie lubi & -i & $-\frac{\text{i}}{\sqrt{N_{i}(u)}}$ &  $-\frac{\text{i}}{\sqrt{N_{u}(i)}}$ & $-\frac{\text{i}}{\sqrt{N_{u}(i)\cdot N_{i}(u)}}$  \\    
+       \hline
+      \end{tabular}
+     \end{center}
+     \vspace{16pt}
+     Algorytm Complex działa dobrze również w przypadku danych implicite, oczywiście w tym przypadku nie skupia się na znajdowaniu obiektów najlepszych
+     na podstawie pozytywnych i negatywnych ocen, a jedynie na znajdowaniu wszystkich przedmiotów które powinny zostać użyte.\newpage
+    
+    
     
     
 \begin{thebibliography}{99}%TODO
