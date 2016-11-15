@@ -840,9 +840,31 @@ Instytut Informatyki}
     które użytkownik powinien ocenić pozytywnie (podejście pośrednie pomiędzy predykcją ocen przy użyciu informacji explicite
     i tworzenia list na podstawie informacji implicite) stąd oceny można w macierzy spłaszczyć do $1$ w przypadku pozytywnej i $-1$ negatywnej
     i $0$ w przypadku braku oceny/użycia (neutralną najlepiej zakwalifikować jako pozytywną -- bardziej lubiane niż w przypadku braku użycia).
-    %TODO może już tutaj podać pseudokod lub szczególy implementacji jak wagi
-    % TODO mnożenie macierzy -> dobrze pooptymalizowane -> szybkie -> wręcz tak szybkie jak algorytmy niespersonalizowane
-    %TODO resularyzacje user i item -> możliwe ulepszenie
+    Ze względu na drastycznie malejącą uzyteczność wiedzy coraz dłuższych ścieżek wagi dla tych ścieżek powinny być na tyle mniejsze od tych dla krótkich.
+    W przypadku wag dobranych do prawdziwych zastosowań suma ogonowa ze wzoru $\sum\limits_{k=0}^{\infty}a_k(BB^\bot)^kB$ jest zaniedbywalna, na tyle,
+    że można wzór ograniczyć do pierwszych kilku elementów.\newline
+    Dzięki tym wszystkim uproszczeniom oraz temu,
+    że mnożenie macierzy jako bardzo standardowa operacja jest w większości języków programowania bardzo dobrze zoptymalizowana czasowo algorytm
+    jest o wiele szybszy od pozostałych przedstawionych w tej pracy (na poziomie szybkości algorytmów niespersonalizowanych).
+    \subsubsection{regularyzacje}
+     Dodatkową metodą używaną do poprawienia osiągnięć systemu jest zastosowanie regularyzacji.
+     W przypadku gdy pewien użytkownik ocenił bardzo dużo przedmiotów lub dany przedmiot został użyty przez większość użytkowników taki węzeł
+     stwarza znaczne większą ilość ścieżek przechodzących przez niego -- ma dużo większy wpływ na oceny niż pozostałe wierzchołki.
+     Aby zapobiec sytuacją w których wpływ jednego użytkownika lub przedmiotu na system przeważałby nad pozostałymi oraz rozszerzyć
+     grono istotnych czynników często stosowane jest dzielenie wartości odpowiadajcych pewnej instancji przez pierwiastek ilości tych wartości
+     (podobnie jak w przypadku wektorów $y$ w SVD++).
+     W przypadku algorytmu Complex regularyzacja taka sprowadza się do podzielenia wartości w wierszach (lub kolumnach) macierzy przez pierwiastek liczby
+     niezerowych elementów w tym wierszu (tej kolumnie). Dokładniej wartości występujące w macierzy macierzy $A$ w różnych wariantach przyjmują odpowiednio
+     wartości:\newline
+     \begin{tabular}{|c|c|c|c|c|}
+      \hline
+         & brak reg. & reg. przedmiotów & reg. użytkowników & reg. uż. i przed. \\
+      \hline
+      lubi & i &  $\frac{\text{i}}{\sqrt{N_{i}(u)}}$& $\frac{\text{i}}{\sqrt{N_{u}(i)}}$ & $\frac{\text{i}}{\sqrt{N_{u}(i)\cdot N_{i}(u)}}$  \\
+      \hline
+      nie lubi & -i & $-\frac{\text{i}}{\sqrt{N_{i}(u)}}$ &  $-\frac{\text{i}}{\sqrt{N_{u}(i)}}$ & $-\frac{\text{i}}{\sqrt{N_{u}(i)\cdot N_{i}(u)}}$  \\    
+      \hline
+     \end{tabular}
     
     
 \begin{thebibliography}{99}%TODO
