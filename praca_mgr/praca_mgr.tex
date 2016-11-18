@@ -525,23 +525,41 @@ Instytut Informatyki}
     \hspace*{32pt}		\}\newline
     \hspace*{16pt}	\}\newline
     %TODO jeśli część kodu wyjdzie poza stronę, to wypada zrobić jakieś wyrównanie, żeby lepiej się czytało
- \chapter{TODO - ulepszenia}
+ %
+ %
+ %
+ %
+ %
+ %
+ \chapter{Ulepszenia}
   %TODO można zrobić tak żeby tutejsze podrozdziały były rozdziałami - jeżeli wyjdą duże te ok, a w spisie treści będzie lepiej wyglądało
   %TODO napisać wstęp dlaczego są potrzebne + przejście ze zwykłego wymyślania nowych systemów do
-  
+  % to może okazać się podobne do wstępu - zadbać żeby nie było za dużo powtórzeń
   % napisać ogólnie, że ulepszenia często rozważają lepsze wyniki w szczególnych przypadkach danych
   \section{TODO - sekcja o ulepszeniach standardowych algorytmów}
    Najprostszym sposobem stworzenia lepszego systemu rekomendacyjnego jest zmodyfikowanie istniejącego już systemu.\newline
+   
+   Modyfikacją może być zaadaptowanie znanego algorytmu do innego typu danych (jak w przypadku zmiany SVD $\rightarrow$ BPR),
+   poprzedzenie algorytmu preprocessingiem modyfikującym otrzymane dane na pasujące do wejścia normalnego systemu,
+   lub też użycie algorytmu bez zmian a jedynie z inną interpretacją wyników.
    %TODO może wylistować jak będzie ze 4 rodzaje
-   Modyfikacją może być dodanie dodatkowego elementu do modelu (jak SVD $\rightarrow$ SVD++ $\rightarrow$ gSVD++)
+   Ulepszeniem można uzyskać poprzez dodanie dodatkowego elementu do modelu (jak SVD $\rightarrow$ SVD++ $\rightarrow$ gSVD++)
    zazwyczaj wynikające z posiadania dodatkowych danych niewykorzystywanych w bazowym systemie.
    Można również zadziałać odwrotnie porzucając część algorytmu, która nie polepsza rezultatów, jedncześnie upraszczając model.
    Takie działanie może istotnie przyspieszyć system pozwalająć użyć go na większych danych, lub wykorzystać czas w inny sposób
    (np. stosując dodatkowe iteracje).
-   %TODO zmiana jak np. inne podobieństwo w CF
-   %TODO użycie czegoś w sposób nieprzewidziany - inny rodzaj danych, ale da się zrutować na coś pasującego
-   %TODO dostosowanie do rozkładu danych - rozmiary macierzy czy gęstość - to bardziej ogólne niż typ modyfikacji - albo na początku tej sekcji albo wręccz rozdziału
+   
+   %TODO rozbić jakoś poniższe zdanie
+   Niektóre systemy jako wejście oprócz danych o predmiotach i użytkownikach przyjmują dodatkowe parametry zmieniające ich pracę i o ile
+   wprowadzenie innych stałych regularyzacyjnych w SVD czy wybór pomiędzy podobieństwami użytkowników i przedmiotów w CF nie może być uznany jako
+   istotna zmiana algorytmu, o tyle wprowadzenie własnej funkcji podobieństwa lub inne schodzenie po gradiencie (np. zmniejszająca się szybkość uczenia)
+   pozwala uzyskać istotnie inny algorytm.
+
+   
+   %TODO dostosowanie do rozkładu danych - rozmiary macierzy czy gęstość - to bardziej ogólne niż typ modyfikacji - albo na początku tej sekcji albo wręcz rozdziału
+   %wtedy zmodyfikować zdanie o poprawie poprzez dostosowanie do typu danych
    %TODO algorytmy przybliżone - szybsze = da się zastosować do większych danych
+   
    % napisać o tym, że często robi się jakieś drobne ulepszenie znanego modelu jak SVD -> SVD++ lub dostosowanie znanego do innej/szczególnej
    % sytuacji jak SVD->BPR, czy też możliwość wykorzystania dodatkowych danych SVD++->gSVD++, drobna modyfikacja CF -> praca 221
    \subsection{ulepszenia CF}
@@ -648,7 +666,7 @@ Instytut Informatyki}
      Pozostaje jednak problem ustalenia tego które kategorie są przez użytkownika lubiane.
      Ponieważ nie posiadamy o użytkowniku danych ponad to jakie przedmioty zostały przez niego użyte, to właśnie z tych danych należy uzyskać
      pożądane informacje.
-     Przeprowadzony zostaje preprocesing mający na celu dla każdego użytkownika $u$ oraz kategorii $g$ uzyskać
+     Przeprowadzony zostaje preprocessing mający na celu dla każdego użytkownika $u$ oraz kategorii $g$ uzyskać
      wartość rzeczywistą $w_{ug}$, obrazującą jak bardzo dana kategoria jest przez użytkownika lubiana.
      Zgodnie z podstawowym założeniem o większej wartości przedmiotu użytego wagi $w$ powinny zostać dobrane tak,
      aby dla użytego przedmiotu $i$ oraz nieużytego $j$ zmaksymalizować wartość
@@ -710,7 +728,7 @@ Instytut Informatyki}
       \end{array}\right.$\quad\quad\quad\quad\quad\quad\quad
       $\varphi(u,i)=\frac{1}{|G(i)|}\sum_{g\in G(i)}w_{ug}$
      \end{center}
-     Po przeprowadzeniu takiego preprocesingu i ustaleniu nowego zbioru $D_K$ pseudo oceny ustalane są już przy pomocy niezmienionego BPR.
+     Po przeprowadzeniu takiego preprocessingu i ustaleniu nowego zbioru $D_K$ pseudo oceny ustalane są już przy pomocy niezmienionego BPR.
     \subsubsection{MABPR gSVD++}
      %TODO przepisać w ładniejszym języku
      Kolejny algorytm również zakład wylicznie rozszerzonego zbioru $D_K$ (w ten sam sposób) przed wykonywaniem właściwej pracy,
