@@ -1,6 +1,6 @@
 mean1=function(x){
   if(sum(x)==0){
-    return(0)
+    return(3)
   }else{
     return (sum(x)/sum(x!=0))
   }
@@ -92,9 +92,14 @@ read_ml_test=function(file){
 
 # trivial recomendations
 
-non_personalized_rating=function(x=0){
-  return(((rep(1,users)%*%t.default(mov_means))+(us_means%*%t.default(rep(1,items))))/2)
+non_personalized_rating=function(popularity=FALSE){
+  if(popularity){
+    return(affine_rating(rep(1,users)%*%t.default(mov_pop),1,5))
+  }else{
+    return(((rep(1,users)%*%t.default(mov_means))+(us_means%*%t.default(rep(1,items))))/2)
+  }
 }
+
 non_personalized=function(u,n=items,popularity=FALSE){#TODO może jakieś ważenie popularności i średniej
   if(popularity){
     score=mov_pop
