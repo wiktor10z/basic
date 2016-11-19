@@ -200,13 +200,13 @@ Instytut Informatyki}
        $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})(r_{vi}-\overline{r_v})}
        {\sqrt{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})^2\sum\limits_{i\in R_{uv}}(r_{vi}-\overline{r_v})^2}}$
       \end{center}
-      Wyliczane dla par użytkowników, którzy ocenili po conajmniej dwa przedmioty, w tym conajmniej jeden wspólny.
+      Wyliczane dla par użytkowników, którzy ocenili po co najmniej dwa przedmioty, w tym co najmniej jeden wspólny.
      \item podobieństwo kosinusowe:
       \begin{center}
        $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}r_{ui}\cdot r_{vi}}
        {\sqrt{\sum\limits_{i\in R_{uv}}r_{ui}^2\sum\limits_{i\in R_{uv}}r_{vi}^2}}$
       \end{center}
-      Wyliczane dla par użytkowników, którzy ocenili conajmniej jeden wspólny przedmiot.
+      Wyliczane dla par użytkowników, którzy ocenili co najmniej jeden wspólny przedmiot.
      %\item podobieństwo implicite\newline % jak się nazywa przecięcie przez suma - odpowiednik f-score
       %begin{center}
        %$S_{uv}=\frac{|R_{uv}|}{|R_{u}\cup R_{v}|}$\newline
@@ -891,12 +891,49 @@ Instytut Informatyki}
     
     
     
+ \chapter{Ocena i porównanie systemów}
+  Aby dokonać wyboru jednego z algorytmów do prawdziwego systemu lub aby sprawdzić czy modyfikacja systemu rzeczywiście go poprawia należy
+  określić jakąś miarę jakości przewidywanych ocen i rekomendacji względem której będą one porównywane.\newline
+  Jakość poszczególnych systemów moze się znacznie różnić w zależności od specyfiki danych:
+  \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+   \item gęstości -- dla rzadszych danych ciężej znaleźć podobnych użytkowników, istotne jest mniej wartości własnych macierz
+   \item rozmiaru -- dla dużych danych niektóre algorytmy są zbyt wolne, lub wymagają zbyt dużej pamięci
+          -- nalezy użyć algorytmów szybszych lub przybliżonych 
+   \item ilości nowych uzytkowników i przedmiotów (z małą liczbą ocen) -- niektóre algorytmy są lepiej dostosowane do zjawiska zimnego startu
+   %TODO więcej   
+  \end{itemize}
+  Dlatego też do wyliczenia tych miar należy użyć prawdziwych danych dla których przewidziany jest system, lub też okrojonej ich części,
+  która zachowa możliwie wiele własności pełnych danych.
+  \section{Opis danych}
+   Dane użyte do testowania i oceny algorytmów pochodzą z ogólnodostępnego i popularnego wśród prac naukowych
+   zbioru zebranego przez GroupLens\newline
+   \textit{http://grouplens.org/datasets/movielens/100k/} i dotyczą danych filmowych.\newline
+   Dokładniej dane skłądają się z listy ocen wystawionych przez użytkowników filmom w skali 1--5,
+   binarnych danych o przynależności przedmiotów do 19 gatunków filmowych oraz kilku podstawowych informacji o użytkownikach.
+   Dodatkowo uwzględnione są tam nieużywane w opisanych algorytmach dane o datach wydania filmu i wystawienia oceny.
+   %TODO jak coś dodam, to zrewidować   
+   W pełnym zbiorze danych występuje 1682 filmów oraz 943 użytkowników, z których każdy wystawił co najmniej 20 ocen.
+   Łącznie wystawionych jest 100 000 ocen, co przy 1 486 126 brakujących ocenach daje poziom rzadkości danych równy 93.7\%
+   ($1-\frac{\text{ilość ocen}}{\text{ilość wszystkich możliwych}}$), dosyć mały przy porównaniu z większością innych baz danych.
+   Oznacza to też, że użytkownicy ocenili średnio po 106 przedmiotów, zaś średnia popularność filmów wyniosła 59.
+   Do danych dołączone jest dodatkowo 5 zbiorów treningowych i 5 testowych stworzonych do badania systemów przy pomocy 5 krotnej cross-walidacji
+   (całe dane podzialone na 5 części, zbiór testowy to jedna z tych części, zaś odpowiedni treningowy to pozostałe części).
+   W moich ocenach algorytmów korzystam właśnie z tego podziału (wartości odpowiednich miar dla systemu jest średnią po 5 wartościach
+   otrzymanych przez uczenie modelu na zbiorze treningowym i ocenianiu na podstawie odpowiedniego testowego).
+  \section{Załączona implementacja algorytmów}
+  %TODO jakiś lepszy tytuł
+  
+  \section{Evaluacja predykcji ocen}
+   
+    
 \begin{thebibliography}{99}%TODO
 \addcontentsline{toc}{chapter}{Bibliografia}
-  %praca o complex
-  %my media literowe
+  %my media lite rowe
   %ewentualnie wikipedia - nie wiem czy trzeba podstrony - podstawowe algorytmy jak SO,CF
   %wikipedia en - recemender system
+  
+  %TODO czy MovieLens też tutaj dać 
+  
   \bibitem[191]{191} Marcelo G. Manzato, Marcos A. Domingues, Solange O. Rezende,
   "Optimizing Personalized Ranking in Recommender Systems with Metadata Awareness"
   \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
