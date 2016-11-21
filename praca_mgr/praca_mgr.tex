@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage[pdftex]{graphicx}
 \usepackage{multicol}
+\usepackage{hyperref}
 
 \author{Wiktor Zuba}
 
@@ -777,6 +778,7 @@ Instytut Informatyki}
     %TODO indeksy przy lambdach we wszystkich wzorach
   \section{TODO - sekcja o ulepszeniach - zupełnie nowe algorytmy}
    \subsection{Complex}
+    %TODO wpisanie poprawek CF mogło coś zmienić w braku możliwości CF na patrzenie na dalsze odległości
     %TODO skoro to "ulepszenie", to warto napisać coś żeby to wyglądało na zmienienie pomysłu z CF - szybsze i usprawnione CF dla dalszych
     %TODO grafowa interpretacja jest też w dalszym podobieństwie CF trzeba to jakoś tak przedstawić, żeby dobrze brzmiało i tu i tu
     Standardową reprezentacją danych rozważanych w filtorwaniu kolaboratywnym jest macierz użyć przedmiotów (lub lista ocen pozwalająca zaoszczędzić pamięć).
@@ -920,8 +922,27 @@ Instytut Informatyki}
    (całe dane podzialone na 5 części, zbiór testowy to jedna z tych części, zaś odpowiedni treningowy to pozostałe części).
    W moich ocenach algorytmów korzystam właśnie z tego podziału (wartości odpowiednich miar dla systemu jest średnią po 5 wartościach
    otrzymanych przez uczenie modelu na zbiorze treningowym i ocenianiu na podstawie odpowiedniego testowego).
-  \section{Załączona implementacja algorytmów}
-  %TODO jakiś lepszy tytuł
+  \section{Załączona implementacja algorytmów}%TODO jakiś lepszy tytuł
+   Aby przeprowadzić miarodajne porównanie algorytmów zaimplementowałem je oraz skrypt umożliwiający zbadanie ich wyników w języku R
+   (implementacje są dołączone do pracy).
+   Wybór języka dostosowanego do data miningu oraz brak nietrywialnych optymalizacji czasowych pozwalił na bezpośrednie przerobienie
+   podanych w pracy pseudokodów na działającą implementację a więc pozwala na zajrzenie do kodu w przypadku wątpliwości co do dokładnego
+   mechanizmu działania algorytmów.
+   Ze względu na to, że implementacja jest dostosowana do testowania algorytmów na konkretnej, stałej bazie danych moze nie działać dobrze
+   na danych innego typu, w szczególności nie jest dostosowana do szybkiej zmiany wyliczonego modelu po wprowadzeniu nowej oceny.
+   W celu stworzenia prawdziwego systemu lepiej skorzystać z implementacji dostępnej w bibliotece \cite{MML}, w której zawarta jest
+   większość przedstawionych tu algorytmów.
+   Z ważniejszych uwag dotyczących implementacji algorytmów niezawartych w pseudokodach:
+   \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+    \item przy używaniu algorytów z grupy SVD (schodzenie po gradiencie) należy rozpocząć od wektorów z wartościami wylosowanymi.
+     W przypadku wartości odpowiednich współrzędnych liniowo powiązanych we wszystkich wektorach nie ma możliwości pozbycia się tej zależności,
+     co skutkuje efektywnie zmniejszeniem długości wektorów bez uzyskania korzyści czasowych.
+    \item należy używać małych stałych uczenia (rzędu 0.02), gdyż przy dużych wartości w wektorach mogą w trakcie wykonywania algorytmu
+     iteracyjnego rozbiegać zamiast stabilizować się, skutkując skrajnie wielkimi wartościami.
+    \item w przypadku algorytmów CF można wyliczyć i zapamiętać macierz podobieństwa pomiędzy użytkownikami (lub przedmiotami)i w ten sposób
+     zmniejszyć złożoność czasową zwiększając jednocześnie złożoność pamięciową.
+    \item w wielu wzorach pojawiają się przypadki gdy pewna wartość jest wyliczana jako $\frac{0}{0}$, należy to zazwyczaj traktować jako $0$.
+   \end{itemize}
   
   \section{Evaluacja predykcji ocen}
    
@@ -949,6 +970,9 @@ Instytut Informatyki}
   \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
   pp. 221 - 228
 
+  \bibitem[MML]{MML} Zeno Gantner, Steffen Rendle, Lucas Drumond, and Christoph Freudenthaler
+  \textit{MyMediaLite}
+  \url{http://www.mymedialite.net/index.html}
 
 \end{thebibliography}
 
