@@ -132,7 +132,6 @@ random_recs=function(n=items){
 
 # przekształcenia
 
-#TODO sprawdzić czy czyta pomiędzy plikami
 vec_reg=function(x){
   if(sum(x)==0){
     return(x)

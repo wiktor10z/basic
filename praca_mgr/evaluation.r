@@ -267,6 +267,8 @@ multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
   return(results)
 }
 
+#łączenie różnych poprzez użycie cbind
+
 cut_result1=function(df1,point_list=c(-items*1000)){
   if(is.null(ncol(df1))){
     if(length(point_list)==1){
@@ -292,7 +294,7 @@ cut_to_bar=function(result_list,point){
 }
 
 #TODO znowu coś się legenda rozjeżdża
-multi_plot=function(result_list,title,point_list=c(-items*1000),big=0,color=TRUE){#TODO zmienić nazwę df_list, na coś bardziej pasującego
+multi_plot=function(result_list,title="",point_list=c(-items*1000),big=0,color=TRUE){
   l=length(result_list)
   if((length(point_list)==1)&&(point_list!=c(-items*1000))){
     title=paste(title," at ",point_list[[1]])
@@ -312,7 +314,7 @@ multi_plot=function(result_list,title,point_list=c(-items*1000),big=0,color=TRUE
     ymin1=min(unlist(lapply(result_list,function(x){min(x[,2])})))
     ymax1=max(unlist(lapply(result_list,function(x){max(x[,2])})))
     ylim1=c(ymin1,ymax1)
-    if(big==1){# TODO os jeszcze nie działa
+    if(big==1){# TODO cos jeszcze nie działa
       inset1=c(-0.28,-0.15)
       seglen1=1
       xinter1=0.3
@@ -358,35 +360,4 @@ plot_to_file=function(file_name,result_list,title,point_list=c(-items*1000),colo
   png(file_name,width=3000,height=1500,units="px",res=200)
   multi_plot(result_list,title,point_list,big=2,color)
   dev.off()
-}
-
-if(FALSE){
-  # to wystarczy w większości przypadków - jak jest mniej niż item-resolution przedmiotów dla klienta w testowym
-  # ale nie jest wcale szybsze
-  normalize_roc2=function(roc1,resolution=1000){
-    if((sum(is.nan(roc1[,1]))>0)||(sum(is.nan(roc1[,2]))>0)){
-      return(trivial_roc(resolution))
-    }else{
-      #roc3=data.frame(rep(0,resolution),rep(0,resolution))    
-      roc2=data.frame(t(apply(roc1,1,function(l){c(round(resolution*l[1])/resolution,l[2])})))
-      colnames(roc2)<-c("FP","TP")
-      roc3=do.call(rbind, by(roc2, roc2$FP, FUN=function(X) X[which.min(X$TP),]))
-      return(roc3[1:resolution,])
-    }
-  }
-  
-  recs_AveP2=function(recs,only_best=FALSE){#strona kaggle
-    hit_vec=hit_vector(recs,only_best)
-    prec1=hit_precision(hit_vec)
-    return(do.call(rbind,lapply(1:users,function(u){
-      if(sum(hit_vec[[u]])==0){
-        rep(0,items)
-      }else{
-        cumsum(prec1[u,]*hit_vec[[u]])/pmin(sum(hit_vec[[u]]),1:items)
-      }
-    })))
-  }
-  recs_MAP2=function(recs,only_best=FALSE){
-    return(colSums(recs_AveP2(recs,only_best))/users)
-  }  
 }
