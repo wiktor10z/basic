@@ -248,7 +248,7 @@ Instytut Informatyki}
    %TODO we wzorach z wieloma indeksami dolnymi utrzymać spójne oznaczenia
    %- albo z przecinkiem albo bez (jak gdzieś indeksy nie 1 literowe, to lepiej z przecinkiem)
    \subsection{Slope One}
-    Popularnym algorytmem wykorzystującym podobieństwo pomiędzy parami przedmiotów w nieco inny sposób jest Slope One.
+    Popularnym algorytmem wykorzystującym podobieństwo pomiędzy parami przedmiotów w nieco inny sposób jest Slope One (opisane w pracy \cite{SO}).
     Algorytm zamiast stosować wyszukane miary podobieństwa statystycznego wektorów dla każdej pary przedmiotów zapamiętuje jedynie ilość
     użytkowniów którzy ocenili oba i sumaryczną różnicę w ich ocenach.\newline
     Predykcja ocen przedmiotów nieocenionych przebiega w tej metodzie również trochę inaczej.
@@ -337,7 +337,7 @@ Instytut Informatyki}
      prędkości uczenia w założeniu symulują proces dojścia do rozwiązania takiego jak w kompresji $SVD$.
      %TODO ujednolicić literę oznaczającą macierz treningową - "M" "A" ...
     \subsubsection{Algorytm SVD++}
-     Najczęściej uzywanym rozszerzeniem modelu SVD jest algorytm SVD++, korzystający również z informacji implicite.
+     Najczęściej uzywanym rozszerzeniem modelu SVD jest algorytm SVD++ (opisany w pracy \cite{SVD++}), korzystający również z informacji implicite.
      Do modelu dodane zostają wektory $y_i\in\mathbb{R}^f$ reprezentujące informacje o użyciach przedmiotów.
      Równanie docelowe przyjmuje postać:
      \begin{center}
@@ -379,7 +379,7 @@ Instytut Informatyki}
     faktoryzacja macierzy oparta o analizę bayesowską prawdopodobieństw.\newline
     Mając dostępną binarną macierz użyć przedmiotów traktujemy negatywne wartości bardziej jako wartość nieznaną niż jako stwierdzenie,
     że dany przedmiot nie podobał się użytkownikowi. Aby uzyskać więcej niż dwie wartości, a przez to i rozróżnienie w obrębie przedmiotów nieznanych
-    model BPR (Bayesian personalized ranking) stara się oszacować dla danego użytkownika i każdej pary przedmiotów prawdopodobieństwo,
+    model BPR (Bayesian personalized ranking, opisany w pracy \cite{BPR}) stara się oszacować dla danego użytkownika i każdej pary przedmiotów prawdopodobieństwo,
     że preferuje on pierwszy z nich. Aby uzyskać początkowe dane używane do filtrowania kolaboratywnego pomiedzy użytkownikami
     przyjmujemy, że te już użyte są bardziej preferowane od nieznanych i dla każdego wiersza macierzy tworzymy nową macierz kwadratową.
      \begin{multicols}{3}
@@ -493,7 +493,8 @@ Instytut Informatyki}
     \item Meta-poziom -- jeden system generuje model, który stanowi wejście drugiego systemu
    \end{itemize}
    \subsection{gSVD++}
-    Jednym z podstawowych hybrydowych systemów rekomendacyjnych (typu połączenie cech) jest algorytm gSVD++ (generalized singular value decomposition),
+    Jednym z podstawowych hybrydowych systemów rekomendacyjnych (typu połączenie cech) jest algorytm gSVD++
+    (generalized singular value decomposition, opisany w pracy \cite{gSVD++}),
     będący wzbogaceniem podstawowego modelu SVD o informacje na temat kategorii do których należą przedmioty.
     Algorytm zakłada, stałą niewielką liczbę kategorii, do której zakwalifikowane są przedmioty, przy czym jeden przedmiot może być zakwalifikowany do wielu
     kategorii na raz.
@@ -777,6 +778,7 @@ Instytut Informatyki}
     %TODO może indeksy qx1 na qx_1 - sprawdzić które lepiej wyglądają
     %TODO indeksy przy lambdach we wszystkich wzorach
   \section{TODO - sekcja o ulepszeniach - zupełnie nowe algorytmy}
+  %TODO napisać, że complex mimo że nowy to tak na prawdę jest ulepszeniem
    \subsection{Complex}
     %TODO wpisanie poprawek CF mogło coś zmienić w braku możliwości CF na patrzenie na dalsze odległości
     %TODO skoro to "ulepszenie", to warto napisać coś żeby to wyglądało na zmienienie pomysłu z CF - szybsze i usprawnione CF dla dalszych
@@ -796,7 +798,7 @@ Instytut Informatyki}
     Jednym z rozwiązań problemu jest posłużenie się również dłuższymi ścieżkami, takie podejście może jednak napotkać barierę złożonościową
     (algorytmy CF i SO do wyliczenia wszystkich ocen potrzebują czasu $\Omega(m^2n)$ dla macierzy o rozmiarach $m\times n$ badając tylko bardzo krótkie ścieżki,
     przy dłuższych ten czas ulegałby potęgowaniu), dlatego aby uzyskać lepsze wyniki w rozsądnym czasie model podobieństwa musi zostać uproszczony.
-    %tutaj już można o COMPLEX
+    %
     Jeden z modeli wykorzystujących dalsze podobieństwo w praktyce został zaproponowany w \cite{205}. Algorytm Complex upodobanie użytkownika do przedmiotu
     predykuje jako sumę wartości po ścieżkach wiodących od użytkownika do tego przedmiotu aplikując do nich wagi zmniejszające się wraz z rosnącą ich długością.
     Twórcy algorytmu wykorzystują model grafowy w którym upodobanie oznaczone jest poprzez krawędzie skierowane
@@ -919,7 +921,7 @@ Instytut Informatyki}
    ($1-\frac{\text{ilość ocen}}{\text{ilość wszystkich możliwych}}$), dosyć mały przy porównaniu z większością innych baz danych.
    Oznacza to też, że użytkownicy ocenili średnio po 106 przedmiotów, zaś średnia popularność filmów wyniosła 59.
    Do danych dołączone jest dodatkowo 5 zbiorów treningowych i 5 testowych stworzonych do badania systemów przy pomocy 5 krotnej cross-walidacji
-   (całe dane podzialone na 5 części, zbiór testowy to jedna z tych części, zaś odpowiedni treningowy to pozostałe części).
+   (całe dane zostają podzialone na 5 równych co do wielkości części, zbiór testowy to jedna z tych części, zaś odpowiedni treningowy to reszta danych).
    W moich ocenach algorytmów korzystam właśnie z tego podziału (wartości odpowiednich miar dla systemu jest średnią po 5 wartościach
    otrzymanych przez uczenie modelu na zbiorze treningowym i ocenianiu na podstawie odpowiedniego testowego).
   \section{Załączona implementacja algorytmów}%TODO jakiś lepszy tytuł
@@ -944,33 +946,49 @@ Instytut Informatyki}
     \item w wielu wzorach pojawiają się przypadki gdy pewna wartość jest wyliczana jako $\frac{0}{0}$, należy to zazwyczaj traktować jako $0$.
    \end{itemize}
   
-  \section{Evaluacja predykcji ocen}
+  \section{Ewaluacja predykcji ocen}
    
     
 \begin{thebibliography}{99}%TODO
 \addcontentsline{toc}{chapter}{Bibliografia}
-  %my media lite rowe
-  %ewentualnie wikipedia - nie wiem czy trzeba podstrony - podstawowe algorytmy jak SO,CF
   %wikipedia en - recemender system
-  
   %TODO czy MovieLens też tutaj dać 
   
-  \bibitem[191]{191} Marcelo G. Manzato, Marcos A. Domingues, Solange O. Rezende,
+  \bibitem{SO} Daniel Lemire, Anna Maclachlan,
+  "Slope One Predictors for Online Rating-Based Collaborative Filtering"
+  \textit{SIAM Data Mining (SDM'05), Newport Beach, California, April 21-23, 2005}  
+  
+  \bibitem{SVD++} Yehuda Koren,
+  "Factorization meets the neighborhood: a multifaceted collaborative filtering model"
+  \textit{KDD '08 Proceedings of the 14th ACM SIGKDD international conference on Knowledge discovery and data mining}
+  Pages 426 -- 434 
+  
+  \bibitem{BPR} Steffen Rendle, Christoph Freudenthaler, Zeno Gantner and Lars Schmidt-Thieme,
+  “BPR: Bayesian personalized ranking from implicit feedback”
+  \textit{UAI '09 Proceedings of the Twenty-Fifth Conference on Uncertainty in Artificial Intelligence}
+  Pages 452 -- 461
+  
+  \bibitem{gSVD++} Marcelo Garcia Manzato,
+  "gSVD++: supporting implicit feedback on recommender systems with metadata awareness"
+  \textit{SAC '13 Proceedings of the 28th Annual ACM Symposium on Applied Computing}
+  Pages 908 -- 913
+
+  \bibitem{191} Marcelo G. Manzato, Marcos A. Domingues, Solange O. Rezende,
   "Optimizing Personalized Ranking in Recommender Systems with Metadata Awareness"
   \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
-  pp. 191 - 197
+  Pages 191 -- 197
   
-  \bibitem[205]{205} Feng Xie, Zhen Chen, Jiaxing, Xiaoping Feng, Wenliang Huang, Jun Li,
+  \bibitem{205} Feng Xie, Zhen Chen, Jiaxing, Xiaoping Feng, Wenliang Huang, Jun Li,
   "A Link Prediction Approach for Item Recommendation with Complex Number"
   \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
-  pp. 205 - 212
+  Pages 205 -- 212
 
-  \bibitem[221]{221} Anna Satsiou and Leandros Tassiulas,
+  \bibitem{221} Anna Satsiou and Leandros Tassiulas,
   "Propagating Users’ Similarity towards improving Recommender Systems"
   \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)},
-  pp. 221 - 228
+  Pages 221 -- 228
 
-  \bibitem[MML]{MML} Zeno Gantner, Steffen Rendle, Lucas Drumond, and Christoph Freudenthaler
+  \bibitem{MML} Zeno Gantner, Steffen Rendle, Lucas Drumond, and Christoph Freudenthaler
   \textit{MyMediaLite}
   \url{http://www.mymedialite.net/index.html}
 
