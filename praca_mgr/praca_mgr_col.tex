@@ -1024,22 +1024,21 @@ Instytut Informatyki}
    przejrzystość CF będzie reprezentowane przez wartości otrzymane przy podobieństwie przedmiotów
    (pozostałe miary jakości w większości też preferują podobieństwo przedmiotów).
    Wartości dla CF przy różnych funkcji podobieństwa można odczytać z wykresów:
-   %TODO można napisać, że tu im większy słupek tym gorzej :)
    \begin{center}
-    \includegraphics[scale=0.35]{CF_item_MAE.jpg}
+    \includegraphics[scale=0.35]{CF_item_MAE_color.jpg}
    \end{center}
    \begin{center}
-    \includegraphics[scale=0.35]{CF_item_MSE.jpg}
+    \includegraphics[scale=0.35]{CF_item_MSE_color.jpg}
    \end{center}
    Jak widać użycie współczynnika podobieństwa poprawia wyniki, podobnie jak uzupełnienie podobieństwa korelacji Paersona przez alternatywne podobieństwo.
    Dodanie dalszego poobieństwa w przypadku podobieństwa przedmiotów nieznacznie pogarsza wyniki (oznacza to, że tym przypadkom lepiej przypisać wartość
    minimalną niż średnią z ocen mało związanych przedmiotów), jednak przy podobieństwie uzytkowników sytuacja jest odwrotna.
    Można teraz porównać CF z innymi algorytmami tworzącymi predykcje ocen:
    \begin{center}
-    \includegraphics[scale=0.35]{MAE2.jpg}
+    \includegraphics[scale=0.35]{MAE2_color.jpg}
    \end{center}
    \begin{center}
-    \includegraphics[scale=0.35]{MSE2.jpg}
+    \includegraphics[scale=0.35]{MSE2_color.jpg}
    \end{center}
    Jak widać po poprawieniu CF potrafi uzyskiwać lepsze wyniki niż algorytmy z grupy SVD (choć przy 20 iteracjach działa dużo wolniej).
    Widać, że zmiana SVD na SVD++ nie daje żadnej poprawy, jednak jest to związane z tym, że w bazie danych nie ma dodatkowego wejścia implicite.
