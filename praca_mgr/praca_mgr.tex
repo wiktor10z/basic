@@ -263,7 +263,7 @@ Instytut Informatyki}
      $R_{ij}$ -- zbiór użytkowników, którzy ocenili zarówno przedmiot $i$ jak i $j$,\newline
      $\text{diff}_{ij}$ -- średnia różnica ocen pomiedzy przedmiotami $i$ oraz $j$ (w przeciwieństwie do wszystkich podobieństw antysymetryczna)
     }\newline
-    W przeciwieństwie do algorytmu CF który tak na prawdę do predykcji ocen wykorzystuje regresję liniową ($f(x)=ax+b$),
+    W przeciwieństwie do algorytmu CF który tak naprawdę do predykcji ocen wykorzystuje regresję liniową ($f(x)=ax+b$),
     SO wykorzysutje prostszą regresję jedno parametrową ($f(x)=x+b$). Użycie tak prostego modelu czyni algorytm o wiele bardziej odpornym na przeuczenie.
     %TODO może rozwinąć temat definicji overfittingu - nie wiem czy uznać problem przeuczenia jako oczywisty
    \subsection{Rozkład według wartości osobliwych}
@@ -596,7 +596,7 @@ Instytut Informatyki}
      jednego z użytkowników dla których oceniane jest podobieństwo.
     \subsubsection{współczynnik podobieństwa}
      Głównym zagrożeniem wynikającym z obliczania standardowych funkcji podobieństwa dla małych ilości wspólnie ocenionych przedmiotów jest możliwość
-     zwrócenia dużego podobieństwa w sytuacji gdy tak na prawdę użytkownicy nie są wcale podobni
+     zwrócenia dużego podobieństwa w sytuacji gdy tak naprawdę użytkownicy nie są wcale podobni
      (w przypadku PC i kosinusowego dla jednego wspólnego przedmiotu wartość będzie zawsze równa $1$).
      W takim przypadku przy predykcji oceny wartości wystawione przez tych sąsiadów mają duże znaczenie, zaburzając działanie systemu.
      Sposobem poradzenia sobie z takimi przypadkami niewymagającym trudnych do zdefiniowania funkcji podobieństwa jest zmiana wag
@@ -778,7 +778,7 @@ Instytut Informatyki}
     %TODO może indeksy qx1 na qx_1 - sprawdzić które lepiej wyglądają
     %TODO indeksy przy lambdach we wszystkich wzorach
   \section{TODO - sekcja o ulepszeniach - zupełnie nowe algorytmy}
-  %TODO napisać, że complex mimo że nowy to tak na prawdę jest ulepszeniem
+  %TODO napisać, że complex mimo że nowy to tak naprawdę jest ulepszeniem
    \subsection{Complex}
     %TODO wpisanie poprawek CF mogło coś zmienić w braku możliwości CF na patrzenie na dalsze odległości
     %TODO skoro to "ulepszenie", to warto napisać coś żeby to wyglądało na zmienienie pomysłu z CF - szybsze i usprawnione CF dla dalszych
@@ -1048,8 +1048,75 @@ Instytut Informatyki}
    w jakim znajdują się te oceny na [1,5] otrzymać odpowiednie wartości dla algorytmów o wejściu implicite, nie otrzymuja one jednak tak dobrych wyników.
    Algorytmy te otrzymują wartości od $MAE=0.91,MSE=1.32$ do $MAE=1.61,MSE=3.54$ a więc porównywalne do losowych ocen o
    wartościach $MAE=1.38,MSE=2.88$
+  \section{Jakość list rekomendacyjnych}
+   Ocena rekomendacji zwracanych użytkownikom jest bardziej skomplikowana -- ważne jest to, żeby jak najwięcej z przedmiotów proponowanych rzeczywiście trafiało
+   w gusta użytkownika, jednak w zależności od zastosowań używane mogą być listy różnych długości.
+   Jedne algorytmy mogą bardzo dobrze radzić sobie z wyborem pojedynczego najlepszego przedmiotu,
+   jednocześnie nie radząc sobie z generowaniem większych ilości propozycji, dlatego też stosowana
+   jest większa ilość miar badających różne własności generowanych list.
+   \subsection{ROC i AUC}
+    Ocenianą uporządkowaną listę przedmiotów przypisaną przez algorytm użytkownikowi można znając zbiór testowy uprościć do postaci binarnej
+    poprzez przypisanie $1$ dla trafionej rekomendacji (para (użytkownik,przedmiot) znajdowała się w zbiorze testowym), oraz $0$ w przeciwnym przypadku.
+    Jako, że każdy z zaprezentowanych tu algorytmów tak naprawdę zwraca dla każdej pary (użytkownik, przedmiot) jakąś ocenę,
+    to listy rekomendacyjne wygenerowane poprzez wzięcie dla użytkownika przedmotów których nie użył w zbiorze treningowym o najlepszych ocenach
+    mogą być dowolnych długości (aż do ilości wszystkich przedmiotów nie użytych w zbiorze testowym).
+    Dla dwóch list tej samej długości i z taką samą ilością $1$ (odpowiadającym jednemu uzytkownikowi i dwóm algorytmom) lepsza jest ta,
+    dla której te jedynki znajdują się wcześniej, nie jest to jednak dobrze sprecyzowane pojęcie.
+    Jedną z metod oceny takich list jest krzywa ROC (receiver operating characteristic), która dla każdego prefiksu listy zlicza osobno
+    jaki procent liczby wszystkich $1$ i $0$ już się pojawił, otrzymując dwie wartości:
+    \begin{center}
+     $TPR(n)=\frac{TP(n)}{TP(\infty)}\quad\quad\quad\quad\quad
+     FPR(n)=\frac{FP(n)}{FP(\infty)}$
+    \end{center}
+    {\scriptsize
+     gdzie $TP(n)$, to ilość $1$ w prefiksie długości $n$, $FP(n)$ to ilość $0$, zaś długość prefiksu $\infty$ oznacza całą listę
+    }\newline
+    Dla każdej długości prefiksu do układu współrzędnych wprowadzany jest punkt $(FPR(n),TPR(n))$, tworząc wykres "funkcji"
+    (mogą występować punkty o tej samej współrzędnej $x$) niemalejącej. Krzywą ROC dla systemu otrzymujemy poprzez uśrednienie wyników
+    po wszystkich użytkownikach (średnia wszystkich "funkcji"), ignorując użytkowników, którzy w zbiorze testowym nie użyli żadnego przedmiotu,
+    lub użyli wszystkie, aby uniknąć wartości $\frac{0}{0}$.
+    Otrzymane w ten sposób wykresy można porównać ze sobą -- miejsca dla których jeden wykres przyjmuje większą wartość od drugiego pokazują
+    dla list jakiej długości algorytm zwraca więcej trafnych przedmiotów. Dzięki takiemu przedstawieniu ułatwiony jest wybór długości list rekomendacyjnych
+    jakie zwaracać powinien nasz system, oraz dobranie algorytmu do tej długości
+    (lub stworzenie nowego systemu hybrydowego, który przyjmuje długość list jako parametr i używa tego algorytmu, który najlepiej sprawdza się w danym przypadku).
+    W przypadku przecinających się wykresów aby wybrać jeden algorytm niezaleznie od długości list często wyliczane jest AUC (area under curve) --
+    powierzchnia pod wykresem krzywej ROC wyliczana jako całka (być może dyskretna) z "funkcji" opisującej tę krzywą.
+    Warto jeszcze dodać, że w zależności od celu systemu można jako trafienie uznać tylko predykcje, których oceny w zbiorze testowym są powyżej pewnego poziomu,
+    lub też zamiast wartości $1$ użyć prawdziwych ocen ze zbioru testowego (jako $TP(n)$ używając sumy wartości z prefiksu)
+    i dzięki temu uzyskać dodatkowy efekt rozróżnenia jakości.
+    Warto jeszcze wspomnieć, że sensowny system powinien mieć wykres powyżej krzywej $y=x$ (AUC=0.5) odpowiadającej losowej kolejności przedmiotów
+    oraz że nie da się przekroczyć optymalnej krzywej $y=1$ (AUC=1).
+    %TODO przedstawić to tak, żeby nie było wrażenia, że to jest do dobierania długości w prawdziwym systemie
+   \subsection{Precyzja i MAP}
+    W przypadku krzywej ROC badanie wartości dla krótkich list mija się z celem -- jeśli lista rekomendacji ma długość rzędu 1\% liczby wszystkich przedmiotów
+    (a w rzeczywistości listy są o wiele krótsze), to wartości dla kilku porównywanych algorytmów odczytywane
+    z krzywej nie zdążą się jeszcze rozejść od startowego punktu $(0,0)$.\newline
+    Miarą dającą lepsze informacje na temat jakości krótkich list rekomendacyjnych jest
+    precyzja zdefiniowana dla pojedynczego uzytkownika jako stosunek ilości trafionych rekomendacji do wszystkich:
+    \begin{center}
+     $Precision(n)=\frac{TP(n)}{n}$
+    \end{center}
+    zaś dla systemu jako średnia tych wartości po wszystkich użytkownikach.\newline
+    Dzięki tej mierze można dobrać algorytm do generowania list rekomendacyjnych w prawdziwych systemach proponujących przedmioty użytkownikom.
+    Jeżeli chcemy dodatkowo zadbać żeby początkowe rekomendacje na liście były jak najlepsze
+    (początkowe rekomendacje są ważniejsze, a końcówka listy służy jako dodatek) wtedy warto rozpatrzyc wartości otrzymywane według zmodyfikowanej precyzji
+    która bierze tę kolejność pod uwagę.
+    AveP (average precision) jest zdefiniowane dla użytkownika następującym wzorem:
+    \begin{center}
+     $AveP(n)=\sum\limits_{i=1}^{n}Precision(i)*V[i]$
+    \end{center} 
+    {\scriptsize
+     gdzie $V[i]$, to wartość wektora trafień (to czy $i$-ty przedmiot zarekomendowany uzytkownikowi był trafiony)
+    }\newline
+    Zaś wartość MAP (mean average precision) jest wektorem wartości dla systemu zdefiniowanym jako średnia AveP po użytkownikach.
+   \subsection{Porównanie systemów}
    
    
+   
+   \subsection{Pokrycie}
+    
+    
+    
 \begin{thebibliography}{99}%TODO
 \addcontentsline{toc}{chapter}{Bibliografia}
   %wikipedia en - recemender system
