@@ -1026,14 +1026,14 @@ Instytut Informatyki}
     \item algorytm Complex na wejściu explicite i implicite + możliwe regularyzacje
    \end{itemize}  
    Jako, że dla każdej dostępnej opcji w algorytmach grupy SVD i BPR (ilość iteracji, długość wektorów, szybkość uczenia, stałe regularyzacyjne)
-   ilość mozliwości jest zbyt duża do przetestowania każdej sensownej kombinacji dobrałem ilość iteracji na $20$
-   (w przypadku BPR $20\cdot$(rozmiar zbioru treningowego)), długość wektorów na $5$
+   ilość mozliwości jest zbyt duża do przetestowania każdej sensownej kombinacji dobrałem ilość iteracji na $40$
+   (w przypadku BPR $40\cdot$(rozmiar zbioru treningowego)) aby czas działania algorytmów był podobny do tych z grupy CF, długość wektorów na $5$
    (dosyć mała w porównaniu z używanymi w pracach do których się odnoszę, jednak z eksperymentów wynikało, że jej zwiększanie w testowanym przypadku
    pogarsza wyniki). Pozostałe opcje dobrane zostały w sposób eksperymentalny
    (ze względu na zbyt duzy czas działania algorytmów automatyczne metody ustalania optymalnych parametrów nie mogły zostać poprawnie zastosowane),
    tak aby w przypadku algorytmów predykcji ocen minimalizować błędy, zaś w przypadku algorytmów z grupy $BPR$, aby maksymalizować precyzję
    krótkich lista rankingowych (szczegóły dotyczące ocen systemów znajdują się w następnych podrozdziałach).
-   Wartości szybkości uczenia zostały ustalone na $0.01$ w przypadku algorytmów $SVD$, oraz $0.04$ dla algorytmów z grupy $BPR$.
+   Wartości szybkości uczenia zostały ustalone na $0.005$ w przypadku algorytmów $SVD$, oraz $0.02$ dla algorytmów z grupy $BPR$.
    Stałe regularyzacyjne uzywane w porównaniach przyjmują natomiast wartości:\newline
    dla algorytmów SVD:\newline
    $\lambda_b=\lambda_{b_2}=0.01,\lambda_p=\lambda_q=\lambda_y=0.3,\lambda_x=0.15$\newline
@@ -1090,6 +1090,7 @@ Instytut Informatyki}
    \begin{center}
     \includegraphics[scale=0.35]{img/CF_item_MSE.jpg}
    \end{center}
+   %TODO podpisać wykresy
    Jak widać użycie współczynnika podobieństwa poprawia wyniki, podobnie jak uzupełnienie podobieństwa korelacji Paersona przez alternatywne podobieństwo.
    Dodanie dalszego poobieństwa w przypadku podobieństwa przedmiotów daje nieistotne ulepszenie,
    przy podobieństwie uzytkowników poprawa jest większa lecz dalej ledwo zauważalna (poniżej 0.5\% zmniejszenia błędów),
@@ -1102,13 +1103,15 @@ Instytut Informatyki}
    \begin{center}
     \includegraphics[scale=0.35]{img/MSE2.jpg}
    \end{center}
-   Jak widać po poprawieniu CF potrafi uzyskiwać lepsze wyniki niż algorytmy z grupy SVD (choć przy 20 iteracjach działa dużo wolniej).
+   Jak widać po poprawieniu CF potrafi uzyskiwać lepsze wyniki niż algorytmy z grupy SVD
+   (które jednak bez dużej straty można przyśpieszyć zmniejszając liczbę iteracji).
    Widać, że zmiana SVD na SVD++ nie daje żadnej poprawy, jednak jest to związane z tym, że w bazie danych nie ma dodatkowego wejścia implicite.
    Dodanie wiedzy o kategoriach przedmiotów (używając gSVD++) też nie dodaje tutaj wiele wartości predykcjom systemu.
    Każdy z algorytmów tu przedstawionych zwraca pewne wartości dla każdej pary użytkownik przedmiot, można poprzez afiniczne przeniesienie przedziału
    w jakim znajdują się te oceny na [1,5] otrzymać odpowiednie wartości dla algorytmów o wejściu implicite, nie otrzymuja one jednak tak dobrych wyników.
    Algorytmy te otrzymują wartości od $MAE=0.91,MSE=1.32$ do $MAE=1.61,MSE=3.54$ a więc porównywalne do losowych ocen o
    wartościach $MAE=1.38,MSE=2.88$
+   %TODO uaktualnić po przeliczeniu SVD,BPR
   \section{Jakość list rekomendacyjnych}
    Ocena rekomendacji zwracanych użytkownikom jest bardziej skomplikowana -- ważne jest to, żeby jak najwięcej z przedmiotów proponowanych rzeczywiście trafiało
    w gusta użytkownika, jednak w zależności od zastosowań używane mogą być listy różnych długości.
@@ -1173,12 +1176,13 @@ Instytut Informatyki}
    \subsection{Porównanie systemów}
     Porównanie jakości list rankingowych można rozpocząć od spojrzenia na wykresy ROC i precyzji (dla list długości od 1 do 100)
     dla wszystkich porównywanych systemów.\newline
-    \includegraphics[scale=0.2]{img/ROC_all2.jpg}
+    \includegraphics[scale=0.2]{img/ROC_all.jpg}
     \includegraphics[scale=0.2]{img/Prec_all_100.jpg}\newline
     O ile ciężko z nich odczytać wartości dla konkretnych algorytmów, o tyle daje sie zauważyć wyraźny podział na 4 grupy
     (w przypadku precyzji dwie pierwsze grupy się łączą) - w kolejności od najgorszych
     rekomendacje losowe, systemy z wejściem explicite (bez complex), algorytmy z wejściem implicite (wraz z complex), rekomendacje optymalne
-    (sztucznie wygenerowane w celu porównania). Wartości AUC dla środkowych grup mieszczą się w przedziałach [0.696,0.751] oraz [0.838,0.937],
+    (sztucznie wygenerowane w celu porównania). Wartości AUC dla środkowych grup mieszczą się w przedziałach $[0.696,0.751]$ oraz $[0.838,0.937]$,
+    %TODO uaktualnić po przeliczeniu SVD,BPR
     (losowy -- 0.5, optymalny -- 1), a więc rozgraniczenie jest wyraźne również po wzięciu pod uwagę różnic wartości wewnątrz grup.
     Taki sam rozdział występuje przy porównywaniu tych miar po uwzględnieniu rozróżnienia pomiędzy ocenami
     ze zbioru testowego (wyższa ocena - ważniejsza predykcja lub tylko najlepsze oceny się liczą), oraz przy uzywaniu miary MAP
@@ -1194,10 +1198,13 @@ Instytut Informatyki}
      Lepsze wyniki uzyskuje sie przy użyciu danych zgodnych z typem danych testowych ($\{0,1\}$ dla implicite,
      $\{-1,0,1\}$ dla poszukiwania wyłącznie najlepszych). W obu przypadkach dodanie regularyzacji poprawia wyniki,
      reguralyzacja przedmiotów uzyskuje lepsze wyniki niż regularyzacja użytkowników, zaś uzycie obu daje jeszcze lepsze rezultaty,
-     wyjątkiem jest użycie szmej regularyzacji użytkowników na danych %TODO
-     która to kombinacja uzyskuje wyniki gorsze od siedmiu pozostałych w obu przypadkach testowych.
+     wyjątkiem jest użycie samej regularyzacji użytkowników na danych w formacie $\{-1,0,1\}$,
+     która to kombinacja uzyskuje wyniki gorsze od siedmiu pozostałych w obu przypadkach testowych.\newline
+     \includegraphics[scale=0.4]{img/Prec_Complex_exp.jpg}\newline
+     \includegraphics[scale=0.4]{img/Prec_Complex_impl.jpg}
      %TODO wykresy
     \subsubsection{MABPR}
+     
     
    %TODO teraz już tylko porównanie w grupie implicite
    %TODO porównanie Complex - najlepsze ui, implicit,explicit w zależności od tego czy wszystkie czy najlepsze
@@ -1221,7 +1228,24 @@ Instytut Informatyki}
     Miara ta szczególnie dobrze pokazuje jak bardzo spersonalizowane sa rekomendacje (techniki niespersonalizowane dają bardzo niskie wyniki w tej mierze),
     jednak nie nalezy kierować się nią jako głównym kryterium, gdyż bardzo faworyzuje ona losowe rekomendacje.
     Dodatkowo z racji nie korzystania ze zbioru testowego przy wyliczaniu miary łatwo stworzyć listy ją maksymalizujące
-    a jednocześnie zwracające rekomendacje gorsze niż losowanie.
+    a jednocześnie zwracające rekomendacje gorsze niż losowanie.\newline
+    \includegraphics[scale=0.2]{img/Cov_non_per.jpg}
+    \includegraphics[scale=0.2]{img/Cov_CF.jpg}\newline
+    \includegraphics[scale=0.2]{img/Cov_SVD.jpg}
+    \includegraphics[scale=0.2]{img/Cov_Complex.jpg}\newline
+    W przypadku algorytmów z grupy CF podobnie jak w przypadku błędów przewidywania ocen użycie podobieństwa przedmiotów oraz współczynnika podobieństwa
+    poprawia wyniki w każdym przypadku. Porównanie pomiędzy różnymi miarami podobieństwa wypada jednak inaczej i dodanie alternatywnego podobieństwa oraz dalszych
+    sąsiedztw ogranicza różnorodność.
+    Pokrycie w algorytmach z grup SVD i BPR wzrasta wraz z ilością ulepszeń i daje dużo wyraźniejsze rozróżnienie niż wcześniejsze miary, pokazuje więc, 
+    że pomimo nikłych zysków z ulepszeń, ich zastosowanie może mieć pozytywny wpływ na działanie systemu na dłuższą metę.
+    Dla algorytmu Complex regularyzacje dla użytkowników dają większą różnorodność, zaś dla przedmiotów ją zmniejszają
+    (ich połączenie wypada trochę powyżej zwykłego). Używanie wejścia w formacie $\{-1,0,1\}$ dodatkowo poprawia wartość tej miary,
+    czyniąc algorytm Complex z regularyzacją użytkowników (ten który najsłabiej radzi sobie z pozostałymi miarami spośród Complex)
+    najlepszym po losowym (i na równi z sztucznym optymalnym) algorytmem jeżeli chodzi o różnorodność rekomendacji.
+    \begin{center}
+    \includegraphics[scale=0.3]{img/Cov_between.jpg}
+    \end{center}
+    %TODO jeśli lepszy od tych BPR, to dopisać w nawiasie, że lepszy
     %TODOTODO zrobić porównanie
    \section{Porównanie czasowe}
    % CF - 370s, CF item - 586s
