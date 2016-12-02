@@ -49,9 +49,69 @@ Instytut Informatyki}
 
 %TODO można dodać coś o systemach bazujących na "kuratorach" - osobach proponujących itp.
 %TODO przy sumowaniach we wzorach zobaczyć czy lepiej dać \limits, czy bez i dać wszędzie tak samo
-\chapter*{Wprowadzenie}
-\addcontentsline{toc}{chapter}{Wprowadzenie}
+ \chapter*{Wprowadzenie}
+ \addcontentsline{toc}{chapter}{Wprowadzenie}
+  W dzisiejszym świecie dzięki globalizacji, rozwojowi mediów i łatwiejszemu transportowi ludzie mają dostęp do coraz większej ilości produktów. 
+  Różnorodność towarów i mnogość dóbr intelektualnych dostępnych człowiekowi stała się tak duża, że nikt nie jest w stanie zapoznać się z wszystkimi
+  możliwościami produktów, które mogły by go zainteresować. W takiej sytuacji coraz bardziej przydatne stają się systemy które mogłyby pomóc użytkownikowi
+  w znajdowaniu takich rzeczy, a do tego były szybkie i nie wymagały od użytkownika dokładnego precyzowania jego oczekiwań.
+  Rozwiązaniem dla tego zapotrzebowania są systemy rekomendacyjne, które na podstawie znanych informacji o uzytkowniku
+  i historii jego zakupów lub użyć przedmiotów mogą znaleźć inne produkty, które powinny go zainteresować i dzięki temu ograniczyć czas i uciążliwość
+  samodzielnego ich poszukiwania.\newline
+  Systemy rekomendacyjne znajdują swoje zastosowanie w sklepach internetowych, reklamach przeglądarkowych
+  (która reklama może zainteresować konkretnego uzytkownika), stronach dających dostęp do filmów, książek czy utworów muzycznych
+  w których to przypadkach dodatkowym plusem jest to, że użytkownik nie musi podejmować wysiłku związanego z załączaniem informacji o sobie ani
+  o swoich upodobaniach, gdyż wystarczające są informacje o jego przeszłych działaniach na konkretnej stronie
+  (choć załączenie takich informacji pozwala na jeszcze lepsze predykcje). Dodatkowo jeśli dostępne są informacje o odczuciach użytkownika
+  na temat pewnych przedmiotów (oceny, komentarze) możliwe jest przewidzenie takiej oceny odnośnie nieznanego jeszcze produktu, co może pomóc uzytkownikowi
+  w podjęciu decyzji o jego kupnie czy użyciu.\newline
+  Aby taka funkcjonalność przynosiła wymierne korzyści predykcje powinny być jak najlepsze. Oznacza to popyt na jak najlepsze algorytmy,
+  zarówno te które dobrze radzą sobie w ogólnym przypadku jak i te stworzone dla konkretnego zastosowania.\newline
+  Badania nad tworzeniem coraz lepszych systemów rekomendacyjnych w dużej mierze skupiają się nad ulepszaniem algorytmów znanych
+  uprzednio, dodawianiem do nich dodatkowych części, wyspecjalizowywaniem do konkretnych zastosowań,
+  lub dostosowaniem do takich w których wcześniej sobie nie radził.\newline
+  
+  Niniejsza praca ma na celu przedstawienie różnych algorytmów używanych w systemach rekomendacyjnych, pokazanie kilku ich ulepszeń oraz
+  dokładne i możliwie obiektywne porównanie wyników przez nie osiąganych (w przypadku nowszych algorytmów wcześniej niedostępne).\newline
+ 
+  Praca składa się z czterech rozdziałów. W pierwszym rozdziale opisane jest sformułowenie problemu rekomendacji,
+  podstawowe definicje, cele, oraz główne trudności z jakimi musi zmierzyć się dobry system rekomendacyjny.
+  W rozdziale 2. zaprezentowany jest przegląd i klasyfikacja technik używanych w celach predykcji ocen oraz budowania list rekomendacji.\newline
+  Jest tam również przedstawione kilka wybranych, popularnych systemów rekomendacyjnych, w tym tych trywialnych
+  i tych znanych już od dawna, ale też takich które zostały wymyślone stosunkowo niedawno, jednak już teraz funkcjonują
+  jako punkt odniesienia w pracach badawczych. Wśród przedstawionych znajdują się techniki niespersonalizowane, jak i algorytmy CF, SVD, SVD++,
+  BPR oraz gSVD++.\newline
+  W kolejnym rozdziale przybliżone są algorytmy z wybranych publikacji przedstawionych na konferencji
+  \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)}, 
+  które stworzone zostały jako modyfikacje algorytmów przedstawionych we wcześniejszym rozdziale. Prace z których pochodzą
+  przedstawione w tym rozdziale algorytmy wybrane zostały również pod kątem działania przy takim samym typie i rozkładzie danych jak podstawowe techniki
+  dzięki temu możliwe jest przeprowadzenie porównania nie tylko pomiędzy algorytmem i jego ulepszeniem, ale także pomiędzy ulepszeniami
+  przedstawionymi w różnych pracach.\newline
+  W ostatnim rozdziale zademonstrowane są różne techniki oceny systemów rekomendacyjnych.
+  W skład przedstawionych tam funkcji oceny wchodzą miary błędów przewidywanych ocen MAE, MSE,
+  miary oparte na trafieniach przedmiotów z list rekomendacyjnych w te rzeczywiście preferowane przez użytkownika:
+  krzywe ROC, ich AUC, oraz Precision i MAP, oraz miara różnorodności propozycji systemu -- Coverage.
+  W większości prac badawczych skupiono się na pojedynczych miarach oceny i zaburzeniom rozkładów danych,
+  dzięki czemu ulepszenia mogą uzyskiwać wyraźną poprawę względem oryginalnego algorytmu.
+  O ile jest to dobre podejście jeśli chce się uzyskać system dobry w jednej konkretnej sytuacji o tyle nie da się
+  dobrze w tej sytuacji porównać algorytmów z różnych prac.
+  Aby dokonać takiego porównania zaimplementowałem w języku R te algorytmy jak i wymienione wyżej metody oceny,
+  a następnie przedstawiłem w pracy rezultaty ich użycia.
+  Dzięki temu porównaniu przy pomocy użycia 5 krotnej walidacji krzyżowej na danych
+  MovieLens100k \cite{ML} możliwe staje się zweryfikowanie efektywnych zysków uzyskanych dzięki wprowadzaniu ulepszeń,
+  oraz rozstrzygnięcie, który z algorytmów rzeczywiście zyskuje najlepsze wyniki w dość popularnie stosowanym przypadku testowym
+  (w większości prac badawczych skupiono się na pojedynczych miarach oceny i zaburzeniom rozkładów danych,
+  dzięki czemu ulepszenia mogą uzyskiwać wyraźną poprawę względem oryginalnego algorytmu).
+  Przeanalizowana jest tam również szybkość tych systemów, co pozwala dobrać system również pod kątem rzeczywistych rozwiązań czasu rzeczywistego.\newline
+  
+  Do pracy dołączone są skrypty w języku R służące wygenerowaniu porównań uzytych w ostatnim rozdziale.
+  Mogą one służyć do wykonania innych badań, jednak są dosyć mocno dostosowane do rozpatrywanego typu danych, dlatego nie nadają się do
+  użycia w prawdziwych systemach.
 
+ 
+ 
+ 
+ 
  \chapter{Sformułowanie problemu}
   W każdym modelu danych wykorzystywanym do wyliczania możliwych ocen przedmiotów lub sporządzania list rekomendacji
   występują użytkownicy i przedmioty, oraz pewne niepełne informacje na temat ich powiązań ze sobą.
@@ -198,14 +258,14 @@ Instytut Informatyki}
     \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
      \item Współczynnik korelacji liniowej Paersona:
       \begin{center}
-       $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})(r_{vi}-\overline{r_v})}
-       {\sqrt{\sum\limits_{i\in R_{uv}}(r_{ui}-\overline{r_u})^2\sum\limits_{i\in R_{uv}}(r_{vi}-\overline{r_v})^2}}$
+       $S_{u,v}=\frac{\sum\limits_{i\in R_{u,v}}(r_{u,i}-\overline{r_u})(r_{v,i}-\overline{r_v})}
+       {\sqrt{\sum\limits_{i\in R_{u,v}}(r_{u,i}-\overline{r_u})^2\sum\limits_{i\in R_{u,v}}(r_{v,i}-\overline{r_v})^2}}$
       \end{center}
       Wyliczane dla par użytkowników, którzy ocenili po co najmniej dwa przedmioty, w tym co najmniej jeden wspólny.
      \item podobieństwo kosinusowe:
       \begin{center}
-       $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}r_{ui}\cdot r_{vi}}
-       {\sqrt{\sum\limits_{i\in R_{uv}}r_{ui}^2\sum\limits_{i\in R_{uv}}r_{vi}^2}}$
+       $S_{u,v}=\frac{\sum\limits_{i\in R_{u,v}}r_{u,i}\cdot r_{v,i}}
+       {\sqrt{\sum\limits_{i\in R_{u,v}}r_{u,i}^2\sum\limits_{i\in R_{u,v}}r_{v,i}^2}}$
       \end{center}
       Wyliczane dla par użytkowników, którzy ocenili co najmniej jeden wspólny przedmiot.
      %\item podobieństwo implicite\newline % jak się nazywa przecięcie przez suma - odpowiednik f-score
@@ -215,14 +275,14 @@ Instytut Informatyki}
       %end{center} 
     \end{itemize}
     {\scriptsize
-     $S_{u,v}$ -- podobieństwo użytkowników $u$ i $v$, $R_{uv}$ -- zbiór przedmiotów, które ocenili zarówno użytkownik $u$ jak i $v$,\newline
-     $r_{ui}$ -- ocena przedmiotu $i$ wystawiona przez użytkownika $u$, $\overline{r_{u}}$ -- średnia ocen wystawionych przez użytkownika $u$
+     $S_{u,v}$ -- podobieństwo użytkowników $u$ i $v$, $R_{u,v}$ -- zbiór przedmiotów, które ocenili zarówno użytkownik $u$ jak i $v$,\newline
+     $r_{u,i}$ -- ocena przedmiotu $i$ wystawiona przez użytkownika $u$, $\overline{r_{u}}$ -- średnia ocen wystawionych przez użytkownika $u$
      %,\newline$R_{u}$ -- zbiór przedmiotów, ocenionych przez użytkownika $u$
     }\newline
     Najczęściej stosowany jest współczynnik korelacji Paersona, jako że jest trafny w większości przypadków.
     Odjęcie średniej od oceny pozwala poradzić sobie z często spotykanym zjawiskiem spłaszczenia ocen (używanie przez użytkownika ocen tylko po jednej stronie skali),
     może jednak spowodować nieważność funkcji podobieństwa w przypadku gdy użytkownik ocenił tylko jeden przedmiot,
-    lub wszystkie wspólnie ocenione przedmioty mają ocenę równą średniej (wtedy $S_{uv}=\frac{0}{0}$).
+    lub wszystkie wspólnie ocenione przedmioty mają ocenę równą średniej (wtedy $S_{u,v}=\frac{0}{0}$).
     Podobieństwo kosinusowe jest bardziej odporne na szczególne przypadki w danych,
     dlatego jest często wykorzystywane przy bardzo rzadkich danych (kiedy takie przypadki często występują).
     Oba podobieństwa nie sprawdzają się zbyt dobrze w przypadku gdy użytkownik wystawia wszystkim przedmiotom takie same oceny,
@@ -233,7 +293,7 @@ Instytut Informatyki}
     Do wyliczenia przewidzianej oceny przedmiotu używa się ważonej średniej z ocen wystarczająco podobnych użytkowników
     (obcięcie listy użytkowników według wartości funkcji podobieństwa, ilości najbliższych sąsiadów, lub obu), zadanej wzorem:\newline
     \begin{center}
-     $r'_{ui}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{vi}-\overline{r_v})S_{uv}}{\sum\limits_{v\in N_u}S_{uv}}$
+     $r'_{u,i}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{v,i}-\overline{r_v})S_{u,v}}{\sum\limits_{v\in N_u}S_{u,v}}$
     \end{center}
     {\scriptsize
      $N_u$ -- zbiór sąsiadów (najbardziej podobnych użytkowników)
@@ -257,11 +317,11 @@ Instytut Informatyki}
     to i użytkownik, który go jeszcze nie ocenił przypisze mu ocenę wyższą o podobną wartość.
     Takie podejście do problemu daje następujący wzór:\newline
     \begin{center}
-     $r'_{ui}=\frac{\sum\limits_{j\in R_u}(\text{diff}_{ij}+r_{uj})\cdot|R_{ij}|}{\sum\limits_{j\in R_u}|R_{ij}|}$
+     $r'_{u,i}=\frac{\sum\limits_{j\in R_u}(\text{diff}_{i,j}+r_{u,j})\cdot|R_{i,j}|}{\sum\limits_{j\in R_u}|R_{i,j}|}$
     \end{center}
     {\scriptsize
-     $R_{ij}$ -- zbiór użytkowników, którzy ocenili zarówno przedmiot $i$ jak i $j$,\newline
-     $\text{diff}_{ij}$ -- średnia różnica ocen pomiedzy przedmiotami $i$ oraz $j$ (w przeciwieństwie do wszystkich podobieństw antysymetryczna)
+     $R_{i,j}$ -- zbiór użytkowników, którzy ocenili zarówno przedmiot $i$ jak i $j$,\newline
+     $\text{diff}_{i,j}$ -- średnia różnica ocen pomiedzy przedmiotami $i$ oraz $j$ (w przeciwieństwie do wszystkich podobieństw antysymetryczna)
     }\newline
     W przeciwieństwie do algorytmu CF który tak naprawdę do predykcji ocen wykorzystuje regresję liniową ($f(x)=ax+b$),
     SO wykorzysutje prostszą regresję jedno parametrową ($f(x)=x+b$). Użycie tak prostego modelu czyni algorytm o wiele bardziej odpornym na przeuczenie.
@@ -281,7 +341,7 @@ Instytut Informatyki}
     Po zastosowaniu tych przekształceń dla $r=$rank$(M)$ otrzymujemy rozkład $M=U'\Sigma'V'^\bot$, gdzie macierz $U'$ ma wymiary $m\times r$ $\Sigma'$
     jest macierzą diagonalną rozmiaru $r\times r$, zaś $V'^\bot$ macierzą rozmiaru $r\times n$
     (a więc rozkład pozwala na przechowywanie mniejszej ilości danych dla $r<\frac{mn}{m+n+1}$).\newline
-    Norma Frobeniusa macierzy: $\lVert M \rVert_F=\sqrt{\sum\limits_{i=1}^{m}\sum\limits_{j=1}^{n}|m_{ij}|^2}$\newline
+    Norma Frobeniusa macierzy: $\lVert M \rVert_F=\sqrt{\sum\limits_{i=1}^{m}\sum\limits_{j=1}^{n}|m_{i,j}|^2}$\newline
     \textbf{Twierdzenie 2.2.2.1.} (Eckhart-Young 1936) Dla dowolnego $r<$rank$(M)$
     macierz $\tilde{M}=U\Sigma_r V^\bot$,
     (gdzie $\Sigma_r$, to macierz $\Sigma$ z pozostawionymi jedynie $r$ wartościami własnymi o największych wartościach bezwzględnych)
@@ -301,12 +361,12 @@ Instytut Informatyki}
      $\mu$ -- średnia wszystkich ocen wystawionych wszystkim przedmiotom\newline
      $K=\{(u,i)|$ użytkownik $u$ wystawił ocenę przedmiotowi $i\}$\newline
      $\lambda_{*}$ -- różne stałe użyte do regularyzacji (ustawiane w celu optymalizacji pożądanych miar jakości predykcji)\newline 
-     $r_{ui}$ -- prawdziwa ocena wystawiona przedmiotowi $i$ przez użytkownika $u$\newline
-     $\tilde{r}_{ui}$ -- przewidziana przez system ocena przypisana użytkownikowi $u$ i przedmiotowi $i$\newline
+     $r_{u,i}$ -- prawdziwa ocena wystawiona przedmiotowi $i$ przez użytkownika $u$\newline
+     $\tilde{r}_{u,i}$ -- przewidziana przez system ocena przypisana użytkownikowi $u$ i przedmiotowi $i$\newline
      $\alpha$ -- prędkość uczenia (zazwyczaj mała stała rzędu 0.01)\newline
      %
      \begin{center}
-     $\tilde{r}_{ui}=\mu+b_u+b_i+p_u\cdot q_i$
+     $\tilde{r}_{u,i}=\mu+b_u+b_i+p_u\cdot q_i$
      \end{center}
      zaś parametry ($b_*,p_*,q_*$) równań wyliczone są poprzez minimalizację funkcji kwadratowej:
      \begin{center}
@@ -317,7 +377,7 @@ Instytut Informatyki}
      Ustawienie $f$ na odpowiednią wielkość pozwala uzyskać z jednej strony model wystarczająco prosty do wyliczenia,
      oraz wystarczająco skomplikowany, aby wektory $p_*$ i $q_*$ mogły oddać profile użytkowników i przedmiotów.
      Wartość $f$ odpowiednio mniejsza od rank$(M)$ uniemożliwia modelowi przeuczenie się znanych ocen i powodując uproszczenie modelu
-     ustala wartości $\tilde{r}_{ui}$ na najmniej komplikujące model.
+     ustala wartości $\tilde{r}_{u,i}$ na najmniej komplikujące model.
      Ustawienie stałej $\Lambda$ na dodatnią pozwala uniknąć optymalizacji funkcji w skrajnych, oddalonych wartościach wektorów
      (co mogłoby wynikać z zaburzeń w danych).\newline
      Ze względu na brakujące wartości w macierzy nie mogą zostać zastosowane standardowe metody rozkładu dlatego też stosowane jest
@@ -328,7 +388,7 @@ Instytut Informatyki}
      poprzez wielokrotne przeprowadzenie procesu opisanego pseudokodem:\newline\newline
      %
      \hspace*{16pt}	foreach $(u,i)\in K$\{\newline
-     \hspace*{32pt}		$err=\tilde{r}_{ui}-r_{ui}$\newline
+     \hspace*{32pt}		$err=\tilde{r}_{u,i}-r_{u,i}$\newline
      \hspace*{32pt}		$x+=\alpha\cdot(err\cdot\frac{\partial err}{\partial x}-\lambda_{x}\cdot x)$\newline
      \hspace*{16pt}	\}\newline    
      Gdzie uaktualnienie $x$ oznacza zmianę każdej zmiennej zawartej we wzorze na błąd ($err$) -- dotyczy to również dodatkowych zmiennych dodanych
@@ -341,7 +401,7 @@ Instytut Informatyki}
      Do modelu dodane zostają wektory $y_i\in\mathbb{R}^f$ reprezentujące informacje o użyciach przedmiotów.
      Równanie docelowe przyjmuje postać:
      \begin{center}
-      $\tilde{r}_{ui}=\mu+b_u+b_i+q_i\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
+      $\tilde{r}_{u,i}=\mu+b_u+b_i+q_i\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
      \end{center}
      gdzie $N(u)$ oznacza zbiór przedmiotów użytych przez użytkownika $u$ (zarówno tych ocenionych jak i nie).\newline
      {\scriptsize
@@ -352,8 +412,8 @@ Instytut Informatyki}
     \hspace*{16pt}	for $I$ iterations\{\newline
     \hspace*{32pt}		foreach $(u,i)\in K$\{\newline
     \hspace*{48pt}			$py=p_u +|N(u)|^{-\frac{1}{2}}\cdot\sum\limits_{j\in N(u)}y_j$\newline
-    \hspace*{48pt}			$\tilde{r}_{ui}=\mu+b_u+b_i+q_i\cdot py$\newline
-    \hspace*{48pt}			$err=\tilde{r}_{ui}-r_{ui}$\newline
+    \hspace*{48pt}			$\tilde{r}_{u,i}=\mu+b_u+b_i+q_i\cdot py$\newline
+    \hspace*{48pt}			$err=\tilde{r}_{u,i}-r_{u,i}$\newline
     \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_1\cdot b_u)$\newline
     \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
     \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot q_i-\lambda_3\cdot p_u)$\newline
@@ -372,8 +432,7 @@ Instytut Informatyki}
      }\newline
      Rozszerzony algorytm jest częściej używany od czystego SVD nawet przy danych wyłącznie explicite,
      jednak bez dodatkowych informacji implicite nie uzyskuje lepszych wyników.
-  %TODO wspomnieć, że mogą być oceny poza zakresem --> pewnie lepiej przy porównaniu wyników i porównaniach MAE i MSE, bo to dotyczy wszystkich
-  
+  %TODO indeksy przy lambdach
    \subsection{Spersonalizowany ranking Bayesa}
     W przypadku dostępu do danych wyłącznie typu implicite popularną metodą tworzenia spersonalizowanych list rekomendacyjnych jest
     faktoryzacja macierzy oparta o analizę bayesowską prawdopodobieństw.\newline
@@ -395,7 +454,7 @@ Instytut Informatyki}
       u4 & ? & ? & ? & ? & + \\    
      \end{tabular}
      \begin{center}
-      \includegraphics[scale=0.72]{strzalka.jpg}\newline
+      \includegraphics[scale=0.72]{img/strzalka.jpg}\newline
       %TODO zmienić tę strzałkę tak żeby wskazywała z wiersza u2, być może jakieś rozszerzenie zamiast strzałki
       $i>_{u_2}j$
      \end{center}
@@ -419,11 +478,11 @@ Instytut Informatyki}
     $p_u,q_i\in\mathbb{R}^f$ oraz wartości $b_i\in\mathbb{R}$, oraz powstaje poprzez iterowaną
     optymalizację funkcji celu:
     \begin{center}
-     $\sum\limits_{(u,i,j)\in D_K}\ln{(\sigma(\tilde{s}_{uij}))}-\Lambda\lVert\Theta\rVert^2$
+     $\sum\limits_{(u,i,j)\in D_K}\ln{(\sigma(\tilde{s}_{u,i,j}))}-\Lambda\lVert\Theta\rVert^2$
     \end{center}
-    gdzie $D_K=\{(u,i,j):i\in N(u) \& j\notin N(u)\}, \tilde{s}_{u,i,j}=\tilde{r}_{ui}-\tilde{r}_{uj}, \lVert\Theta\rVert^2=(b_i^2+\lVert p_u\rVert^2+\lVert q_i\rVert^2)$,
+    gdzie $D_K=\{(u,i,j):i\in N(u) \& j\notin N(u)\}, \tilde{s}_{u,i,j}=\tilde{r}_{u,i}-\tilde{r}_{u,j}, \lVert\Theta\rVert^2=(b_i^2+\lVert p_u\rVert^2+\lVert q_i\rVert^2)$,
     $\sigma(x)=\frac{1}{1+e^{-x}}$\newline
-    Zaś przewidywana ocena przedmiotu jest równa $\tilde{r}_{ui}=b_i+p_u\cdot q_i$.\newline
+    Zaś przewidywana ocena przedmiotu jest równa $\tilde{r}_{u,i}=b_i+p_u\cdot q_i$.\newline
     Warto wspomnieć tu, że uzyskana w ten sposób wartość nie ma wiele wspólnego z używaną skalą ocen 
     (w przypadku informacji wyłącznie implicite nie występującą) i jest używana wyłącznie do ustawienia przedmiotów w odpowiedniej kolejności
     dla każdego użytkownika(dlatego też używane w SVD wartości $\mu$ oraz $b_u$ nie mają tutaj sensu).\newline
@@ -503,7 +562,7 @@ Instytut Informatyki}
     Dokładniej zakładane, jest że do każdego przedmiotu dołączona jest informacja o zbiorze kategorii przedmiot należy, a do których nie.\newline
     Ocena przewidziana dla użytkownika i przedmiotu opisana jest wzorem
     \begin{center}
-     $\tilde{r}_{ui}=\mu+b_u+b_i+\left(q_i+|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}\right)\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
+     $\tilde{r}_{u,i}=\mu+b_u+b_i+\left(q_i+|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}\right)\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
     \end{center}
     Gdzie $G(i)$ oznacza zbiór kategorii do których nalezy przedmiot, zaś $x_{g}\in\mathbb{R}^f$ dodatkowym wektorem przypisanym kategorii
     (w przypadku, gdy zbiór kategorii jest pusty wartość $|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}$ traktowana jest jako $0$ ).
@@ -512,8 +571,8 @@ Instytut Informatyki}
     \hspace*{32pt}		foreach $(u,i)\in K$\{\newline
     \hspace*{48pt}			$py=p_u +|N(u)|^{-\frac{1}{2}}\cdot\sum\limits_{j\in N(u)}y_j$\newline
     \hspace*{48pt}			$qx=q_i +|G(i))|^{-1}\cdot\sum\limits_{g\in G(i)}x_g$\newline
-    \hspace*{48pt}			$\tilde{r}_{ui}=\mu+b_u+b_i+qx\cdot py$\newline
-    \hspace*{48pt}			$err=\tilde{r}_{ui}-r_{ui}$\newline
+    \hspace*{48pt}			$\tilde{r}_{u,i}=\mu+b_u+b_i+qx\cdot py$\newline
+    \hspace*{48pt}			$err=\tilde{r}_{u,i}-r_{u,i}$\newline
     \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_1\cdot b_u)$\newline
     \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
     \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot qx-\lambda_3\cdot p_u)$\newline
@@ -577,11 +636,11 @@ Instytut Informatyki}
      w przypadku małej ilości wspólnych przedmiotów użytych lub spłaszczenia ocen.
      Aby pokonać te ograniczenia zaproponowana została nowa miara podobieństwa pomiędzy dwoma użytkownikami:\newline
      \begin{center}
-      $S_{uv}=\frac{\sum\limits_{i\in R_{uv}}f(r_{ui}-r_{vi})}{|R_{uv}|}$\newline
-      $f(r_{ui},r_{vi})=\left\{\begin{array}{cc}
-                                 \frac{1}{|r_{ui}-r_{vi}|+1}& \text{ dla } (r_{ui}>\overline{r})\wedge(r_{vi}>\overline{r})\\
-                                 \frac{1}{|r_{ui}-r_{vi}|+1}& \text{ dla } (r_{ui}\le\overline{r})\wedge(r_{vi}\le\overline{r})\\
-                                 \frac{0.5}{|r_{ui}-r_{vi}|+1}& \text{ w p.p.}\\
+      $S_{u,v}=\frac{\sum\limits_{i\in R_{u,v}}f(r_{u,i}-r_{v,i})}{|R_{u,v}|}$\newline
+      $f(r_{u,i},r_{v,i})=\left\{\begin{array}{cc}
+                                 \frac{1}{|r_{u,i}-r_{v,i}|+1}& \text{ dla } (r_{u,i}>\overline{r})\wedge(r_{v,i}>\overline{r})\\
+                                 \frac{1}{|r_{u,i}-r_{v,i}|+1}& \text{ dla } (r_{u,i}\le\overline{r})\wedge(r_{v,i}\le\overline{r})\\
+                                 \frac{0.5}{|r_{u,i}-r_{v,i}|+1}& \text{ w p.p.}\\
                                 \end{array}\right.$\newline
      {\scriptsize
      $\overline{r}$ -- średnia ocena dostępna w systemie (neutralna)
@@ -603,14 +662,14 @@ Instytut Informatyki}
      wykorzystywanych do wyliczania ocen na zależne od ilości wspólnie ocenionych przedmiotów.
      Zdefiniowany zostaje współczynnik podobieństwa:
      \begin{center}
-      $SF_{uv}=\left\{\begin{array}{cc}
-       |R_{uv}|\cdot S_{uv}&\text{dla podobieństwa symetrycznego (PC lub kosinusowe)}\\
-       |R_{uv}|\cdot(S_{uv}-0.1)&\text{dla podobieństwa alternatywnego)}\\
+      $SF_{u,v}=\left\{\begin{array}{cc}
+       |R_{u,v}|\cdot S_{u,v}&\text{dla podobieństwa symetrycznego (PC lub kosinusowe)}\\
+       |R_{u,v}|\cdot(S_{u,v}-0.1)&\text{dla podobieństwa alternatywnego)}\\
       \end{array}\right.$
      \end{center}
      Zaś ocena wystawiona przez algorytm zdefiniowana jest wzorem:
      \begin{center}
-     $r'_{ui}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{vi}-\overline{r_v})SF_{uv}}{\sum\limits_{v\in N_u}SF_{uv}}$
+     $r'_{u,i}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{v,i}-\overline{r_v})SF_{u,v}}{\sum\limits_{v\in N_u}SF_{u,v}}$
      \end{center}
      Zbiór sąsiadów jest jednak nadal wyliczany na podstawie normalnych podobieństw między użytkownikami.
     \subsubsection{dalsze podobieństwo}
@@ -620,7 +679,7 @@ Instytut Informatyki}
      Dalsze podobieństwo można odczytać z grafu w którym wierzchołkami są użytkownicy, zaś krawędziami wartości podobieństwa między nimi z odciętymi krawędziami
      negatywnymi. W ten sposób podobieństwo można zdefiniować jako po pierwsze odległość w grafie, a w dalszej kolejności podobieństwo wynikające z wag krawędzi
      na najkrótszej ścieżce.\newline
-     \includegraphics[scale=0.72]{graf1(221).jpg}\newline
+     \includegraphics[scale=0.72]{img/graf1(221).jpg}\newline
     \subsubsection{połączenie ulepszeń}
      Łącząc przedstawione usprawnienia algorytmu CF w pracy \cite{221} zaproponowany został system CF-ADV.\newline
      Dla zadanego użytkownika $u$ oraz przedmiotu $i$ jeżeli według podobieństwa zdefiniowanego wcześniej
@@ -631,20 +690,20 @@ Instytut Informatyki}
      aż do zadanej odległości maksymalnej $H$.
      Sąsiedzi użytkownika $u$ na podstawie których wystawiana jest ocena dla przedmiotu $i$
      wybierani są jako początek tej listy ograniczonej do użytkowników, dla których znana jest ocena tego przedmiotu.\newline
-     \includegraphics[scale=0.72]{graf2(221).jpg}\newline
+     \includegraphics[scale=0.72]{img/graf2(221).jpg}\newline
      Aby móc zastosować średnią ważoną pozostaje jeszcze zdefiniować wagi
      -- w tym przypadku dla użytkownika $v$ o najkrótszej ścieżce od źródła $u$ w grafie użytkowników długości $m$
      na podstawie średniej z wag jego bezpośrednich poprzedników na wszystkich ścieżkach tej długości:
      \begin{center}
-      $SF_{uv}=\frac{\sum_{w\in P_{uv}}(SF_{uw}\cdot SF_{wv})}{\sum_{w\in P_{uv}}SF_{uw}}$
+      $SF_{u,v}=\frac{\sum_{w\in P_{u,v}}(SF_{u,w}\cdot SF_{w,v})}{\sum_{w\in P_{u,v}}SF_{u,w}}$
      \end{center}
      {\scriptsize
-      ($P_{uv}$ -- zbiór wierzchołków oddalonych od $u$ o $m-1$, połączonych krawędzią z $v$)
+      ($P_{u,v}$ -- zbiór wierzchołków oddalonych od $u$ o $m-1$, połączonych krawędzią z $v$)
      }\newline
      W przypadku z rysunku wartości współczynników wyniosą odpowiednio:\newline
      $
-     SF_{AD}=\frac{SF_{AC}\cdot SF_{CD}}{SF_{AC}}=4\newline
-     SF_{AF}=\frac{SF_{AB}\cdot SF_{BF}+SF_{AC}\cdot SF_{CF}}{SF_{AB}+SF_{AC}}=\frac{61.92+442.68}{25.6}=19.71\newline
+     SF_{A,D}=\frac{SF_{A,C}\cdot SF_{C,D}}{SF_{A,C}}=4\newline
+     SF_{A,F}=\frac{SF_{A,B}\cdot SF_{B,F}+SF_{A,C}\cdot SF_{CF}}{SF_{AB}+SF_{AC}}=\frac{61.92+442.68}{25.6}=19.71\newline
      SF_{AG}=\frac{SF_{AD}\cdot SF_{DG}+SF_{AF}\cdot SF_{FG}}{SF_{AD}+SF_{AF}}=\frac{60.8+67.97}{23.71}=5.43\newline
      SF_{AE}=\frac{SF_{AF}\cdot SF_{FE}}{SF_{AF}}=4.5\newline   
      $
@@ -707,7 +766,7 @@ Instytut Informatyki}
        u4 & ? & ? & ? & ? & + \\    
       \end{tabular}
       \begin{center}
-       \includegraphics[scale=0.72]{strzalka.jpg}\newline
+       \includegraphics[scale=0.72]{img/strzalka.jpg}\newline
        %TODO zmienić tę strzałkę tak żeby wskazywała z wiersza u2, być może jakieś rozszerzenie zamiast strzałki
        $i>_{u_2}j$
       \end{center}
@@ -803,7 +862,7 @@ Instytut Informatyki}
     predykuje jako sumę wartości po ścieżkach wiodących od użytkownika do tego przedmiotu aplikując do nich wagi zmniejszające się wraz z rosnącą ich długością.
     Twórcy algorytmu wykorzystują model grafowy w którym upodobanie oznaczone jest poprzez krawędzie skierowane
     od użytkownika do przedmiotu z pojedynczą wartością rzeczywistą i uogólniają na dłuższe ścieżki mnożąc wartości z krawędzi zgodnie ze schematem:\newline
-     \includegraphics[scale=0.72]{graf1(191).jpg}\newline
+     \includegraphics[scale=0.72]{img/graf1(191).jpg}\newline
     Ze schematu można wywnioskować następujące reguły:
     \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
      \item $\omega_{similar}=\omega^2_{similar}$    
@@ -911,7 +970,7 @@ Instytut Informatyki}
   \section{Opis danych}
    Dane użyte do testowania i oceny algorytmów pochodzą z ogólnodostępnego i popularnego wśród prac naukowych
    zbioru zebranego przez GroupLens\newline
-   \textit{http://grouplens.org/datasets/movielens/100k/} i dotyczą danych filmowych.\newline
+   \cite{ML} i dotyczą danych filmowych.\newline
    Dokładniej dane skłądają się z listy ocen wystawionych przez użytkowników filmom w skali 1--5,
    binarnych danych o przynależności przedmiotów do 19 gatunków filmowych oraz kilku podstawowych informacji o użytkownikach.
    Dodatkowo uwzględnione są tam nieużywane w opisanych algorytmach dane o datach wydania filmu i wystawienia oceny.
@@ -984,7 +1043,7 @@ Instytut Informatyki}
    %CF-mix co oznacza za mało wspólnych lub za bardzo spłaszczone
    %TODO CF-ADV tylko do podobieństwa stopnia 2, bo dla tych danych wystarcza (normalnie ilsę procent, tak ileś)
    %TODO complex większej długości niż 3 w praktyce nie daje żadnych plusów 
-   
+   % sąsiedzi -->  <=30 powyżej 0
    
    Z ważniejszych uwag dotyczących implementacji algorytmów niezawartych w pseudokodach:
    \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
@@ -1026,20 +1085,22 @@ Instytut Informatyki}
    Wartości dla CF przy różnych funkcji podobieństwa można odczytać z wykresów:
    %TODO można napisać, że tu im większy słupek tym gorzej :)
    \begin{center}
-    \includegraphics[scale=0.35]{CF_item_MAE.jpg}
+    \includegraphics[scale=0.35]{img/CF_item_MAE.jpg}
    \end{center}
    \begin{center}
-    \includegraphics[scale=0.35]{CF_item_MSE.jpg}
+    \includegraphics[scale=0.35]{img/CF_item_MSE.jpg}
    \end{center}
    Jak widać użycie współczynnika podobieństwa poprawia wyniki, podobnie jak uzupełnienie podobieństwa korelacji Paersona przez alternatywne podobieństwo.
-   Dodanie dalszego poobieństwa w przypadku podobieństwa przedmiotów nieznacznie pogarsza wyniki (oznacza to, że tym przypadkom lepiej przypisać wartość
-   minimalną niż średnią z ocen mało związanych przedmiotów), jednak przy podobieństwie uzytkowników sytuacja jest odwrotna.
+   Dodanie dalszego poobieństwa w przypadku podobieństwa przedmiotów daje nieistotne ulepszenie,
+   przy podobieństwie uzytkowników poprawa jest większa lecz dalej ledwo zauważalna (poniżej 0.5\% zmniejszenia błędów),
+   wynika to z tego, że dalsze podobieństwo używane jest dopiero gdy nie znajdzie się żaden bezpośredni sąsiad 
+   który użył danego przedmiotu (został użyty przez danego użytkownika), a dla rozpatrywanych danych jest to rzadkie zjawisko.
    Można teraz porównać CF z innymi algorytmami tworzącymi predykcje ocen:
    \begin{center}
-    \includegraphics[scale=0.35]{MAE2.jpg}
+    \includegraphics[scale=0.35]{img/MAE2.jpg}
    \end{center}
    \begin{center}
-    \includegraphics[scale=0.35]{MSE2.jpg}
+    \includegraphics[scale=0.35]{img/MSE2.jpg}
    \end{center}
    Jak widać po poprawieniu CF potrafi uzyskiwać lepsze wyniki niż algorytmy z grupy SVD (choć przy 20 iteracjach działa dużo wolniej).
    Widać, że zmiana SVD na SVD++ nie daje żadnej poprawy, jednak jest to związane z tym, że w bazie danych nie ma dodatkowego wejścia implicite.
@@ -1096,7 +1157,7 @@ Instytut Informatyki}
     \begin{center}
      $Precision(n)=\frac{TP(n)}{n}$
     \end{center}
-    zaś dla systemu jako średnia tych wartości po wszystkich użytkownikach.\newline
+    zaś dla systemu jako średnia tych wartości po wszystkich użytkownikach (tym razem nie trzeba żadnych użytkowników pomijać).\newline
     Dzięki tej mierze można dobrać algorytm do generowania list rekomendacyjnych w prawdziwych systemach proponujących przedmioty użytkownikom.
     Jeżeli chcemy dodatkowo zadbać żeby początkowe rekomendacje na liście były jak najlepsze
     (początkowe rekomendacje są ważniejsze, a końcówka listy służy jako dodatek) wtedy warto rozpatrzyc wartości otrzymywane według zmodyfikowanej precyzji
@@ -1110,17 +1171,74 @@ Instytut Informatyki}
     }\newline
     Zaś wartość MAP (mean average precision) jest wektorem wartości dla systemu zdefiniowanym jako średnia AveP po użytkownikach.
    \subsection{Porównanie systemów}
+    Porównanie jakości list rankingowych można rozpocząć od spojrzenia na wykresy ROC i precyzji (dla list długości od 1 do 100)
+    dla wszystkich porównywanych systemów.\newline
+    \includegraphics[scale=0.2]{img/ROC_all2.jpg}
+    \includegraphics[scale=0.2]{img/Prec_all_100.jpg}\newline
+    O ile ciężko z nich odczytać wartości dla konkretnych algorytmów, o tyle daje sie zauważyć wyraźny podział na 4 grupy
+    (w przypadku precyzji dwie pierwsze grupy się łączą) - w kolejności od najgorszych
+    rekomendacje losowe, systemy z wejściem explicite (bez complex), algorytmy z wejściem implicite (wraz z complex), rekomendacje optymalne
+    (sztucznie wygenerowane w celu porównania). Wartości AUC dla środkowych grup mieszczą się w przedziałach [0.696,0.751] oraz [0.838,0.937],
+    (losowy -- 0.5, optymalny -- 1), a więc rozgraniczenie jest wyraźne również po wzięciu pod uwagę różnic wartości wewnątrz grup.
+    Taki sam rozdział występuje przy porównywaniu tych miar po uwzględnieniu rozróżnienia pomiędzy ocenami
+    ze zbioru testowego (wyższa ocena - ważniejsza predykcja lub tylko najlepsze oceny się liczą), oraz przy uzywaniu miary MAP
+    (zalezy ona niemalejąco od prefiksowych wartości precyzji = może dać inną decyzję tylko w przypadku przecinających się krzywych).
+    Oznacza, to że miary te dają odwrotne porównanie miedzy tymi grupami niż miary jakości ocen zwracanych przez systemy, daje to wniosek,
+    że cięzko jest znaleźć pojedynczy algorytm dobry w obu sytuacjach i lepiej dobrać jeden do konkretnego problemu
+    (lub uzywać dwóch niezależnie, jeśli chcemy żeby system miał obie funkcjonalności).
+    Można teraz skupić się wyłącznie na algorytmach z grupy otrzymującej lepsze wyniki.\newline
+    \subsubsection{Complex}
+     W przypadku porównań wewnątrz różnych odmian algorytmu Complex (regularyzacje, rodzaj wejścia)
+     wyniki porównania zależą od tego czy chce się uzyskać listy rekomendacyjne oceniane przy pomocy wszystkich
+     uzyć ze zbioru testowego (jak w przypadku danych implicite), czy też tylko tych z najwyższą oceną (podejście rozważane w pracy \cite{205}).
+     Lepsze wyniki uzyskuje sie przy użyciu danych zgodnych z typem danych testowych ($\{0,1\}$ dla implicite,
+     $\{-1,0,1\}$ dla poszukiwania wyłącznie najlepszych). W obu przypadkach dodanie regularyzacji poprawia wyniki,
+     reguralyzacja przedmiotów uzyskuje lepsze wyniki niż regularyzacja użytkowników, zaś uzycie obu daje jeszcze lepsze rezultaty,
+     wyjątkiem jest użycie szmej regularyzacji użytkowników na danych %TODO
+     która to kombinacja uzyskuje wyniki gorsze od siedmiu pozostałych w obu przypadkach testowych.
+     %TODO wykresy
+    \subsubsection{MABPR}
+    
+   %TODO teraz już tylko porównanie w grupie implicite
+   %TODO porównanie Complex - najlepsze ui, implicit,explicit w zależności od tego czy wszystkie czy najlepsze
+   %TODO teraz BPRy + porównanie do COMPLEX iu implicit
    
+   
+   
+   
+   %TODOTODO 
    
    
    \subsection{Pokrycie}
-    
+    W przypadku gdy mamy do wyboru kilka algorytmów, o podobnej jakości rekomendacji możemy do stworzenia prawdziwego systemu wybrać taki,
+    który posiada dodatkowe cechy. Jedną z takich pożądanych własności jest różnorodność proponowanych przedmiotów -- proponowanie mało popularnych
+    (mała ilość użyć), ale pasujacych przedmiotów daje szansę na to że użyje je większa ilość użytkowników i dzięki temu uzyskamy na ich temat liczniejszy
+    a więc i bardziej rzetelny odzew. Miarą badającą predykcje pod tym kątem jest pokrycie zdefiniowane dla zbioru list rekomendacji tej samej
+    długości dla wszystkich użytkowników:
+    \begin{center}
+     $Coverage(n)=|\bigcup\limits_{u\in U}\bigcup\limits_{i=1}^{n}V_u[i]|$
+    \end{center}
+    Miara ta szczególnie dobrze pokazuje jak bardzo spersonalizowane sa rekomendacje (techniki niespersonalizowane dają bardzo niskie wyniki w tej mierze),
+    jednak nie nalezy kierować się nią jako głównym kryterium, gdyż bardzo faworyzuje ona losowe rekomendacje.
+    Dodatkowo z racji nie korzystania ze zbioru testowego przy wyliczaniu miary łatwo stworzyć listy ją maksymalizujące
+    a jednocześnie zwracające rekomendacje gorsze niż losowanie.
+    %TODOTODO zrobić porównanie
+   \section{Porównanie czasowe}
+   % CF - 370s, CF item - 586s
+   % CF mix - 558s, XF mix item - 877s
+   % CF further - 663s,CF further item - 1188
+   % CF further slow - 872s, CF further item slow 1627
+   % SO 577
+   % Complex - 3s zwykły, 78 - mnożenie na pałe
+   \section{Podsumowanie}
     
     
 \begin{thebibliography}{99}%TODO
 \addcontentsline{toc}{chapter}{Bibliografia}
   %wikipedia en - recemender system
-  %TODO czy MovieLens też tutaj dać 
+  %TODO czy MovieLens też tutaj dać tak
+  
+  \bibitem{ML} \url{http://grouplens.org/datasets/movielens/100k/} %TODO jakiś opis
   
   \bibitem{SO} Daniel Lemire, Anna Maclachlan,
   "Slope One Predictors for Online Rating-Based Collaborative Filtering"
