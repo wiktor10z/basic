@@ -20,20 +20,21 @@
 \opiekun{prof. Hung Son Nguyen\\
 Instytut Informatyki}
 
-\date{??? 2016}
+\date{December 2016}
 
 \dziedzina{ 
-11.0 Matematyka, Informatyka:?????????????????????????\\
-11.2 Statystyka??????????????????\\
-11.4 Sztuczna inteligencja????????????\\ 
+11.0 Matematyka, Informatyka:\\
+11.4 Sztuczna inteligencja\\ 
 }
 
 
-\klasyfikacja{62-XX Statistics??????????????????????????????\\
-68-XX Computer science????????????????????????????????????\\
+\klasyfikacja{
+68--XX Computer science\\
+68Txx Artificial Inteligence\\
+68T05 Learning and adaptive systems
 }
 
-\keywords{???????????????????????}
+\keywords{rekomendacje, predykcja ocen, systemy rekomendacyjne, collaborative filtering, Slope One, SVD, BPR, Complex, porównanie algorytmów}
 
 
 
@@ -41,7 +42,13 @@ Instytut Informatyki}
 \maketitle
 
 \begin{abstract}
-???????????????????????????????????????
+W pracy przedstawiono problemy rekomendacji przedmiotów oraz predykcji ocen, podstawowe techniki ich rozwiązania, jak i algorytmy je implementujące.
+Przedstawiono również kilka sposobów ich ulepszenia zaproponowanych na konferencji
+\textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)}.
+Do przedstawionych algorytmów należą CF (collaborative filtering), SVD (singular value decomposition), SVD++, gSVD++,
+BPR (Bayesian personalized ranking), SO (Slope One), oraz ulepszenia: CF ADV, MABPR (Metadata awareness Bayesian personalized ranking),
+Complex plus różne ich odmiany.
+Praca zawiera również przegląd różnych metod oceny systemów oraz szczegółowe porównanie wyżej wymienionych algorytmów na nich bazujące.
 \end{abstract}
 
 
@@ -251,7 +258,7 @@ Instytut Informatyki}
    że dwóch użytkowników jest bardzo podobnych można założyć,
    że przedmioty użyte tylko przez jednego z nich byłyby podobnie ocenione i przez drugiego.
    %TODO może jakieś gładkie przejście z opisu do algorytmów
-   \subsection{Colaborative Filtering}%TODO napisać, że raczej explicit feedback, choć dla implicit feedback też coś się da
+   \subsection{Collaborative Filtering}%TODO napisać, że raczej explicit feedback, choć dla implicit feedback też coś się da
     Najprostszym algorytmem realizującym ideę filtorwania kolaboratywnego jest zdefiniowanie funkcji podobieństwa pomiędzy użytkownikami
     oraz wystawienie przedmiotowi oceny jako pewnej średniej z ocen najbardziej podobnych użytkowników, którzy ten przedmiot ocenili.\newline
     Do najpowszechniej stosowanych funkcji podobieństwa należą:
@@ -625,7 +632,7 @@ Instytut Informatyki}
    % sytuacji jak SVD->BPR, czy też możliwość wykorzystania dodatkowych danych SVD++->gSVD++, drobna modyfikacja CF -> praca 221
    \subsection{ulepszenia CF}
    %TODO gdzieś w klasycznych algorytmach napisać, że CF ma tę zaletę, że można szybko zrobić dla jednego użytkownika a SVD nie - tutaj przy dalszym podobieńtwie ta przewaga zanikać
-    Największą niedoskonałością algorytmu Colaborative Filtering (poza złożonością czasową) jest słaba możliwość predykcji ocen w przypadku gdy użytkownik nie
+    Największą niedoskonałością algorytmu Collaborative Filtering (poza złożonością czasową) jest słaba możliwość predykcji ocen w przypadku gdy użytkownik nie
     ma sąsiadów którzy użyli dany przedmiot, takich sąsiadów jest mało,
     lub też mimo podobieństwa w wybranej mierze użytkownik nie jest dobrym wyznaczikiem oceny.\newline
     W pracy \cite{221} zaproponowano szereg ulepszeń klasycznego algorytmu CF mających na celu zminimalizowanie tych wad.
@@ -1246,21 +1253,25 @@ Instytut Informatyki}
     \includegraphics[scale=0.3]{img/Cov_between.jpg}
     \end{center}
     %TODO jeśli lepszy od tych BPR, to dopisać w nawiasie, że lepszy
-    %TODOTODO zrobić porównanie
    \section{Porównanie czasowe}
    % CF - 370s, CF item - 586s
    % CF mix - 558s, XF mix item - 877s
-   % CF further - 663s,CF further item - 1188
-   % CF further slow - 872s, CF further item slow 1627
-   % SO 577
-   % Complex - 3s zwykły, 78 - mnożenie na pałe
+   % CF further - 663s,CF further item - 1188s
+   % CF further slow - 872s, CF further item slow - 1627s
+   % SO - 577s
+   % SVD - 106s, SVD - 57s
+   % SVD++ - 433s, SVD++ - 220s
+   % gSVD++ - 627s, gSVD++ - 348s
+   % BPR - 442s, BPR - 235s
+   % MABPR - 710s, MABPR - 396s
+   % MABPR gSVD++ - 1241s, MABPR gSVD++ - 718s
+   % Complex - 4.2/5.3/5.7s zwykły, 104/136/142s - mnożenie na pałe
    \section{Podsumowanie}
     
     
 \begin{thebibliography}{99}%TODO
 \addcontentsline{toc}{chapter}{Bibliografia}
   %wikipedia en - recemender system
-  %TODO czy MovieLens też tutaj dać tak
   
   \bibitem{ML} \url{http://grouplens.org/datasets/movielens/100k/} %TODO jakiś opis
   
