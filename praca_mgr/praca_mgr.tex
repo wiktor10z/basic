@@ -56,6 +56,7 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
 
 %TODO można dodać coś o systemach bazujących na "kuratorach" - osobach proponujących itp.
 %TODO przy sumowaniach we wzorach zobaczyć czy lepiej dać \limits, czy bez i dać wszędzie tak samo
+% przecinki w indeksach
  \chapter*{Wprowadzenie}
  \addcontentsline{toc}{chapter}{Wprowadzenie}
   W dzisiejszym świecie dzięki globalizacji, rozwojowi mediów i łatwiejszemu transportowi ludzie mają dostęp do coraz większej ilości produktów. 
@@ -1116,7 +1117,7 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
    Dodanie wiedzy o kategoriach przedmiotów (używając gSVD++) też nie dodaje tutaj wiele wartości predykcjom systemu.
    Każdy z algorytmów tu przedstawionych zwraca pewne wartości dla każdej pary użytkownik przedmiot, można poprzez afiniczne przeniesienie przedziału
    w jakim znajdują się te oceny na [1,5] otrzymać odpowiednie wartości dla algorytmów o wejściu implicite, nie otrzymuja one jednak tak dobrych wyników.
-   Algorytmy te otrzymują wartości od $MAE=0.91,MSE=1.32$ do $MAE=1.61,MSE=3.54$ a więc porównywalne do losowych ocen o
+   Algorytmy te otrzymują wartości od $MAE=0.9,MSE=1.34$ do $MAE=1.61,MSE=3.54$ a więc porównywalne do losowych ocen o
    wartościach $MAE=1.38,MSE=2.88$
    %TODO uaktualnić po przeliczeniu SVD,BPR
   \section{Jakość list rekomendacyjnych}
@@ -1208,21 +1209,26 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      wyjątkiem jest użycie samej regularyzacji użytkowników na danych w formacie $\{-1,0,1\}$,
      która to kombinacja uzyskuje wyniki gorsze od siedmiu pozostałych w obu przypadkach testowych.\newline
      \includegraphics[scale=0.4]{img/Prec_Complex_exp.jpg}\newline
-     \includegraphics[scale=0.4]{img/Prec_Complex_impl.jpg}
-     %TODO wykresy
-    \subsubsection{MABPR}
-     
-    
-   %TODO teraz już tylko porównanie w grupie implicite
-   %TODO porównanie Complex - najlepsze ui, implicit,explicit w zależności od tego czy wszystkie czy najlepsze
-   %TODO teraz BPRy + porównanie do COMPLEX iu implicit
-   
-   
-   
-   
-   %TODOTODO 
-   
-   
+     \includegraphics[scale=0.4]{img/Prec_Complex_impl.jpg}\newline
+     Bardzo podobne porównanie dotyczy długich list rekomendacyjnych -- krzywe ROC pomiędzy różnymi regularyzacjami układają się w tych samych kolejnościach.
+     Jedyną różnicą jest to, że tym razem nawet przy obcięciu zbioru testowego wyłącznie do maksymalnych ocen algorytmy bazujące na wejściu $\{0,1\}$ otrzymują
+     lepsze rezultaty.\newline
+     \includegraphics[scale=0.2]{img/ROC_Complex_all.jpg}
+     \includegraphics[scale=0.2]{img/ROC_Complex_best.jpg}\newline
+    \subsubsection{BPR/MABPR}
+     \includegraphics[scale=0.4]{img/Prec_BPR.jpg}\newline
+     Ulepszenia Algorytmu BPR podobnie jak analogiczne ulepszenia SVD nie dają istotnej poprawy na rozważanym zbiorze danych.
+     Przy wielokrotnym testowaniu daje się jednak zauważyć tendencję, że czyste BPR daje lepsze rezultaty dla list długości 1--3,
+     zaś MABPR gSVD++ odrobinę (prawie niezauważalne na wykresach) lepsze dla list dłuższych niż 10 (AUC(BPR)=0.9244, AUC(MABPR)=0.9263, AUC(MABPR gSVD++)=0.9304).
+     Cowięcej ze względu na losowość w wielu próbach porównania te dawały odwrotne wyniki (tutaj przedstawiłem jedne z bardziej typowych).
+     Co ciekawe we wszystkich próbach algorytm MABPR gSVD++ uzyskuje sporą mniejsze błędy w predykcji ocen (ok. 4\% dla MAE, 8\% dla MSE) i mimo,
+     że wciąż jest pod tym względem dużo gorszy od algorytmów działających na wejściu explicite, to pozwala zauważyć,
+     że korelacja pomiędzy kategoriami i ocenami wystawianymi przez użytkowników jest niezaniedbywalna.
+     Jeżeli chce się wymagać jednak dodatkowo malejącą kolejność istotności wraz z pozycjami w listach (miara MAP), to zwykłe BPR wypada lepiej.
+     Tak małe różnice pomiędzy tymi algorytmami wynikają najpewniej z tego, że ilość trójek losowanych w algorytmach, w których oba przedmioty
+     zostały użyte jest znikoma w przypadku rzadkich macierzy użyć (a tak jest prawie zawsze), dodatkowo różnice w ich wartościach są mniej istotne.\newline
+     \includegraphics[scale=0.2]{img/ROC_BPR.jpg}
+      \includegraphics[scale=0.2]{img/MAP_BPR.jpg}    
    \subsection{Pokrycie}
     W przypadku gdy mamy do wyboru kilka algorytmów, o podobnej jakości rekomendacji możemy do stworzenia prawdziwego systemu wybrać taki,
     który posiada dodatkowe cechy. Jedną z takich pożądanych własności jest różnorodność proponowanych przedmiotów -- proponowanie mało popularnych
@@ -1230,7 +1236,7 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
     a więc i bardziej rzetelny odzew. Miarą badającą predykcje pod tym kątem jest pokrycie zdefiniowane dla zbioru list rekomendacji tej samej
     długości dla wszystkich użytkowników:
     \begin{center}
-     $Coverage(n)=|\bigcup\limits_{u\in U}\bigcup\limits_{i=1}^{n}V_u[i]|$
+     $Coverage(n)=\frac{|\bigcup\limits_{u\in U}\bigcup\limits_{i=1}^{n}V_u[i]|}{\#Items}$
     \end{center}
     Miara ta szczególnie dobrze pokazuje jak bardzo spersonalizowane sa rekomendacje (techniki niespersonalizowane dają bardzo niskie wyniki w tej mierze),
     jednak nie nalezy kierować się nią jako głównym kryterium, gdyż bardzo faworyzuje ona losowe rekomendacje.
@@ -1252,20 +1258,34 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
     \begin{center}
     \includegraphics[scale=0.3]{img/Cov_between.jpg}
     \end{center}
-    %TODO jeśli lepszy od tych BPR, to dopisać w nawiasie, że lepszy
    \section{Porównanie czasowe}
-   % CF - 370s, CF item - 586s
-   % CF mix - 558s, XF mix item - 877s
-   % CF further - 663s,CF further item - 1188s
-   % CF further slow - 872s, CF further item slow - 1627s
-   % SO - 577s
-   % SVD - 106s, SVD - 57s
-   % SVD++ - 433s, SVD++ - 220s
-   % gSVD++ - 627s, gSVD++ - 348s
-   % BPR - 442s, BPR - 235s
-   % MABPR - 710s, MABPR - 396s
-   % MABPR gSVD++ - 1241s, MABPR gSVD++ - 718s
-   % Complex - 4.2/5.3/5.7s zwykły, 104/136/142s - mnożenie na pałe
+    W zastosowaniach praktycznych równie ważną albo i ważniejszą od miar jakości rzeczą jest czas potrzebny do wyliczenia przewidywanych wartości
+    czy sporządzenia list rekomendacji. Aby porównać tę własność algorytmów można podać czasy potrzebne do wyliczenia ocen (lub pseudo ocen)
+    dla wszystkich par użytkownik -- przedmiot na jednym zbiorze treningowym. Dzięki podobnemu stopniowi optymalizacji we wszystkich implementacjach
+    takie porównanie powinno być miarodajne, jednak zastosowanie prawdziwych optymalizacji pozwala dać te same wyniki dużo szybciej
+    (aby pokazać to przyspieszenie dodałem czas przy użyciu wbudowanego w R mnożenia macierzy w algorytmach w których ono używane).
+    Algorytmy do przeliczenia potrzebowały następujących czasów:\newline
+    $\text{CF}_{\text{user sim}} - 370s, \text{CF}_{\text{item sim}} - 586s$ dla zwykłych podobieństw\newline
+    $\text{CF}_{\text{user sim}} - 558s, \text{CF}_{\text{item sim}} - 877s$ dla podobieństwa mieszanego\newline
+    $\text{CF}_{\text{user sim}} - 872s, \text{CF}_{\text{item sim}} - 1627s$ dla CF ADV z odległością maksymalną 2\newline
+    $\text{CF}_{\text{user sim}} - 663s, \text{CF}_{\text{item sim}} - 1188s$ gdy użyje się do tego wbudowanego mnożenia macierzy\newline 
+    $\text{SO} - 577s$\newline
+    $\text{SVD}_{\text{40 iter}} - 106s, \text{SVD}_{\text{20 iter}} - 57s$\newline
+    $\text{SVD++}_{\text{40 iter}} - 433s, \text{SVD++}_{\text{20 iter}} - 220s$\newline
+    $\text{gSVD++}_{\text{40 iter}} - 627s, \text{gSVD++}_{\text{20 iter}} - 348s$\newline
+    $\text{BPR}_{\text{40 iter}} - 442s, \text{BPR}_{\text{20 iter}} - 235s$\newline
+    $\text{MABPR}_{\text{40 iter}} - 710s, \text{MABPR}_{\text{20 iter}} - 396s$\newline
+    $\text{MABPR gSVD++}_{\text{40 iter}} - 1241s, \text{MABPR gSVD++}_{\text{20 iter}} - 718s$\newline
+    $\text{Complex} - 104s/136s/142s$ dla ścieżek maksymalnej długości $3/5/7$\newline
+    $\text{Complex} - 4.2s/5.3s/5.7s$ gdy użyje się do tego wbudowanego mnożenia macierzy\newline
+    
+    Algorytmy SVD i BPR mogą zostać przyśpieszone poprzez używanie mniejszej ilości iteracji, jednocześnie zwiększając odpowiednio szybkość uczenia,
+    w przypadku użycia 20 iteracji zamiast 40 wyniki nie są wiele gorsze (plasują się tak samo na tle pozostałych). Nie należy jednak z tym przesadzać,
+    ponieważ dla dużych szybkoci uczenia wartości potrafią nie tylko mocno odbiegajać od właściwych, ale również rozbiegać się do nieskończoności.
+    Plusem algorytmów CF jest to, że może być zaaplikowana do kadżdego uzytkownika osobno (jednak czas sumaryczny po wszystkich użytkownikach wtedy wzrasta).
+    Wystarczy wtedy wyliczać tylko podobieństwa między tym jednym użytkownikiem i pozostałymi uzyskując system szybszy od pozostałych,
+    do których nie da się zaaplikować podobnej operacji. Własność ta jest niestety tracona jeśli używa się dalszego sąsiedztwa, gdyż wtedy potrzeba wyliczyć
+    podobieństwo pomiedzy prawie wszystkimi parami uzytkowników.
    \section{Podsumowanie}
     
     
