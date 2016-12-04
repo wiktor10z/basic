@@ -55,7 +55,6 @@ Instytut Informatyki}
 \tableofcontents
 
 %TODO takie rozmieszczenie, żeby ładny podział na strony
-%TODO przykłady dla CF i SO
 %TODO sformatowanie skryptów
 %TODO błędy językowe i ortografia
 %TODO ReadMe
@@ -287,7 +286,7 @@ Instytut Informatyki}
     Do wyliczenia przewidzianej oceny przedmiotu używa się ważonej średniej z ocen wystarczająco podobnych użytkowników
     (obcięcie listy użytkowników według wartości funkcji podobieństwa, ilości najbliższych sąsiadów, lub obu), zadanej wzorem:\newline
     \begin{center}
-     $r'_{u,i}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{v,i}-\overline{r_v})S_{u,v}}{\sum\limits_{v\in N_u}S_{u,v}}$
+     $\tilde{r}_{u,i}=\overline{r_{u}}+\frac{\sum\limits_{v\in N_u}(r_{v,i}-\overline{r_v})S_{u,v}}{\sum\limits_{v\in N_u}S_{u,v}}$
     \end{center}
     {\scriptsize
      $N_u$ -- zbiór sąsiadów (najbardziej podobnych użytkowników)
@@ -298,7 +297,26 @@ Instytut Informatyki}
     Jako że algorytm jest symetryczny ze względu na użytkowników i przedmioty ich rola może zostać zamieniona.    
     Dzięki możliwości wyboru ról można uzyskać lepsze własności systemu jak szybkość przy dysporporcji rozmiarów macierzy użyć oraz zmniejszyć
     ilość przypadków w ktorych algorytm sobie nie radzi (za mało sąsiadów o określonej własności).
-    
+    \subsubsection{przykład}
+    Rozważmy CF z podobieństwem korelacji Paersona między użytkownikami na danych:\newline
+    \begin{center}
+     \begin{tabular}{c|ccc|}
+       & i1 & i2 & i3\\
+      \hline
+      u1 & ? & 3 & 1\\
+      u2 & 2 & 5 & ?\\
+      u3 & 4 & 4 & 1\\
+      \hline
+     \end{tabular}
+    \end{center}
+    Wtedy
+    $\overline{r}_{u1}=2,\overline{r}_{u2}=3.5,\overline{r}_{u3}=3\newline
+    S_{u1,u2}=\frac{1\cdot 1.5}{\sqrt{1^2\cdot(1.5)^2}}=1\newline
+    S_{u1,u3}=\frac{1\cdot1+(-1)\cdot(-2)}{\sqrt{(1^2+(-1)^2)\cdot(1^2+(-2)^2)}}=\frac{3}{\sqrt{10}}\newline
+    S_{u2,u3}=\frac{-1.5\cdot1+1.5\cdot1}{\sqrt{((1.5)^2+(-1.5)^2)\cdot(1^2+1^2)}}=0\newline
+    \tilde{r}_{u1,i1}=2+\frac{-1.5\cdot1+1\cdot\frac{3}{\sqrt{10}}}{1+\frac{3}{\sqrt{10}}}=1.72\newline
+    \tilde{r}_{u2,i3}=3.5+\frac{-1\cdot1}{1}=2.5
+    $
    \subsection{Slope One}
     Popularnym algorytmem wykorzystującym podobieństwo pomiędzy parami przedmiotów w nieco inny sposób jest Slope One (opisane w pracy \cite{SO}).
     Algorytm zamiast stosować wyszukane miary podobieństwa statystycznego wektorów dla każdej pary przedmiotów zapamiętuje jedynie ilość
@@ -309,7 +327,7 @@ Instytut Informatyki}
     to i użytkownik, który go jeszcze nie ocenił przypisze mu ocenę wyższą o podobną wartość.
     Takie podejście do problemu daje następujący wzór:\newline
     \begin{center}
-     $r'_{u,i}=\frac{\sum\limits_{j\in R_u}(\text{diff}_{i,j}+r_{u,j})\cdot|R_{i,j}|}{\sum\limits_{j\in R_u}|R_{i,j}|}$
+     $\tilde{r}_{u,i}=\frac{\sum\limits_{j\in R_u}(\text{diff}_{i,j}+r_{u,j})\cdot|R_{i,j}|}{\sum\limits_{j\in R_u}|R_{i,j}|}$
     \end{center}
     {\scriptsize
      $R_{i,j}$ -- zbiór użytkowników, którzy ocenili zarówno przedmiot $i$ jak i $j$,\newline
@@ -317,6 +335,13 @@ Instytut Informatyki}
     }\newline
     W przeciwieństwie do algorytmu CF który tak naprawdę do predykcji ocen wykorzystuje regresję liniową ($f(x)=ax+b$),
     SO wykorzystuje prostszą regresję jednoparametrową ($f(x)=x+b$). Użycie tak prostego modelu czyni algorytm o wiele bardziej odpornym na przeuczenie.
+    \subsubsection{przykład}
+     Na tych samych danych:\newline
+     $\text{diff}_{i1,i2}=-\text{diff}_{i2,i1}=-1.5,\text{diff}_{i1,i3}=-\text{diff}_{i3,i1}=3,
+     \text{diff}_{i2,i3}=-\text{diff}_{i3,i2}=2.5\newline
+     \tilde{r}_{u1,i1}=\frac{(-1.5+3)\cdot2+(3+1)\cdot1}{2+1}=\frac{7}{3}\newline
+     \tilde{r}_{u2,i3}=\frac{(-3+2)\cdot1+(-2.5+5)\cdot2}{1+2}=\frac{4}{3}
+     $
    \subsection{Rozkład według wartości osobliwych}
     Rozkład SVD (Singular Value Decomposition) macierzy $m\times n$ przedstawiony jest wzorem:
     $M=U\Sigma V^\bot$\newline
