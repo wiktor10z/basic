@@ -57,6 +57,10 @@ Instytut Informatyki}
 %TODO takie rozmieszczenie, żeby ładny podział na strony
 %TODO opisy wykresów
 %TODO przykłady dla CF i SO
+%TODO sformatowanie skryptów
+%TODO błędy językowe i ortografia
+%TODO ReadMe
+%TODO kolorowa wersja
  \chapter*{Wprowadzenie}
  \addcontentsline{toc}{chapter}{Wprowadzenie}
   W dzisiejszym świecie dzięki globalizacji, rozwojowi mediów i łatwiejszemu transportowi ludzie mają dostęp do coraz większej ilości produktów. 
@@ -115,6 +119,7 @@ Instytut Informatyki}
   Do pracy dołączone są skrypty w języku R służące wygenerowaniu porównań uzytych w ostatnim rozdziale.
   Mogą one służyć do wykonania innych badań, jednak są dosyć mocno dostosowane do rozpatrywanego typu danych, dlatego nie nadają się do
   użycia w prawdziwych systemach.
+  % Dołączona też kolorowa wersja
   
  \chapter{Sformułowanie problemu}
   W każdym modelu danych wykorzystywanym do wyliczania możliwych ocen przedmiotów lub sporządzania list rekomendacji
@@ -1167,6 +1172,8 @@ Instytut Informatyki}
      Ulepszenia Algorytmu BPR podobnie jak analogiczne ulepszenia SVD nie dają istotnej poprawy na rozważanym zbiorze danych.
      Przy wielokrotnym testowaniu daje się jednak zauważyć tendencję, że czyste BPR daje lepsze rezultaty dla list długości 1--3,
      zaś MABPR gSVD++ odrobinę (prawie niezauważalne na wykresach) lepsze dla list dłuższych niż 10 (AUC(BPR)=0.9244, AUC(MABPR)=0.9263, AUC(MABPR gSVD++)=0.9304).
+     AUC jest właśnie miarą optymalizowaną w pracy \cite{191}, algorytmy te radzą sobie według niej lepiej niż większość przypadków Complex
+     (poza wersją z oboma regularyzacjami na wejściu implicite).
      Cowięcej ze względu na losowość w wielu próbach porównania te dawały odwrotne wyniki (tutaj przedstawiłem jedne z bardziej typowych).
      Co ciekawe we wszystkich próbach algorytm MABPR gSVD++ uzyskuje sporą mniejsze błędy w predykcji ocen (ok. 4\% dla MAE, 8\% dla MSE) i mimo,
      że wciąż jest pod tym względem dużo gorszy od algorytmów działających na wejściu explicite, to pozwala zauważyć,
@@ -1234,12 +1241,32 @@ Instytut Informatyki}
     do których nie da się zaaplikować podobnej operacji. Własność ta jest niestety tracona jeśli używa się dalszego sąsiedztwa, gdyż wtedy potrzeba wyliczyć
     podobieństwo pomiedzy prawie wszystkimi parami użytkowników.
    \section{Podsumowanie}
+    Z porównań wyszło, że dla danych \cite{ML} w rozważanych przypadkach testowych z przewidywaniem ocen wstawianym filmom, przez użytkowników
+    najlepiej poradził sobie algorytm CF ADV, przewaga ta nie jest jednak duża.
+    Z tworzeniem list rekomendacji natomiast najlepiej poradził sobie algorytm Complex z obiema regularyzacjami,
+    który wykazał przewagę we wszystkich miarach oceniających jakość rekomendacji (często ze sporą przewagą).\newline
+    Wyniki tu zamieszczone mogą odstawać od tych przedstawionych w pracach z których pochodzą przedstawione w tej pracy ulepszenia głównie ze względu na inne 
+    dobranie zbiorów treningowych i testowych.\newline
+    W pracy \cite{205} algorytm Complex badany był poprzez wyłczenie 10\% danych jako zbioru testowego, który następnie został obcięty tylko do wpisów z
+    maksymalną oceną (5). Ten przypadek testowy jest bardzo podobny do rozważanego u mnie, stąd też może wynikać wyjątkowa skuteczność tego algorytmu.
+    Badania przeprowadzone w niniejszej pracy wykazały nadto, że algorytm Complex radzi sobie również bardzo dobrze dla danych implicite.\newline
+    W pracy \cite{221} ulepszenia CF testowane były głównie pod kątem minimalizacji błędów na dodatkowo rozrzedzonych danych
+    (duża ilość użytkowników z zimnym startem), w której to właśnie sytuacji alternatywne podobieństwo zyskuje przewagę nad korelacją Paersona
+    i podobieństwem kosinusowym. W takiej sytuacji również częściej zdaża się algorytmowi CF ADV korzystać z dalszych sąsiadów, co było rzadkie 
+    w przypadkach testowych rozważanych przeze mnie. Z racji na te cechy różnice w moich porównaniach są o wiele mniejsze.\newline
+    Algorytmy MABPR i MABPR gSVD++ opisane w pracy \cite{191} przyjmują podobny przypadek testowy do mojego (20\% danych wyłączone do zbioru testowego).
+    Ulepszenia te badane są tam głównie pod kątem AUC dla zwykłych krzywych ROC. Jest to też miara która u mnie pokazała największy zysk z tych ulepszeń
+    i jednocześnie plasowała je bardzo wysoko na tle pozostałych algorytmów (przegrywając wyłącznie z Complex z obiema regularyzacjami).\newline
     
+    Po wynikach widać, że bardzo ciężko wybrać algorytm który byłby dobry zarówno w predykcji ocen i tworzeniu rekomendacji -- warto wybrać odpowiedni algorytm
+    do konkretnego zastosowania i konkretnych danych.
+    Z racji świeżości przedstawionych tu algorytmów można spodziewać się w najbliższym czasie kolejnych ulepszeń oraz nowych algorytmów,
+    które pozwolą na jeszcze lepsze rezultaty otrzymywane przez systemy rekomendacyjne.
     
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Bibliografia}
 
-  \bibitem{ML} \url{http://grouplens.org/datasets/movielens/100k/}
+  \bibitem[ML]{ML} \url{http://grouplens.org/datasets/movielens/100k/}
   
   \bibitem{SO} Daniel Lemire, Anna Maclachlan,
   "Slope One Predictors for Online Rating-Based Collaborative Filtering"
