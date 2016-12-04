@@ -54,22 +54,24 @@ Instytut Informatyki}
 
 \tableofcontents
 
-%TODO można dodać coś o systemach bazujących na "kuratorach" - osobach proponujących itp.
+%TODO takie rozmieszczenie, żeby ładny podział na strony
+%TODO opisy wykresów
+%TODO przykłady dla CF i SO
  \chapter*{Wprowadzenie}
  \addcontentsline{toc}{chapter}{Wprowadzenie}
   W dzisiejszym świecie dzięki globalizacji, rozwojowi mediów i łatwiejszemu transportowi ludzie mają dostęp do coraz większej ilości produktów. 
   Różnorodność towarów i mnogość dóbr intelektualnych dostępnych człowiekowi stała się tak duża, że nikt nie jest w stanie zapoznać się z wszystkimi
   możliwościami produktów, które mogły by go zainteresować. W takiej sytuacji coraz bardziej przydatne stają się systemy które mogłyby pomóc użytkownikowi
   w znajdowaniu takich rzeczy, a do tego były szybkie i nie wymagały od użytkownika dokładnego precyzowania jego oczekiwań.
-  Rozwiązaniem dla tego zapotrzebowania są systemy rekomendacyjne, które na podstawie znanych informacji o uzytkowniku
+  Rozwiązaniem dla tego zapotrzebowania są systemy rekomendacyjne, które na podstawie znanych informacji o użytkowniku
   i historii jego zakupów lub użyć przedmiotów mogą znaleźć inne produkty, które powinny go zainteresować i dzięki temu ograniczyć czas i uciążliwość
   samodzielnego ich poszukiwania.\newline
   Systemy rekomendacyjne znajdują swoje zastosowanie w sklepach internetowych, reklamach przeglądarkowych
-  (która reklama może zainteresować konkretnego uzytkownika), stronach dających dostęp do filmów, książek czy utworów muzycznych
+  (która reklama może zainteresować konkretnego użytkownika), stronach dających dostęp do filmów, książek czy utworów muzycznych
   w których to przypadkach dodatkowym plusem jest to, że użytkownik nie musi podejmować wysiłku związanego z załączaniem informacji o sobie ani
   o swoich upodobaniach, gdyż wystarczające są informacje o jego przeszłych działaniach na konkretnej stronie
   (choć załączenie takich informacji pozwala na jeszcze lepsze predykcje). Dodatkowo jeśli dostępne są informacje o odczuciach użytkownika
-  na temat pewnych przedmiotów (oceny, komentarze) możliwe jest przewidzenie takiej oceny odnośnie nieznanego jeszcze produktu, co może pomóc uzytkownikowi
+  na temat pewnych przedmiotów (oceny, komentarze) możliwe jest przewidzenie takiej oceny odnośnie nieznanego jeszcze produktu, co może pomóc użytkownikowi
   w podjęciu decyzji o jego kupnie czy użyciu.\newline
   Aby taka funkcjonalność przynosiła wymierne korzyści predykcje powinny być jak najlepsze. Oznacza to popyt na jak najlepsze algorytmy,
   zarówno te które dobrze radzą sobie w ogólnym przypadku jak i te stworzone dla konkretnego zastosowania.\newline
@@ -207,14 +209,12 @@ Instytut Informatyki}
      W takiej sytuacji program rekomendujący również powinien być w stanie przydzielić propozycje mniej aktywnym użytownikom.
      Zasadniczym problemem w takiej sytuacji jest to, że ocena jakości w niektórych (zazwyczaj dobrych)
      miarach może być zawyżona przy dobrym dopasowaniu się do tych pojedynczych użytkowników,
-     jendocześnie przypasowującej mniej aktywnym oceny bliskie losowym. % może podać/rozrysować przykład
+     jendocześnie przypasowującej mniej aktywnym oceny bliskie losowym.
     \item sytuacja w której nie da się już nic zaproponować -- jeśli użytkownik użył znaczną ilość przedmiotów,
      system nie może nic zaproponować albo ponieważ nie ma już wystarczająco dużo przedmiotów nieużytych,
      albo wszystkie pozostałe zostały zaklasyfikowane jako silnie niepasujące.\newline
-     Sytuacja ta jest dosyć łatwa do kontrolowania, jednak należy o niej pamiętać przy projektowaniu algorytmu i jego ocenie.
-    %.... może jeszcze da się coś wymyślić    
+     Sytuacja ta jest dosyć łatwa do kontrolowania, jednak należy o niej pamiętać przy projektowaniu algorytmu i jego ocenie. 
    \end{itemize}
-  %\section{Cechy produkcyjnych systemów}
    Poza odpornością na wyżej wymienione sytuacje systemy używane przez ludzi powinny posiadać dodatkowe cechy zapewniające wygodę użycia.
    Podstawową różnicą między badaniem laboratoryjnym a systemem używanym przez ludzi jest szybkość użycia --
    użytkownik portalu internetowego nie jest skłonny czekać aż algorytm używany w rekomendacji przeanalizuje pełną bazę danych od początku
@@ -248,7 +248,7 @@ Instytut Informatyki}
    że dwóch użytkowników jest bardzo podobnych można założyć,
    że przedmioty użyte tylko przez jednego z nich byłyby podobnie ocenione i przez drugiego.
    \subsection{Collaborative Filtering}
-    Najprostszym algorytmem realizującym ideę filtorwania kolaboratywnego jest zdefiniowanie funkcji podobieństwa pomiędzy użytkownikami
+    Najprostszym algorytmem realizującym ideę filtrwania kolaboratywnego jest zdefiniowanie funkcji podobieństwa pomiędzy użytkownikami
     oraz wystawienie przedmiotowi oceny jako pewnej średniej z ocen najbardziej podobnych użytkowników, którzy ten przedmiot ocenili.\newline
     Do najpowszechniej stosowanych funkcji podobieństwa należą:
     \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
@@ -268,7 +268,6 @@ Instytut Informatyki}
     {\scriptsize
      $S_{u,v}$ -- podobieństwo użytkowników $u$ i $v$, $R_{u,v}$ -- zbiór przedmiotów, które ocenili zarówno użytkownik $u$ jak i $v$,\newline
      $r_{u,i}$ -- ocena przedmiotu $i$ wystawiona przez użytkownika $u$, $\overline{r_{u}}$ -- średnia ocen wystawionych przez użytkownika $u$
-     %,\newline$R_{u}$ -- zbiór przedmiotów, ocenionych przez użytkownika $u$
     }\newline
     Najczęściej stosowany jest współczynnik korelacji Paersona, jako że jest trafny w większości przypadków.
     Odjęcie średniej od oceny pozwala poradzić sobie z często spotykanym zjawiskiem spłaszczenia ocen (używanie przez użytkownika ocen tylko po jednej stronie skali),
@@ -321,7 +320,6 @@ Instytut Informatyki}
     $V$ -- macierz unitarna $n\times n$\newline
     (w przypadku macierzy nad ciałem rzeczywistym macierze unitarne są ortogonalne)\newline\newline
     Rozkład SVD stosowany jest między innymi do kompresji macierzy:\newline
-    %można to zrobić jako lematy
     W przypadku gdy $m>n$ ($m<n$) $m-n$ ostatnich kolumn macierzy $U$ ($n-m$ ostatnich wierszy macierzy $V^\bot$) jest nieistotne,
     gdyż są mnożone zawsze przez wektor $0$, więc można ich nie przechowywać w pamięci.\newline
     Podobnie dzieje się w przypadku wierszy (kolumn) przypadających na zerowe wartości własne w macierzy $\Sigma$.\newline
@@ -396,20 +394,20 @@ Instytut Informatyki}
      }\newline
      Parametry równań w tym przypadku znajdowane są poprzez optymalizację modelu w procesie iteracyjnym opisanym pseudokodem:\newline\newline
      %
-    \hspace*{16pt}	for $I$ iterations\{\newline
-    \hspace*{32pt}		foreach $(u,i)\in K$\{\newline
-    \hspace*{48pt}			$py=p_u +|N(u)|^{-\frac{1}{2}}\cdot\sum\limits_{j\in N(u)}y_j$\newline
-    \hspace*{48pt}			$\tilde{r}_{u,i}=\mu+b_u+b_i+q_i\cdot py$\newline
-    \hspace*{48pt}			$err=\tilde{r}_{u,i}-r_{u,i}$\newline
-    \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_b\cdot b_u)$\newline
-    \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_{b_2}\cdot b_i)$\newline
-    \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot q_i-\lambda_p\cdot p_u)$\newline
-    \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_q\cdot q_i)$\newline
-    \hspace*{48pt}			foreach $j\in N(u)$\{\newline
-    \hspace*{64pt}				$y_j=y_j+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot q_i-\lambda_y\cdot y_j)$\newline
-    \hspace*{48pt}			\}\newline
-    \hspace*{32pt}		\}\newline
-    \hspace*{16pt}	\}\newline
+     \hspace*{16pt}	for $I$ iterations\{\newline
+     \hspace*{32pt}		foreach $(u,i)\in K$\{\newline
+     \hspace*{48pt}			$py=p_u +|N(u)|^{-\frac{1}{2}}\cdot\sum\limits_{j\in N(u)}y_j$\newline
+     \hspace*{48pt}			$\tilde{r}_{u,i}=\mu+b_u+b_i+q_i\cdot py$\newline
+     \hspace*{48pt}			$err=\tilde{r}_{u,i}-r_{u,i}$\newline
+     \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_b\cdot b_u)$\newline
+     \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_{b_2}\cdot b_i)$\newline
+     \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot q_i-\lambda_p\cdot p_u)$\newline
+     \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_q\cdot q_i)$\newline
+     \hspace*{48pt}			foreach $j\in N(u)$\{\newline
+     \hspace*{64pt}				$y_j=y_j+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot q_i-\lambda_y\cdot y_j)$\newline
+     \hspace*{48pt}			\}\newline
+     \hspace*{32pt}		\}\newline
+     \hspace*{16pt}	\}\newline
      {\scriptsize
       stała $\alpha$ oznacza szybkość uczenia (powinna więc zależeć od ilości przewidzianych iteracji = dostępnego czasu na działanie algorytmu uczącego)\newline
       stałe $\lambda_*$ służą lepszemu dostosowaniu algorytmu do problemu i powinny zostać ustalone tak, by optymalizowały funkcje oceny na zbiorze testowym\newline
@@ -419,7 +417,6 @@ Instytut Informatyki}
      }\newline
      Rozszerzony algorytm jest częściej używany od czystego SVD nawet przy danych wyłącznie explicite,
      jednak bez dodatkowych informacji implicite nie uzyskuje lepszych wyników.
-  %TODO indeksy przy lambdach
    \subsection{Spersonalizowany ranking Bayesa}
     W przypadku dostępu do danych wyłącznie typu implicite popularną metodą tworzenia spersonalizowanych list rekomendacyjnych jest
     faktoryzacja macierzy oparta o analizę bayesowską prawdopodobieństw.\newline
@@ -484,7 +481,6 @@ Instytut Informatyki}
     \hspace*{32pt}		$q_i=q_i+\alpha\cdot(err\cdot p_u-\lambda_q\cdot q_i)$\newline
     \hspace*{32pt}		$q_j=q_j+\alpha\cdot(-err\cdot p_u-\lambda_q\cdot q_j)$\newline
     \hspace*{16pt}	\}\newline
-    %TODO czy za każdym razem pisać definicje zmiennych czy raz wystarczy (zalezy czy ktoś czyta wyrywkowo czy całość)
     W tym algorytmie trójki $(u,i,j)\in D_K$ są wybierane losowo, gdyż jest ich na ogół o wiele wiecej niż par $(u,i)\in K$
     i przez to już jedna iteracja po wszystkich mogła by być zbyt droga obliczeniowo.
    
@@ -542,8 +538,7 @@ Instytut Informatyki}
     będący wzbogaceniem podstawowego modelu SVD o informacje na temat kategorii do których należą przedmioty.
     Algorytm zakłada, stałą niewielką liczbę kategorii, do której zakwalifikowane są przedmioty, przy czym jeden przedmiot może być zakwalifikowany do wielu
     kategorii na raz.
-    %W przypadku danych filmowych jeden film może być na przykład jednocześnie sensacyjny, przygodowy oraz science-fiction.
-    %TODO gdzieś na początku - podstawowe informacje/wstęp umnieścić informacje o danych MovieLens
+    Na przykład dla danych w których przedmioty są filmami jeden film może być jednocześnie sensacyjny, przygodowy oraz science-fiction.
     Dokładniej zakładane, jest że do każdego przedmiotu dołączona jest informacja o zbiorze kategorii przedmiot należy, a do których nie.\newline
     Ocena przewidziana dla użytkownika i przedmiotu opisana jest wzorem
     \begin{center}
@@ -570,53 +565,41 @@ Instytut Informatyki}
     \hspace*{48pt}			\}\newline
     \hspace*{32pt}		\}\newline
     \hspace*{16pt}	\}\newline
-    %TODO jeśli część kodu wyjdzie poza stronę, to wypada zrobić jakieś wyrównanie, żeby lepiej się czytało
- %
- %
- %
- %
- %
  %
  \chapter{Ulepszenia}
-  %TODO można zrobić tak żeby tutejsze podrozdziały były rozdziałami - jeżeli wyjdą duże te ok, a w spisie treści będzie lepiej wyglądało
-  %TODO napisać wstęp dlaczego są potrzebne + przejście ze zwykłego wymyślania nowych systemów do
-  % to może okazać się podobne do wstępu - zadbać żeby nie było za dużo powtórzeń
-  % napisać ogólnie, że ulepszenia często rozważają lepsze wyniki w szczególnych przypadkach danych
-  \section{TODO - sekcja o ulepszeniach standardowych algorytmów}
+  Aby stworzyć system odnoszący porządane rezultaty w rzeczywistych zastosowaniach warto wybrać odpowiedni do konkretnego celu algorytm.
+  Znane algorytmy pozwalają uzyskać w miarę dobre predykcje lub listy rekomendacji jednak ich rezultaty wciąż odbiegają mocno od optymalnych,
+  plasująć się często niewiele wyżej od prostych technik losowych i niespersonalizowanych.
+  Dodatkowo niektóre algorytmy nie radzą sobie dobrze w przypadku niektórych rozkładów danych, dodatkowo ograniczając możliwość wyboru odpowiedniego.
+  Jedną z możliwości pokonania tych niedoskonałości jest wymyślenie zupełnie nowego, lepszego algorytmu, to jednak jest wyjątkowo trudne.
+  Inną opcją jest wzięcie jednego ze znanych algorytmów i dokonanie na nim modyfikacji, pozwalającej uzyskać lepsze rezultaty
+  lub użycie niektórych jego fragmentów i stworzenie zupełnie nowego systemu.
+ 
+  \section{Standardowe ulepszenia algorytmów}
    Najprostszym sposobem stworzenia lepszego systemu rekomendacyjnego jest zmodyfikowanie istniejącego już systemu.\newline
-   
-   Modyfikacją może być zaadaptowanie znanego algorytmu do innego typu danych (jak w przypadku zmiany SVD $\rightarrow$ BPR),
-   poprzedzenie algorytmu preprocessingiem modyfikującym otrzymane dane na pasujące do wejścia normalnego systemu,
-   lub też użycie algorytmu bez zmian a jedynie z inną interpretacją wyników.
-   %TODO może wylistować jak będzie ze 4 rodzaje
-   Ulepszeniem można uzyskać poprzez dodanie dodatkowego elementu do modelu (jak SVD $\rightarrow$ SVD++ $\rightarrow$ gSVD++)
-   zazwyczaj wynikające z posiadania dodatkowych danych niewykorzystywanych w bazowym systemie.
-   Można również zadziałać odwrotnie porzucając część algorytmu, która nie polepsza rezultatów, jedncześnie upraszczając model.
-   Takie działanie może istotnie przyspieszyć system pozwalająć użyć go na większych danych, lub wykorzystać czas w inny sposób
-   (np. stosując dodatkowe iteracje).
-   
-   %TODO rozbić jakoś poniższe zdanie
+   Ulepszenie można uzyskać poprzez zaaplikowanie modyfikacji polegającej na:
+   \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
+    \item zaadaptowaniu znanego algorytmu do innego typu danych (jak w przypadku zmiany SVD $\rightarrow$ BPR)
+    \item poprzedzeniu algorytmu preprocessingiem modyfikującym otrzymane dane na pasujące do wejścia normalnego systemu
+    \item użycie algorytmu bez zmian a jedynie z inną interpretacją wyników
+    \item dodanie dodatkowego elementu do modelu (jak SVD $\rightarrow$ SVD++ $\rightarrow$ gSVD++)
+          -- zazwyczaj wynikające z posiadania dodatkowych danych niewykorzystywanych w bazowym systemie
+    \item porzucenie części algorytmu, która nie polepsza rezultatów, jednocześnie upraszczając model
+    \item zamianę części na inną o tej samej funkcji (inna miara podobieństwa czy funkcja celu)
+   \end{itemize}
    Niektóre systemy jako wejście oprócz danych o predmiotach i użytkownikach przyjmują dodatkowe parametry zmieniające ich pracę i o ile
    wprowadzenie innych stałych regularyzacyjnych w SVD czy wybór pomiędzy podobieństwami użytkowników i przedmiotów w CF nie może być uznany jako
    istotna zmiana algorytmu, o tyle wprowadzenie własnej funkcji podobieństwa lub inne schodzenie po gradiencie (np. zmniejszająca się szybkość uczenia)
-   pozwala uzyskać istotnie inny algorytm.
-
-   
-   %TODO dostosowanie do rozkładu danych - rozmiary macierzy czy gęstość - to bardziej ogólne niż typ modyfikacji - albo na początku tej sekcji albo wręcz rozdziału
-   %wtedy zmodyfikować zdanie o poprawie poprzez dostosowanie do typu danych
-   %TODO algorytmy przybliżone - szybsze = da się zastosować do większych danych
-   
-   % napisać o tym, że często robi się jakieś drobne ulepszenie znanego modelu jak SVD -> SVD++ lub dostosowanie znanego do innej/szczególnej
-   % sytuacji jak SVD->BPR, czy też możliwość wykorzystania dodatkowych danych SVD++->gSVD++, drobna modyfikacja CF -> praca 221
+   pozwala uzyskać istotnie inny algorytm.\newline
+   Porzucenie części algorytmu o ile raczej nie usprawni wyników samo w sobie, o tyle pozwala użyć go na większych danych,
+   lub wykorzystać zyskany czas w inny sposób (np. stosując dodatkowe iteracje).
    \subsection{ulepszenia CF}
-   %TODO gdzieś w klasycznych algorytmach napisać, że CF ma tę zaletę, że można szybko zrobić dla jednego użytkownika a SVD nie - tutaj przy dalszym podobieńtwie ta przewaga zanikać
     Największą niedoskonałością algorytmu Collaborative Filtering (poza złożonością czasową) jest słaba możliwość predykcji ocen w przypadku gdy użytkownik nie
     ma sąsiadów którzy użyli dany przedmiot, takich sąsiadów jest mało,
     lub też mimo podobieństwa w wybranej mierze użytkownik nie jest dobrym wyznaczikiem oceny.\newline
     W pracy \cite{221} zaproponowano szereg ulepszeń klasycznego algorytmu CF mających na celu zminimalizowanie tych wad.
     \subsubsection{alternatywne podobieństwo}
      Najbardziej standardową zmianą jaką można dokonać w algorytmie CF jest zdefiniowanie własnej funkcji podobieństwa.\newline
-     %TODO następne zdanie odnosi się właściwie do wszystkich 3, więc można wyrzucić poziom wyżej
      Największą wadą podobieństw korelacji Paersona oraz kosinusowego jest niedokładność lub wręcz brak możliwości określenia podobieństwa pomiedzy użytkownikami
      w przypadku małej ilości wspólnych przedmiotów użytych lub spłaszczenia ocen.
      Aby pokonać te ograniczenia zaproponowana została nowa miara podobieństwa pomiędzy dwoma użytkownikami:\newline
@@ -631,7 +614,6 @@ Instytut Informatyki}
      $\overline{r}$ -- średnia ocena dostępna w systemie (neutralna)
      }\newline    
      \end{center}
-     %TODO dopilnować, żeby nie podzieliło tego brzydko
      W ten sposób otrzymane podobieństwo przyjmuje wartości w przedziale $[0,1]$ i daje w miarę dobre informacje o podobieństwie dwóch użytkowników
      już dla małych ilości wspólnie użytych przedmiotów oraz spłaszczonych rankingach,
      w pozostałych przypadkach przegrywa jednak z korelacją Paersona.\newline
@@ -658,9 +640,9 @@ Instytut Informatyki}
      \end{center}
      Zbiór sąsiadów jest jednak nadal wyliczany na podstawie normalnych podobieństw między użytkownikami.
     \subsubsection{dalsze podobieństwo}
-     W przypadku gdy pewien użytkownik nie posiada sąsiadów, którzy użyli dany przedmiot %TODO można zacytować ile procent dla PC w danych ml100k
+     W przypadku gdy pewien użytkownik nie posiada sąsiadów, którzy użyli dany przedmiot
      można odnieść się do dalszych sąsiadów -- użytkowników bliskich według podobieństwa przechodniego (sąsiedzi sąsiadów),
-     które już dla ścieżek pomiędzy użytkownikami długości 2 powinny znacznie poprawić pokrycie przypadków występujących w danych.%TODO ponownie zacytować
+     które już dla ścieżek pomiędzy użytkownikami długości 2 powinny znacznie poprawić pokrycie przypadków występujących w danych.
      Dalsze podobieństwo można odczytać z grafu w którym wierzchołkami są użytkownicy, zaś krawędziami wartości podobieństwa między nimi z odciętymi krawędziami
      negatywnymi. W ten sposób podobieństwo można zdefiniować jako po pierwsze odległość w grafie, a w dalszej kolejności podobieństwo wynikające z wag krawędzi
      na najkrótszej ścieżce.\newline
@@ -775,8 +757,7 @@ Instytut Informatyki}
      \end{center}
      Po przeprowadzeniu takiego preprocessingu i ustaleniu nowego zbioru $D_K$ pseudo oceny ustalane są już przy pomocy niezmienionego BPR.
     \subsubsection{MABPR gSVD++}
-     %TODO przepisać w ładniejszym języku
-     Kolejny algorytm również zakład wylicznie rozszerzonego zbioru $D_K$ (w ten sam sposób) przed wykonywaniem właściwej pracy,
+     Kolejny algorytm również zakłada wylicznie rozszerzonego zbioru $D_K$ (w ten sam sposób) przed wykonywaniem właściwej pracy,
      jednak korzysta z danych o należności przedmiotów do kategorii dodatkowo i w właściwej swojej części.
      MABPR gSVD++ łączy w sobie dwa ulepszenia jakimi są przejście z SVD do gSVD++ oraz z BPR do MABPR generując sztuczną ocenę przypisaną
      użytkownikowi i przedmiotowi przy pomocy wzoru:
@@ -814,28 +795,28 @@ Instytut Informatyki}
      \hspace*{48pt}			$x_g=x_g+\alpha\cdot(-err\cdot |G(j))|^{-1}\cdot py-\lambda_{x_2}\cdot x_g)$\newline
      \hspace*{32pt}		\}\newline
      \hspace*{16pt}	\}\newline
-    %TODO znów ładne łamanie strony
-  \section{TODO - sekcja o ulepszeniach - zupełnie nowe algorytmy}
-  %TODO napisać, że complex mimo że nowy to tak naprawdę jest ulepszeniem
+  \section{Nowe algorytmy zbudowane na podstawie starych}
+   Inną metodą skonstruowania ulepszenia jest przeanalizowanie głównych cech pewnego algorytmu i stworzenie nowego pozornie zupełnie innego algorytmu,
+   który jednak również zawiera te cechy a jednocześnie lepiej radzi sobie z postawionym przed nim celem.\newline
+   Jednym z takich ulepszeń jest algorytm Complex bazujący na kolaboratywnym filtrowaniu i otrzymany poprzez znaczne uproszczenie algorytmów CF i SO
+   oraz dostosowanie do prostszych danych postaci $\{-1,0,1\}=\{$negatywna ocena, brak oceny, pozytywna ocena$\}$.
    \subsection{Complex}
-    %TODO wpisanie poprawek CF mogło coś zmienić w braku możliwości CF na patrzenie na dalsze odległości
-    %TODO skoro to "ulepszenie", to warto napisać coś żeby to wyglądało na zmienienie pomysłu z CF - szybsze i usprawnione CF dla dalszych
-    %TODO grafowa interpretacja jest też w dalszym podobieństwie CF trzeba to jakoś tak przedstawić, żeby dobrze brzmiało i tu i tu
-    Standardową reprezentacją danych rozważanych w filtorwaniu kolaboratywnym jest macierz użyć przedmiotów (lub lista ocen pozwalająca zaoszczędzić pamięć).
-    %TODO inną formą brzmi trochę jakby ta macierz była formą wizualizacji - można by spróbować lepiej to ująć
+    Standardową reprezentacją danych rozważanych w filtrowaniu kolaboratywnym jest macierz użyć przedmiotów (lub lista ocen pozwalająca zaoszczędzić pamięć).
     Inną formą wizualizacji danych jest graf w którym wierzchołkami są użytkownicy i przedmioty, zaś krawędzie oznaczają powiązania miedzy nimi
     -- oceny wystawione przez użytkowników przedmiotom lub znane podobieństwo. Zazwyczaj informacje zawarte w krawędziach mogą zostać spłaszczone do
-    rzeczywistej wartości liczbowej oznaczającej upodobanie użytkownika do przedmiotu lub podobieństwo przedmiot-przedmiot użytkownik-użytkownik,
-    w przypadku braku informacji na temat interakcji krawędź nie istnieje.
+    rzeczywistej wartości liczbowej oznaczającej upodobanie użytkownika do przedmiotu lub podobieństwo przedmiot-przedmiot użytkownik-użytkownik.
+    W przypadku braku informacji na temat interakcji krawędź nie istnieje.
     Klasyczne algorytmy bazujące na podobieństwie pomiędzy użytkownikami lub przedmiotami skupiają się w większości na wyliczeniu tych podobieństw
-    dla każdej pary (sporządzeniu maciery podobieństwa) i w celu predykcji nowej oceny aplikują pewną funkcję agregującą oceny podobnych instancji.
+    dla każdej pary (sporządzeniu macierzy podobieństwa) i w celu predykcji nowej oceny aplikują pewną funkcję agregującą oceny podobnych instancji.
     Przy spojrzeniu na nie z perspektywy grafu algorytmy te skupiają się na stworzeniu brakującej krawędzi pomiędzy użytkownikiem i przedmiotem na podstawie
     ścieżek długości 3 między nimi.\newline
     Podstawowym problemem tego podejścia jest to, że w przypadku rzadkich macierzy użyć przedmiotów (w zastosowaniach macierze te są zazwyczaj bardzo rzadkie)
     ścieżek takich może być bardzo mało, co oznacza małą wiarygodność predykcji, zaś brak ścieżek uniemożliwia jakąkolwiek predykcję.
-    Jednym z rozwiązań problemu jest posłużenie się również dłuższymi ścieżkami, takie podejście może jednak napotkać barierę złożonościową
-    (algorytmy CF i SO do wyliczenia wszystkich ocen potrzebują czasu $\Omega(m^2n)$ dla macierzy o rozmiarach $m\times n$ badając tylko bardzo krótkie ścieżki,
-    przy dłuższych ten czas ulegałby potęgowaniu), dlatego aby uzyskać lepsze wyniki w rozsądnym czasie model podobieństwa musi zostać uproszczony.
+    Jednym z rozwiązań problemu jest posłużenie się również dłuższymi ścieżkami, takie podejście może jednak napotkać barierę złożonościową.
+    Algorytmy CF i SO do wyliczenia wszystkich ocen potrzebują czasu $\Omega(m^2n)$ dla macierzy o rozmiarach $m\times n$ badając tylko bardzo krótkie ścieżki,
+    przy dłuższych ten czas ulegałby potęgowaniu
+    (jest to częściowo naprawiane przez podejście jak w pracy \cite{221}, nie jest to jednak całkowite rozwiązanie problemu),
+    dlatego aby uzyskać lepsze wyniki w rozsądnym czasie model podobieństwa musi zostać uproszczony.
     %
     Jeden z modeli wykorzystujących dalsze podobieństwo w praktyce został zaproponowany w \cite{205}. Algorytm Complex upodobanie użytkownika do przedmiotu
     predykuje jako sumę wartości po ścieżkach wiodących od użytkownika do tego przedmiotu aplikując do nich wagi zmniejszające się wraz z rosnącą ich długością.
@@ -930,9 +911,6 @@ Instytut Informatyki}
      Algorytm Complex działa dobrze również w przypadku danych implicite, oczywiście w tym przypadku nie skupia się na znajdowaniu obiektów najlepszych
      na podstawie pozytywnych i negatywnych ocen, a jedynie na znajdowaniu wszystkich przedmiotów które powinny zostać użyte.\newpage
     
-    
-    
-    
  \chapter{Ocena i porównanie systemów}
   Aby dokonać wyboru jednego z algorytmów do prawdziwego systemu lub aby sprawdzić czy modyfikacja systemu rzeczywiście go poprawia należy
   określić jakąś miarę jakości przewidywanych ocen i rekomendacji względem której będą one porównywane.\newline
@@ -941,19 +919,17 @@ Instytut Informatyki}
    \item gęstości -- dla rzadszych danych ciężej znaleźć podobnych użytkowników, istotne jest mniej wartości własnych macierz
    \item rozmiaru -- dla dużych danych niektóre algorytmy są zbyt wolne, lub wymagają zbyt dużej pamięci
           -- nalezy użyć algorytmów szybszych lub przybliżonych 
-   \item ilości nowych uzytkowników i przedmiotów (z małą liczbą ocen) -- niektóre algorytmy są lepiej dostosowane do zjawiska zimnego startu
-   %TODO więcej   
+   \item ilości nowych użytkowników i przedmiotów (z małą liczbą ocen) -- niektóre algorytmy są lepiej dostosowane do zjawiska zimnego startu
+   \item rożnorodności ocen -- jeśli użytkownicy wystawiają takie same oceny wszystkim przedmiotom wiele funkcji podobieństwa przestaje sobie radzić 
   \end{itemize}
   Dlatego też do wyliczenia tych miar należy użyć prawdziwych danych dla których przewidziany jest system, lub też okrojonej ich części,
   która zachowa możliwie wiele własności pełnych danych.
   \section{Opis danych}
    Dane użyte do testowania i oceny algorytmów pochodzą z ogólnodostępnego i popularnego wśród prac naukowych
-   zbioru zebranego przez GroupLens\newline
-   \cite{ML} i dotyczą danych filmowych.\newline
+   zbioru zebranego przez GroupLens (\cite{ML}) nazwanego MovieLens (ML) i dotyczą danych filmowych.\newline
    Dokładniej dane skłądają się z listy ocen wystawionych przez użytkowników filmom w skali 1--5,
    binarnych danych o przynależności przedmiotów do 19 gatunków filmowych oraz kilku podstawowych informacji o użytkownikach.
    Dodatkowo uwzględnione są tam nieużywane w opisanych algorytmach dane o datach wydania filmu i wystawienia oceny.
-   %TODO jak coś dodam, to zrewidować   
    W pełnym zbiorze danych występuje 1682 filmów oraz 943 użytkowników, z których każdy wystawił co najmniej 20 ocen.
    Łącznie wystawionych jest 100 000 ocen, co przy 1 486 126 brakujących ocenach daje poziom rzadkości danych równy 93.7\%
    ($1-\frac{\text{ilość ocen}}{\text{ilość wszystkich możliwych}}$), dosyć mały przy porównaniu z większością innych baz danych.
@@ -962,7 +938,7 @@ Instytut Informatyki}
    (całe dane zostają podzialone na 5 równych co do wielkości części, zbiór testowy to jedna z tych części, zaś odpowiedni treningowy to reszta danych).
    W moich ocenach algorytmów korzystam właśnie z tego podziału (wartości odpowiednich miar dla systemu jest średnią po 5 wartościach
    otrzymanych przez uczenie modelu na zbiorze treningowym i ocenianiu na podstawie odpowiedniego testowego).
-  \section{Załączona implementacja algorytmów}%TODO jakiś lepszy tytuł
+  \section{Załączona implementacja algorytmów}
    Aby przeprowadzić miarodajne porównanie algorytmów zaimplementowałem je oraz skrypt umożliwiający zbadanie ich wyników w języku R
    (implementacje są dołączone do pracy).
    Wybór języka dostosowanego do data miningu oraz brak nietrywialnych optymalizacji czasowych pozwalił na bezpośrednie przerobienie
@@ -1019,23 +995,25 @@ Instytut Informatyki}
    dla algorytmów BPR:\newline
    $\lambda_w=0.075,\lambda_{b_2}=0.005,\lambda_p=\lambda_{q_1}=0.025,\lambda_{q_2}=0.0025,\lambda_y=\lambda_{x_1}=\lambda_{x_2}=0.006$\newline
    ze względu jednak na występujący w algorytmach czynnik losowy oraz ograniczoną przestrzeń przeszukiwania mogą one jednak mocno odbiegać od optymalnych.\newline
-   %CF-mix co oznacza za mało wspólnych lub za bardzo spłaszczone
-   %TODO CF-ADV tylko do podobieństwa stopnia 2, bo dla tych danych wystarcza (normalnie ilsę procent, tak ileś)
-   %TODO complex większej długości niż 3 w praktyce nie daje żadnych plusów 
-   % sąsiedzi -->  <=30 powyżej 0
-   
+   W algorytmach z grupy CF jako sąsiedzi uznawani są tacy inni uzytkownicy (inne przedmioty), dla których funkcja podobieństwa wynosi więcej niż $0$,
+   a w przypadku dużej ich ilości do wyliczania oceny uzywanych jest $30$ z nich, dl których to podobieństwo jest największe. 
+   Pojęcie spłaszczonego oceniania przez użytkownika używane w algorytmach z pracy \cite{221} do określenia,
+   kiedy w mieszanej funkcji podobieństwa użyć korelacji Paersona, a kiedy alternatywnego podobieństwa określiłem przy pomocy wariancji tych ocen.
+   Podobieństwo alternatywne używane jest albo kiedy ilość wspólnych ocen jest mniejsza niż $5$, albo wariancja ocen jednego z użytkowników jest mniejsza niż $0.15$.\newline
+
    Z ważniejszych uwag dotyczących implementacji algorytmów niezawartych w pseudokodach:
    \begin{itemize}\itemsep1pt \parskip0pt \parsep0pt
     \item przy używaniu algorytów z grupy SVD (schodzenie po gradiencie) należy rozpocząć od wektorów z wartościami wylosowanymi.
      W przypadku wartości odpowiednich współrzędnych liniowo powiązanych we wszystkich wektorach nie ma możliwości pozbycia się tej zależności,
-     co skutkuje efektywnie zmniejszeniem długości wektorów bez uzyskania korzyści czasowych.%TODO dodatkowy czynnik losowy
-    \item należy używać małych stałych uczenia (rzędu 0.02), gdyż przy dużych wartości w wektorach mogą w trakcie wykonywania algorytmu
-     iteracyjnego rozbiegać zamiast stabilizować się, skutkując skrajnie wielkimi wartościami.%TODO można poprawić przy uzyciu stałych regularyzacyjnych
+     co skutkuje efektywnie zmniejszeniem długości wektorów bez uzyskania korzyści czasowych.
+    \item należy używać małych stałych uczenia (rzędu 0.01), gdyż przy dużych wartości w wektorach mogą w trakcie wykonywania algorytmu
+     iteracyjnego rozbiegać zamiast stabilizować się, skutkując skrajnie wielkimi wartościami.
+    \item odpowiednio dobrane, dodatnie stałe regularyzacyjne pozwalają nie tylko uzyskiwać lepsze wyniki, ale również częściowo uodporniają
+     algorytm na problem z poprzedniego podpunktu pozwalając użyć większych szybkości uczenia.
     \item w przypadku algorytmów CF można wyliczyć i zapamiętać macierz podobieństwa pomiędzy użytkownikami (lub przedmiotami)i w ten sposób
      zmniejszyć złożoność czasową zwiększając jednocześnie złożoność pamięciową.
     \item w wielu wzorach pojawiają się przypadki gdy pewna wartość jest wyliczana jako $\frac{0}{0}$, należy to zazwyczaj traktować jako $0$.
    \end{itemize}
-   %TODO pewnie gdzieś tutaj o optymalizacji stałych użytych w algorytmach i o całej liście algorytmów
   \section{Ewaluacja predykcji ocen}
    Jednym z celów do których możemy chcieć użyć algorytmu jest przewidzenie jaką ocenę powinien wystawić użytkownik pewnemu filmowi, którego jeszcze nie obejrzał.
    W tym przypadku stosunkowo łatwo jest dokonać oceny systemu, skoro zbiorem testowym jest lista niektórych takich właśnie ocen.
@@ -1052,27 +1030,29 @@ Instytut Informatyki}
     gdzie $T$ to zbiór par (użytkownik, przedmiot) ze zbioru testowego, $r_{u,i}$ to prawdziwe oceny z tego zbioru,\newline
     zaś $\tilde{r}_{u,i}$ oceny przewidziane przez system
    }\newline
-   Przed wyliczeniem miar jakości warto obciąć wartości ocen do dostępnego przedziału (w przypadku danych ML [1,5]).%TODO dać skrót przy wspomnieniu o dancyh
+   Przed wyliczeniem miar jakości warto obciąć wartości ocen do dostępnego przedziału (w przypadku danych ML [1,5]).
    Większość algorytmów tu przedstawionych może zwracać wartości spoza przedziału, przy zwracaniu ocen lepiej zwrócić wartość z krańca przedziału,
-   jednak przy konstruowaniu list rekomendacyjnych lepiej nie spłaszczać wyników systemu.
-   %TODO przykład 
+   jednak przy konstruowaniu list rekomendacyjnych lepiej nie spłaszczać wyników systemu.\newline
+   Przykładem takiej sytuacji jest użycie algorytmu SO na macierzy użyć
+   $\left[\begin{array}{cc}
+    4&5\\
+    5&?\\
+   \end{array}\right]$, kiedy to wartość nieznana zostanie wyliczona na $\text{diff}_{i,j}+r_{u,j}=1+5=6$.\newline
    W porównaniu wartości błędów dla algorytmów CF zastosowanie podobieństwa między przedmiotami dało według obu miara zawsze mniejsze błędy
    niż zastosowanie podobieństwa między użytkownikami, średnio o 1.6\% w przypadku MAE i 3.5\% w przypadku MSE, ta prawidłowość wynika jednak głównie
    z własności danych, w szczególności tego, że filmów w bazie jest prawie 2 razy więcej niż użytkowników. W dalszych porównaniach aby uzyskać większą
    przejrzystość CF będzie reprezentowane przez wartości otrzymane przy podobieństwie przedmiotów
    (pozostałe miary jakości w większości też preferują podobieństwo przedmiotów).
    Wartości dla CF przy różnych funkcji podobieństwa można odczytać z wykresów:
-   %TODO można napisać, że tu im większy słupek tym gorzej :)
    \begin{center}
     \includegraphics[scale=0.35]{img/CF_item_MAE.jpg}
    \end{center}
    \begin{center}
     \includegraphics[scale=0.35]{img/CF_item_MSE.jpg}
    \end{center}
-   %TODO podpisać wykresy
    Jak widać użycie współczynnika podobieństwa poprawia wyniki, podobnie jak uzupełnienie podobieństwa korelacji Paersona przez alternatywne podobieństwo.
    Dodanie dalszego poobieństwa w przypadku podobieństwa przedmiotów daje nieistotne ulepszenie,
-   przy podobieństwie uzytkowników poprawa jest większa lecz dalej ledwo zauważalna (poniżej 0.5\% zmniejszenia błędów),
+   przy podobieństwie użytkowników poprawa jest większa lecz dalej ledwo zauważalna (poniżej 0.5\% zmniejszenia błędów),
    wynika to z tego, że dalsze podobieństwo używane jest dopiero gdy nie znajdzie się żaden bezpośredni sąsiad 
    który użył danego przedmiotu (został użyty przez danego użytkownika), a dla rozpatrywanych danych jest to rzadkie zjawisko.
    Można teraz porównać CF z innymi algorytmami tworzącymi predykcje ocen:
@@ -1090,7 +1070,6 @@ Instytut Informatyki}
    w jakim znajdują się te oceny na [1,5] otrzymać odpowiednie wartości dla algorytmów o wejściu implicite, nie otrzymuja one jednak tak dobrych wyników.
    Algorytmy te otrzymują wartości od $MAE=0.9,MSE=1.34$ do $MAE=1.61,MSE=3.54$ a więc porównywalne do losowych ocen o
    wartościach $MAE=1.38,MSE=2.88$
-   %TODO uaktualnić po przeliczeniu SVD,BPR
   \section{Jakość list rekomendacyjnych}
    Ocena rekomendacji zwracanych użytkownikom jest bardziej skomplikowana -- ważne jest to, żeby jak najwięcej z przedmiotów proponowanych rzeczywiście trafiało
    w gusta użytkownika, jednak w zależności od zastosowań używane mogą być listy różnych długości.
@@ -1101,9 +1080,9 @@ Instytut Informatyki}
     Ocenianą uporządkowaną listę przedmiotów przypisaną przez algorytm użytkownikowi można znając zbiór testowy uprościć do postaci binarnej
     poprzez przypisanie $1$ dla trafionej rekomendacji (para (użytkownik,przedmiot) znajdowała się w zbiorze testowym), oraz $0$ w przeciwnym przypadku.
     Jako, że każdy z zaprezentowanych tu algorytmów tak naprawdę zwraca dla każdej pary (użytkownik, przedmiot) jakąś ocenę,
-    to listy rekomendacyjne wygenerowane poprzez wzięcie dla użytkownika przedmotów których nie użył w zbiorze treningowym o najlepszych ocenach
+    to listy rekomendacyjne wygenerowane poprzez wzięcie dla użytkownika przedmiotów których nie użył w zbiorze treningowym o najlepszych ocenach
     mogą być dowolnych długości (aż do ilości wszystkich przedmiotów nie użytych w zbiorze testowym).
-    Dla dwóch list tej samej długości i z taką samą ilością $1$ (odpowiadającym jednemu uzytkownikowi i dwóm algorytmom) lepsza jest ta,
+    Dla dwóch list tej samej długości i z taką samą ilością $1$ (odpowiadającym jednemu użytkownikowi i dwóm algorytmom) lepsza jest ta,
     dla której te jedynki znajdują się wcześniej, nie jest to jednak dobrze sprecyzowane pojęcie.
     Jedną z metod oceny takich list jest krzywa ROC (receiver operating characteristic), która dla każdego prefiksu listy zlicza osobno
     jaki procent liczby wszystkich $1$ i $0$ już się pojawił, otrzymując dwie wartości:
@@ -1114,14 +1093,13 @@ Instytut Informatyki}
     {\scriptsize
      gdzie $TP(n)$, to ilość $1$ w prefiksie długości $n$, $FP(n)$ to ilość $0$, zaś długość prefiksu $\infty$ oznacza całą listę
     }\newline
-    Dla każdej długości prefiksu do układu współrzędnych wprowadzany jest punkt $(FPR(n),TPR(n))$, tworząc wykres "funkcji"
+    Dla każdej długości prefiksu do układu współrzędnych wprowadzany jest punkt\newline
+    $(FPR(n),TPR(n))$, tworząc wykres "funkcji"
     (mogą występować punkty o tej samej współrzędnej $x$) niemalejącej. Krzywą ROC dla systemu otrzymujemy poprzez uśrednienie wyników
     po wszystkich użytkownikach (średnia wszystkich "funkcji"), ignorując użytkowników, którzy w zbiorze testowym nie użyli żadnego przedmiotu,
     lub użyli wszystkie, aby uniknąć wartości $\frac{0}{0}$.
     Otrzymane w ten sposób wykresy można porównać ze sobą -- miejsca dla których jeden wykres przyjmuje większą wartość od drugiego pokazują
-    dla list jakiej długości algorytm zwraca więcej trafnych przedmiotów. Dzięki takiemu przedstawieniu ułatwiony jest wybór długości list rekomendacyjnych
-    jakie zwaracać powinien nasz system, oraz dobranie algorytmu do tej długości
-    (lub stworzenie nowego systemu hybrydowego, który przyjmuje długość list jako parametr i używa tego algorytmu, który najlepiej sprawdza się w danym przypadku).
+    dla list jakiej długości względnej algorytm zwraca więcej trafnych przedmiotów.
     W przypadku przecinających się wykresów aby wybrać jeden algorytm niezaleznie od długości list często wyliczane jest AUC (area under curve) --
     powierzchnia pod wykresem krzywej ROC wyliczana jako całka (być może dyskretna) z "funkcji" opisującej tę krzywą.
     Warto jeszcze dodać, że w zależności od celu systemu można jako trafienie uznać tylko predykcje, których oceny w zbiorze testowym są powyżej pewnego poziomu,
@@ -1129,13 +1107,12 @@ Instytut Informatyki}
     i dzięki temu uzyskać dodatkowy efekt rozróżnenia jakości.
     Warto jeszcze wspomnieć, że sensowny system powinien mieć wykres powyżej krzywej $y=x$ (AUC=0.5) odpowiadającej losowej kolejności przedmiotów
     oraz że nie da się przekroczyć optymalnej krzywej $y=1$ (AUC=1).
-    %TODO przedstawić to tak, żeby nie było wrażenia, że to jest do dobierania długości w prawdziwym systemie
    \subsection{Precyzja i MAP}
     W przypadku krzywej ROC badanie wartości dla krótkich list mija się z celem -- jeśli lista rekomendacji ma długość rzędu 1\% liczby wszystkich przedmiotów
     (a w rzeczywistości listy są o wiele krótsze), to wartości dla kilku porównywanych algorytmów odczytywane
     z krzywej nie zdążą się jeszcze rozejść od startowego punktu $(0,0)$.\newline
     Miarą dającą lepsze informacje na temat jakości krótkich list rekomendacyjnych jest
-    precyzja zdefiniowana dla pojedynczego uzytkownika jako stosunek ilości trafionych rekomendacji do wszystkich:
+    precyzja zdefiniowana dla pojedynczego użytkownika jako stosunek ilości trafionych rekomendacji do wszystkich:
     \begin{center}
      $Precision(n)=\frac{TP(n)}{n}$
     \end{center}
@@ -1149,7 +1126,7 @@ Instytut Informatyki}
      $AveP(n)=\sum\limits_{i=1}^{n}Precision(i)*V[i]$
     \end{center} 
     {\scriptsize
-     gdzie $V[i]$, to wartość wektora trafień (to czy $i$-ty przedmiot zarekomendowany uzytkownikowi był trafiony)
+     gdzie $V[i]$, to wartość wektora trafień (to czy $i$-ty przedmiot zarekomendowany użytkownikowi był trafiony)
     }\newline
     Zaś wartość MAP (mean average precision) jest wektorem wartości dla systemu zdefiniowanym jako średnia AveP po użytkownikach.
    \subsection{Porównanie systemów}
@@ -1161,7 +1138,6 @@ Instytut Informatyki}
     (w przypadku precyzji dwie pierwsze grupy się łączą) - w kolejności od najgorszych
     rekomendacje losowe, systemy z wejściem explicite (bez complex), algorytmy z wejściem implicite (wraz z complex), rekomendacje optymalne
     (sztucznie wygenerowane w celu porównania). Wartości AUC dla środkowych grup mieszczą się w przedziałach $[0.696,0.751]$ oraz $[0.838,0.937]$,
-    %TODO uaktualnić po przeliczeniu SVD,BPR
     (losowy -- 0.5, optymalny -- 1), a więc rozgraniczenie jest wyraźne również po wzięciu pod uwagę różnic wartości wewnątrz grup.
     Taki sam rozdział występuje przy porównywaniu tych miar po uwzględnieniu rozróżnienia pomiędzy ocenami
     ze zbioru testowego (wyższa ocena - ważniejsza predykcja lub tylko najlepsze oceny się liczą), oraz przy uzywaniu miary MAP
@@ -1199,7 +1175,7 @@ Instytut Informatyki}
      Tak małe różnice pomiędzy tymi algorytmami wynikają najpewniej z tego, że ilość trójek losowanych w algorytmach, w których oba przedmioty
      zostały użyte jest znikoma w przypadku rzadkich macierzy użyć (a tak jest prawie zawsze), dodatkowo różnice w ich wartościach są mniej istotne.\newline
      \includegraphics[scale=0.2]{img/ROC_BPR.jpg}
-      \includegraphics[scale=0.2]{img/MAP_BPR.jpg}    
+     \includegraphics[scale=0.2]{img/MAP_BPR.jpg}    
    \subsection{Pokrycie}
     W przypadku gdy mamy do wyboru kilka algorytmów, o podobnej jakości rekomendacji możemy do stworzenia prawdziwego systemu wybrać taki,
     który posiada dodatkowe cechy. Jedną z takich pożądanych własności jest różnorodność proponowanych przedmiotów -- proponowanie mało popularnych
@@ -1253,18 +1229,17 @@ Instytut Informatyki}
     Algorytmy SVD i BPR mogą zostać przyśpieszone poprzez używanie mniejszej ilości iteracji, jednocześnie zwiększając odpowiednio szybkość uczenia,
     w przypadku użycia 20 iteracji zamiast 40 wyniki nie są wiele gorsze (plasują się tak samo na tle pozostałych). Nie należy jednak z tym przesadzać,
     ponieważ dla dużych szybkoci uczenia wartości potrafią nie tylko mocno odbiegajać od właściwych, ale również rozbiegać się do nieskończoności.
-    Plusem algorytmów CF jest to, że może być zaaplikowana do kadżdego uzytkownika osobno (jednak czas sumaryczny po wszystkich użytkownikach wtedy wzrasta).
+    Plusem algorytmów CF jest to, że może być zaaplikowana do kadżdego użytkownika osobno (jednak czas sumaryczny po wszystkich użytkownikach wtedy wzrasta).
     Wystarczy wtedy wyliczać tylko podobieństwa między tym jednym użytkownikiem i pozostałymi uzyskując system szybszy od pozostałych,
     do których nie da się zaaplikować podobnej operacji. Własność ta jest niestety tracona jeśli używa się dalszego sąsiedztwa, gdyż wtedy potrzeba wyliczyć
-    podobieństwo pomiedzy prawie wszystkimi parami uzytkowników.
+    podobieństwo pomiedzy prawie wszystkimi parami użytkowników.
    \section{Podsumowanie}
     
     
-\begin{thebibliography}{99}%TODO
+\begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Bibliografia}
-  %wikipedia en - recemender system
-  
-  \bibitem{ML} \url{http://grouplens.org/datasets/movielens/100k/} %TODO jakiś opis
+
+  \bibitem{ML} \url{http://grouplens.org/datasets/movielens/100k/}
   
   \bibitem{SO} Daniel Lemire, Anna Maclachlan,
   "Slope One Predictors for Online Rating-Based Collaborative Filtering"
@@ -1303,6 +1278,8 @@ Instytut Informatyki}
   \bibitem{MML} Zeno Gantner, Steffen Rendle, Lucas Drumond, and Christoph Freudenthaler
   \textit{MyMediaLite}
   \url{http://www.mymedialite.net/index.html}
+  
+  \bibitem{Wiki} \url{https://en.wikipedia.org/wiki/Recommender_system}
 
 \end{thebibliography}
 
