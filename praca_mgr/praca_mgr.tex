@@ -23,15 +23,15 @@ Instytut Informatyki}
 \date{December 2016}
 
 \dziedzina{ 
-11.0 Matematyka, Informatyka:\\
-11.4 Sztuczna inteligencja\\ 
+ 11.0 Matematyka, Informatyka:\\
+ 11.4 Sztuczna inteligencja\\ 
 }
 
 
 \klasyfikacja{
-68--XX Computer science\\
-68Txx Artificial Inteligence\\
-68T05 Learning and adaptive systems
+ 68--XX Computer science\\
+ 68Txx Artificial Inteligence\\
+ 68T05 Learning and adaptive systems
 }
 
 \keywords{rekomendacje, predykcja ocen, systemy rekomendacyjne, collaborative filtering, Slope One, SVD, BPR, Complex, porównanie algorytmów}
@@ -42,21 +42,19 @@ Instytut Informatyki}
 \maketitle
 
 \begin{abstract}
-W pracy przedstawiono problemy rekomendacji przedmiotów oraz predykcji ocen, podstawowe techniki ich rozwiązania, jak i algorytmy je implementujące.
-Przedstawiono również kilka sposobów ich ulepszenia zaproponowanych na konferencji
-\textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)}.
-Do przedstawionych algorytmów należą CF (collaborative filtering), SVD (singular value decomposition), SVD++, gSVD++,
-BPR (Bayesian personalized ranking), SO (Slope One), oraz ulepszenia: CF ADV, MABPR (Metadata awareness Bayesian personalized ranking),
-Complex plus różne ich odmiany.
-Praca zawiera również przegląd różnych metod oceny systemów oraz szczegółowe porównanie wyżej wymienionych algorytmów na nich bazujące.
+ W pracy przedstawiono problemy rekomendacji przedmiotów oraz predykcji ocen, podstawowe techniki ich rozwiązania, jak i algorytmy je implementujące.
+ Przedstawiono również kilka sposobów ich ulepszenia zaproponowanych na konferencji
+ \textit{2014 IEEE/WIC/ACM International Joint Conferences on Web Intelligence (WI) and Intelligent Agent Technologies (IAT)}.
+ Do przedstawionych algorytmów należą CF (collaborative filtering), SVD (singular value decomposition), SVD++, gSVD++,
+ BPR (Bayesian personalized ranking), SO (Slope One), oraz ulepszenia: CF ADV, MABPR (Metadata awareness Bayesian personalized ranking),
+ Complex plus różne ich odmiany.
+ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegółowe porównanie wyżej wymienionych algorytmów na nich bazujące.
 \end{abstract}
 
 
 \tableofcontents
 
 %TODO można dodać coś o systemach bazujących na "kuratorach" - osobach proponujących itp.
-%TODO przy sumowaniach we wzorach zobaczyć czy lepiej dać \limits, czy bez i dać wszędzie tak samo
-% przecinki w indeksach
  \chapter*{Wprowadzenie}
  \addcontentsline{toc}{chapter}{Wprowadzenie}
   W dzisiejszym świecie dzięki globalizacji, rozwojowi mediów i łatwiejszemu transportowi ludzie mają dostęp do coraz większej ilości produktów. 
@@ -115,17 +113,12 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
   Do pracy dołączone są skrypty w języku R służące wygenerowaniu porównań uzytych w ostatnim rozdziale.
   Mogą one służyć do wykonania innych badań, jednak są dosyć mocno dostosowane do rozpatrywanego typu danych, dlatego nie nadają się do
   użycia w prawdziwych systemach.
-
- 
- 
- 
- 
+  
  \chapter{Sformułowanie problemu}
   W każdym modelu danych wykorzystywanym do wyliczania możliwych ocen przedmiotów lub sporządzania list rekomendacji
   występują użytkownicy i przedmioty, oraz pewne niepełne informacje na temat ich powiązań ze sobą.
   Aby móc przewidzieć czy dany nie oceniony jeszcze przedmiot zainteresuje konkretnego użytkownika trzeba dla obu określić preferencje na podstawie 
   załączonych opisów, znanych interakcji tego użytkownika z innymi przedmiotami i przedmiotu z innymi użytkownikami, lub też obu informacji na raz.
-  
   
   \section{Podstawowe definicje}
    \textbf{Definicja 1.1.1.} Użytkownik -- osoba korzystająca z serwisu, dla której staramy się stworzyć rekomendacje lub też,
@@ -189,8 +182,6 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
    jest tylko lista rekomendacji (bez ocen) może posiadać pożądane przez nas zalety jak szybkość lub oszczędność pamięci,
    są więc one wykorzystywane w sytuacjach w których posiadanie przewidzianych ewaluacji nie ma dodatkowych zastosowań.
    
-   
-   
   \section{Problemy stojące przed systemami rekomendacyjnymi}
    Do czysto teoretycznych badań wykorzystuje się stabilne, nie zmieniające się dane aby uzyskać wiarygodne porównanie jakości algorytmów
    (również pomiedzy niezależnymi badaczami). W danych tych zazwyczaj nie występują skrajne warunki ani błędne informacje,
@@ -237,8 +228,6 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
    a po pewnej ilości zmian w bazie danych przeliczyć nowy model (nie zaburzając pracy portalu),
    Dodatkowymi zaletami takiego rozwiązania jest łatwa przenośność, oraz rozpraszalność systemu (mały model może być przechowywany w wielu miejscach,
    podczas gdy pełna baza danych znajduje się tylko w jednym).
-   
-
 
  \chapter{Podstawowe techniki}
   \section{Techniki niespersonalizowane}
@@ -255,11 +244,10 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
   \section{Filtrowanie kolaboratywne}
    Jedną z najbardziej podstawowych technik przewidywania ocen przedmiotów jest filtrowanie kolaboratywne polegające na wykorzystaniu wyłącznie informacji
    o użyciach przedmiotów (bez jawnych informacji o użytkownikach, czy przedmiotach). Predykcje tworzone są na podstawie założenia, że użytkownicy,
-   którzy używali wych samych przedmiotów i podobnie je ocenili mają te same upodobania. Jeżeli ustali się na podstawie wspólnie ocenionych przedmiotów,
+   którzy używali tych samych przedmiotów i podobnie je ocenili mają te same upodobania. Jeżeli ustali się na podstawie wspólnie ocenionych przedmiotów,
    że dwóch użytkowników jest bardzo podobnych można założyć,
    że przedmioty użyte tylko przez jednego z nich byłyby podobnie ocenione i przez drugiego.
-   %TODO może jakieś gładkie przejście z opisu do algorytmów
-   \subsection{Collaborative Filtering}%TODO napisać, że raczej explicit feedback, choć dla implicit feedback też coś się da
+   \subsection{Collaborative Filtering}
     Najprostszym algorytmem realizującym ideę filtorwania kolaboratywnego jest zdefiniowanie funkcji podobieństwa pomiędzy użytkownikami
     oraz wystawienie przedmiotowi oceny jako pewnej średniej z ocen najbardziej podobnych użytkowników, którzy ten przedmiot ocenili.\newline
     Do najpowszechniej stosowanych funkcji podobieństwa należą:
@@ -276,11 +264,6 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
        {\sqrt{\sum\limits_{i\in R_{u,v}}r_{u,i}^2\sum\limits_{i\in R_{u,v}}r_{v,i}^2}}$
       \end{center}
       Wyliczane dla par użytkowników, którzy ocenili co najmniej jeden wspólny przedmiot.
-     %\item podobieństwo implicite\newline % jak się nazywa przecięcie przez suma - odpowiednik f-score
-      %begin{center}
-       %$S_{uv}=\frac{|R_{uv}|}{|R_{u}\cup R_{v}|}$\newline
-       %Używane gdy dostępne są jedynie informacje implicite.
-      %end{center} 
     \end{itemize}
     {\scriptsize
      $S_{u,v}$ -- podobieństwo użytkowników $u$ i $v$, $R_{u,v}$ -- zbiór przedmiotów, które ocenili zarówno użytkownik $u$ jak i $v$,\newline
@@ -313,8 +296,6 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
     Dzięki możliwości wyboru ról można uzyskać lepsze własności systemu jak szybkość przy dysporporcji rozmiarów macierzy użyć oraz zmniejszyć
     ilość przypadków w ktorych algorytm sobie nie radzi (za mało sąsiadów o określonej własności).
     
-   %TODO we wzorach z wieloma indeksami dolnymi utrzymać spójne oznaczenia
-   %- albo z przecinkiem albo bez (jak gdzieś indeksy nie 1 literowe, to lepiej z przecinkiem)
    \subsection{Slope One}
     Popularnym algorytmem wykorzystującym podobieństwo pomiędzy parami przedmiotów w nieco inny sposób jest Slope One (opisane w pracy \cite{SO}).
     Algorytm zamiast stosować wyszukane miary podobieństwa statystycznego wektorów dla każdej pary przedmiotów zapamiętuje jedynie ilość
@@ -332,8 +313,7 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      $\text{diff}_{i,j}$ -- średnia różnica ocen pomiedzy przedmiotami $i$ oraz $j$ (w przeciwieństwie do wszystkich podobieństw antysymetryczna)
     }\newline
     W przeciwieństwie do algorytmu CF który tak naprawdę do predykcji ocen wykorzystuje regresję liniową ($f(x)=ax+b$),
-    SO wykorzysutje prostszą regresję jedno parametrową ($f(x)=x+b$). Użycie tak prostego modelu czyni algorytm o wiele bardziej odpornym na przeuczenie.
-    %TODO może rozwinąć temat definicji overfittingu - nie wiem czy uznać problem przeuczenia jako oczywisty
+    SO wykorzystuje prostszą regresję jednoparametrową ($f(x)=x+b$). Użycie tak prostego modelu czyni algorytm o wiele bardziej odpornym na przeuczenie.
    \subsection{Rozkład według wartości osobliwych}
     Rozkład SVD (Singular Value Decomposition) macierzy $m\times n$ przedstawiony jest wzorem:
     $M=U\Sigma V^\bot$\newline
@@ -355,10 +335,10 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
     (gdzie $\Sigma_r$, to macierz $\Sigma$ z pozostawionymi jedynie $r$ wartościami własnymi o największych wartościach bezwzględnych)
     jest najlepszym przybliżeniem macierzy $M$ pod względem normy Frobeniusa, wśród macierzy o rzędzie $\le r$.\newline
     Zastosowanie rozkładu SVD i Twierdzenia Eckharta-Younga pozwala na stratną kompresję macierzy.
-    %TODO być może przydałaby się unifikacja r i f -- raz rząd a raz faktor, ale tylko jedno mogłoby być czytelne
     \subsubsection{Model SVD}
      Algorytmy rekomendacyjne z grupy SVD mają na celu wygenerowaniu możliwie
-     najlepszych macierzy $U'$ i $V'^\bot$ dla zadanego $r$ reprezentujących pełną macierz ocen użytkownik--przedmiot
+     najlepszych macierzy $U'$ i $V'^\bot$ dla zadanego rzędu $r$ (od teraz oznaczanego jako $f$ -- factor)
+     reprezentujących pełną macierz ocen użytkownik--przedmiot
      (wiersz zawiera oceny wystawione przez jednego użytkownika, zaś kolumna oceny wystawione jednemu przedmiotowi)
      na podstawie rzadkiej macierzy znanych już ocen.\newline
      Oznaczenia:\newline
@@ -403,7 +383,6 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      przez rozszerzenia podstawowego algorytmu.\newline
      Warte wspomnienia jest również to, że w przypadku pełnej macierzy $M$ algorytmy te przy odpowiedniej liczbie iteracji i odpowiednio małej
      prędkości uczenia w założeniu symulują proces dojścia do rozwiązania takiego jak w kompresji $SVD$.
-     %TODO ujednolicić literę oznaczającą macierz treningową - "M" "A" ...
     \subsubsection{Algorytm SVD++}
      Najczęściej uzywanym rozszerzeniem modelu SVD jest algorytm SVD++ (opisany w pracy \cite{SVD++}), korzystający również z informacji implicite.
      Do modelu dodane zostają wektory $y_i\in\mathbb{R}^f$ reprezentujące informacje o użyciach przedmiotów.
@@ -422,12 +401,12 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
     \hspace*{48pt}			$py=p_u +|N(u)|^{-\frac{1}{2}}\cdot\sum\limits_{j\in N(u)}y_j$\newline
     \hspace*{48pt}			$\tilde{r}_{u,i}=\mu+b_u+b_i+q_i\cdot py$\newline
     \hspace*{48pt}			$err=\tilde{r}_{u,i}-r_{u,i}$\newline
-    \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_1\cdot b_u)$\newline
-    \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
-    \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot q_i-\lambda_3\cdot p_u)$\newline
-    \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_4\cdot q_i)$\newline
+    \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_b\cdot b_u)$\newline
+    \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_{b_2}\cdot b_i)$\newline
+    \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot q_i-\lambda_p\cdot p_u)$\newline
+    \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_q\cdot q_i)$\newline
     \hspace*{48pt}			foreach $j\in N(u)$\{\newline
-    \hspace*{64pt}				$y_j=y_j+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot q_i-\lambda_5\cdot y_j)$\newline
+    \hspace*{64pt}				$y_j=y_j+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot q_i-\lambda_y\cdot y_j)$\newline
     \hspace*{48pt}			\}\newline
     \hspace*{32pt}		\}\newline
     \hspace*{16pt}	\}\newline
@@ -462,9 +441,7 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
       u4 & ? & ? & ? & ? & + \\    
      \end{tabular}
      \begin{center}
-      \includegraphics[scale=0.72]{img/strzalka.jpg}\newline
-      %TODO zmienić tę strzałkę tak żeby wskazywała z wiersza u2, być może jakieś rozszerzenie zamiast strzałki
-      $i>_{u_2}j$
+      \includegraphics[scale=0.72]{img/strzalka2.jpg}\newline
      \end{center}
      \begin{tabular}{c|c|c|c|c|c|}
        & j1 & j2 & j3 & j4 & j5 \\
@@ -501,17 +478,17 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
     \hspace*{32pt}		wylosuj $(u,i,j)$ z $D_K$\newline 
     \hspace*{32pt}		$\tilde{s}=b_i-b_j+p_u\cdot(q_i-q_j)$\newline
     \hspace*{32pt}		$err=\frac{e^{-\tilde{s}}}{1+e^{-\tilde{s}}}$\newline
-    \hspace*{32pt}		$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
-    \hspace*{32pt}		$b_j=b_j+\alpha\cdot(-err-\lambda_2\cdot b_j)$\newline
-    \hspace*{32pt}		$p_u=p_u+\alpha\cdot(err\cdot (q_i-q_j)-\lambda_3\cdot p_u)$\newline
-    \hspace*{32pt}		$q_i=q_i+\alpha\cdot(err\cdot p_u-\lambda_4\cdot q_i)$\newline
-    \hspace*{32pt}		$q_j=q_j+\alpha\cdot(-err\cdot p_u-\lambda_4\cdot q_j)$\newline
+    \hspace*{32pt}		$b_i=b_i+\alpha\cdot(err-\lambda_b\cdot b_i)$\newline
+    \hspace*{32pt}		$b_j=b_j+\alpha\cdot(-err-\lambda_{b_2}\cdot b_j)$\newline
+    \hspace*{32pt}		$p_u=p_u+\alpha\cdot(err\cdot (q_i-q_j)-\lambda_p\cdot p_u)$\newline
+    \hspace*{32pt}		$q_i=q_i+\alpha\cdot(err\cdot p_u-\lambda_q\cdot q_i)$\newline
+    \hspace*{32pt}		$q_j=q_j+\alpha\cdot(-err\cdot p_u-\lambda_q\cdot q_j)$\newline
     \hspace*{16pt}	\}\newline
     %TODO czy za każdym razem pisać definicje zmiennych czy raz wystarczy (zalezy czy ktoś czyta wyrywkowo czy całość)
     W tym algorytmie trójki $(u,i,j)\in D_K$ są wybierane losowo, gdyż jest ich na ogół o wiele wiecej niż par $(u,i)\in K$
     i przez to już jedna iteracja po wszystkich mogła by być zbyt droga obliczeniowo.
    
-  \section{Filtrowanie na podstawie opisów} %TODO jakieś lepsze tłumaczenie
+  \section{Filtrowanie na podstawie opisów}
    Gdy do danych o przedmiotach i/lub użytkownikach dołączone są dodatkowe informacje podobieństwo
    można wywnioskowac na podstawie właśnie tych opisów.\newline
    W przypadku przedmiotów najczęściej spotykanymi formami opisów są:
@@ -581,15 +558,15 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
     \hspace*{48pt}			$qx=q_i +|G(i))|^{-1}\cdot\sum\limits_{g\in G(i)}x_g$\newline
     \hspace*{48pt}			$\tilde{r}_{u,i}=\mu+b_u+b_i+qx\cdot py$\newline
     \hspace*{48pt}			$err=\tilde{r}_{u,i}-r_{u,i}$\newline
-    \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_1\cdot b_u)$\newline
-    \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline
-    \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot qx-\lambda_3\cdot p_u)$\newline
-    \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_4\cdot q_i)$\newline
+    \hspace*{48pt}			$b_u=b_u+\alpha\cdot(err-\lambda_b\cdot b_u)$\newline
+    \hspace*{48pt}			$b_i=b_i+\alpha\cdot(err-\lambda_{b_2}\cdot b_i)$\newline
+    \hspace*{48pt}			$p_u=p_u+\alpha\cdot(err\cdot qx-\lambda_p\cdot p_u)$\newline
+    \hspace*{48pt}			$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_q\cdot q_i)$\newline
     \hspace*{48pt}			foreach $j\in N(u)$\{\newline
-    \hspace*{64pt}				$y_j=y_j+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot qx-\lambda_5\cdot y_j)$\newline
+    \hspace*{64pt}				$y_j=y_j+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot qx-\lambda_y\cdot y_j)$\newline
     \hspace*{48pt}			\}\newline
     \hspace*{48pt}			foreach $g\in G(i)$\{\newline
-    \hspace*{64pt}				$x_g=x_g+\alpha\cdot(err\cdot |G(i))|^{-1}\cdot py-\lambda_6\cdot x_g)$\newline
+    \hspace*{64pt}				$x_g=x_g+\alpha\cdot(err\cdot |G(i))|^{-1}\cdot py-\lambda_x\cdot x_g)$\newline
     \hspace*{48pt}			\}\newline
     \hspace*{32pt}		\}\newline
     \hspace*{16pt}	\}\newline
@@ -703,7 +680,7 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      -- w tym przypadku dla użytkownika $v$ o najkrótszej ścieżce od źródła $u$ w grafie użytkowników długości $m$
      na podstawie średniej z wag jego bezpośrednich poprzedników na wszystkich ścieżkach tej długości:
      \begin{center}
-      $SF_{u,v}=\frac{\sum_{w\in P_{u,v}}(SF_{u,w}\cdot SF_{w,v})}{\sum_{w\in P_{u,v}}SF_{u,w}}$
+      $SF_{u,v}=\frac{\sum\limits_{w\in P_{u,v}}(SF_{u,w}\cdot SF_{w,v})}{\sum\limits_{w\in P_{u,v}}SF_{u,w}}$
      \end{center}
      {\scriptsize
       ($P_{u,v}$ -- zbiór wierzchołków oddalonych od $u$ o $m-1$, połączonych krawędzią z $v$)
@@ -711,15 +688,12 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      W przypadku z rysunku wartości współczynników wyniosą odpowiednio:\newline
      $
      SF_{A,D}=\frac{SF_{A,C}\cdot SF_{C,D}}{SF_{A,C}}=4\newline
-     SF_{A,F}=\frac{SF_{A,B}\cdot SF_{B,F}+SF_{A,C}\cdot SF_{CF}}{SF_{AB}+SF_{AC}}=\frac{61.92+442.68}{25.6}=19.71\newline
-     SF_{AG}=\frac{SF_{AD}\cdot SF_{DG}+SF_{AF}\cdot SF_{FG}}{SF_{AD}+SF_{AF}}=\frac{60.8+67.97}{23.71}=5.43\newline
-     SF_{AE}=\frac{SF_{AF}\cdot SF_{FE}}{SF_{AF}}=4.5\newline   
+     SF_{A,F}=\frac{SF_{A,B}\cdot SF_{B,F}+SF_{A,C}\cdot SF_{C,F}}{SF_{A,B}+SF_{A,C}}=\frac{61.92+442.68}{25.6}=19.71\newline
+     SF_{A,G}=\frac{SF_{A,D}\cdot SF_{D,G}+SF_{A,F}\cdot SF_{FG}}{SF_{A,D}+SF_{A,F}}=\frac{60.8+67.97}{23.71}=5.43\newline
+     SF_{A,E}=\frac{SF_{A,F}\cdot SF_{F,E}}{SF_{A,F}}=4.5\newline   
      $
      Widać tutaj, że nawet jeśli bezpośrednie podobieństwo między użytkownikami jest ujemne, to mogą być w relacji dalszego podobieństwa.
      Dlatego też ważne jest aby najpierw patrzeć na długość ścieżek, a na wartości współczynników podobieństwa dopiero w drugiej kolejności.
-     %TODO zmienić wartości w grafach, tak żeby dały lepszy przykład
-     %TODO na rysunku 2 dać podział na warstwy
-     %TODO lepsze rozmieszczenie obrazków kontekstowo
    \subsection{Wykorzystanie metadanych jako uzupełnienie danych implicite}
     Przykład ulepszenia które można wprowadzić posiadając dodatkowe dane przedstawiony został w pracy \cite{191},
     w której zajęto się poprawą algorytmu BPR.\newline
@@ -739,14 +713,15 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      Ponieważ nie posiadamy o użytkowniku danych ponad to jakie przedmioty zostały przez niego użyte, to właśnie z tych danych należy uzyskać
      pożądane informacje.
      Przeprowadzony zostaje preprocessing mający na celu dla każdego użytkownika $u$ oraz kategorii $g$ uzyskać
-     wartość rzeczywistą $w_{ug}$, obrazującą jak bardzo dana kategoria jest przez użytkownika lubiana.
+     wartość rzeczywistą $w_{u,g}$, obrazującą jak bardzo dana kategoria jest przez użytkownika lubiana.
      Zgodnie z podstawowym założeniem o większej wartości przedmiotu użytego wagi $w$ powinny zostać dobrane tak,
      aby dla użytego przedmiotu $i$ oraz nieużytego $j$ zmaksymalizować wartość
      \begin{center}
-      $\tilde{s}_{uij}=\tilde{r}_{ui}-\tilde{r}_{uj}=\sum_{g\in G}w_{ug}a_{ig}-\sum_{g\in G}w_{ug}a_{jg}=\sum_{g\in G}w_{ug}(a_{ig}-a_{jg})$
+      $\tilde{s}_{u,i,j}=\tilde{r}_{u,i}-\tilde{r}_{u,j}=\sum\limits_{g\in G}w_{u,g}a_{i,g}-\sum\limits_{g\in G}w_{u,g}a_{j,g}
+      =\sum\limits_{g\in G}w_{u,g}(a_{i,g}-a_{j,g})$
      \end{center}
      {\scriptsize
-      gdzie $G$ to zbiór kategorii, zaś $a_{ig}$ to binarna wartość przynależności przedmiotu $i$ do kategorii $g$
+      gdzie $G$ to zbiór kategorii, zaś $a_{i,g}$ to binarna wartość przynależności przedmiotu $i$ do kategorii $g$
      }\newline
      Jak w pozostałych takich przypadkach wartości te są otrzymane poprzez zaaplikowanie algorytmu iteracyjnego zejścia po gradiencie dla tej funkcji:\newline
      \hspace*{0pt} LearnBPR\{\newline
@@ -758,7 +733,7 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      \hspace*{16pt}	\}\newline
      \hspace*{0pt}\}\newline
      {\scriptsize
-      gdzie $w_u,a_i,a_j$ to wektory długości $|G|$ (wartości $w_{ug}$ oraz binarne przynależności do kategorii $a_{ig}$)
+      gdzie $w_u,a_i,a_j$ to wektory długości $|G|$ (wartości $w_{u,g}$ oraz binarne przynależności do kategorii $a_{i,g}$)
      }\newline
      Dzięki tak wyliczonym wagom można utworzyć tabelkę porównań przedmiotów dla użytkownika z mniejszą ilością wartości nieznanych\newline
      \begin{multicols}{3}
@@ -774,31 +749,29 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
        u4 & ? & ? & ? & ? & + \\    
       \end{tabular}
       \begin{center}
-       \includegraphics[scale=0.72]{img/strzalka.jpg}\newline
-       %TODO zmienić tę strzałkę tak żeby wskazywała z wiersza u2, być może jakieś rozszerzenie zamiast strzałki
-       $i>_{u_2}j$
+       \includegraphics[scale=0.72]{img/strzalka2.jpg}\newline
       \end{center}
       \begin{tabular}{c|c|c|c|c|c|}
           & j1 & j2 & 		j3 & 		j4 & j5 \\
        \hline
        i1 & X &	- &	 	 - &		 ? & - \\
        \hline
-       i2 & + &	X &	 	 $\delta_{23}$ & + & $\delta_{25}$ \\    
+       i2 & + &	X &	 	 $\delta_{2,3}$ & + & $\delta_{2,5}$ \\    
        \hline
-       i3 & + &	$\delta_{32}$ & X &		 + & $\delta_{35}$ \\    
+       i3 & + &	$\delta_{3,2}$ & X &		 + & $\delta_{3,5}$ \\    
        \hline
        i4 & ? &	- &	 	 - &		 X & - \\
        \hline
-       i5 & + &	$\delta_{52}$ & $\delta_{53}$ & + & X \\ 
+       i5 & + &	$\delta_{5,2}$ & $\delta_{5,3}$ & + & X \\ 
       \end{tabular}
      \end{multicols}
      \begin{center}
-      $\delta_{ij}=\left\{\begin{array}{cc}
+      $\delta_{i,j}=\left\{\begin{array}{cc}
        + &\text{ jeśli } \varphi(u,i)>\varphi(u,j)\\
        - &\text{ jeśli } \varphi(u,i)<\varphi(u,j)\\
        ? &\text{ w p.p }\\
       \end{array}\right.$\quad\quad\quad\quad\quad\quad\quad
-      $\varphi(u,i)=\frac{1}{|G(i)|}\sum_{g\in G(i)}w_{ug}$
+      $\varphi(u,i)=\frac{1}{|G(i)|}\sum\limits_{g\in G(i)}w_{u,g}$
      \end{center}
      Po przeprowadzeniu takiego preprocessingu i ustaleniu nowego zbioru $D_K$ pseudo oceny ustalane są już przy pomocy niezmienionego BPR.
     \subsubsection{MABPR gSVD++}
@@ -808,12 +781,12 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      MABPR gSVD++ łączy w sobie dwa ulepszenia jakimi są przejście z SVD do gSVD++ oraz z BPR do MABPR generując sztuczną ocenę przypisaną
      użytkownikowi i przedmiotowi przy pomocy wzoru:
      \begin{center}
-       $\tilde{r}_{ui}=b_i+\left(q_i+|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}\right)\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
+       $\tilde{r}_{u,i}=b_i+\left(q_i+|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}\right)\cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
      \end{center}
      czyli takiego jak w przypadku gSVD++, uproszczonego o nieistotne w BPR przesunięcia.
      W takim przypadku maksymalizowane wartości różnic dla przedmiotów preferowanego $i$ i mniej lubianego $j$ przyjmują postać:
      \begin{center}
-      $\tilde{s}_{uij}=\tilde{r}_{ui}-\tilde{r}_{uj}=b_i-b_j+
+      $\tilde{s}_{u,i,j}=\tilde{r}_{u,i}-\tilde{r}_{u,j}=b_i-b_j+
       \left(q_i-q_j+|G(i)|^{-1}\sum\limits_{g\in G(i)}x_{g}-|G(j)|^{-1}\sum\limits_{g\in G(j)}x_{g}\right)
       \cdot\left(p_u +|N(u)|^{-\frac{1}{2}}\sum\limits_{j\in N(u)}y_j\right)$
      \end{center}
@@ -822,28 +795,26 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      \hspace*{16pt}	for $I$ iterations\{\newline
      \hspace*{32pt}		wylosuj $(u,i,j)$ z $D_K$\newline 
      \hspace*{32pt}		$py=p_u +|N(u)|^{-\frac{1}{2}}\cdot\sum\limits_{j\in N(u)}y_j$\newline
-     \hspace*{32pt}		$qx1=q_i +|G(i))|^{-1}\cdot\sum\limits_{g\in G(i)}x_g$\newline
-     \hspace*{32pt}		$qx2=q_j +|G(j))|^{-1}\cdot\sum\limits_{g\in G(j)}x_g$\newline
-     \hspace*{32pt}		$\tilde{s}=b_i-b_j+(qx1-qx2)\cdot py$\newline   
+     \hspace*{32pt}		$qx_1=q_i +|G(i))|^{-1}\cdot\sum\limits_{g\in G(i)}x_g$\newline
+     \hspace*{32pt}		$qx_2=q_j +|G(j))|^{-1}\cdot\sum\limits_{g\in G(j)}x_g$\newline
+     \hspace*{32pt}		$\tilde{s}=b_i-b_j+(qx_1-qx_2)\cdot py$\newline   
      \hspace*{32pt}		$err=\frac{e^{-\tilde{s}}}{1+e^{-\tilde{s}}}$\newline
-     \hspace*{32pt}		$b_i=b_i+\alpha\cdot(err-\lambda_2\cdot b_i)$\newline     
-     \hspace*{32pt}		$b_j=b_j+\alpha\cdot(-err-\lambda_2\cdot b_j)$\newline
-     \hspace*{32pt}		$p_u=p_u+\alpha\cdot(err\cdot (qx1-qx2)-\lambda_3\cdot p_u)$\newline
-     \hspace*{32pt}		$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_4\cdot q_i)$\newline     
-     \hspace*{32pt}		$q_j=q_j+\alpha\cdot(-err\cdot py-\lambda_4\cdot q_j)$\newline
+     \hspace*{32pt}		$b_i=b_i+\alpha\cdot(err-\lambda_{b_2}\cdot b_i)$\newline     
+     \hspace*{32pt}		$b_j=b_j+\alpha\cdot(-err-\lambda_{b_2}\cdot b_j)$\newline
+     \hspace*{32pt}		$p_u=p_u+\alpha\cdot(err\cdot (qx_1-qx_2)-\lambda_p\cdot p_u)$\newline
+     \hspace*{32pt}		$q_i=q_i+\alpha\cdot(err\cdot py-\lambda_{q_1}\cdot q_i)$\newline     
+     \hspace*{32pt}		$q_j=q_j+\alpha\cdot(-err\cdot py-\lambda_{q_2}\cdot q_j)$\newline
      \hspace*{32pt}		foreach $k\in N(u)$\{\newline
-     \hspace*{48pt}			$y_k=y_k+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot(qx1-qx2)-\lambda_5\cdot y_k)$\newline
+     \hspace*{48pt}			$y_k=y_k+\alpha\cdot(err\cdot |N(u)|^{-\frac{1}{2}}\cdot(qx_1-qx_2)-\lambda_y\cdot y_k)$\newline
      \hspace*{32pt}		\}\newline    
      \hspace*{32pt}		foreach $g\in G(i)$\{\newline
-     \hspace*{48pt}			$x_g=x_g+\alpha\cdot(err\cdot |G(i))|^{-1}\cdot py-\lambda_6\cdot x_g)$\newline
+     \hspace*{48pt}			$x_g=x_g+\alpha\cdot(err\cdot |G(i))|^{-1}\cdot py-\lambda_{x_1}\cdot x_g)$\newline
      \hspace*{32pt}		\}\newline
      \hspace*{32pt}		foreach $g\in G(j)$\{\newline
-     \hspace*{48pt}			$x_g=x_g+\alpha\cdot(-err\cdot |G(j))|^{-1}\cdot py-\lambda_6\cdot x_g)$\newline
+     \hspace*{48pt}			$x_g=x_g+\alpha\cdot(-err\cdot |G(j))|^{-1}\cdot py-\lambda_{x_2}\cdot x_g)$\newline
      \hspace*{32pt}		\}\newline
      \hspace*{16pt}	\}\newline
     %TODO znów ładne łamanie strony
-    %TODO może indeksy qx1 na qx_1 - sprawdzić które lepiej wyglądają
-    %TODO indeksy przy lambdach we wszystkich wzorach
   \section{TODO - sekcja o ulepszeniach - zupełnie nowe algorytmy}
   %TODO napisać, że complex mimo że nowy to tak naprawdę jest ulepszeniem
    \subsection{Complex}
@@ -888,20 +859,20 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
     (jeżeli użytkownik ocenił dużo przedmiotów lub przedmiot był licznie używany, związane z nim oceny mają rosnący wpływ na dłuższe ścieżki)
     algorytm sprawdza się dobrze tylko w celu stworzenia list rekomendacji.
     Jeżeli unormalizować wartości podobieństw w macierzy tak aby, zrównoważyć wykładniczo szybko rosnącą ilość ścieżek wraz ich długością
-    (dzieląc w podstawowej macierzy wartości przez rozmiar macierzy) narzucającą się macierzą wynikową było by $I+A+\frac{1}{2}A^2+...=e^{A}$,
+    (dzieląc w podstawowej macierzy wartości przez rozmiar macierzy) narzucającą się macierzą wynikową było by $I+M+\frac{1}{2}M^2+...=e^{M}$,
     jednak ponieważ ścieżki większych długości są mniej istotne dla prawdziwych wartości (nawet po zniwelowaniu oddziaływania ilościowego)
     w praktyce lepiej stosować wagi, które bardziej premiują krótkie ścieżki.
     Jeśli model danych nie posiada żadnych krawędzi pomiędzy użytkownikami lub przedmiotami macierz grafu (dwudzielnego)
     można zapisać w uproszczony sposób:\newline
-    $A=
+    $M=
      \left[\begin{array}{cc}
-     A_{UU}&A_{UI}\\
-     A_{IU}&A_{II}
+     M_{UU}&M_{UI}\\
+     M_{IU}&M_{II}
      \end{array}\right]
      =
      \left[\begin{array}{cc}
-     0&A_{UI}\\
-     A_{IU}&0
+     0&M_{UI}\\
+     M_{IU}&0
      \end{array}\right]
      =
      \left[\begin{array}{cc}
@@ -909,12 +880,12 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      -jB^\bot&0
      \end{array}\right]
      \Rightarrow\newline
-     A^{2k}=
+     M^{2k}=
      \left[\begin{array}{cc}
      (BB^\bot)^k&0\\
      0&(B^\bot B)^k
      \end{array}\right],
-     A^{2k+1}=
+     M^{2k+1}=
      \left[\begin{array}{cc}
      0&j(BB^\bot)^kB\\
      -j(B^\bot B)^kB^\bot&0
@@ -942,7 +913,7 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
      grono istotnych czynników często stosowane jest dzielenie wartości odpowiadajcych pewnej instancji przez pierwiastek ilości tych wartości
      (podobnie jak w przypadku wektorów $y$ w SVD++).
      W przypadku algorytmu Complex regularyzacja taka sprowadza się do podzielenia wartości w wierszach (lub kolumnach) macierzy przez pierwiastek liczby
-     niezerowych elementów w tym wierszu (tej kolumnie). Dokładniej wartości występujące w macierzy macierzy $A$ w różnych wariantach przyjmują odpowiednio
+     niezerowych elementów w tym wierszu (tej kolumnie). Dokładniej wartości występujące w macierzy macierzy $M$ w różnych wariantach przyjmują odpowiednio
      wartości:
      \begin{center}
       \begin{tabular}{|c|c|c|c|c|}
@@ -1046,7 +1017,7 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
    dla algorytmów SVD:\newline
    $\lambda_b=\lambda_{b_2}=0.01,\lambda_p=\lambda_q=\lambda_y=0.3,\lambda_x=0.15$\newline
    dla algorytmów BPR:\newline
-   $\lambda_w=0.075,\lambda_{b_2}=0.005,\lambda_p=\lambda_q=0.025,\lambda_{q_2}=0.0025,\lambda_y=\lambda_x=\lambda_{x_2}=0.006$\newline
+   $\lambda_w=0.075,\lambda_{b_2}=0.005,\lambda_p=\lambda_{q_1}=0.025,\lambda_{q_2}=0.0025,\lambda_y=\lambda_{x_1}=\lambda_{x_2}=0.006$\newline
    ze względu jednak na występujący w algorytmach czynnik losowy oraz ograniczoną przestrzeń przeszukiwania mogą one jednak mocno odbiegać od optymalnych.\newline
    %CF-mix co oznacza za mało wspólnych lub za bardzo spłaszczone
    %TODO CF-ADV tylko do podobieństwa stopnia 2, bo dla tych danych wystarcza (normalnie ilsę procent, tak ileś)
@@ -1073,13 +1044,13 @@ Praca zawiera również przegląd różnych metod oceny systemów oraz szczegó�
    o następujących definicjach:\newline
    \begin{center}
     $
-    MAE=\frac{1}{|T|}\sum\limits_{(u,i)\in T}|\tilde{r}_{ui}-r_{ui}|\quad\quad\quad\quad\quad\quad\quad
-    MSE=\frac{1}{|T|}\sum\limits_{(u,i)\in T}(\tilde{r}_{ui}-r_{ui})^2
+    MAE=\frac{1}{|T|}\sum\limits_{(u,i)\in T}|\tilde{r}_{u,i}-r_{u,i}|\quad\quad\quad\quad\quad\quad\quad
+    MSE=\frac{1}{|T|}\sum\limits_{(u,i)\in T}(\tilde{r}_{u,i}-r_{u,i})^2
     $
    \end{center}
    {\scriptsize
-    gdzie $T$ to zbiór par (użytkownik, przedmiot) ze zbioru testowego, $r_{ui}$ to prawdziwe oceny z tego zbioru,\newline
-    zaś $\tilde{r}_{ui}$ oceny przewidziane przez system
+    gdzie $T$ to zbiór par (użytkownik, przedmiot) ze zbioru testowego, $r_{u,i}$ to prawdziwe oceny z tego zbioru,\newline
+    zaś $\tilde{r}_{u,i}$ oceny przewidziane przez system
    }\newline
    Przed wyliczeniem miar jakości warto obciąć wartości ocen do dostępnego przedziału (w przypadku danych ML [1,5]).%TODO dać skrót przy wspomnieniu o dancyh
    Większość algorytmów tu przedstawionych może zwracać wartości spoza przedziału, przy zwracaniu ocen lepiej zwrócić wartość z krańca przedziału,
