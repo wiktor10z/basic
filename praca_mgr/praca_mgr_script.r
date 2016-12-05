@@ -329,6 +329,7 @@ save(res_SVD_20iter,res_BPR_20iter,time_list,file="extra_results")
 load(file="results")
 load(file="extra_results")
 
+colnames(res_CF_cor)=c("CF PC","CF PC SF","CF PC item","CF PC SF item")
 res_CF=cbind(res_CF_cor,res_CF_cos,res_CF_mix,res_CF_ADV)
 res_all=cbind(res_non_per,res_CF,res_SO,res_SVD,res_BPR,res_Complex)
 
@@ -355,9 +356,9 @@ plot_to_file("../img/MAE2.jpg",res_rat_pred2[1,],"Porównanie MAE dla róźnych 
 plot_to_file("../img/MSE2.jpg",res_rat_pred2[2,],"Porównanie MSE dla róźnych algorytmów",col=FALSE,height1=1000)
 
 plot_to_file("../img/ROC_all_color.jpg",res_all[3,],"ROC",legend=FALSE)
-plot_to_file("../img/Prec_all_100_color.jpg",res_all[9,],"Precision",point_list=1:100,legend=FALSE)
+plot_to_file("../img/Prec_all_100_color.jpg",res_all[9,],"Precyzja",point_list=1:100,legend=FALSE)
 plot_to_file("../img/ROC_all.jpg",res_all[3,],"ROC",col=FALSE,legend=FALSE)
-plot_to_file("../img/Prec_all_100.jpg",res_all[9,],"Precision",point_list=1:100,col=FALSE,legend=FALSE)
+plot_to_file("../img/Prec_all_100.jpg",res_all[9,],"Precyzja",point_list=1:100,col=FALSE,legend=FALSE)
 
 plot_to_file("../img/Prec_Complex_impl_color.jpg",res_Complex[9,c(2,4,6,8,7)],"Precyzja (wszystkie użycia) algorytmów Complex",point_list=1:30,height1=1000)
 plot_to_file("../img/Prec_Complex_exp_color.jpg",res_Complex[11,c(1,3,5,7,8)],"Precyzja (same maksymalne oceny) algorytmów Complex",point_list=1:30,height1=1000)
