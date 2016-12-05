@@ -1,3 +1,7 @@
+# ALGORYTMY Z GRUPY CF, W TYM COMPLEX
+
+# wyliczenia wspólnie ocenionych przedmiotów, lub uzytkowników, którzy ocenili dwa wybrane przedmioty
+
 vec_and=function(x,y){
   return ((x!=0)&(y!=0))
 }
@@ -8,6 +12,7 @@ both_used_count=function(i,j){
   return(sum((ml_bin_matrix[,i]!=0)*(ml_bin_matrix[,j]!=0)))
 }
 
+# kosinus dwóch wektorów
 similarity_vec=function(x,y){
   viewed=vec_and(x,y)
   if(sum(viewed)<1){
@@ -33,8 +38,8 @@ item_cos_similarity=function(i,j){
   return(similarity_vec(ml_matrix[,i],ml_matrix[,j]))
 }
 
-#praca 221
-alt_similarity=function(u,v){#TODO mozna zrobić ten drugi like_matrix(> zamiast >=)
+# podobieństwo alternatywne - praca 221
+alt_similarity=function(u,v){
   viewed=vec_and(ml_like_matrix[u,],ml_like_matrix[v,])
   if(sum(viewed)<1){
     return(0)
@@ -67,9 +72,10 @@ item_alt_similarity=function(i,j){
   }
 }
 
+# podobieństwo mieszane - gdy zawodzi korelacja Paersona użyte jest podobieństwo alternatywne
 mixed_similarity=function(u,v){
   viewed=vec_and(ml_bin_matrix[u,],ml_bin_matrix[v,])
-  if((sum(viewed)>4)&&(var(ml_matrix[u,]>0.15))&&(var(ml_matrix[v,]>0.15))){#TODOTODO płaskość - jak wyznaczyć
+  if((sum(viewed)>4)&&(var(ml_matrix[u,]>0.15))&&(var(ml_matrix[v,]>0.15))){
     return(cor_similarity(u,v))
   }else{
     return(alt_similarity(u,v))
@@ -77,13 +83,14 @@ mixed_similarity=function(u,v){
 }
 item_mixed_similarity=function(i,j){
   viewed=vec_and(ml_bin_matrix[,i],ml_bin_matrix[,j])
-  if((sum(viewed)>4)&&(var(ml_matrix[,i]>0.15))&&(var(ml_matrix[,j]>0.15))){#TODOTODO płaskość - jak wyznaczyć
+  if((sum(viewed)>4)&&(var(ml_matrix[,i]>0.15))&&(var(ml_matrix[,j]>0.15))){
     return(item_cor_similarity(i,j))
   }else{
     return(item_alt_similarity(i,j))
   }
 }
 
+# stworzenie macierzy podobieństwa o zadanej funkcji podobieństwa, sym=1 - podobieństwo jest symetryczne, sym=-1 - antysymetryczne
 make_sim_matrix=function(sim_fun,item_sim=FALSE,sym=1){
   if(item_sim){l=items}else{l=users}
   matrix1=matrix(0L,nrow=l,ncol=l)
@@ -103,18 +110,7 @@ make_sim_matrix=function(sim_fun,item_sim=FALSE,sym=1){
   return(matrix1)
 }
 
-if(FALSE){
-  neighbours=function(u,n=30,f=0){
-    all=sum(similarity_matrix[u,]>x)
-    if(all<=n){
-      list=head(order(similarity_matrix[u,],decreasing=TRUE),all)
-    }else{
-      list=head(order(similarity_matrix[u,],decreasing=TRUE),n+1)
-    }
-    return(list[-(match(u,list,nomatch=length(list)))])
-  }
-}
-
+# sąsiedzi według macierzy poobieństwa o ocenionym konkretnym przedmiocie (ocenione przez konkretnego uzytkownika)
 neighbours2=function(u,it,n=30,f=0){
   sim2=similarity_matrix[u,]*(ml_matrix[,it]!=0)
   all=sum(sim2>f)
@@ -136,6 +132,7 @@ item_neighbours2=function(i,u,n=30,f=0){
   return(list[-(match(i,list,nomatch=length(list)))])
 }
 
+# predykcja ocen przy pomocy normalnego algorytmu CF
 CF_predict=function(u,n=30,f=0){
   mean_u=us_means[u]
   rating=numeric(length=items)
@@ -168,9 +165,7 @@ item_CF_predict=function(u,n=30,f=0){
       }
       rating[i]=mov_means[i]+sum1/sum2
     }else{
-      rating[i]=0 #TODO może średnia, z drugiej strony skoro nie ma podobnych, to znaczy, że raczej nieporządane
-      # przy jednym tylko ledwo podobnym daje to jego ocenę, przy użyciu tych z ujemnym podobieństwem
-      # jest możliwość wystąpienia sumy wag ujemnej=tak samo jakby zamienić znak podobieństwa - gorsze od średniej
+      rating[i]=0
     }
   }
   return(rating)
@@ -201,7 +196,7 @@ CF_ratings=function(sim_fun,item_sim=FALSE,sim_fac=FALSE,n=30,f=0){
   return(CF_predict_all(make_sim_matrix(sim_fun,item_sim),item_sim,sim_fac,n,f))
 }
 
-#221 - additional function
+# sąsiedzi według dwóch funkcji podobieństwa (jak pierwsza zawodzi, to druga) - na przykład dalsze podobieństwo
 neighbours3=function(u,it,n=30,f=0){
   sim2=alt_sim_matrix[u,]*(ml_matrix[,it]!=0)
   all=sum(sim2>f)
@@ -223,6 +218,7 @@ item_neighbours3=function(i,u,n=30,f=0){
   return(list[-(match(i,list,nomatch=length(list)))])
 }
 
+# algorytm CF z drugą funkcją podobieństwa 
 CF_predict_mixed=function(u,n=30,f=0){
   mean_u=us_means[u]
   rating=numeric(length=items)
@@ -242,7 +238,7 @@ CF_predict_mixed=function(u,n=30,f=0){
       }
       rating[i]=mean_u+sum1/sum2
     }else{
-      rating[i]=0 #TODO może średnia, z drugiej strony skoro nie ma podobnych, to znaczy, że raczej nieporządane
+      rating[i]=0
     }
   }
   return(rating)
@@ -265,12 +261,11 @@ item_CF_predict_mixed=function(u,n=30,f=0){
       }
       rating[i]=mov_means[i]+sum1/sum2
     }else{
-      rating[i]=0 #TODO może średnia, z drugiej strony skoro nie ma podobnych, to znaczy, że raczej nieporządane
+      rating[i]=0
     }
   }
   return(rating)
 }
-
 
 CF_ratings_mixed=function(sim_fun1=cor_similarity,sim_fun2=alt_similarity,sim_fac=FALSE,n=30,f=0){
   if(sim_fac){
@@ -283,7 +278,7 @@ CF_ratings_mixed=function(sim_fun1=cor_similarity,sim_fun2=alt_similarity,sim_fa
   return(matrix(sapply(1:users,function(u){CF_predict_mixed(u,n,f)}),byrow=TRUE,nrow=users))
 }
 
-#221 - long distance
+# dalsze podobieństwo
 
 make_further_sim_matrix=function(sim_mat){
   mat1=sim_mat*(sim_mat>0)
@@ -297,10 +292,10 @@ make_further_sim_matrix=function(sim_mat){
 CF_ratings_further=function(item_sim=FALSE,n=30,f=0){
   if(item_sim){
     intersections_matrix<<-make_sim_matrix(both_used_count,TRUE)
-    similarity_matrix<<-make_sim_matrix(item_cor_similarity,TRUE)
+    similarity_matrix<<-make_sim_matrix(item_mixed_similarity,TRUE)
   }else{
     intersections_matrix<<-make_sim_matrix(used_by_both_count,FALSE)
-    similarity_matrix<<-make_sim_matrix(cor_similarity,FALSE)
+    similarity_matrix<<-make_sim_matrix(mixed_similarity,FALSE)
   }
   alt_sim_matrix<<-make_further_sim_matrix(similarity_matrix*intersections_matrix)
   if(item_sim){
@@ -309,6 +304,35 @@ CF_ratings_further=function(item_sim=FALSE,n=30,f=0){
     return(matrix(sapply(1:users,function(u){CF_predict_mixed(u,n,f)}),byrow=TRUE,nrow=users))
   }
 }
+
+# wolniejsza wersja używana w celach porównań czasowych
+
+make_further_sim_matrix2=function(sim_mat){
+  mat1=sim_mat*(sim_mat>0)
+  mat2=mat_mul(mat1,mat1)
+  mat3=mat_mul(mat1,(mat1>0))
+  mat4=mat2/mat3
+  mat4[is.na(mat4)]=0
+  return(mat4)
+}
+
+CF_ratings_further2=function(item_sim=FALSE,n=30,f=0){
+  if(item_sim){
+    intersections_matrix<<-make_sim_matrix(both_used_count,TRUE)
+    similarity_matrix<<-make_sim_matrix(item_mixed_similarity,TRUE)
+  }else{
+    intersections_matrix<<-make_sim_matrix(used_by_both_count,FALSE)
+    similarity_matrix<<-make_sim_matrix(mixed_similarity,FALSE)
+  }
+  alt_sim_matrix<<-make_further_sim_matrix2(similarity_matrix*intersections_matrix)
+  if(item_sim){
+    return(matrix(sapply(1:users,function(u){item_CF_predict_mixed(u,n,f)}),byrow=TRUE,nrow=users))
+  }else{
+    return(matrix(sapply(1:users,function(u){CF_predict_mixed(u,n,f)}),byrow=TRUE,nrow=users))
+  }
+}
+
+#------------------------------------------------------------------------------
 #slope one
 
 items_difference=function(i,j){
@@ -345,8 +369,10 @@ SO_predict_all=function(x=0){
 }
 SO_ratings=SO_predict_all
 
+#------------------------------------------------------------------------------
 #COMPLEX
 
+# like=TRUE - wejście explicite (1,0,-1), FALSE - wejście implicite (1,0)
 COMPLEX_pseudo_ratings=function(weight_list=c(1),like=TRUE,item_reg=TRUE,user_reg=TRUE){
   if(like){
     m0=ml_like_matrix
@@ -367,4 +393,27 @@ COMPLEX_pseudo_ratings=function(weight_list=c(1),like=TRUE,item_reg=TRUE,user_re
     m3=m3+w*m2
   }
   return(affine_rating2(m3 %*% m0))
+}
+
+# wolniejsza wersja używana w celach porównań czasowych
+COMPLEX_pseudo_ratings2=function(weight_list=c(1),like=TRUE,item_reg=TRUE,user_reg=TRUE){
+  if(like){
+    m0=ml_like_matrix
+  }else{
+    m0=ml_bin_matrix
+  }
+  if(item_reg){#wartość dla użytkownika przez ilość przedmiotów
+    m0=t(apply(m0,1,vec_reg))
+  }
+  if(user_reg){#wartość dla przedmiotu przez ilość użytkowników
+    m0=apply(m0,2,vec_reg)
+  }
+  m3=matrix(0,nrow=users,ncol=users)
+  m1=mat_mul(m0,t(m0))
+  m2=diag(users)
+  for(w in weight_list){
+    m2=mat_mul(m2,m1)
+    m3=m3+w*m2
+  }
+  return(affine_rating2(mat_mul(m3,m0)))
 }

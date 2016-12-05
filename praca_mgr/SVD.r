@@ -1,3 +1,5 @@
+# ALGORYTMY Z GRUPY SVD
+
 genres_norm=function(x){
   y=sum(x)
   if(y==0){
@@ -7,6 +9,7 @@ genres_norm=function(x){
   }
 }
 
+# losowa inicjalizacja zmiennych
 init_SVD=function(f2,alpha2){
   f<<-f2
   alpha<<-alpha2
@@ -21,7 +24,8 @@ init_SVD=function(f2,alpha2){
   b2<<-rep(0L,items)
 }
 
-SVD_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){#test 0.01 i 0.3 wyglądają na dobre w MyMediaLite 0.005 i 0.015
+# uaktualnienie zmiennych na podstawie pojedynczej oceny
+SVD_one=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){#test 0.01 i 0.3 wyglądają na dobre w MyMediaLite 0.005 i 0.015
   r2=glob_mean+b[u]+b2[i]+sum(q1[i,]*p[u,])
   err=r[u,i]-r2
   b[u]<<-b[u]+alpha*(err-l_b*b[u])
@@ -30,7 +34,7 @@ SVD_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){#test 0.01 i 0.3 wygl�
   q1[i,]<<-q1[i,]+alpha*(err*p[u,]-l_q*q1[i,])
 }
 
-SVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
+SVDpp_one=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
   y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
   p_plus_y=p[u,]+y_sum
   r2=glob_mean+b[u]+b2[i]+sum(q1[i,]*p_plus_y)
@@ -44,7 +48,7 @@ SVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
   }  
 }
 
-gSVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.15){
+gSVDpp_one=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.15){
   y_sum=us_viewed_root1[u]*colSums(y*ml_bin_matrix[u,])
   x_sum=item_genres_norm1[i]*colSums(x*item_genres[i,])
   p_plus_y=p[u,]+y_sum
@@ -62,26 +66,26 @@ gSVDpp_item=function(u,i,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.15){
     x<<-x*(1-alpha*l_x*item_genres[i,])+item_genres[i,]%*%t(alpha*err*item_genres_norm1[i]*p_plus_y)
   }
 }
-# rozkłady SVD
 
+# wyliczenie wszystkich zmiennych wykorzystywanych w predykcji  Iter - ilość iteracji f2 - długość wektorów, l_* - stałe regularyzacyjne
 SVD=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){
   init_SVD(f2,alpha2)
   for(I in 1:Iter){
-    apply(ml_bin,1,FUN=function(x){SVD_item(x[1],x[2],l_b,l_b2,l_p,l_q)})    
+    apply(ml_bin,1,FUN=function(x){SVD_one(x[1],x[2],l_b,l_b2,l_p,l_q)})    
   }
 }
 
 SVDpp=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3){
   init_SVD(f2,alpha2)
   for(I in 1:Iter){
-    apply(ml_bin,1,FUN=function(x){SVDpp_item(x[1],x[2],l_b,l_b2,l_p,l_q,l_y)})    
+    apply(ml_bin,1,FUN=function(x){SVDpp_one(x[1],x[2],l_b,l_b2,l_p,l_q,l_y)})    
   }
 }
 
 gSVDpp=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3,l_y=0.3,l_x=0.15){
   init_SVD(f2,alpha2)
   for(I in 1:Iter){
-    apply(ml_bin,1,FUN=function(x){gSVDpp_item(x[1],x[2],l_b,l_b2,l_p,l_q,l_y,l_x)})    
+    apply(ml_bin,1,FUN=function(x){gSVDpp_one(x[1],x[2],l_b,l_b2,l_p,l_q,l_y,l_x)})    
   }
 }
 
@@ -105,6 +109,7 @@ BPR=function(Iter,f2,alpha2=0.04,unif_user=TRUE,l_b2=0.005,l_p=0.025,l_q1=0.025,
   }
 }
 
+# preprocesing MABPR polegający na wyliczeniu wag w
 MABPR_learn_weights=function(Iter,unif_user=TRUE,l_w){
   w<<-matrix(0,users,genres)
   if(unif_user){
@@ -196,7 +201,9 @@ MABPR_gSVDpp=function(Iter,f2,alpha2,unif_user=TRUE,l_w=0.075,l_b2=0.005,l_p=0.0
     }
   }
 }
-# ratings
+
+#------------------------------------------------------------------------------
+# wyliczenie zmiennych a następnie zwrócenie wszystkich ocen
 
 SVD_ratings=function(Iter,f2,alpha2=0.01,l_b=0.01,l_b2=0.01,l_p=0.3,l_q=0.3){
   SVD(Iter,f2,alpha2,l_b,l_b2,l_p,l_q)

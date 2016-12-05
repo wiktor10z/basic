@@ -1,0 +1,97 @@
+Autor Wiktor Zuba
+
+Programy dołączone do pracy magisterskiej z matematyki
+
+"Metody ulepszania systemów rekomendacyjnych"
+
+Folder główny zawiera:
+
+plik ReadMe
+
+kolorową wersję pracy
+
+folder programy
+
+folder img
+
+
+
+Folder programy zawiera:
+
+biblioteki zapisane w R:
+
+basic.r
+
+	zawierającą podstawowe funkcje:
+		do wczytania danych z plików MovieLens100k
+		generujące trywialne i sztuczne algorytmy predykcji ocen i rekomendacji
+		wykonujące podstawowe przekształcenia danych i wyników
+		
+evaluation.r
+	
+	zawierającą funkcje używane do oceny systemów w tym:
+		MAE (mean average error)
+		MSE (mean square error)
+		ROC (receiver operating characteristic)
+		AUC (area under curve) dla ROC
+		Precyzja
+		MAP (mean average precision)
+		Pokrycie
+		
+		wraz z różnymi dodatkowymi opcjami
+	funkcje służące wyliczaniu i wizualizacji wyników dla algorytmów zawartych w innych plikach
+
+CF.r
+
+	zawierającą implementacje różnych wersji algorytmu CF
+		podobieństwo korelacji Paersona
+		podobieństwo kosinusowe
+		podobieństwo alternatywne i mieszane
+		wersję z dalszymi sąsiadami
+	
+	implementację algorytmu Complex
+	
+SVD.r
+
+	zawierającą implementacje algorytmów:
+		SVD
+		SVD++
+		gSVD++
+		BPR
+		MABPR
+		MABPR gSVD++
+
+skrypt praca_mgr_script.r
+
+	zawierający instrukcje użyte do wyliczenia danych zamieszczonych w pracy
+	stanowi jednocześnie przykład użycia funkcji dostępnych w bibliotekach
+
+folder z danymi ML100k
+
+zapisane rezultaty kosztownych czasowo części skryptu - do wczytania z poziomu R poleceniem load():
+	results
+	extra_results
+
+
+
+Folder img zawiera obrazki i wykresy zamieszczone w pracy
+	obrazki są w większym formacie niż w pracy, więc pozwalają na dokładniejsze przyjrzenie się wykresom
+
+
+
+Uwaga:
+
+	Skrypty i funkcje nie są przygotowane do użycia w rzeczywistym systemie.
+	Cowięcej ze względu na przekazywanie części parametrów przez zmienne globalne, brak optymalizacji
+	i brak przyjaznego interfejsu funkcje dostosowane są do tego konkretnego zastosowania i raczej
+	nie przydadzą się jako biblioteki w innych programach.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

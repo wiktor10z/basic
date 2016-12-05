@@ -1,9 +1,19 @@
+# EWALUACJA OCEN,REKOMENDACJI,ALGORYTMÓW + WYKRESY
+
+# ewaluacja ocen i rekomendacji - zakłada wczytany plik testowy
+
+# ocena błędów przewidywanych ocen
 rating_MAE=function(rating,test=ml_test){
   return(sum(apply(test,1,function(x){abs(x[3]-rating[x[1],x[2]])}))/nrow(test))
 }
 
 rating_MSE=function(rating,test=ml_test){#mean square error
-  return(sqrt(sum(apply(test,1,function(x){(x[3]-rating[x[1],x[2]])*(x[3]-rating[x[1],x[2]])}))/nrow(test)))
+  return(sum(apply(test,1,function(x){(x[3]-rating[x[1],x[2]])*(x[3]-rating[x[1],x[2]])}))/nrow(test))
+}
+
+# tworzenie krzywej roc dla list rekomendacji - z odpowiednim skalowaniem osi x
+zero_roc=function(resolution=1000){
+  return(data.frame(rep(0,resolution),rep(0,resolution)))
 }
 
 trivial_roc=function(resolution=1000){
@@ -15,10 +25,9 @@ trivial_roc=function(resolution=1000){
   return(roc1)
 }
 
-#TODO to jest ekstremalnie wolne
 normalize_roc=function(roc1,resolution=1000){
   if((sum(is.nan(roc1[,1]))>0)||(sum(is.nan(roc1[,2]))>0)){
-    return(trivial_roc(resolution))
+    return(zero_roc(resolution))
   }else{
     roc2=data.frame(rep(0,resolution),rep(0,resolution))
     k1=1
@@ -33,6 +42,8 @@ normalize_roc=function(roc1,resolution=1000){
   }
 }
 
+# quality=0 - zwykły ROC, quality=1 - wzięcie pod uwagę ocen, quality=2 - wzięcie pod uwagę tylko przedmiotów z oceną 
+# resolution - ilość punktów w krzywej (mniejsza ilość przyśpiesza tworzenie i przetwarzanie krzywych)
 recs_ROC=function(recs,resolution=1000,quality=0){#receiver operating characteristic
   roc_sum=data.frame(rep(0,resolution),rep(0,resolution))
   if(quality==0){
@@ -47,13 +58,18 @@ recs_ROC=function(recs,resolution=1000,quality=0){#receiver operating characteri
     roc1=data.frame(cumsum(!hit_vec)/sum(!hit_vec),cumsum(hit_vec)/sum(hit_vec))
     roc_sum=roc_sum+normalize_roc(roc1,resolution)
   }
-  return(roc_sum/users)
+  if(quality==2){
+    return(roc_sum/(users-test_empty_users_best))
+  }else{
+    return(roc_sum/(users-test_empty_users))
+  }
 }
 
 normalized_AUC=function(roc,resolution=1000){#area under curve
   return(sum(roc[,2])/resolution)
 }
 
+# przekształcenie list rekomendacji na listy trafień
 hit_vector=function(recs,only_best=FALSE){
   if(only_best){
     return(lapply(1:users,function(u){c(ml_test_best_matrix[u,recs[[u]]],rep(FALSE,us_viewed[[u]]))})) 
@@ -62,6 +78,7 @@ hit_vector=function(recs,only_best=FALSE){
   }
 }
 
+# wyliczenie precyzji
 hit_precision=function(hit_vec){
   return(do.call(rbind,lapply(1:users,function(u){cumsum(hit_vec[[u]])/cumsum(rep(1,items))})))
 }
@@ -95,7 +112,8 @@ recs_coverage=function(recs){
   return(unlist(lapply(cov2,length))/items)
 }
 
-# ocena systemu
+#------------------------------------------------------------------------------
+# ocena systemu = wyliczenie wartości pewnej miary dla algorytmu
 
 count_MAE=function(rating_function,args){
   value=0
@@ -185,6 +203,10 @@ count_MAP_recs=function(recs_function,only_best=FALSE){
   return(MAP_sum/5)
 }
 
+#------------------------------------------------------------------------------
+# porównania algorytmów
+
+# stworzenie list rekomendacyjnych dla kilku algorytmów na raz
 multi_recs=function(functions_list,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
@@ -206,6 +228,7 @@ multi_recs=function(functions_list,quick=FALSE){
   return(recs)
 }
 
+# wyliczenie wszystkich miar jakości dla podanej listy alogorytmów
 multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
   l=1+4*(!quick)
   len=length(functions_list)
@@ -267,8 +290,10 @@ multi_evaluation_rating=function(functions_list,resolution=100,quick=FALSE){
   return(results)
 }
 
-#łączenie różnych poprzez użycie cbind
+#------------------------------------------------------------------------------
+# wykresy
 
+# funkcje pomocnicze funkcji tworzącej wykresy
 cut_result1=function(df1,point_list=c(-items*1000)){
   if(is.null(ncol(df1))){
     if(length(point_list)==1){
@@ -293,39 +318,40 @@ cut_to_bar=function(result_list,point){
   }
 }
 
-#TODO znowu coś się legenda rozjeżdża
-multi_plot=function(result_list,title="",point_list=c(-items*1000),big=0,color=TRUE){
+# funkcja tworząca wykres dla listy wyników algorytmów według jednej miary
+# big - formatownie wymiarów 0 - małe okno wykresów, 1 - duże okno, 2 - plik
+# point_list - obcięcie wykresu do konkretnych długości list rekomendacyjnych / odpowiednich części wykresu
+multi_plot=function(result_list,title="",point_list=c(-items*1000),big=0,color=TRUE,legend=TRUE){
   l=length(result_list)
   if((length(point_list)==1)&&(point_list!=c(-items*1000))){
     title=paste(title," at ",point_list[[1]])
-    #TODO w ROC powinno być podzielone przez resolution - czyli wyifowanie czy ncol null...
     result_list=cut_to_bar(result_list,point_list[1])
   }
   if((typeof(result_list[[1]])=="double")&&(length(result_list[[1]])==1)){
     if(color){
-      plot1<-barplot(unlist(result_list),col=rainbow(l),main=title)
+      plot1<-barplot(unlist(result_list),col=rainbow(l),main=title,cex.main=2)
     }else{
-      plot1<-barplot(unlist(result_list),main=title)
+      plot1<-barplot(unlist(result_list),main=title,cex.main=2)
     }
-    text(plot1,round(unlist(result_list),digits=3),labels=round(unlist(result_list),digits=3),pos=1)
+    text(plot1,round(unlist(result_list),digits=4),labels=round(unlist(result_list),digits=4),pos=1,cex=2)
   }else{
     result_list=cut_result(result_list,point_list)
     xlim1=c(min(result_list[[1]][,1]),max(result_list[[1]][,1]))
     ymin1=min(unlist(lapply(result_list,function(x){min(x[,2])})))
     ymax1=max(unlist(lapply(result_list,function(x){max(x[,2])})))
     ylim1=c(ymin1,ymax1)
-    if(big==1){# TODO cos jeszcze nie działa
+    if(big==1){
       inset1=c(-0.28,-0.15)
       seglen1=1
       xinter1=0.3
       cex1=1
       par(mar=c(3,3,3,9)) 
     }else if(big==2){
-      inset1=c(-0.15,-0.07)
+      inset1=c(-0.25,-0.07)
       seglen1=3
       xinter1=1
       cex1=1.7
-      par(mar=c(3,3,3,10))
+      par(mar=c(3,3,3,14))
     }else{
       inset1=c(-0.3,-0.3)
       seglen1=2
@@ -337,27 +363,28 @@ multi_plot=function(result_list,title="",point_list=c(-items*1000),big=0,color=T
       df1=result_list[[i]]
       df2=df1[(c(0:10)+i/l)*(nrow(df1)/10),]
       if(color){
-        plot(df1,type="l",col=rainbow(l)[i],main=title,xlab="",ylab="",xlim=xlim1,ylim=ylim1,bty="L")
+        plot(df1,type="l",col=rainbow(l)[i],main=title,cex.main=2,xlab="",ylab="",xlim=xlim1,ylim=ylim1,bty="L",lwd=1.5)
       }else{
-        plot(df1,type="l",main=title,xlab="",ylab="",xlim=xlim1,ylim=ylim1,bty="L",lty=i)
+        plot(df1,type="l",main=title,cex.main=2,xlab="",ylab="",xlim=xlim1,ylim=ylim1,bty="L",lty=i,lwd=1.5)
         par(new=TRUE)
-        plot(df2,type="p",main=title,xlab="",ylab="",xlim=xlim1,ylim=ylim1,pch=i,bty="L")
+        plot(df2,type="p",main=title,cex.main=2,xlab="",ylab="",xlim=xlim1,ylim=ylim1,pch=i%%26,bty="L",cex=2)
       }
       par(new=TRUE)
     }
-    if(l>1){
+    if((legend)&&(l>1)){
       if(color){
         legend("bottomright",inset=inset1,xpd=TRUE,legend=names(result_list),col=rainbow(l),lty=1,box.lwd=0,bg="transparent",seg.len=seglen1,x.intersp=xinter1,cex=cex1)
       }else{
-        legend("bottomright",inset=inset1,xpd=TRUE,legend=names(result_list),box.lwd=0,lty=c(1:l),pch=c(1:l),bg="transparent",seg.len=seglen1,x.intersp=xinter1,cex=cex1)
+        legend("bottomright",inset=inset1,xpd=TRUE,legend=names(result_list),box.lwd=0,lty=c(1:l),pch=c(1:l)%%26,bg="transparent",seg.len=seglen1,x.intersp=xinter1,cex=cex1)
       }
     }
     par(new=FALSE)
   }
 }
 
-plot_to_file=function(file_name,result_list,title,point_list=c(-items*1000),color=TRUE){
-  png(file_name,width=3000,height=1500,units="px",res=200)
-  multi_plot(result_list,title,point_list,big=2,color)
+# stworzenie wykresu i zapisanie do pliku .jpg
+plot_to_file=function(file_name,result_list,title,point_list=c(-items*1000),color=TRUE,width1=3000,height1=1500,legend=TRUE){
+  jpeg(file_name,width=width1,height=height1,units="px",res=200)
+  multi_plot(result_list,title,point_list,big=2,color,legend)
   dev.off()
 }
