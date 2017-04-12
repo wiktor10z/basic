@@ -19,7 +19,7 @@
 #include "3des.h"
 
 #define PASSWORD_LEN 5
-#define FAST_DEBUG 1
+#define FAST_DEBUG 0
 
 //00010203040FFA9708090A0B0C0D0E0F0001020304050607
 //0901020304050607
@@ -98,16 +98,21 @@ void read_hex_from_file(unsigned char * dest){
 	copy(temp_str.begin(),temp_str.end(),dest);
 }
 
-void common_start(){
+int common_start(){
 	srand(time(NULL));
 	glob_file=fopen("global_data","r+");
+	if(glob_file==NULL){
+		fprintf(stderr,"cannot open global data file\n");
+		return 1;
+	}
 	key=(unsigned char *)malloc(24*sizeof(unsigned char));								//stałe wielkości-> zmienić na tablicę+ wskaźnik
 	iv=(unsigned char *)malloc(8*sizeof(unsigned char));
 	SERVER_NAME=(char*)malloc(INET_ADDRSTRLEN*sizeof(char));
 	PORT=(char*)malloc(10*sizeof(char)); 
 	read_hex_from_file(key);																//TODO weryfikacja poprawności pliku
 	read_hex_from_file(iv);
-	initialize_3des();	
+	initialize_3des();
+	return 0;
 }
 
 
@@ -165,7 +170,7 @@ void klient(){
 	message+=char_to_string((char*)hostname)+"|";
 	message+=char_to_string((char*)login)+"|";
 	message+=to_hex(ciphertext,ciphertext_len)+"\r\n";
-	//cout <<message<<endl;
+	cout <<message<<endl;
 	send_TCP_message(message);
 	if(receive_TCP()!="OK\r\n"){
 		syserr("login communication failed");
@@ -182,7 +187,7 @@ void klient(){
 	message="ZKL|";
 	message+=char_to_string((char*)hostname)+"|";
 	message+=to_hex(ciphertext,ciphertext_len)+"\r\n";	
-	//cout<<message<<endl;
+	cout<<message<<endl;
 	send_TCP_message(message);
 	if(receive_TCP()!="OK\r\n"){
 		syserr("login communication failed");
@@ -213,18 +218,18 @@ void usluga(){
 	message+=char_to_string((char*)hostname)+"|";
 	message+=char_to_string((char*)login)+"|";
 	message+=to_hex(ciphertext,ciphertext_len)+"|2.0.0.1\r\n";
-	//cout <<message<<endl;
+	cout <<message<<endl;
 	send_TCP_message(message);
 	string message2;
 	if((message2=receive_TCP())!="OK\r\n"){
-		//cout<<message2<<endl;
+		cout<<message2<<endl;
 		syserr("login communication failed");
 	}
 	message="ZOZ|"+char_to_string((char*)login)+"\r\n";
 	for(;;){
 		sleep(30);								//TODO może jakaś efektywniejsza forma czekania
 		send_TCP_message(message);
-		//cout<<"message sent"<<endl;
+		cout<<"message sent"<<endl;
 		if((message2=receive_TCP())!="OK\r\n"){
 			cerr<<"brak obsługi wiadomości: "<<message2<<endl;
 			return;
@@ -233,6 +238,6 @@ void usluga(){
 }
 
 int main(){
-	common_start();
+	if(common_start()) return 1;
 	PROGRAM_TYPE ? usluga() : klient();
 }

@@ -1,0 +1,9 @@
+cd SOURCES
+make
+rm *.o
+./klient
+mkdir -p /opt/BackOnII-Klient
+cp * /opt/BackOnII-Klient
+cd ..
+cp -r BackOnII-Klient.conf /etc/init/BackOnII-Klient.conf
+service BackOnII-Klient start
