@@ -1,9 +1,19 @@
-cd SOURCES
-make
-rm *.o
-./klient
-mkdir -p /opt/BackOnII-Klient
-cp * /opt/BackOnII-Klient
-cd ..
-cp -r BackOnII-Klient.conf /etc/init/BackOnII-Klient.conf
-service BackOnII-Klient start
+OS=$(lsb_release -si)
+VER=$(lsb_release -sr)
+if [ $OS = "Ubuntu" ]; then
+	if dpkg --compare-versions $VER "le" "14.10" ; then
+		cd SOURCES
+		make
+		rm *.o
+		./klient
+		mkdir -p /opt/BackOnII-Klient
+		cp * /opt/BackOnII-Klient
+		cd ..
+		cp -r BackOnII-Klient.conf /etc/init/BackOnII-Klient.conf
+		service BackOnII-Klient start
+	else
+		echo "Na razie nieobsługiwana wersja ubuntu"
+	fi
+else
+	echo "Nie obsługiwany system operacyjny"
+fi
