@@ -1,6 +1,6 @@
 CC = g++
 
-TARGETS = klient usluga
+TARGETS = klient usluga service_script
 
 FLAGS = -std=c++0x -pedantic -Wall
 
@@ -11,6 +11,9 @@ klient: basic_functions.o err.o 3des.o klient.o
 	
 usluga: basic_functions.o err.o 3des.o usluga.o
 	$(CC) $(FLAGS) basic_functions.o err.o 3des.o usluga.o -o usluga -lpthread -lcrypto
+
+service_script: service_script.c
+	$(CC) $(FLAGS) service_script.c -o service_script 
 
 klient.o: klient.cpp
 	$(CC) $(FLAGS) -DPROGRAM_TYPE=0 -c klient.cpp
