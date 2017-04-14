@@ -12,7 +12,15 @@ if [ $OS = "Ubuntu" ]; then
 		cp -r BackOnII-Klient.conf /etc/init/BackOnII-Klient.conf
 		service BackOnII-Klient start
 	else
-		echo "Na razie nieobsługiwana wersja ubuntu"
+		cd SOURCES
+		make
+		rm *.o
+		./klient
+		mkdir -p /opt/BackOnII-Klient
+		cp * /opt/BackOnII-Klient		
+		cd ..
+		cp -r BackOnII-Klient.service /etc/systemd/system/BackOnII-Klient.service
+		systemctl start BackOnII-Klient
 	fi
 else
 	echo "Nie obsługiwany system operacyjny"
