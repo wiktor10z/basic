@@ -19,7 +19,7 @@
 #include "3des.h"
 
 #define PASSWORD_LEN 5
-#define FAST_DEBUG 0
+#define FAST_DEBUG 1
 
 //00010203040FFA9708090A0B0C0D0E0F0001020304050607
 //0901020304050607
@@ -189,8 +189,10 @@ void klient(){
 	message+=to_hex(ciphertext,ciphertext_len)+"\r\n";	
 	cout<<message<<endl;
 	send_TCP_message(message);
-	if(receive_TCP()!="OK\r\n"){
-		syserr("login communication failed");
+	string message2;
+	if((message2=receive_TCP())!="OK\r\n"){
+		cerr<<"brak obsługi wiadomości: "<<message2<<endl;		
+		syserr("ZKL communication failed");
 	}else{
 		printf("Komputer został zarejestrowany w systemie BackOnII\n");
 	}
@@ -232,7 +234,6 @@ void usluga(){
 		cout<<"message sent"<<endl;
 		if((message2=receive_TCP())!="OK\r\n"){
 			cerr<<"brak obsługi wiadomości: "<<message2<<endl;
-			return;
 		}
 	}
 }

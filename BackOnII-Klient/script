@@ -1,7 +1,22 @@
 OS=$(lsb_release -si)
 VER=$(lsb_release -sr)
 if [ $OS = "Ubuntu" ]; then
-	if dpkg --compare-versions $VER "le" "14.10" ; then
+	if dpkg --compare-versions $VER "gt" "14.10" ; then
+		apt-get update
+		apt-get install libssl-dev
+		cd SOURCES
+		make
+		rm *.o
+		./klient
+		mkdir -p /opt/BackOnII-Klient
+		cp * /opt/BackOnII-Klient		
+		cd ..
+		cp -r BackOnII-Klient.service /etc/systemd/system/BackOnII-Klient.service
+		systemctl enable BackOnII-Klient
+		systemctl start BackOnII-Klient
+	else
+		apt-get update
+		apt-get install libssl-dev
 		cd SOURCES
 		make
 		rm *.o
@@ -11,16 +26,6 @@ if [ $OS = "Ubuntu" ]; then
 		cd ..
 		cp -r BackOnII-Klient.conf /etc/init/BackOnII-Klient.conf
 		service BackOnII-Klient start
-	else
-		cd SOURCES
-		make
-		rm *.o
-		./klient
-		mkdir -p /opt/BackOnII-Klient
-		cp * /opt/BackOnII-Klient		
-		cd ..
-		cp -r BackOnII-Klient.service /etc/systemd/system/BackOnII-Klient.service
-		systemctl start BackOnII-Klient
 	fi
 else
 	echo "Nie obsługiwany system operacyjny"
