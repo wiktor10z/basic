@@ -14,14 +14,18 @@ następnie kompiluje programy klienta i usługi, i uruchamia pierwszy
 po udanej konfiguracji klienta pliki serwisowe przenoszone są do odpowiednich miejsc, a następnie uruchamiany jest serwis uruchamiający usługę
 (i uruchamiający ją ponownie po ponownym uruchomieniu).
 
-
+odinstalowanie/usunięcie plików umieszczonych w katalogach systamowych (w tym ewentualnie dorzuconych przez użytkownika do katalogów serwisu):
+sudo sh uninstall
 
 Uwagi:
 
 
 Jako, że jest to wersja testowa pliki są tylko kopiowane w odpowiednie miejsca a nie przenoszone, oraz udostępnione są pliki źródłowe
-W przypadku ponownego uruchomienia klienta z pliku global_data należy wykasować wszystko poza pierwszymi dwoma linijkami - klient wykrywa,
-że został już kiedyś skonfigurowany.
+W przypadku ponownego uruchomienia klienta (przy zmienionym pliku global_data), klient pyta się czy ponownie przejść przez proces rejestracji dając 3 opcje:
+R - będzie działać jak w przypadku niezmienionego pliku global_data (ponownie zarejestruje się w serwisie nadpisując poprzednie dane logowania -
+w przypadku zostawienia w serwerze starych danych dostęp jest uniemożliwiony)
+K - zakończ działanie programu klient i kontynuuj wykonanie skryptu
+P - przerwij działanie programu klienta i skryptu
 
 Pliki programu przenoszone są do katalogu /opt/BackOnII-Klient
 Plik BackOnII-Klient.service trafia do katalogu /etc/init
