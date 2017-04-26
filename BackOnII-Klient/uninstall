@@ -1,0 +1,20 @@
+OS=$(lsb_release -si)
+VER=$(lsb_release -sr)
+if [ $OS = "Ubuntu" ]; then
+	if dpkg --compare-versions $VER "gt" "14.10" ; then
+		systemctl stop BackOnII-Klient
+		systemctl disable BackOnII-Klient
+		rm /var/log/BackOnII-Klient.log 
+		rm /var/log/BackOnII-Klient-err.log
+		rm -r /opt/BackOnII-Klient
+		rm /etc/systemd/system/BackOnII-Klient.service
+	else
+		service BackOnII-Klient stop
+		rm /var/log/BackOnII-Klient.log 
+		rm /var/log/BackOnII-Klient-err.log
+		rm -r /opt/BackOnII-Klient
+		rm /etc/init/BackOnII-Klient.conf
+	fi
+else
+	echo "Nie obsługiwany system operacyjny"
+fi

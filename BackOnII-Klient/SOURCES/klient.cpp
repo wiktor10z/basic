@@ -19,7 +19,7 @@
 #include "3des.h"
 
 #define PASSWORD_LEN 5
-#define FAST_DEBUG 1
+#define FAST_DEBUG 0
 
 //00010203040FFA9708090A0B0C0D0E0F0001020304050607
 //0901020304050607
@@ -117,12 +117,23 @@ int common_start(){
 
 
 
-void klient(){
+int klient(){
 	char login[1000],password[1000],hostname[HOST_NAME_MAX],service_password[PASSWORD_LEN];			//TODO zapytać o te długości
+	int fresh_start;
 	fscanf(glob_file,"%s",SERVER_NAME);
-	if(strlen(SERVER_NAME)>0){
-		printf("usługa jest już zarejestrowana, lub zmieniony został plik z danymi\n");
-		return;
+	fresh_start=(strlen(SERVER_NAME)==0);
+	if(!fresh_start){								//tak na prawdę sprawdzenie pustości linijki roboczej
+		do{
+			printf("Usługa jest już zarejestrowana, lub zmieniony został plik z danymi\n");
+			printf("Spróbować dokonać ponownej rejestracji (R), kontynuować z aktualnymi danymi (K), czy przerwać działanie programu (P)?\n");
+			printf("(ponowna rejestracja nadpisze stare dane rejestracji usługi)\n");
+			scanf("%s",login);
+		}while((strcmp(login,"R")!=0)&&(strcmp(login,"K")!=0)&&(strcmp(login,"P")!=0));
+		if(strcmp(login,"P")==0){
+			return 1;
+		}else if(strcmp(login,"K")==0){
+			return 0;
+		}
 	}
 	if(FAST_DEBUG){
 		SERVER_NAME=(char *)"10.0.2.2";
@@ -175,12 +186,7 @@ void klient(){
 	if(receive_TCP()!="OK\r\n"){
 		syserr("login communication failed");
 	}
-		
 	string str1=random_password(PASSWORD_LEN);
-	fprintf(glob_file,"\n%s\n",SERVER_NAME);
-	fprintf(glob_file,"%s\n",PORT);
-	fprintf(glob_file,"%s\n",login);
-	fprintf(glob_file,"%s\n",str1.c_str());
 	copy(str1.begin(),str1.end(),service_password);
 	plaintext=(unsigned char *)service_password;
 	ciphertext_len=encrypt(plaintext,strlen((char *)plaintext),key,iv,ciphertext);
@@ -196,14 +202,21 @@ void klient(){
 	}else{
 		printf("Komputer został zarejestrowany w systemie BackOnII\n");
 	}
+	if(fresh_start){fprintf(glob_file,"x");}
+	fprintf(glob_file,"\n%s\n",SERVER_NAME);
+	fprintf(glob_file,"%s\n",PORT);
+	fprintf(glob_file,"%s\n",login);
+	fprintf(glob_file,"%s\n",str1.c_str());
+	return 0;
 }
 
-void usluga(){
+int usluga(){
 	char login[1000],hostname[HOST_NAME_MAX],service_password[PASSWORD_LEN];
+	fscanf(glob_file,"%s",SERVER_NAME);						// wczytanie dodatkowej linijki roboczej "xxx"
 	fscanf(glob_file,"%s",SERVER_NAME);						//TODO weryfikacja poprawności pliku
 	if(strlen(SERVER_NAME)<=0){
 		printf("usługa nie została jeszcze zarejestrowana, lub zmieniony został plik z danymi\n");
-		return;
+		return 1;
 	}
 	fscanf(glob_file,"%s",PORT);
 	fscanf(glob_file,"%s",login);
@@ -236,9 +249,14 @@ void usluga(){
 			cerr<<"brak obsługi wiadomości: "<<message2<<endl;
 		}
 	}
+	return 0;
 }
 
 int main(){
 	if(common_start()) return 1;
-	PROGRAM_TYPE ? usluga() : klient();
+	if(PROGRAM_TYPE){
+		return usluga();
+	}else{
+		return klient();
+	}
 }

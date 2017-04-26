@@ -8,12 +8,14 @@ if [ $OS = "Ubuntu" ]; then
 		make
 		rm *.o
 		./klient
-		mkdir -p /opt/BackOnII-Klient
-		cp * /opt/BackOnII-Klient		
-		cd ..
-		cp -r BackOnII-Klient.service /etc/systemd/system/BackOnII-Klient.service
-		systemctl enable BackOnII-Klient
-		systemctl start BackOnII-Klient
+		if [ $? = 0  ]; then
+			mkdir -p /opt/BackOnII-Klient
+			cp * /opt/BackOnII-Klient		
+			cd ..
+			cp -r BackOnII-Klient.service /etc/systemd/system/BackOnII-Klient.service
+			systemctl enable BackOnII-Klient
+			systemctl start BackOnII-Klient
+		fi
 	else
 		apt-get update
 		apt-get install libssl-dev
@@ -21,11 +23,13 @@ if [ $OS = "Ubuntu" ]; then
 		make
 		rm *.o
 		./klient
-		mkdir -p /opt/BackOnII-Klient
-		cp * /opt/BackOnII-Klient
-		cd ..
-		cp -r BackOnII-Klient.conf /etc/init/BackOnII-Klient.conf
-		service BackOnII-Klient start
+		if [ $? = 0  ]; then
+			mkdir -p /opt/BackOnII-Klient
+			cp * /opt/BackOnII-Klient
+			cd ..
+			cp -r BackOnII-Klient.conf /etc/init/BackOnII-Klient.conf
+			service BackOnII-Klient start
+		fi
 	fi
 else
 	echo "Nie obsługiwany system operacyjny"
