@@ -142,17 +142,17 @@ int klient(){
 		//wczytywanie adresu i portu
 		struct sockaddr_in sa;
 		SERVER_NAME=(char*)malloc(INET_ADDRSTRLEN*sizeof(char));
-		printf("proszę podać adres ip serwera BackOnII\n");
+		printf("proszę podać adres ip serwera BackOnII:");
 		scanf("%s",SERVER_NAME);												//TODO zadbać o nieprzepełnienie bufora we wszystkich scanf
 		while(inet_pton(AF_INET,SERVER_NAME,&(sa.sin_addr))!=1){
-			printf("to nie jest poprawny adres ip_v4,\nproszę podać poprawny\n");
+			printf("to nie jest poprawny adres ip_v4,\nproszę podać poprawny:");
 			scanf("%s",SERVER_NAME);
 		}
 		int temp;
 		char temp2;
-		printf("proszę podać numer portu serwera BackOnII\n");
+		printf("proszę podać numer portu serwera BackOnII:");
 		while(((scanf("%d%c",&temp,&temp2)!=2 || temp2!='\n')&& clean_stdin())|| (temp<0) || (temp>65535)){
-			printf("to nie jest poprawny numer portu ip_v4\nproszę podać poprawny\n");
+			printf("to nie jest poprawny numer portu ip_v4\nproszę podać poprawny:");
 		}
 		PORT=(char*)malloc(10*sizeof(char));
 		sprintf(PORT,"%d",temp);
@@ -166,9 +166,12 @@ int klient(){
 			strcpy(password,"admin");		
 		}else{
 			//poznanie loginu i hasła
-			printf("login:\n");
+			printf("login:");
 			scanf("%s",login);
-			printf("hasło:\n");
+			for(int i=0;i<strlen(login);++i){
+				login[i]=toupper(login[i]);
+			}
+			printf("hasło:");
 			scanf("%s",password);
 		}
 	}else{
