@@ -1,0 +1,14 @@
+[Unit]
+Description = BackOnII klient linux
+After = network.target
+
+[Service]
+Type=simple
+PIDFile=/var/run/BackOnII-Klient.pid
+ExecStart=/opt/BackOnII-Klient/service_script
+ExecReload=/opt/BackOnII-Klient/service_script
+Restart=always
+
+[Install]
+WantedBy=default.target
+ 
