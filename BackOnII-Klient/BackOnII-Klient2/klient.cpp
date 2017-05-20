@@ -265,7 +265,6 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	message="ZKL|";
 	message+=char_to_string((char*)hostname)+"|";
 	message+=to_hex(ciphertext,ciphertext_len)+"\r\n";
-	sleep(30);
 	do{
 		cout<<message<<endl;
 		send_TCP_message(message);
@@ -317,7 +316,6 @@ int usluga(){
 	message="ZOZ|"+char_to_string((char*)login)+"\r\n";
 	for(;;){
 		sleep(30);								//TODO może jakaś efektywniejsza forma czekania
-		cout << "mes"<<endl;
 		send_TCP_message(message);
 		cout<<"hello message sent"<<endl;
 		ret_message=receive_TCP();
