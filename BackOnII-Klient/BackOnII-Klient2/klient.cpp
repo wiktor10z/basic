@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include <ctime>
 //#include <pthread.h>
 #include <unistd.h>
 #include <limits.h>
@@ -11,6 +12,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/sysinfo.h>
+#include <sys/ioctl.h>
 
 #include <arpa/inet.h>
 
@@ -42,6 +44,18 @@ static void catch_int (int sig) {
 	exit(1);
 }
 */
+
+string time_string(){
+	time_t rawtime;
+	char buffer[80];
+	struct tm * timeinfo;
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+	strftime (buffer,80,"%F %T    ",timeinfo);
+	string str(buffer);
+	return str;
+}
+
 const char* install_script="\
 OS=$(lsb_release -si)\n\
 VER=$(lsb_release -sr)\n\
@@ -100,35 +114,35 @@ void connect_TCP(){
 	while(!connected){
 		err = getaddrinfo(SERVER_NAME, PORT, &addr_hintsTCP, &addr_result);
 		if (err != 0){
-			syserr("getaddrinfo: %s\n", gai_strerror(err));
+			syserr("%sgetaddrinfo: %s\n", time_string().c_str(),gai_strerror(err));
 		}
 		sockTCP = socket(addr_result->ai_family, addr_result->ai_socktype, addr_result->ai_protocol);
 		if(sockTCP < 0){
-			syserr("socketTCP,client");
+			syserr("%ssocketTCP,client",time_string().c_str());
 		}
 		
 		if(connect(sockTCP, addr_result->ai_addr, addr_result->ai_addrlen) < 0){			//TODO ustawić timeout jak się nie może połączyć
 			usleep(500000);
-			fprintf(stderr,"connection attepmt failed\n");
+			fprintf(stderr,"%sconnection attepmt failed\n",time_string().c_str());
 		}else{
 			connected=true;
 		}
 	}
 	if(receive_TCP().first!="BackOnII Serwer\r\n"){	
-		syserr("wrong banner");
+		syserr("%swrong banner",time_string().c_str());
 	}
 }
 
 void reconnect_TCP(){
-	fprintf(stderr,"server disconnected\n");	
+	fprintf(stderr,"%sserver disconnected\n",time_string().c_str());	
 	connect_TCP();
 	send_TCP_message(login_message);
 	pair<string,int> ret_message=receive_TCP();
 	if(ret_message.first!="OK\r\n"){
-		cout<<ret_message.first<<endl;
-		syserr("recconection login communication failed");
+		cerr<<time_string()<<"wrong login answer: "<<ret_message.first<<endl;
+		syserr("%srecconection login communication failed",time_string().c_str());
 	}else{
-		fprintf(stderr,"reconnected to server\n");			
+		fprintf(stderr,"%sreconnected to server\n",time_string().c_str());			
 	}
 }
 
@@ -136,13 +150,13 @@ void reconnect_TCP(){
 void send_TCP_message(string message){//TODO może trzeba będzie i tutaj sprawdzać rozłączenie serwera
 	int lenTCP=message.length();
 	if(write(sockTCP,message.c_str(),lenTCP)!=lenTCP){
-		fprintf(stderr,"message send error\n");
+		fprintf(stderr,"%smessage send error\n",time_string().c_str());
 	}
 }
 
 pair<string,int> receive_TCP(){//pierwszy argument to odczytana wiadomość,drugi 0 - wszystko ok 
 	ssize_t len;// 1 - w między czasie nastąpiło rozłączenie i ponowne połączenie - należy powtórzyć komunikację
-	char buffer[1000];
+	char buffer[1000];//2 - 
 	memset(buffer, 0, sizeof(buffer));
 	len = read(sockTCP, buffer, sizeof(buffer)-1);
 	if(len==0){
@@ -150,7 +164,7 @@ pair<string,int> receive_TCP(){//pierwszy argument to odczytana wiadomość,drug
 		return make_pair("OK\r\n",1);//TODO recconect message - wykonaj ponownie komunikację (czy tylko w jedną stronę?)
 	}
 	if(len < 0){
-		syserr("receive error");
+		syserr("%sreceive error",time_string().c_str());
 	}
 	string ret(buffer);
 	return make_pair(ret,0);
@@ -252,10 +266,11 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	message+=char_to_string((char*)hostname)+"|";
 	message+=char_to_string((char*)login)+"|";
 	message+=to_hex(ciphertext,ciphertext_len)+"\r\n";
-	cout <<message<<endl;
+	cout <<time_string() <<"send message: "<<message<<endl;
 	login_message=message;
 	send_TCP_message(message);
 	if(receive_TCP().first!="OK\r\n"){
+		cerr<<time_string()<<"wrong login answer: "<<ret_message.first<<endl;
 		syserr("login communication failed");
 	}
 	string str1=random_password(PASSWORD_LEN);
@@ -270,10 +285,10 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 		send_TCP_message(message);
 		ret_message=receive_TCP();
 		if(ret_message.first!="OK\r\n"){
-			cerr<<"brak obsługi wiadomości: "<<ret_message.first<<endl;		
+			cerr<<time_string()<<"wrong ZKL answer: "<<ret_message.first<<endl;		
 			syserr("ZKL communication failed");
 		}else if(ret_message.second==0){
-			printf("Komputer został zarejestrowany w systemie BackOnII\n");
+			printf("%sKomputer został zarejestrowany w systemie BackOnII\n",time_string().c_str());
 		}
 	}while(ret_message.second!=0);
 	if(fresh_start){fprintf(glob_file,"x");}
@@ -306,22 +321,30 @@ int usluga(){
 	message+=char_to_string((char*)login)+"|";
 	message+=to_hex(ciphertext,ciphertext_len)+"|2.0.0.1\r\n";
 	login_message=message;
-	cout <<message<<endl;
+	cout <<time_string()<<"send message: "<<message<<endl;
 	send_TCP_message(message);
 	ret_message=receive_TCP();
 	if(ret_message.first!="OK\r\n"){
-		cout<<ret_message.first<<endl;
+		cerr<<time_string()<<"wrong login answer: "<<ret_message.first<<endl;
 		syserr("login communication failed");
 	}
 	message="ZOZ|"+char_to_string((char*)login)+"\r\n";
 	for(;;){
 		sleep(30);								//TODO może jakaś efektywniejsza forma czekania
 		send_TCP_message(message);
-		cout<<"hello message sent"<<endl;
+		cout<<time_string()<<"hello message sent"<<endl;
 		ret_message=receive_TCP();
 		if(ret_message.first!="OK\r\n"){
-			cerr<<"brak obsługi wiadomości: "<<ret_message.first<<endl;
+			cerr<<time_string()<<"brak obsługi wiadomości: "<<ret_message.first<<endl;
+			int count;			
+			ioctl(sockTCP,FIONREAD,&count);
+			while(count>0){
+				ret_message=receive_TCP();
+				cerr<<time_string()<<"next message part: "<<ret_message.first<<endl;
+				ioctl(sockTCP,FIONREAD,&count);
+			}			
 		}
+
 	}
 	return 0;
 }
