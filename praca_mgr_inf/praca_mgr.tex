@@ -114,11 +114,29 @@ Instytut Informatyki}
    $\frac{\Gamma(x+\frac{1}{2})}{\Gamma(x)}<\frac{\Gamma(x+1)}{\Gamma(x+\frac{1}{2})}\Rightarrow
    \sqrt{x-\frac{1}{2}}<\frac{\Gamma(x+\frac{1}{2})}{\Gamma(x)}<\sqrt{x}$\newline
    \begin{lemma}\label{binomial sum upper bound}
-    Dla $k<\lfloor\frac{n}{2}\rfloor$ zachodzi ograniczenie $\sum_{i=0}^{k-1}{n\choose i}<2^{n-1}\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$
+    Dla $k\le\lfloor\frac{n+1}{2}\rfloor$ zachodzi ograniczenie $\sum_{i=0}^{k-1}{n\choose i}\le2^{n-1}\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$
    \end{lemma}
    \begin{proof}
-    (Uogólnienie dowodu z podobnego lematu dla n parzystych z \cite{LPV})\newline% Lemma3.8.2
-    
+    (Uogólnienie dowodu z podobnego lematu dla $n=2m,k<m$ z \cite{LPV})\newline% Lemma3.8.2
+    Załóżmy najpierw, że $k<\lfloor\frac{n}{2}\rfloor$\newline
+    Zdefiniujmy $c=\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}<1,t=\lfloor\frac{n}{2}\rfloor-k,$
+    $A=\sum_{i=0}^{k-1}{n\choose i}, B=\sum_{i=k}^{\lfloor\frac{n}{2}\rfloor-1}{n\choose i}$\newline
+    $\forall_{1\le i\le k}$ $\frac{{n\choose k-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i}}<\frac{{n\choose k-i+1}}{{n\choose \lfloor\frac{n}{2}\rfloor-i+1}}$
+    ($\Leftrightarrow \frac{k-c+1}{n-k+c}<\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lceil\frac{n}{2}\rceil+c}$,\newline
+    co wynika z szeregu prostych nierówności $\frac{k-c+1}{n-k+c}\le\frac{k-c+1}{k+c+1}
+    <\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lfloor\frac{n}{2}\rfloor+c+1}\le\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lceil\frac{n}{2}\rceil+c}$)\newline
+    Daje nam to ograniczenia $\forall_{1\le i\le k}$ $\frac{{n\choose k-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i}}<c$.\newline
+    Suma ostatnich $t$ wyrazów szeregu $A$ jest majoryzowana przez $c\cdot B$, wcześniejszych $t$ przez $c$ razy suma ostatnich $t$ (a więc przez $c^2\cdot B$).
+    Daje nam to oszacowanie $A<(c+c^2+c^3+...+c^{\lfloor\frac{k}{t}\rfloor})\cdot B<(c+c^2+c^3+...)\cdot B=\frac{c}{1-c}\cdot B$.
+    Jednocześnie $A+B=\sum_{i=0}^{\lfloor\frac{n}{2}\rfloor-1}{n\choose i}<2^{n-1}$.
+    $A=c\cdot A+(1-c)\cdot A=c(A+\frac{1-c}{c}A)<c\cdot(A+B)<c\cdot 2^{n-1}$.\newline
+    Pozostaje udowodnić przypadki większych $k$:\newline
+    Dla $n=2m,k=m$ $\sum_{i=0}^{m-1}{2m\choose i}=2^{2m-1}-\frac{1}{2}{2m\choose m}<2^{2m-1}=
+    2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$\newline
+    Dla $n=2m+1,k=m$ $\sum_{i=0}^{m-1}{2m+1\choose i}=2^{2m}-{2m+1\choose m}<2^{2m}=
+    2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$\newline
+    Dla $n=2m+1,k=m+1$ $\sum_{i=0}^{m}{2m+1\choose i}=2^{2m}=
+    2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$ (jedyna nieostra nierówność)\newline
    \end{proof}
 
   
@@ -178,16 +196,39 @@ Instytut Informatyki}
     $\frac{|N(S_{2^{2m-1}})|}{|S_{2^{2m-1}}|}=\frac{{2m \choose m}}{2^{2m-1}}=\frac{2\Gamma(m+\frac{1}{2})}{\sqrt{\pi}\Gamma(m+1)}<\frac{2}{\sqrt{\pi m}}=
     \frac{2}{\sqrt{\pi\cdot\frac{n}{2}}}=\frac{2\sqrt{2}}{\sqrt{\pi n}}$.
    \end{proof}
-   \begin{theorem}\label{ekspansja kostki}%TODO podać właściwe c
-    Hiperkostka $Q_n$ posiada własność $\frac{c}{\sqrt{n}}$--ekspansji wierzchołkowej.
+   \begin{theorem}\label{ekspansja kostki}%TODO spróować wzmocnić do \frac{2}{\sqrt{\pi n}}
+    Hiperkostka $Q_n$ posiada własność $\frac{1}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
    \end{theorem}
    \begin{proof}
-    Jeśli $k=\sum_{i=0}^{r}{n\choose i}$ (pełne $r$ warstw), to%TODO podać oszacowanie na sum {n\choose i}
-    $\frac{|N(S_k)|}{|S_k|}=\frac{{n\choose r+1}}{\sum_{i=0}^{r}{n \choose i}}>\frac{{n\choose r+1}{n\choose \frac{n}{2}}}{2^{n-1}{n\choose r+1}}
-    =\frac{{n\choose \frac{n}{2}}}{2^{n-1}}=\frac{2^n\Gamma(\frac{n}{2}+\frac{1}{2})}{2^{n-1}\sqrt{\pi}\Gamma(\frac{n}{2}+1)}=
-    \frac{2\Gamma(\frac{n}{2}+\frac{1}{2})}{\sqrt{\pi}\Gamma(\frac{n}{2}+1)}>\frac{2}{\sqrt{\pi (\frac{n}{2}+\frac{1}{2})}}=
-    \frac{2\sqrt{2}}{\sqrt{\pi (n+1)}}\ge\frac{2}{\sqrt{\pi n}}$.\newline
-
+    Jeśli $k=\sum_{i=0}^{r}{n\choose i}$ (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw), to%TODO podać oszacowanie na sum {n\choose i}
+    $\frac{|N(S_k)|}{|S_k|}=\frac{{n\choose r+1}}{\sum_{i=0}^{r}{n \choose i}}>\frac{{n\choose r+1}{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}{n\choose r+1}}
+    =\frac{{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}}=\frac{2^n\Gamma(\lfloor\frac{n}{2}\rfloor+\frac{1}{2})}{2^{n-1}\sqrt{\pi}\Gamma(\lfloor\frac{n}{2}\rfloor+1)}=
+    \frac{2\Gamma(\lfloor\frac{n}{2}\rfloor+\frac{1}{2})}{\sqrt{\pi}\Gamma(\lfloor\frac{n}{2}\rfloor+1)}>\frac{2}{\sqrt{\pi (\lfloor\frac{n}{2}\rfloor+\frac{1}{2})}}
+    \ge\frac{2\sqrt{2}}{\sqrt{\pi (n+1)}}\ge\frac{2}{\sqrt{\pi n}}$(dla $n\ge2$).\newline
+    ($n=2m+1,r=m$ rozważone w \ref{S->S_k})\newline
+    Jeśli $k=\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}$
+    (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw ? TODO + te wierzchołki z warstwy $r+2$, których ciągi binarne kończą się na $1$).\newline
+    $|N(S_k)\cup S_k|=\sum_{i=0}^{r+1}{n\choose i}+{n-1 \choose r+1}\Rightarrow |N(S_k)|=2\cdot{n-1\choose r+1}$\newline
+    $\frac{|N(S_k)|}{|S_k|}=\frac{2\cdot{n-1 \choose r+1}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}>
+    \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}\cdot{n\choose r+1}+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}=
+    \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}\cdot({n-1\choose r}+{n-1\choose r+1})+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}>\newline
+    \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n}\cdot{n-1\choose r+1}+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}=
+    \left(\frac{2^{n-1}}{{n\choose\lfloor\frac{n}{2}\rfloor}}+\frac{{n-1\choose r}}{2\cdot{n-1\choose r+1}}\right)^{-1}>
+    \left(\frac{\sqrt{\pi(n+1)}}{2\sqrt{2}}+\frac{1}{2}\right)^{-1}=\frac{2\sqrt{2}}{\sqrt{\pi(n+1)}+\sqrt{2}}>\frac{2}{\sqrt{\pi n}}$(dla $n\ge 6$).\newline
+    W pozostałych przypadkach można otrzymać ograniczenie choć dużo gorsze wiedząc, że dodanie wierzchołka do $S$ zmniejszy $N(S)$ o conajwyżej $1$.\newline
+    Weźmy teraz $\sum_{i=0}^{r}{n\choose i}<k<\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}$\newline
+    $\frac{|N(S_k)|}{|S_k|}>\frac{{n\choose r+1}-{n-1\choose r}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}=
+    \frac{{n-1\choose r+1}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}\ge
+    \frac{\frac{1}{2}{n \choose r+1}}{\sum_{i=0}^{r}{n\choose i}+\frac{1}{2}{n \choose r+1}}>
+    \left(\frac{\sqrt{\pi (n+1)}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$(dla $n\ge 6$).\newline
+    Analogicznie da $\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}<k<\sum_{i=0}^{r+1}{n\choose i}$\newline
+    $\frac{|N(S_k)|}{|S_k|}>\frac{2{n-1\choose r+1}-{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}=
+    \frac{{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}>
+    \frac{{n-1\choose r+1}}{2^{n-1}\frac{{n\choose r+1}}{{n\choose\lfloor\frac{n}{2}\rfloor}}+{n\choose r+1}}\ge
+    \frac{{n\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{(2^{n-1}+{n\choose\lfloor\frac{n}{2}\rfloor}){n\choose r+1}}=
+    \frac{{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}+{n\choose\lfloor\frac{n}{2}\rfloor}}>
+    \left(\frac{\sqrt{\pi (n+1)}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$(dla $n\ge 6$).\newline
+    Dla przypadku $n\le5$ można ręcznie sprawdzić wszystkie $2^{n-1}$ przypadków, aby również otrzymać oszacowanie $\frac{1}{\sqrt{\pi n}}$.
    \end{proof}
 
 
