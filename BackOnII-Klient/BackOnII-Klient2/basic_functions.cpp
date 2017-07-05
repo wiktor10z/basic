@@ -1,9 +1,11 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <ctime>
+#include <algorithm>
 #include <sstream>
 #include <iomanip>
-//#include <openssl/md5.h>
+#include <openssl/md5.h>
 
 #include "basic_functions.h"
 
@@ -19,7 +21,7 @@ string char_to_string(char* chararr){
 	return ret;
 }
 
-string to_hex(unsigned char* str1, int len){
+string to_hex(unsigned char* str1, int len){//TODO można się pobawić w zrobienie tego upcase
 	stringstream ss("");
 	for(int i=0;i<len;++i){
 		ss<<hex << setfill('0') << setw(2) << (uint)str1[i];
@@ -39,6 +41,27 @@ string from_hex(string str1){
 return res;
 }
 
+void read_hex_from_file(FILE * file,unsigned char * dest){
+	char buff[100];
+	fscanf(file,"%s",buff);				//TODO sprawdzić czy to jest hex i czy dobrej długości
+	string temp_str(buff);
+	temp_str=from_hex(temp_str);
+	copy(temp_str.begin(),temp_str.end(),dest);
+}
+
+
+
+string time_string(){
+	time_t rawtime;
+	char buffer[80];
+	struct tm * timeinfo;
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+	strftime (buffer,80,"%F %T    ",timeinfo);
+	string str(buffer);
+	return str;
+}
+
 string random_password(int len){					//TODO zapytać o to jakiej długości, czy ma być odczytywalne dla człowieka, jak bezpiecznie zapisać
 	string res;
 	for(int i=0;i<len;++i){
@@ -47,7 +70,7 @@ string random_password(int len){					//TODO zapytać o to jakiej długości, czy
 	return res;
 }
 
-/*
+
 string Codes64="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
 
 string Encode64(string s){
@@ -93,16 +116,13 @@ string Decode64(string s){
 	return result;
 }
 
-
 string md5_encode(string s){
 	unsigned char hash[MD5_DIGEST_LENGTH];
 	MD5((const unsigned char*)s.c_str(),s.length(),hash);
-	stringstream ss("");
-	for(int i=0;i<MD5_DIGEST_LENGTH;++i){
-		ss<<hex<<(uint)hash[i];
-	}
-	return ss.str();
+	string hex=to_hex(hash,MD5_DIGEST_LENGTH);
+	transform(hex.begin(), hex.end(),hex.begin(), ::toupper);
+	return hex;
 }
-*/
+
 
 

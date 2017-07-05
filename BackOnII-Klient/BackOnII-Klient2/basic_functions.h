@@ -11,14 +11,18 @@ extern string to_hex(unsigned char* str1, int len);
 
 extern string from_hex(string str1);
 
+extern void read_hex_from_file(FILE * file,unsigned char * dest);
+
+extern string time_string();
+
 extern string random_password(int len);
 
-/*
+
 extern string Encode64(string s);
 
 extern string Decode64(string s);
 
 extern string md5_encode(string s);
-*/
+
 
 #endif

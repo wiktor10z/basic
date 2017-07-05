@@ -2,13 +2,13 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
-#include <ctime>
 //#include <pthread.h>
 #include <unistd.h>
 #include <limits.h>
 #include <netdb.h>
 //#include <csignal>
 
+#include <sys/wait.h>			//waitpid GetSys...
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/sysinfo.h>
@@ -25,6 +25,9 @@
 
 //00010203040FFA9708090A0B0C0D0E0F0001020304050607
 //0901020304050607
+
+//TODO przy audycie trzeba zakładać, że którejść informacji nie da się wyciągnąć - zmienione pliki, brak informacji itp.
+//TODO sklejenie dwóch wiadomości przy czytaniu do wyczerpania źródła
 
 using namespace std;
 
@@ -45,16 +48,63 @@ static void catch_int (int sig) {
 }
 */
 
-string time_string(){
-	time_t rawtime;
-	char buffer[80];
-	struct tm * timeinfo;
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-	strftime (buffer,80,"%F %T    ",timeinfo);
-	string str(buffer);
-	return str;
+string GetSystemOutput(char* cmd){
+        int buff_size = 32;
+    char* buff = new char[buff_size];
+
+        string str = "";
+
+    int fd[2];
+    int old_fd[3];
+    pipe(fd);
+
+
+        old_fd[0] = dup(STDIN_FILENO);
+        old_fd[1] = dup(STDOUT_FILENO);
+        old_fd[2] = dup(STDERR_FILENO);
+
+        int pid = fork();
+        switch(pid){
+                case 0:
+                        close(fd[0]);
+                        close(STDOUT_FILENO);
+                        close(STDERR_FILENO);
+                        dup2(fd[1], STDOUT_FILENO);
+                        dup2(fd[1], STDERR_FILENO);
+                        system(cmd);
+                        //execlp((const char*)cmd, cmd,0);
+                        close (fd[1]);
+                        exit(0);
+                        break;
+                case -1:
+                        cerr << "GetSystemOutput/fork() error\n" << endl;
+                        exit(1);
+                default:
+                        close(fd[1]);
+                        dup2(fd[0], STDIN_FILENO);
+						int rc = 1;
+                        while (rc > 0){
+                                rc = read(fd[0], buff, buff_size);
+                                str.append(buff, rc);
+                                //memset(buff, 0, buff_size);
+                        }
+
+
+
+                        waitpid(pid, NULL, 0);
+                        close(fd[0]);
+        }
+
+        dup2(STDIN_FILENO, old_fd[0]);
+        dup2(STDOUT_FILENO, old_fd[1]);
+        dup2(STDERR_FILENO, old_fd[2]);
+	if(str[str.length()-1]=='\n'){
+		return str.substr(0,str.length()-1);
+	}else{
+		return str;
+	}
 }
+
 
 const char* install_script="\
 OS=$(lsb_release -si)\n\
@@ -146,7 +196,6 @@ void reconnect_TCP(){
 	}
 }
 
-
 void send_TCP_message(string message){//TODO może trzeba będzie i tutaj sprawdzać rozłączenie serwera
 	int lenTCP=message.length();
 	if(write(sockTCP,message.c_str(),lenTCP)!=lenTCP){
@@ -170,16 +219,179 @@ pair<string,int> receive_TCP(){//pierwszy argument to odczytana wiadomość,drug
 	return make_pair(ret,0);
 }
 
+/*
+Audyt sprzętu.
+Klient robi własną inwetaryzację sprzętu i całość wysyła jako skrypt SQL (cały skrypt poniżej – wydaje się na tyle jasny, że powinieneś wiedzieć co trzeba sprawdzić
+– robi update danych komputera, usuwa aktualne komponenty i dodaje nowe – indeksem jest nazwa komputera (zawsze upcase)).
+Po otrzymaniu komunikatu AS … powinieneś zrobić inwetaryzację i przygotować skryto, wyliczyć jego sumę MD5, zakodować go za pomocą Base64 i odesłać ciąg znaków:
+PAS|'+Sl[3]+'|'+T64+'|'+TMD5
+Gdzie SL[3] to numer zadania, a ten numer przyszedł w zadaniu AS na pozycji 4 (znak | w zadaniu jest separatorem, w delphi tablica liczona od 0 więc pozycja nr 3).
 
+U mnie wygląda to tak:
+     T64:=Encode64(DBackOnIIMain.SLSprzetuKomputera.Text);
+    TMD5:=StrMD5(DBackOnIIMain.SLSprzetuKomputera.Text);
+     DodajZapis('PAS|'+Sl[3]+'|'+T64+'|'+TMD5,false,stmp);
 
+Skrypt:
+update komputery set SystemOperacyjny='Microsoft Windows 7 Professional ',  Dodatek='Service Pack 1',  ProductID='00371-177-6532507-85985', 
+* Serial='XXXX',  Procesor='Intel(R) Xeon(R) CPU E3-1231 v3 @ 3.40GHz',  RAM='3,02GB',  Producent='innotek GmbH',  NumerSeryjnyKomputera='SN508382512',
+*  Model='VirtualBox' where nazwa_komputera='FPP-D2007-W7';
+delete from KomponentyKomputera where NazwaKomputera='FPP-D2007-W7';
+insert into KomponentyKomputera (NazwaKomputera,TypKomponentu, Nazwa1) values ('FPP-D2007-W7',3,'VBOX CD-ROM ATA Device');
+insert into KomponentyKomputera (NazwaKomputera,TypKomponentu, Nazwa1,Nazwa2,Nazwa3,Nazwa4) values ('FPP-D2007-W7',2,'VBOX HARDDISK ATA Device',
+* 'VBOX HARDDISK ATA Device','40GB','42566434376230343765352d6237346466342037');
+insert into KomponentyKomputera (NazwaKomputera,TypKomponentu, Nazwa1,Nazwa2,Nazwa3,Nazwa4) values ('FPP-D2007-W7',2,'VBOX HARDDISK ATA Device',
+* 'VBOX HARDDISK ATA Device','60GB','42563936626332656364362d6538633233612030');
+insert into KomponentyKomputera (NazwaKomputera,TypKomponentu, Nazwa1, Nazwa2) values ('FPP-D2007-W7',1,'Karta Intel(R) PRO/1000 MT Desktop Adapter',
+* '08:00:27:27:2D:C2');
+*/
+ //R9VRVY5
+ 
+string prod_name(string info){
+	string name3="???";
+	if(info.find("product:")!=string::npos){
+		string info1=info.substr(info.find("product:")+9);
+		name3=info1.substr(0,info1.find("\n"));
+		if(info.find("description:")!=string::npos){
+			string info1=info.substr(info.find("description:")+13);
+			name3=name3+" "+info1.substr(0,info1.find("\n"));
+		}
+	}else if(info.find("description:")!=string::npos){
+		string info1=info.substr(info.find("description:")+13);
+		name3=info1.substr(0,info1.find("\n"));
+	}
+	return name3;
+} 
 
-void read_hex_from_file(unsigned char * dest){
-	char buff[100];
-	fscanf(glob_file,"%s",buff);				//TODO sprawdzić czy to jest hex i czy dobrej długości
-	string temp_str(buff);
-	temp_str=from_hex(temp_str);
-	copy(temp_str.begin(),temp_str.end(),dest);
+string software_info(){//można też zrobić z tego stały string obliczany przy włączeniu programu
+	char hostname[HOST_NAME_MAX];
+	gethostname(hostname,HOST_NAME_MAX);
+	string host(hostname);
+	string system=GetSystemOutput((char*)"lsb_release -si");
+	string version=GetSystemOutput((char*)"lsb_release -sr");
+	string processor=GetSystemOutput((char*)"cpuid | grep \"brand = \"");
+	string uuid=GetSystemOutput((char*)"dmidecode -t system | grep UUID:");
+	string manufacturer=GetSystemOutput((char*)"dmidecode -t system | grep Manufacturer:");
+	string model=GetSystemOutput((char*)"dmidecode -t system | grep \"Product Name:\"");
+	string serial=GetSystemOutput((char*)"dmidecode -t system | grep \"Serial Number:\"");
+	system=system+" "+version;	
+	if(processor.find("brand =")!=string::npos){
+		processor=processor.substr(processor.find("brand =")+9);
+		processor=processor.substr(0,processor.find("\"\n"));
+		processor=processor.substr(processor.find_first_not_of(" "));	
+	}else{
+		processor="???";
+	}
+	if(uuid.find("UUID")!=string::npos){
+		uuid=uuid.substr(uuid.find("UUID")+6);
+	}else{
+		uuid="???";
+	}
+	if(manufacturer.find("Manufacturer")!=string::npos){		
+		manufacturer=manufacturer.substr(manufacturer.find("Manufacturer")+14);
+	}else{
+		manufacturer="???";
+	}
+	if(model.find("Product Name")!=string::npos){
+		model=model.substr(model.find("Product Name")+14);
+	}else{
+		model="???";
+	}
+	if(serial.find("Serial Number")!=string::npos){	
+		serial=serial.substr(serial.find("Serial Number")+15);
+	}else{
+		serial="???";
+	}
+	struct sysinfo info;
+	sysinfo(&info);
+	char ram[20];
+	sprintf(ram,"%.2fGB",((1.0*info.totalram)/(1024*1024*1024)));
+	string computer_serial1="????????????";
+	string soft_info="\
+update komputery set SystemOperacyjny='"+system+"',\
+ ProductID='"+uuid+"', Serial='"+serial+"', Procesor='"+processor+"',\
+ RAM='"+ram+"', Producent='"+manufacturer+"',  NumerSeryjnyKomputera='"+computer_serial1+"', Model='"+model+"'\
+ where nazwa_komputera='"+host+"';\r\n\
+delete from KomponentyKomputera where NazwaKomputera='"+host+"';\r\n";
+	string diskinfo=GetSystemOutput((char*)"lshw -class disk");
+	size_t pos1,pos2;
+	while(((pos1=diskinfo.find("*-cdrom"))!=string::npos)||((pos2=diskinfo.find("*-disk"))!=string::npos)){
+		bool b;
+		if((pos1!=string::npos)&&(pos2!=string::npos)){
+			b=(pos1<pos2);
+		}else{
+			b=(pos1!=string::npos);
+		}
+		if(b){
+			diskinfo=diskinfo.substr(diskinfo.find("*-cdrom"));
+			diskinfo=diskinfo.substr(diskinfo.find("\n")+1);
+			string cdrominfo=diskinfo;
+			if(cdrominfo.find("*-cdrom")!=string::npos){
+				cdrominfo=cdrominfo.substr(0,cdrominfo.find("*-cdrom"));
+			}
+			if(cdrominfo.find("*-disk")!=string::npos){
+				cdrominfo=cdrominfo.substr(0,cdrominfo.find("*-disk"));
+			}
+			soft_info = soft_info+"insert into KomponentyKomputera (NazwaKomputera,TypKomponentu, Nazwa1)\
+ values ('"+host+"',3,'"+prod_name(cdrominfo)+"');\r\n";
+		}else{
+			diskinfo=diskinfo.substr(diskinfo.find("*-disk"));
+			diskinfo=diskinfo.substr(diskinfo.find("\n")+1);
+			string diskinfo1=diskinfo;
+			if(diskinfo1.find("*-cdrom")!=string::npos){
+				diskinfo1=diskinfo1.substr(0,diskinfo1.find("*-cdrom"));
+			}
+			if(diskinfo1.find("*-disk")!=string::npos){
+				diskinfo1=diskinfo1.substr(0,diskinfo1.find("*-disk"));
+			}
+			string name3=prod_name(diskinfo1);
+			string name4="???";
+			if(diskinfo1.find("size:")!=string::npos){
+				string diskinfo2=diskinfo1.substr(diskinfo1.find("size:")+6);
+				name4=diskinfo2.substr(0,diskinfo2.find("\n"));
+			}
+			string name5="???";
+			if(diskinfo1.find("serial:")!=string::npos){
+				string diskinfo2=diskinfo1.substr(diskinfo1.find("serial:")+8);
+				name5=diskinfo2.substr(0,diskinfo2.find("\n"));
+			}
+			soft_info = soft_info+"insert into KomponentyKomputera (NazwaKomputera,TypKomponentu, Nazwa1,Nazwa2,Nazwa3,Nazwa4)\
+ values ('"+host+"',2,'"+name3+"','"+name3+"','"+name4+"','"+name5+"');\r\n";
+		}
+	}
+	string netinfo=GetSystemOutput((char*)"lshw -class network");
+		if(netinfo.find("*-network")!=string::npos){
+		string serial1="???";
+		if(netinfo.find("serial:")!=string::npos){
+			string info1=netinfo.substr(netinfo.find("serial:")+8);
+			serial1=info1.substr(0,info1.find("\n"));
+		}
+		soft_info = soft_info+"insert into KomponentyKomputera (NazwaKomputera,TypKomponentu, Nazwa1, Nazwa2) values\
+ ('"+host+"',1,'"+prod_name(netinfo)+"','"+serial1+"');";
+	}
+	return soft_info;
 }
+
+
+
+
+
+string software_audit(int Sl3){
+	string script1=software_info();
+	string T64=Encode64(script1);
+	string TMD5=md5_encode(script1);
+	return "PAS|"+to_string(Sl3)+"|"+T64+"|"+TMD5+"\r\n";
+}
+
+
+
+
+
+
+
+
+
+
 
 int common_start(){
 	srand(time(NULL));
@@ -192,12 +404,11 @@ int common_start(){
 	iv=(unsigned char *)malloc(8*sizeof(unsigned char));
 	SERVER_NAME=(char*)malloc(INET_ADDRSTRLEN*sizeof(char));
 	PORT=(char*)malloc(10*sizeof(char)); 
-	read_hex_from_file(key);																//TODO weryfikacja poprawności pliku
-	read_hex_from_file(iv);
+	read_hex_from_file(glob_file,key);																//TODO weryfikacja poprawności pliku
+	read_hex_from_file(glob_file,iv);
 	initialize_3des();
 	return 0;
 }
-
 
 int klient(){//TODO dodać obsługę rozłączenia serwera
 	char login[1000],password[1000],hostname[HOST_NAME_MAX],service_password[PASSWORD_LEN];			//TODO zapytać o te długości
@@ -210,10 +421,16 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 			printf("Usługa jest już zarejestrowana, lub zmieniony został plik z danymi.\n");
 			printf("Spróbować dokonać ponownej rejestracji (R),\nkontynuować z aktualnymi danymi (K),\n");
 			printf("przerwać działanie programu (P),\nczy wyrejestrować usługę (W)?\n");
+			printf("przeprowadzić i wyświetlić audyt sprzętu (A)?\n");			//TODO usunąć
 			printf("(ponowna rejestracja nadpisze stare dane rejestracji usługi)\n");
 			scanf("%s",login);
-		}while((strcmp(login,"R")!=0)&&(strcmp(login,"K")!=0)&&(strcmp(login,"P")!=0)&&(strcmp(login,"W")!=0));
-		if(strcmp(login,"W")==0){
+		//}while((strcmp(login,"R")!=0)&&(strcmp(login,"K")!=0)&&(strcmp(login,"P")!=0)&&(strcmp(login,"W")!=0));
+		//if(strcmp(login,"W")==0){
+		
+		}while((strcmp(login,"R")!=0)&&(strcmp(login,"K")!=0)&&(strcmp(login,"P")!=0)&&(strcmp(login,"W")!=0)&&(strcmp(login,"A")!=0));			//TODO usunąć
+		if(strcmp(login,"A")==0){			//TODO usunąć
+			return 3;			//TODO usunąć
+		}else if(strcmp(login,"W")==0){			//TODO usunąć
 			return 2;
 		}else if(strcmp(login,"P")==0){
 			return 1;
@@ -266,7 +483,7 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	message+=char_to_string((char*)hostname)+"|";
 	message+=char_to_string((char*)login)+"|";
 	message+=to_hex(ciphertext,ciphertext_len)+"\r\n";
-	cout <<time_string() <<"send message: "<<message<<endl;
+	cout <<time_string() <<"sent message: "<<message<<endl;
 	login_message=message;
 	send_TCP_message(message);
 	if(receive_TCP().first!="OK\r\n"){
@@ -281,7 +498,7 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	message+=char_to_string((char*)hostname)+"|";
 	message+=to_hex(ciphertext,ciphertext_len)+"\r\n";
 	do{
-		cout<<message<<endl;
+		cout <<time_string() <<"sent message: "<<message<<endl;
 		send_TCP_message(message);
 		ret_message=receive_TCP();
 		if(ret_message.first!="OK\r\n"){
@@ -321,7 +538,7 @@ int usluga(){
 	message+=char_to_string((char*)login)+"|";
 	message+=to_hex(ciphertext,ciphertext_len)+"|2.0.0.1\r\n";
 	login_message=message;
-	cout <<time_string()<<"send message: "<<message<<endl;
+	cout <<time_string()<<"sent message: "<<message<<endl;
 	send_TCP_message(message);
 	ret_message=receive_TCP();
 	if(ret_message.first!="OK\r\n"){
@@ -330,11 +547,15 @@ int usluga(){
 	}
 	message="ZOZ|"+char_to_string((char*)login)+"\r\n";
 	for(;;){
-		sleep(30);								//TODO może jakaś efektywniejsza forma czekania
+		sleep(10);								//TODO może jakaś efektywniejsza forma czekania TODO 30
 		send_TCP_message(message);
 		cout<<time_string()<<"hello message sent"<<endl;
 		ret_message=receive_TCP();
-		if(ret_message.first!="OK\r\n"){
+		if(ret_message.first.find("AS|")==0){
+			string AS_message=software_audit(stoi(ret_message.first.substr(ret_message.first.rfind("|")+1),NULL));
+			cout <<time_string()<<"sent message: "<<AS_message<<endl;
+			send_TCP_message(AS_message);
+		}else if(ret_message.first!="OK\r\n"){
 			cerr<<time_string()<<"brak obsługi wiadomości: "<<ret_message.first<<endl;
 			int count;			
 			ioctl(sockTCP,FIONREAD,&count);
@@ -361,6 +582,9 @@ int main(){
 			system(install_script);
 		}else if(k==2){
 			system(uninstall_script);	//TODO może zmodyfikować plik glob		
-		}
+		//}
+		}else if(k==3){				//TODO usunąć
+			cout<<software_info()<<endl;			//TODO usunąć
+		}			//TODO usunąć
 	}
 }
