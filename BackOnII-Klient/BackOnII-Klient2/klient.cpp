@@ -110,6 +110,7 @@ const char* install_script="\
 OS=$(lsb_release -si)\n\
 VER=$(lsb_release -sr)\n\
 if [ $OS = \"Ubuntu\" ]; then\n\
+		apt-get install cpuid\n\
 		mkdir -p /opt/BackOnII-Klient\n\
 		cp usluga /opt/BackOnII-Klient\n\
 		cp global_data /opt/BackOnII-Klient\n\
