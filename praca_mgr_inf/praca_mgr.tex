@@ -38,6 +38,7 @@ Instytut Informatyki}
 \newtheorem{theorem}{Twierdzenie}
 \newtheorem{lemma}[theorem]{Lemat}
 \newtheorem{remark}[theorem]{Uwaga}
+\newtheorem{fact}[theorem]{Fakt}
 \newtheorem{corollary}[theorem]{Wniosek}
 
 
@@ -106,13 +107,31 @@ Instytut Informatyki}
    więc $u$ ma mniejszy numer niż $v$.
   \end{proof}
   \section{Podstawy kombinatoryczne}
-   ${2n \choose n}=\frac{2^{2n}\Gamma(n+\frac{1}{2})}{\sqrt{\pi}\Gamma(n+1)}$\quad\quad
+   %Wzor Stirlinga: $n!=\sqrt{2\pi n}(\frac{n}{e})^n e^{\lambda_n}$\quad $\frac{1}{12n+1}<\lambda_n<\frac{1}{12n}$\newline
+   %${2m \choose m}=\frac{(2m)!}{m!\cdot m!}=
+   %\frac{2\sqrt{\pi m}}{2\pi m}\cdot\frac{2^{2m}m^{2m}}{m^{2m}}\cdot\frac{e^{2m}}{e^{2m}}\cdot\frac{e^{\lambda_{2m}}}{e^{2\lambda_m}}=
+   %\frac{2^{2m}}{\sqrt{\pi m}}\cdot\frac{e^{\lambda_{2m}}}{e^{2\lambda_m}}$\newline
+   %${2m+1 \choose m}={2m+1 \choose m+1}=\frac{(2m+1)(2m)!}{(m+1)m!\cdot m!}=\frac{2m+1}{m+1}\cdot\frac{2^{2m}}{\sqrt{\pi m}}\cdot\frac{e^{\lambda_{2m}}}{e^{2\lambda_m}}$\newline
+   %$-\frac{1}{6m}<\frac{-4}{24m+1}<\frac{-3m-1}{m(24m+1)}<\frac{-18m-1}{(24m+1)6m}=\frac{1}{24m+1}-\frac{2}{12m}<\lambda_{2m}-2\lambda_{m}<\frac{1}{24m}-\frac{2}{12m+1}<0$\newline
+   %$\frac{1}{\sqrt{m+1}}=\sqrt{m(m+1)}\cdot\frac{1}{(m+1)\sqrt{m}}\le\frac{m+(m+1)}{2}\cdot\frac{1}{(m+1)\sqrt{m}}=\frac{2m+1}{2(m+1)\sqrt{m}}<\frac{1}{\sqrt{m}}$\newline
+   %$ 1+\frac{1}{m+1}>e^{\frac{1}{3m}}\Rightarrow e^{-\frac{1}{6m}}>\frac{\sqrt{m+1}}{\sqrt{m+2}}>\frac{\sqrt{m}}{\sqrt{m+1}}$\newline
+   %Daje to ograniczenia: $\frac{2^{2m}}{\sqrt{\pi (m+1)}}<{2m \choose m}<\frac{2^{2m}}{\sqrt{\pi m}}$
+   %i $\frac{2^{2m+1}}{\sqrt{\pi (m+2)}}<{2m+1 \choose m}={2m+1 \choose m+1}<\frac{2^{2m+1}}{\sqrt{\pi m}}$\newline
+   %Lub w krotszym zapisie:
+   %$\frac{2^n}{\sqrt{\pi(\lfloor\frac{n}{2}\rfloor}+2)}<{n\choose \lfloor\frac{n}{2}\rfloor}<\frac{2^n}{\sqrt{\pi\cdot\lfloor\frac{n}{2}\rfloor}}$
+   ${2n \choose n}=\frac{2^{2n}\Gamma(n+\frac{1}{2})}{\sqrt{\pi}\Gamma(n+1)}$,\quad\quad
    ${2n+1 \choose n}={2n+1 \choose n+1}=\frac{2^{2n+1}\Gamma(n+\frac{3}{2})}{\sqrt{\pi}\Gamma(n+2)}$\newline
    $\Gamma(z)=\int\limits_{0}^{\infty}x^{z-1}e^{-x}dx$\quad
    dla $n\in\mathbb{N}$ $\Gamma(n)=(n-1)!$,\newline
-   ogólniej dla $x\in\mathbb{R},x>1$ $\frac{\Gamma(x+1)}{\Gamma(x)}=x$,
+   ogólniej dla $x\in\mathbb{R},x>1$ $\frac{\Gamma(x+1)}{\Gamma(x)}=x$,\quad\quad
    $\frac{\Gamma(x+\frac{1}{2})}{\Gamma(x)}<\frac{\Gamma(x+1)}{\Gamma(x+\frac{1}{2})}\Rightarrow
    \sqrt{x-\frac{1}{2}}<\frac{\Gamma(x+\frac{1}{2})}{\Gamma(x)}<\sqrt{x}$\newline
+   Daje to ograniczenia:
+   $\frac{2^{2n}}{\sqrt{\pi(n+\frac{1}{2})}}<{2n\choose n}<\frac{2^{2n}}{\sqrt{\pi n}}$,\quad\quad
+   $\frac{2^{2n+1}}{\sqrt{\pi(n+\frac{3}{2})}}<{2n+1\choose n}={2n+1\choose n+1}<\frac{2^{2n+1}}{\sqrt{\pi(n+1)}}$\newline
+   Lub równoważnie:
+   $\frac{2^n}{\sqrt{\pi(\lceil\frac{n}{2}\rceil+\frac{1}{2})}}<{n\choose\lfloor\frac{n}{2}\rfloor}
+   ={n\choose\lceil\frac{n}{2}\rceil}<\frac{2^n}{\sqrt{\pi\lceil\frac{n}{2}\rceil}}$
    \begin{lemma}\label{binomial sum upper bound}
     Dla $k\le\lfloor\frac{n+1}{2}\rfloor$ zachodzi ograniczenie $\sum_{i=0}^{k-1}{n\choose i}\le2^{n-1}\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$
    \end{lemma}
@@ -122,7 +141,7 @@ Instytut Informatyki}
     Zdefiniujmy $c=\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}<1,t=\lfloor\frac{n}{2}\rfloor-k,$
     $A=\sum_{i=0}^{k-1}{n\choose i}, B=\sum_{i=k}^{\lfloor\frac{n}{2}\rfloor-1}{n\choose i}$\newline
     $\forall_{1\le i\le k}$ $\frac{{n\choose k-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i}}<\frac{{n\choose k-i+1}}{{n\choose \lfloor\frac{n}{2}\rfloor-i+1}}$
-    ($\Leftrightarrow \frac{k-c+1}{n-k+c}<\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lceil\frac{n}{2}\rceil+c}$,\newline
+    $\Leftrightarrow \frac{k-c+1}{n-k+c}<\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lceil\frac{n}{2}\rceil+c}$,\newline
     co wynika z szeregu prostych nierówności $\frac{k-c+1}{n-k+c}\le\frac{k-c+1}{k+c+1}
     <\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lfloor\frac{n}{2}\rfloor+c+1}\le\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lceil\frac{n}{2}\rceil+c}$)\newline
     Daje nam to ograniczenia $\forall_{1\le i\le k}$ $\frac{{n\choose k-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i}}<c$.\newline
@@ -138,11 +157,7 @@ Instytut Informatyki}
     Dla $n=2m+1,k=m+1$ $\sum_{i=0}^{m}{2m+1\choose i}=2^{2m}=
     2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$ (jedyna nieostra nierówność)\newline
    \end{proof}
-
-  
-  
   \section{Własność ekspansji}
-  
    \begin{defi}\label{sasiedztwo wierzcholka}
     Dla grafu $G$ oraz wierzchołka $v\in V(G)$ definiujemy \emph{sąsiedztwo wierzchołka} jako zbiór wierzchołków połączonych z nim krawędzią:
     $N(v)=\{u\in V(G):(u,v)\in E(G)\}$.
@@ -188,12 +203,12 @@ Instytut Informatyki}
    \begin{corollary}\label{ograniczenie ekspansji}
     Hiperkostka wymiaru $n$ nie posiada własności $\frac{2\sqrt{2}}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
    \end{corollary}
-   \begin{proof}
+   \begin{proof}%TODO mozna by wylaczyc te gamma stad do tego podrozdzialu o kombinatrycznych
     Dla $n=2m+1$\newline
-    $\frac{|N(S_{2^{2m}})|}{|S_{2^{2m}}|}=\frac{{2m+1 \choose m+1}}{2^{2m}}=\frac{2\Gamma(m+\frac{3}{2})}{\sqrt{\pi}\Gamma(m+2)}<\frac{2}{\sqrt{\pi(m+1)}}=
+    $\frac{|N(S_{2^{2m}})|}{|S_{2^{2m}}|}=\frac{{2m+1 \choose m+1}}{2^{2m}}=\frac{2^{2m+1}}{2^{2m}\sqrt{\pi(m+1)}}=\frac{2}{\sqrt{\pi(m+1)}}=
     \frac{2}{\sqrt{\pi(\frac{n}{2}+\frac{1}{2})}}=\frac{2\sqrt{2}}{\sqrt{\pi(n+1)}}<\frac{2\sqrt{2}}{\sqrt{\pi n}}$.\newline
     Dla $n=2m$
-    $\frac{|N(S_{2^{2m-1}})|}{|S_{2^{2m-1}}|}=\frac{{2m \choose m}}{2^{2m-1}}=\frac{2\Gamma(m+\frac{1}{2})}{\sqrt{\pi}\Gamma(m+1)}<\frac{2}{\sqrt{\pi m}}=
+    $\frac{|N(S_{2^{2m-1}})|}{|S_{2^{2m-1}}|}=\frac{{2m \choose m}}{2^{2m-1}}<\frac{2^{2m}}{2^{2m-1}\sqrt{\pi(m+1)}}=\frac{2}{\sqrt{\pi m}}=
     \frac{2}{\sqrt{\pi\cdot\frac{n}{2}}}=\frac{2\sqrt{2}}{\sqrt{\pi n}}$.
    \end{proof}
    \begin{theorem}\label{ekspansja kostki}%TODO spróować wzmocnić do \frac{2}{\sqrt{\pi n}}
@@ -202,9 +217,9 @@ Instytut Informatyki}
    \begin{proof}
     Jeśli $k=\sum_{i=0}^{r}{n\choose i}$ (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw), to%TODO podać oszacowanie na sum {n\choose i}
     $\frac{|N(S_k)|}{|S_k|}=\frac{{n\choose r+1}}{\sum_{i=0}^{r}{n \choose i}}>\frac{{n\choose r+1}{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}{n\choose r+1}}
-    =\frac{{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}}=\frac{2^n\Gamma(\lfloor\frac{n}{2}\rfloor+\frac{1}{2})}{2^{n-1}\sqrt{\pi}\Gamma(\lfloor\frac{n}{2}\rfloor+1)}=
-    \frac{2\Gamma(\lfloor\frac{n}{2}\rfloor+\frac{1}{2})}{\sqrt{\pi}\Gamma(\lfloor\frac{n}{2}\rfloor+1)}>\frac{2}{\sqrt{\pi (\lfloor\frac{n}{2}\rfloor+\frac{1}{2})}}
-    \ge\frac{2\sqrt{2}}{\sqrt{\pi (n+1)}}\ge\frac{2}{\sqrt{\pi n}}$(dla $n\ge2$).\newline
+    =\frac{{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}}>\frac{2^{n}}{2^{n-1}\sqrt{\pi (\lceil\frac{n}{2}\rceil+\frac{1}{2})}}=
+    \frac{2}{\sqrt{\pi (\lceil\frac{n}{2}\rceil+\frac{1}{2})}}
+    \ge\frac{2\sqrt{2}}{\sqrt{\pi (n+\frac{3}{2})}}\ge\frac{2}{\sqrt{\pi n}}$ (dla $n\ge2$).\newline
     ($n=2m+1,r=m$ rozważone w \ref{S->S_k})\newline
     Jeśli $k=\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}$
     (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw ? TODO + te wierzchołki z warstwy $r+2$, których ciągi binarne kończą się na $1$).\newline
@@ -214,25 +229,91 @@ Instytut Informatyki}
     \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}\cdot({n-1\choose r}+{n-1\choose r+1})+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}>\newline
     \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n}\cdot{n-1\choose r+1}+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}=
     \left(\frac{2^{n-1}}{{n\choose\lfloor\frac{n}{2}\rfloor}}+\frac{{n-1\choose r}}{2\cdot{n-1\choose r+1}}\right)^{-1}>
-    \left(\frac{\sqrt{\pi(n+1)}}{2\sqrt{2}}+\frac{1}{2}\right)^{-1}=\frac{2\sqrt{2}}{\sqrt{\pi(n+1)}+\sqrt{2}}>\frac{2}{\sqrt{\pi n}}$(dla $n\ge 6$).\newline
-    W pozostałych przypadkach można otrzymać ograniczenie choć dużo gorsze wiedząc, że dodanie wierzchołka do $S$ zmniejszy $N(S)$ o conajwyżej $1$.\newline
+    \left(\frac{\sqrt{\pi(n+\frac{3}{2})}}{2\sqrt{2}}+\frac{1}{2}\right)^{-1}=\frac{2\sqrt{2}}{\sqrt{\pi(n+\frac{3}{2})}+\sqrt{2}}>\frac{2}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
+    W pozostałych przypadkach można otrzymać ograniczenie choć dużo gorsze wiedząc, że dodanie wierzchołka do $S$ zmniejszy $N(S)$ o co najwyżej $1$.\newline
     Weźmy teraz $\sum_{i=0}^{r}{n\choose i}<k<\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}$\newline
     $\frac{|N(S_k)|}{|S_k|}>\frac{{n\choose r+1}-{n-1\choose r}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}=
     \frac{{n-1\choose r+1}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}\ge
-    \frac{\frac{1}{2}{n \choose r+1}}{\sum_{i=0}^{r}{n\choose i}+\frac{1}{2}{n \choose r+1}}>
-    \left(\frac{\sqrt{\pi (n+1)}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$(dla $n\ge 6$).\newline
+    \frac{\frac{1}{2}{n \choose r+1}}{\sum_{i=0}^{r}{n\choose i}+\frac{1}{2}{n \choose r+1}}
+    \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
     Analogicznie da $\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}<k<\sum_{i=0}^{r+1}{n\choose i}$\newline
     $\frac{|N(S_k)|}{|S_k|}>\frac{2{n-1\choose r+1}-{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}=
     \frac{{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}>
     \frac{{n-1\choose r+1}}{2^{n-1}\frac{{n\choose r+1}}{{n\choose\lfloor\frac{n}{2}\rfloor}}+{n\choose r+1}}\ge
     \frac{{n\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{(2^{n-1}+{n\choose\lfloor\frac{n}{2}\rfloor}){n\choose r+1}}=
     \frac{{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}+{n\choose\lfloor\frac{n}{2}\rfloor}}>
-    \left(\frac{\sqrt{\pi (n+1)}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$(dla $n\ge 6$).\newline
-    Dla przypadku $n\le5$ można ręcznie sprawdzić wszystkie $2^{n-1}$ przypadków, aby również otrzymać oszacowanie $\frac{1}{\sqrt{\pi n}}$.
+    \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
+    Dla przypadków $n\le6$ można ręcznie sprawdzić wszystkie $2^{n-1}$ przypadków, aby również otrzymać oszacowanie $\frac{1}{\sqrt{\pi n}}$.
    \end{proof}
-
-
-    
+ \chapter{Problemy na wadliwej hiperkostce}
+  \section{Graf z wadami}
+   \begin{defi}\label{graf z wadami}
+    W grafie $G$ możemy wyróżnić niektóre wierzchołki (czasem również krawędzie) i oznaczyć jako wadliwe.
+    Graf z niepustym takim wyróżnionym zbiorem wierzchołków wadliwych $F\subseteq V(G)$ nazywamy \emph{grafem z wadami} (lub \emph{grafem wadliwym})
+   \end{defi}%TODO może dodać wspomnienie, że wadliwy też nazywany usuniętym
+    Wadliwe wierzchołki (i/lub krawędzie) najczęściej traktowane są jako usunięte z grafu -- mówimy w tym przypadku o grafie $G-F$.
+    Wyróżnianie wadliwych wierzchołków w grafie zamiast definiowania nowego grafu jest umotywowane głównie w przypadkach,
+    gdy pełny graf łatwo zdefiniować i zapisać w pamięci małej względem jego rozmiaru (np. klika, hiperkostka, graf de Bruijna),
+    a zbiór wadliwych wierzchołków jest również mały.
+  \section{Spójność wadliwej hiperkostki}
+   \textbf{Ten podrozdział jest napisany w większości na podstawie \cite{DFGKR}.}
+   \begin{remark}\label{spojnosc przy usunietych}
+    Aby zbadać spójność grafu $G-F$ dla spójnego grafu $G$ wystarczy sprawdzić czy wciąż istnieje ścieżka pomiędzy dowolnymi dwoma wierzchołkami,
+    które oryginalnym grafie sąsiadowały z jakimś spośród usuniętych wierzchołków (wszystkie takie wierzchołki należą do jedenj spójnej składowej).
+   \end{remark}
+   \begin{proof}
+    Aby udowodnić spójność trzeba pokazać, że istnieje ścieżka pomiędzy dowolnymi dwoma wierzchołkami, jednak skoro w oryginalnym grafie taka ścieżka istniała,
+    to w nowym grafie jedyną przeszkodą jest to, że na tej ścieżce mogły występować wierzchołki, które zostały usunięte. Taką scieżkę można naprawić wstawiając
+    w miejsca od pierwszego do ostatniego wystąpienia wierzchołka usuniętego ścieżkę pomiędzy odpowiednimi ich sąsiadami istniejącą w pomniejszonym grafie.
+   \end{proof}
+   \subsection{Podejście ekspansywne}
+    \begin{theorem}\label{Spójność ekspansywna}
+     Niech graf $G$ posiada własność $\varepsilon$--ekspansji wierzchołkowej z $\varepsilon>0$ i maksymalny stopień wierzchołka $\Delta$,
+     oraz dana jest wyrocznia zwracająca dla danego wierzchołka listę jego sąsiadów.
+     Wtedy istnieje algorytm, który otrzymuje na wejściu zbiór $F\subseteq V(G)$ oraz $\varepsilon$
+     i testuje spójność $G-F$ w czasie $O\left(\frac{|F|^2\cdot\Delta^2\cdot\log(|V(G)|)}{\varepsilon}\right)$
+    \end{theorem}
+    \begin{lemma}\label{klasyfikacja skladowych}
+     Spójna składowa $S\subseteq V(G)\backslash F$ grafu $G-F$ jest jednego z dwóch typów:
+     \begin{itemize}
+      \item główna -- $|S|>\frac{|V(G)|}{2}$
+      \item mała -- $|S|\le\frac{|F|}{\varepsilon}$
+     \end{itemize}
+    \end{lemma}
+    \begin{remark}\label{klasyfikacja skladowych 2}
+     Co prawda dla dużego $|F|$ i małego $\varepsilon$ może być tak, że składowa jest jednocześnie główna i mała, jednak po pierwsze jest to przypadek mało
+     interesujacy, gdyż wtedy zwykłe przeszukiwanie grafu spełnia tezę twierdzenia, a po drugie przypadek ten nie psuje w żaden sposób otrzymywanego algorytmu.
+     W lemacie istotne jest to, że w grafie nie ma składowych średnich wielkości.
+    \end{remark}
+    \begin{fact}\label{jedna glowna skladowa}
+     Może być tylko jedna składowa główna.
+    \end{fact}
+    \begin{proof}
+     (Lematu)\newline
+     Weźmy spójną składową $S$ grafu $G-F$ ($N_{G-F}(S)=0$), jeżeli $S\le\frac{|V(G)|}{2}$, to z własności $\varepsilon$--ekspansji wierzchołkowej grafu $G$
+     $|N_G(S)|\ge\varepsilon\cdot|S|$ (gdzie $S$ jest teraz traktowane jako podzbiór wierzchołków grafu $G$). Gdyby zachodziło $|S|>\frac{|F|}{\varepsilon}$,
+     to mielibyśmy $|N_G(S)|>\frac{\varepsilon\cdot|F|}{\varepsilon}=|F|$, co daje sprzeczność ponieważ aby w grafie $G-F$ to sąsiedztwo było puste z grafu
+     $G$ trzeba usunąć co najmniej $N_G(S)$ wierzchołków.
+    \end{proof}
+    \begin{proof}
+     (Twierdzenia)\newline
+     Chcemy sprawdzić, czy wszyscy sąsiedzi wierzchołków usuniętych należą do tej samej spójnej składowej. Na podstawie lematu \ref{klasyfikacja skladowych},
+     jeśli składowa zawierająca taki wierzchołek jest większa niż $\frac{|F|}{\varepsilon}$, to jest to składowa główna.
+     Jeżeli wszystkie takie wierzchołki spełniają ten warunek, to $G-F$ jest spójny.
+     Jeżeli natomiast, któraś z tych składowych okaże się mała, to $G-F$ nie jest spójny.\newline
+     Wystarczy więc uruchomić liniowe przeszukiwanie grafowe w każdym wierzchołku sąsiadującym z wierzchołkiem wadliwym i przerywać po przejrzeniu
+     $\frac{|F|}{\varepsilon}$ wierzchołków.\newline
+     Algorytm liniowego przeszukiwania grafowego uruchamiany jest co najwyżej $|F|\cdot\Delta$ razy.
+     Za każdym razem przeglądamy co najwyżej $\frac{|F|}{\varepsilon}$ wierzchołków.
+     Dla każdego przeglądanego wierzchołka sprawdzamy conajwyżej $\Delta$ sąsiadów.
+     Daje to złożoność z tezy twierdzenia.
+    \end{proof}
+    \begin{corollary}\label{ekspansywna spojnosc dla kostki}
+     Ponieważ zgodnie z twierdzeniem \ref{ekspansja kostki} hiperkostka $Q_n$ posiada własność\newline
+     $\frac{1}{\sqrt{\pi n}}$--ekspansji wierzchołkowej,
+     oraz można znaleźć wszystkich sąsiadów wierzchołka w czasie liniowym od ich ilości powyższy algorytm testuje spójność wadliwej hiperkostki w czasie
+     ${O(|F|^2\cdot n^{3.5})}$ (wyrażonego w ilości operacji na wierzchołkach).
+    \end{corollary}
 
 
   
@@ -247,10 +328,10 @@ Instytut Informatyki}
    "Optimal Numberings and Isoperimetric Problems on Graphs"
    \textit{JOURNAL OF COMBINATORIAL THEORY 1, 385-393 (1966)}
    
-   %------------------------------------------------------------pompowanie
   \bibitem{DFGKR} Tomas Dvorak, Jirı Fink, Petr Gregor, Vaclav Koubek and Tomasz Radzik,
    "Efficient connectivity testing of hypercubic networks with faults"
    
+   %------------------------------------------------------------pompowanie   
   \bibitem{FG} Jirı Fink and Petr Gregor,
    "Long paths and cycles in hypercubes with faulty vertices"
    
