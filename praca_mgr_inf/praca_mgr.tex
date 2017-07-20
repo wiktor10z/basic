@@ -340,7 +340,58 @@ Instytut Informatyki}
      lub w drzewie prefiksowym (czas pesymistyczny operacji $O(n)$, złożoność pamięciowa całej struktury $O(n^{1.5}|F|)$).
      Pozwala to w łatwy sposób uzyskać efektywną wyrocznię, a więc i algorytm o złożoności z wniosku.
     \end{remark}
-    TODO pseudokod
+    \subsubsection{pseudokod i uwagi}
+     W algorytmie wykorzystywana jest sturktura $T$ z operacjami
+     \begin{itemize}
+      \item $Insert(v,T)$ wstawiającą wierzchołek $v$ do struktury $T$
+      \item $Retrieve(v,T)$ zwracająca binarną informacje o obecności wierzchołka $v$ w strukturze $T$
+     \end{itemize}
+     które wymagają $O(n)$ czasu na wykonanie (jak w uwadze \ref{prawdziwa zlozoność ekspansywnej}).\newline
+     Przeszukiwanie grafowe odbywa się przy pomocy funkcji o pseudokodzie:\newline\newline
+     \hspace*{0pt}$DFS(v)\{$\newline
+     \hspace*{16pt}	$counter++;$\newline
+     \hspace*{16pt}	$Insert(v,T);$\newline
+     \hspace*{16pt}	if$(counter\ge size)\quad $return$(TRUE);$\newline
+     \hspace*{16pt}	foreach$(u\in N(v))\{$\newline
+     \hspace*{32pt}		if$(Retrieve(u,T)==FALSE)\{$\newline
+     \hspace*{48pt}			if$(DFS(u))\quad $return$(TRUE);$\newline
+     \hspace*{32pt}		$\}$\newline
+     \hspace*{16pt}	$\}$\newline
+     \hspace*{16pt}	return$(FALSE);$\newline
+     \hspace*{0pt}$\}$\newline  
+
+     Spójność sprawdzana jest przy pomocy funkcji głównej o pseudokodzie:\newline\newline
+     \hspace*{0pt}$Conectivity(n,F)\{$\newline
+     \hspace*{16pt}	$T2=empty\_structureT();$\newline
+     \hspace*{16pt}	$counter=0;$\newline
+     \hspace*{16pt}	foreach$(f\in F)\{$\newline
+     \hspace*{32pt}		$Insert(f,T2);$\newline
+     \hspace*{32pt}		$counter++;$\newline
+     \hspace*{16pt}	$\}$\newline
+     \hspace*{16pt}	$size=sqrt(\pi*n)*counter;$\newline
+     \hspace*{16pt}	foreach$(f\in F)\{$\newline
+     \hspace*{32pt}		foreach$(v\in N(f))\{$\newline
+     \hspace*{48pt}			if$(Retrieve(v,T2)==FALSE)\{$\newline
+     \hspace*{64pt}				$counter=0;$\newline
+     \hspace*{64pt}				$T=T2;$\newline
+     \hspace*{64pt}				if$(DFS(v)==FALSE)\quad $return$(FALSE);$\newline
+     \hspace*{48pt}			$\}$\newline
+     \hspace*{32pt}		$\}$\newline
+     \hspace*{16pt}	$\}$\newline
+     \hspace*{16pt}	return$(TRUE);$\newline
+     \hspace*{0pt}$\}$\newline
+     \begin{remark}\label{przeszukiwanie N(v)}
+      Aby przeiterować po $N(v)$ wystarczy przeiterować się po współrzędnych uzyskując sąsiada poprzez zanegowanie tej współrzędnej w zapisie bitowym $v$.
+     \end{remark}
+     \begin{remark}\label{dwie struktury T}
+      Można użyć dodatkowej struktury $T$ w której przechowywane są wszystkie wierzchołki z poprzednich wywołań $DFS(v)$ z funkcji głównej.
+      Wtedy przy kolejnych użyciach $DFS(v)$ można sprawdzać, czy wierzchołek nie był już wcześniej w jakiejś składowej (można wtedy od razu zwrócić $TRUE$).
+      Teoretycznie może to zwiększyć słożoność dwukrotnie, jednak w praktyce będzie to dużo szybsze
+      (już nawet z tego wzgledu, że albo inni sąsiedzi tego samego $f$ są oddaleni o 2, albo na drodze staje inny wierzchołek z $F$),
+      w szczególności przy użyciu bardziej wyszukanych kolejności przeszukiwania (np. próba dojścia do wierzchołka $\overline{0}$).
+     \end{remark}
+
+     
    \subsection{Redukcja przy pomocy transformacji ścieżek}
     Algorytm przedstawiony w poprzednim podrozdziale jest dowodem na to, że testowanie spójności wadliwej hiperkostki może być zrobione wielomianowo
     ze względu na ilość wad i wymiar hiperkostki. Algorytm ten wykorzystuje jednak bardzo płytko potencjał tak regularnego grafu.
@@ -551,17 +602,33 @@ Instytut Informatyki}
      \hspace*{16pt}	foreach$(f\in F)\{$\newline
      \hspace*{32pt}		$f_T=Retrieve(f,T);$\newline
      \hspace*{32pt}		if$(f_T.visited==FALSE)\{$\newline
-     \hspace*{48pt}		$f_T.visited=TRUE;$\newline
-     \hspace*{48pt}		$D=empty\_structureD();$\newline
-     \hspace*{48pt}		$DFS(f);$\newline
-     \hspace*{48pt}		if$(D.counter>1)\quad return(FALSE);$\newline
+     \hspace*{48pt}			$f_T.visited=TRUE;$\newline
+     \hspace*{48pt}			$D=empty\_structureD();$\newline
+     \hspace*{48pt}			$DFS(f);$\newline
+     \hspace*{48pt}			if$(D.counter>1)\quad return(FALSE);$\newline
      \hspace*{32pt}		$\}$\newline
      \hspace*{16pt}	$\}$\newline
-     \hspace*{16pt}	$return(TRUE);$\newline
+     \hspace*{16pt}	return$(TRUE);$\newline
      \hspace*{0pt}$\}$
     \subsubsection{Analiza złożoności}
+    \begin{corollary}\label{zlozonosc lokalnej spojnosci}
+     Algorytm ma pesymistyczną złożoność czasową i pamięciową $O(|F|\cdot n^3)$.
+    \end{corollary}
+    \begin{proof}
+     Dla kazdego wierzchołka z $F$ każdy sąsiad jest przeglądany po jeden raz, dla każdego wierzchołka nalezącego do $N(F)$ również przeglądani są wszyscy sąsiedzi
+     po razie. Przeglądnięcie jedengo wierzchołka (znalezienie odpowiedniego wierzchołka w $T$ i $D$) zajmuje $O(n)$,
+     ustawienie właściwości w $D$ zajmuje stały czas po posiadaniu dowiązania do odpowiedniego wierzchołka -- daje to złożoność tej części $O(|F|\cdot n^3)$.\newline
+     Operacja $Make(v,D)$ używana jest dla każdego wierzchołka z $G(C)-C$ po razie dla kazdego $C$
+     (moze być użyta więcej niż raz dla wierzchołków oddalonych o 2 od $F$ i występujących w różnych $G(C)$).
+     W przypadku $Find(v,D)$ i $Union(u,v,D)$ uruchamiane są one maksymalnie odpowiednio dwa i jeden raz dla kazdego z sąsiadów wierzchołków $N(F)$
+     -- daje to złożoność $O(|F|\cdot n^2\log(n))$.\newline
+     Preprocessing i Postprocessing (tworzenie i usuwanie struktur $T$ i $D$)
+     może być zrobione w czasie liniowym od ich wielkości (w przypadku $D$ można trzymać dowiązanie do wszystkich nieuporządkowanych
+     wierzchołków dodatkowo na liście). W przypadku struktury $T$ wielkość tą można ograniczyć przez $O(|F|\cdot n^3)$ przy użyciu drzewa prefiksowego
+     (lub $O(|F|\cdot n^2)$ przy użyciu hashmapy, która nie pozwala jednak uzyskać odpowiedniej złożoności przy pesmistycznym scenariuszu),
+     zaś w przypadku struktur $D$ łącznie $O(|F|\cdot n^2)$.
+    \end{proof}
     
-     
 \begin{thebibliography}{99}%TODO dziwne litery , upcase?
 \addcontentsline{toc}{chapter}{Bibliografia}
 
