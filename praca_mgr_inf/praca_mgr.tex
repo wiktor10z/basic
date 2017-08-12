@@ -620,24 +620,67 @@ Instytut Informatyki}
     \hspace*{16pt}	return$(TRUE);$\newline
     \hspace*{0pt}$\}$
    \subsection{Analiza złożoności}
-   \begin{corollary}\label{zlozonosc lokalnej spojnosci}
-    Algorytm ma pesymistyczną złożoność czasową i pamięciową $O(|F|\cdot n^3)$.
-   \end{corollary}
-   \begin{proof}
-    Dla kazdego wierzchołka z $F$ każdy sąsiad jest przeglądany po jeden raz, dla każdego wierzchołka nalezącego do $N(F)$ również przeglądani są wszyscy sąsiedzi
-    po razie. Przeglądnięcie jedengo wierzchołka (znalezienie odpowiedniego wierzchołka w $T$ i $D$) zajmuje $O(n)$,
-    ustawienie właściwości w $D$ zajmuje stały czas po posiadaniu dowiązania do odpowiedniego wierzchołka -- daje to złożoność tej części $O(|F|\cdot n^3)$.\newline
-    Operacja $Make(v,D)$ używana jest dla każdego wierzchołka z $G(C)-C$ po razie dla kazdego $C$
-    (moze być użyta więcej niż raz dla wierzchołków oddalonych o 2 od $F$ i występujących w różnych $G(C)$).
-    W przypadku $Find(v,D)$ i $Union(u,v,D)$ uruchamiane są one maksymalnie odpowiednio dwa i jeden raz dla kazdego z sąsiadów wierzchołków $N(F)$
-    -- daje to złożoność $O(|F|\cdot n^2\log(n))$.\newline
-    Preprocessing i Postprocessing (tworzenie i usuwanie struktur $T$ i $D$)
-    może być zrobione w czasie liniowym od ich wielkości (w przypadku $D$ i hashmapy można trzymać dodatkowo nieuporządkowaną listę dowiązań do wszystkich
-    elementów). W przypadku struktury $T$ wielkość tą można ograniczyć przez $O(|F|\cdot n^3)$ przy użyciu drzewa prefiksowego
-    (lub $O(|F|\cdot n^2)$ przy użyciu hashmapy, która nie pozwala jednak uzyskać odpowiedniej złożoności przy pesmistycznym scenariuszu),
-    zaś w przypadku struktur $D$ łącznie $O(|F|\cdot n^2)$.
-   \end{proof}
-   
+    \begin{corollary}\label{zlozonosc lokalnej spojnosci}
+     Algorytm ma pesymistyczną złożoność czasową i pamięciową $O(|F|\cdot n^3)$.
+    \end{corollary}
+    \begin{proof}
+     Dla kazdego wierzchołka z $F$ każdy sąsiad jest przeglądany po jeden raz, dla każdego wierzchołka nalezącego do $N(F)$ również przeglądani są wszyscy sąsiedzi
+     po razie. Przeglądnięcie jedengo wierzchołka (znalezienie odpowiedniego wierzchołka w $T$ i $D$) zajmuje $O(n)$,
+     ustawienie właściwości w $D$ zajmuje stały czas po posiadaniu dowiązania do odpowiedniego wierzchołka -- daje to złożoność tej części $O(|F|\cdot n^3)$.\newline
+     Operacja $Make(v,D)$ używana jest dla każdego wierzchołka z $G(C)-C$ po razie dla kazdego $C$
+     (moze być użyta więcej niż raz dla wierzchołków oddalonych o 2 od $F$ i występujących w różnych $G(C)$).
+     W przypadku $Find(v,D)$ i $Union(u,v,D)$ uruchamiane są one maksymalnie odpowiednio dwa i jeden raz dla kazdego z sąsiadów wierzchołków $N(F)$
+     -- daje to złożoność $O(|F|\cdot n^2\log(n))$.\newline
+     Preprocessing i Postprocessing (tworzenie i usuwanie struktur $T$ i $D$)
+     może być zrobione w czasie liniowym od ich wielkości (w przypadku $D$ i hashmapy można trzymać dodatkowo nieuporządkowaną listę dowiązań do wszystkich
+     elementów). W przypadku struktury $T$ wielkość tą można ograniczyć przez $O(|F|\cdot n^3)$ przy użyciu drzewa prefiksowego
+     (lub $O(|F|\cdot n^2)$ przy użyciu hashmapy, która nie pozwala jednak uzyskać odpowiedniej złożoności przy pesmistycznym scenariuszu),
+     zaś w przypadku struktur $D$ łącznie $O(|F|\cdot n^2)$.
+    \end{proof}
+  \section{Wnioski i zastosowania}
+   \subsection{Cykl Eulera}
+    Mając dostępny efektywny algorytm badania spójności wysnułem następujący wniosek: 
+ 
+    \begin{theorem}\label{cykl Eulera}%TODO naprawić opisy po przeniesieniu i dodać, że sam to zrobiłem
+     Dla $F\subseteq V(Q_n)$ można rozstrzygnąć, czy w $Q_n-F$ jest cykl Eulera w czasie $O(|F|\cdot n^3)$
+    \end{theorem}
+    \begin{proof}
+     Kryterium istnienia cyklu Eulera jest to, że po pierwsze graf jest spójny, a po drugie z każdego wierzchołka wychodzi parzyście wiele krawędzi.
+     Spójność można sprawdzić w czasie $O(|F|\cdot n^3)$ przy pomocy algorytmu z poprzedniego podrozdziału.
+     Wierzchołek nie mający wadliwego sąsiada ma stopień $n$, wystarczy więc policzyć tylko parzystość dla tych którzy takiego sąsiada mają.
+     W czasie i pamięci $O(|F|\cdot n^2)$ można wstawić wszystkich niewadliwych sąsiadów wierzchołków wadliwych
+     do drzewa prefiksowego zapamiętując w liściach krotność.
+     Po wszystkim wystarczy dla $^2|n$ sprawdzić czy wszystkie wstawione wierzchołki mają krotność parzystą, zaś dla $^2\nmid n$ trzeba po pierwsze sprawdzić,
+     że wszystkie wstawione wierzchołki mają krotność nieparzystą, a po drugie że jest ich dokładnie $2^n-|F|$.
+    \end{proof}
+   \subsection{Długość ścieżki między dwoma punktami}
+    \begin{fact}
+     Dla spójnego grafu $Q_n-F$ pomiędzy każdymi dwoma wierzchołkami jest ścieżka długości nie większej niż $n+n^2\cdot|F|$.
+    \end{fact}
+    \begin{proof}
+     Jest to bezpośredni wniosek z dowodu lematu \ref{Q_n^2[F]-F spojne => Q_n-F spojne}. Dwa dowolne wierzchołki są połączone w pełnej hiperkostce $Q_n$
+     ścieżką długości co najwyżej $n$. W dowodzie zastępujemy (być może kilka razy)
+     część takiej ścieżki inną ścieżką w grafie $G(C)-C$. Łącznie długość wszystkich takich zastąpień nie może wynosić więcej niż wynosi rozmiar $G(F)-F$,
+     co dowodzi tezy.
+    \end{proof}
+   \subsection{Istnienie ścieżki między dwoma punktami}
+    Pomimo gorszej złożoności algorytmu ekspansywnego ma on wciąż przydatne zastosowania. Jeśli nie chcemy badać spójności całego grafu, a jedynie sprawdzić
+    czy istnieje w nim ścieżka między dwoma wybranymi wierzchołkami algorytm ten łatwo zredukować:
+    \begin{theorem}
+     Dla $F\subseteq V(Q_n)$ i dwóch wierzchołków $u,v\in Q_n-F$ można w czasie $O(n^{2.5}|F|)$ rozstrzygnąć, czy w $Q_n-F$ istnieje $uv$--ścieżka.
+    \end{theorem}
+    \begin{proof}
+     Chcemy sprawdzić czy dwa wierzchołki należą do jednej spójnej składowej grafu $Q_n-F$. Zgodnie z lematem \ref{klasyfikacja skladowych}
+     jeśli spójne składowe w których znajdują się te wierzchołki są większe niż $\frac{|F|}{\varepsilon}$, to są składową główną (a więc tą samą),
+     wystarczy więc z obu wierzchołków wystartować przeszukiwanie grafowe i zakończyć je jeśi zbada się tyle wierzchołków.
+     Jeśli oba wyszukiwania zakończą się dzięki temu kryterium, lub jeśli zostanie napotkany ten drugi wierzchołek, to w $Q_n-F$ istnieje $uv$--ścieżka,
+     w przeciwnym przypadku nie.
+    \end{proof}
+
+
+   %przenieść tu cykl eulera
+   %da się zbudować ścieżkę wielomianowej długości
+   %ekspansja daje łatwy algorytm tego czy dwa wierzchołki w tej samej składowej
     
  \chapter{Długie ścieżki i cykle w grafie} %TODO jeśli wyłącze podrozdziały o poziom wyżej, to trzeba zmienić wewnętrzne odniesienia typu w poprzednim podrozdziale
   W poprzednim rozdziale przedstawiony był przykład problemu na wadliwej hiperkostce, dla którego można było znaleźć rozwiązanie wielomianowe od $n$ i $|F|$.
@@ -939,28 +982,15 @@ Instytut Informatyki}
      które chcemy połączyć ścieżką Hamiltona tworzymy ścieżki w podkostkach i łączymy je. Dla drzewa zbalansowanego postępujemy analogicznie z tą różnicą,
      że wybór liścia jest dowolny.
     \end{proof}
- \chapter{Własne wyniki}
-  \section{Cykl Eulera}
-   \begin{theorem}\label{cykl Eulera}
-    Dla $F\subseteq V(Q_n)$ można rozstrzygnąć, czy w $Q_n-F$ jest cykl Eulera w czasie $O(|F|\cdot n^3)$
-   \end{theorem}
-   \begin{proof}
-    Kryterium istnienia cyklu Eulera jest to, że po pierwsze graf jest spójny, a po drugie z każdego wierzchołka wychodzi parzyście wiele krawędzi.
-    Spójność można sprawdzić w czasie $O(|F|\cdot n^3)$ przy pomocy algorytmu z podrozdziału \ref{spojnosc 2}.
-    Wierzchołek nie mający wadliwego sąsiada ma stopień $n$, wystarczy więc policzyć tylko parzystość dla tych którzy takiego sąsiada mają.
-    W czasie i pamięci $O(|F|\cdot n^2)$ można wstawić wszystkich niewadliwych sąsiadów wierzchołków wadliwych
-    do drzewa prefiksowego zapamiętując w liściach krotność.
-    Po wszystkim wystarczy dla $^2|n$ sprawdzić czy wszystkie wstawione wierzchołki mają krotność parzystą, zaś dla $^2\nmid n$ trzeba po pierwsze sprawdzić,
-    że wszystkie wstawione wierzchołki mają krotność nieparzystą, a po drugie że jest ich dokładnie $2^n-|F|$.
-   \end{proof}
-  \section{Największa odległość grafowa}%TODO sprawdzić czy zawsze nazywam tak samo współrzędne (od 0 do n-1), w innych podrozdziałach też
+
+  \chapter{Największa odległość grafowa}%TODO sprawdzić czy zawsze nazywam tak samo współrzędne (od 0 do n-1), w innych podrozdziałach też
    \begin{defi}\label{srednica grafu}
     \emph{Średnicą grafu} nazywamy największą odległość pomiędzy jego dwoma wierzchołkami $d(G)=\max\limits_{u,v\in V(G)}d(u,v)$.
    \end{defi}
    Jedną z najważniejszych zalet hiperkostki $Q_n$, jest to, że pomimo względnie niskiej gęstości jej średnica jest niewielka i równa $n$,
    a do tego po usunięciu części węzłów często pozostaje spójna.
    Graf ten posiada również tę przyjemną własność, że przy losowym usuwaniu wierzchołków odległości pomiędzy nieusuniętymi wierzchołkami rzadko się zwiększają
-   (w szczególności dla wierzchołków w większej odległości).
+   (w szczególności dla wierzchołków bardziej oddalonych).
    Przy intencjonalnym usuwaniu aby zwiększyć odległość pomiędzy dowolnymi dwoma wierzchołkami potrzeba usunąć co najmniej dwa wierzchołki
    (w przypadku dowolnych wierzhcołków oddalonych o 2), zaś aby zwiększyć średnicę grafu należy usunąć co najmniej $n-1$ wierzchołków
    (wszystkich prócz jednego sąsiadów dowolnie wybranego wierzchołka).
@@ -977,7 +1007,7 @@ Instytut Informatyki}
    Wyjściowy problem został więc zredukowany (okazał się równoważny) do problemu:\newline
    Znajdź najdłuższy ciąg wektorów binarnych długości $n$,
    że każde dwa sąsiednie wektory różnią się na co najmniej jednej pozycji, zaś każde dwa inne na co najmniej dwóch.
-   \subsection{Ścieżka Fibonacciego}
+   \section{Ścieżka Fibonacciego}
     \begin{theorem}\label{co najmniej fibo}
      Dla danego $n$ istnieje prosty algorytm konstruujący ciąg wektorów reprezentujący ścieżkę długości $F_{n+1}$,
      (gdzie $F_n$ to $n$-ty wyraz ciągu Fibonacciego: $F_0=F_1=1$), która jest podgrafem indukowanym hiperkostki.
@@ -1013,7 +1043,7 @@ Instytut Informatyki}
      Jako, że ciąg Fibonacciego rośnie w tempie wykładniczym -- ilość użytych wierzchołków wynosi
      $\frac{1}{\sqrt{5}}((\frac{1+\sqrt{5}}{2})^{n+1}-(\frac{1-\sqrt{5}}{2})^{n+1})\approx \frac{(1.62)^{n+1}}{\sqrt{5}}=\Omega(1.61^n)$, przy wielkości kostki $2^n$.
     \end{corollary}
-   \subsection{Wyniki eksperymentalne}
+   \section{Wyniki eksperymentalne}
     \begin{remark}\label{da sie dluzsze}
      Dla wymiarów większych niż $4$ da się otrzymać ścieżki jeszcze dłuższe -- dla $n=5$ najdłuższa możliwą ścieżką jest:\newline
      00000
@@ -1041,7 +1071,7 @@ Instytut Informatyki}
     Drzewo tej gry ma maksymalny stopień rozgałęzienia równy $n$, zaś głębokość $|P|$.\newline
     Daje to złożoność algotyrmu przeglądającego wszystkie ściężki mocno pesymistycznie ograniczoną przez $O(n^{|P|})$. Nawet po zastosowaniu
     różnych usprawnień, algorytm dokładny szybko staje się zbyt wolny, dlatego dla $n\ge7$ musiałem skorzystać z metod losowych.
-    \subsubsection{NMCS}
+    \subsection{NMCS}
      Aby otrzymać pewną ścieżke, która posiada tę właśność, że nie da się jej już wydłużyć do innej poprawnej można przeprowadzić zejście po drzewie
      od korzenia do liścia poprzez losowe wybieranie jednego z dzieci za każdym razem, gdy taki wybór jest możliwy.\newline
      Przeprowadzając odpowiedno dużo takich losowych zejść po drzewie i wybierając najdłuższą ścieżkę ze znalezionych możemy uzyskać już w miarę dobry
@@ -1054,7 +1084,7 @@ Instytut Informatyki}
      Rozszerzenie tej metody zostało zaprezentowane w pracy \cite{NMCS} zwane Nested Monte Carlo Search, polegające na tym, że do oszacowania
      wartości możliwych ruchów zamiast zwykłych przeszukiwań losowych używamy zwykłego przeszukiwania Monte Carlo.
      Dokładniej metoda ta zakłada, że tworząc rozwiązanie przy pomocy NMCS z poziomem $k$ używamy do wyboru ruchu NMCS z poziomem $k-1$ i tak dalej rekurencyjnie
-     aż do poziomu $0$, który oznacza przeszukiwanie losowe. Można to przedstawić następującym pseudokodem:\newline\newline\newline\newline%TODO znów zadbać, żey strona się nie łamała brzydko
+     aż do poziomu $0$, który oznacza przeszukiwanie losowe. Można to przedstawić następującym pseudokodem:\newline\newline%TODO znów zadbać, żey strona się nie łamała brzydko
      \hspace*{0pt}$NMCS(v,level)\{$\newline
      \hspace*{16pt}	while$(TRUE)\{$\newline
      \hspace*{32pt}		$val.push\_back(v);$\newline
@@ -1074,31 +1104,46 @@ Instytut Informatyki}
      \hspace*{32pt}		$\}$\newline
      \hspace*{16pt}	$\}$\newline
      \hspace*{0pt}$\}$
-    \subsubsection{Uwagi praktyczne}
+    \subsection{Uwagi praktyczne}
      Ze względu na ogromną różnicę w złożoności algorytmu $NMCS$ w zależności od użytego poziomu można wprowadzić lekką modyfikację -- w przypadku,
      gdy wyższy poziom jest zbyt kosztowny, zaś niższy za słaby zamiast uruchamiać program z niższym poziomem wiele razy można poszerzyć przeszukiwanie.
-     Poszerzenie takie można łatwo uzyskać uruchamiając dla każdego dziecka symulację poziomu niżej nie raz a $T$ razy.
-     
-     W przypadku szukania izolowanej ścieżki w hiperkostce sprawdzanie, czy danego sąsiada aktualnego wierzchołka końcowego można wybrać
-     jako następce na ścieżce można sprawdzać albo sprawdzając, czy nie jest sąsiadem któregoś z poprzednich wierzchołków na ścieżce (ogromna złożoność czasowa),
-     albo zapamiętując wszystkich sąsiadów wierzchołków ze ścieżki w trakcie jej tworzenia. Jako, że spora część kostki jest w tym przypadku albo na ścieżce
-     albo leży w jej sąsiedztwie można jako struktury danych użyć prostej tablicy, oznacza to złożoność pamięciową algorytmu $O(2^n)$
-     (dopóki dostępna jest pamięć jest to i tak lepsze rozwiązanie).
+     Poszerzenie takie można łatwo uzyskać uruchamiając dla każdego dziecka symulację poziomu niżej nie raz a $T$ razy
+     (plus uruchomienie algorytmu najwyższego pozmiou tyle razy).
      
      Mając na uwadze algorytm z tą modyfikacją można oszacować pesymistyczną złożoność algorytmu dla szukania długiej izolowanej ścieżki w hiperkostce
      w zależności od wymiaru $n$,poziomu $L$, liczby razy przy sprawdzaniu dzieci $T$ oraz oczekiwanej długości maksymalnej ścieżki $|P|$.
      Złożoność ta jest wyrażona poprzez równanie rekurencyjne:\newline
-     $NMCS(n,0,T,|P|)=n\cdot |P|$\newline
+     $NMCS(n,0,T,|P|)=n\cdot T\cdot |P|$\newline
      $NMCS(n,L,T,|P|)=n\cdot T\cdot NMCS(n,L-1,T,|P|-1)+NMCS(n,L,T,|P|-1)$\newline
      Które daje rozwiązanie:\newline
-     $NMCS(n,L,T,|P|)=O(T^L\cdot n^{L+1}\cdot|P|^{L+1})$
+     $NMCS(n,L,T,|P|)=O(T^{L+1}\cdot n^{L+1}\cdot|P|^{L+1})$     
+     
+     W przypadku szukania izolowanej ściezki w hiperkostce nalezy jeszcze doliczyć czas i pamięć potrzebne na sprawdzanie czy nowo wybrany (wylosowany)
+     wierzchołek nie jest sąsiadem jednego z wierzchołków z początku ścieżki.
+     
+     Jedną z możliwych metod jest za każdym razem przeiterowanie po aktualnej ściężce i porównanie ciągów binarnych, daje to jednak złożoność
+     czasową rzędu $n |P|$. Drugą metodą jest zapamiętywanie wszystkich sąsiadów wierzchołków ze ścieżki (plus ich samych) w tablicy binarnej rozmiaru $2^n$.
+     W tym wypadku sprawdzanie jest trywialnie proste (w czasie potrzebnym na odczytanie nazwy wierzchołka),
+     jednak złożoność pamięicowa w przypadku NMCS poziomu $0$ przeważa nad złożonością czasową samego algorytmu.
+     W przypadku małych $n$ nie jest to jednak złe rozwiązanie, ponieważ ze względu na liczne optymalizacje tablic binarnych jest to najszybsze rozwiązanie.
+     Trzecią (pośrednią) metodą jest użycie jako struktury drzewa prefiksowego lub tablicy hashującej uzyskując podobnie do tablicy binarnej
+     złożoność $O(n)$ na odczytanie i wstawienie wierzchołka jednocześnie potrzebując jedynie $O(n^{1.5}\cdot|P|)$ lub $O(n\cdot|P|)$ pamięci w zależności od użytej struktury.
+     
+     W przypadku użycia struktury zapamiętującej sąsiadów wierzchołków ze ścieżki należy jeszcze zwrócić uwagę na zmienianie jej stanu przy wchodzeniu
+     i wracaniu z niższych poziomów wywołania. Można albo za każdym razem pamiętać wszystkie wstawione wierzchołki i przy zwracaniu wyniku
+     do poziomu wyżej dokonywać ich usunięcia, albo można za każdym razem kopiować całą strukturę (dosyć efektywne przy użyciu tablic).
+     W drugim przypadku wystarczy mieć $L+1$ kopii stuktury na raz (po jednej na każdy poziom) i przy powrocie z apoziomu niżej
+     zastępować starą wersję z tamtego poziomu kopią z poziomu o 1 wyżej.
+     
+     Mając to na uwadze można zaprogramować algorytm tak, aby miał złożoności czasową $O(T^{L+1}\cdot n^{L+2}\cdot|P|^{L+1})$
+     i pamięciową $O(L\cdot n\cdot |P|)$.\newline
      
      Przeszukiwanie można dodatkowo zawęzić jeśli program weźmie pod uwagę, że kierunki, które nie pojawiły się jeszcze na ścieżce są równoważne
      (wystarczy pamiętać liczbę oznaczającą ilość kierunków już użytych i nie używać kierunków większych niż ta liczba + 1).
      W ten sposób ustalone są pierwsze 3 ruchy ($1\rightarrow2\rightarrow4\rightarrow8$ przy numerowaniu klasycznym),
      zaś na czwarty są tylko dwie możliwości ($8\rightarrow7,8\rightarrow17$). Daje to duże przyśpieszenie przy małych przypadkach,
      jednak przy większych nie ma już większego znaczenia.
-    \subsubsection{Uzyskane wartości}
+    \subsection{Uzyskane wartości}
      Przy pomocy komputera i przedstawonych wyżej algorytmów przeprowadziłem przeszukiwanie w celu znalezienia możliwie najdłuższej takiej ścieżki.
      W przypadku $n\le6$ przy pomocy pełnego przeszukiwania, a dalej NMCS z 4 poziomami dla $n=7$, 3 dla $n=8$, 2 dla $9\le n\le12$ i 1 dla $13\le n\le18$
      z ilością wywołań niższego poziomu takich żeby podobny był czas dla wszystkich $n$. Dalej użyłem zwykłego błądzenia losowego i wybierania najdłuższej
@@ -1160,7 +1205,7 @@ Instytut Informatyki}
       \sqrt[n]{|P|+1}&1.78&1.78&1.79&1.79&1.79\\
       \hline
      \end{array}$\newline
-     \begin{center}%TODO dane nieaktualne
+     \begin{center}
       \includegraphics[scale=0.37]{img/plot1.jpg}
      \end{center}
 
