@@ -653,16 +653,6 @@ Instytut Informatyki}
      Po wszystkim wystarczy dla $^2|n$ sprawdzić czy wszystkie wstawione wierzchołki mają krotność parzystą, zaś dla $^2\nmid n$ trzeba po pierwsze sprawdzić,
      że wszystkie wstawione wierzchołki mają krotność nieparzystą, a po drugie że jest ich dokładnie $2^n-|F|$.
     \end{proof}
-   \subsection{Długość ścieżki między dwoma punktami}
-    \begin{fact}
-     Dla spójnego grafu $Q_n-F$ pomiędzy każdymi dwoma wierzchołkami jest ścieżka długości nie większej niż $n+n^2\cdot|F|$.
-    \end{fact}
-    \begin{proof}
-     Jest to bezpośredni wniosek z dowodu lematu \ref{Q_n^2[F]-F spojne => Q_n-F spojne}. Dwa dowolne wierzchołki są połączone w pełnej hiperkostce $Q_n$
-     ścieżką długości co najwyżej $n$. W dowodzie zastępujemy (być może kilka razy)
-     część takiej ścieżki inną ścieżką w grafie $G(C)-C$. Łącznie długość wszystkich takich zastąpień nie może wynosić więcej niż wynosi rozmiar $G(F)-F$,
-     co dowodzi tezy.
-    \end{proof}
    \subsection{Istnienie ścieżki między dwoma punktami}
     Pomimo gorszej złożoności algorytmu ekspansywnego ma on wciąż przydatne zastosowania. Jeśli nie chcemy badać spójności całego grafu, a jedynie sprawdzić
     czy istnieje w nim ścieżka między dwoma wybranymi wierzchołkami algorytm ten łatwo zredukować:
@@ -674,14 +664,21 @@ Instytut Informatyki}
      jeśli spójne składowe w których znajdują się te wierzchołki są większe niż $\frac{|F|}{\varepsilon}$, to są składową główną (a więc tą samą),
      wystarczy więc z obu wierzchołków wystartować przeszukiwanie grafowe i zakończyć je jeśi zbada się tyle wierzchołków.
      Jeśli oba wyszukiwania zakończą się dzięki temu kryterium, lub jeśli zostanie napotkany ten drugi wierzchołek, to w $Q_n-F$ istnieje $uv$--ścieżka,
-     w przeciwnym przypadku nie.
+     w przeciwnym przypadku nie. Tak przedstawiony algorytm działa dla dowolnego grafu (spójnego z którego usuwamy wierzchołki)
+     z odpowiednią wartością $\varepsilon$. W przypadku hiperkostki wystarczy sprawdzić sąsiadów $2\sqrt{\pi n}\cdot|F|$ wierzchołków (a każdy ma ich $n$),
+     podczas gdy każda taka operacja kosztuje $O(n)$, co daje koszt z twierdzenia.
+    \end{proof}    
+   \subsection{Długość ścieżki między dwoma punktami}
+    \begin{fact}
+     Dla spójnego grafu $Q_n-F$ pomiędzy każdymi dwoma wierzchołkami jest ścieżka długości nie większej niż $n+n^2\cdot|F|$.
+    \end{fact}
+    \begin{proof}
+     Jest to bezpośredni wniosek z dowodu lematu \ref{Q_n^2[F]-F spojne => Q_n-F spojne}. Dwa dowolne wierzchołki są połączone w pełnej hiperkostce $Q_n$
+     ścieżką długości co najwyżej $n$. W dowodzie zastępujemy (być może kilka razy)
+     część takiej ścieżki inną ścieżką w grafie $G(C)-C$. Łącznie długość wszystkich takich zastąpień nie może wynosić więcej niż wynosi rozmiar $G(F)-F$,
+     co dowodzi tezy.
     \end{proof}
 
-
-   %przenieść tu cykl eulera
-   %da się zbudować ścieżkę wielomianowej długości
-   %ekspansja daje łatwy algorytm tego czy dwa wierzchołki w tej samej składowej
-    
  \chapter{Długie ścieżki i cykle w grafie} %TODO jeśli wyłącze podrozdziały o poziom wyżej, to trzeba zmienić wewnętrzne odniesienia typu w poprzednim podrozdziale
   W poprzednim rozdziale przedstawiony był przykład problemu na wadliwej hiperkostce, dla którego można było znaleźć rozwiązanie wielomianowe od $n$ i $|F|$.
   W tym rozdzialę przedstawię kilka problemów, dla których samo przedstawienie wyników wymagało by wykładniczej pamięci,
