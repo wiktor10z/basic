@@ -207,7 +207,24 @@ Instytut Informatyki}
     Dla $n=2m+1,k=m+1$ $\sum_{i=0}^{m}{2m+1\choose i}=2^{2m}=
     2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$ (jedyna nieostra nierówność)\newline
    \end{proof}
+  \section{Własność podziałowa}%TODO zdefiniować kierunek krawędzi wcześniej i usunąć później żeby nie było powtórek
+   \begin{theorem}\label{wlasnosc podzialowa}
+    Dla dowolnego podziału wierzchołków na dwa zbiory : $S\in V(G)$ i $V(Q_n)\backslash S$
+    liczba krawędzi między tymi zbiorami jest conajmniej tak duża jak liczność mniejszego ze zbiorów:
+    $|\{(u,v)\in E(Q_n):u\in S,v\in V(Q_n)\backslash S\}|\ge\min(|S|,|V(Q_n)\backslash S|)$.
+   \end{theorem}
+   \begin{proof}%TODO dodać że dowód zaczerpnięty z olimpiady
+    Załóżmy, że $m=|S|\le 2^{n-1}$.\newline
+    Dla każdej pary $(u,v)$ wierzchołków hiperkostki wybieramy jedną $uv$--ścieżkę taką, że jest najkrótsza
+    (krawędź każdego kierunku jest używana conajwyżej raz) oraz idąc od $u$ współrzędne kierunkowe krawędzi rosną.
+    Każda krawędź w hiperkostce występuje na dokładnie $2^{n-1}$ takich ścieżek
+    (dla każdego innego kierunku możemy wybrać czy występuje na ścieżce i zawsze otrzymamy poprawną ścieżkę należącą do tego zbioru).
+    Na każdej ścieżce pomiędzy wierzchołkami $u\in S$ i $v\in V(Q_n)\backslash S$ występuje co najmniej jedna krawędź z interesującego nas zbioru,
+    zaś wszytkich takich ścieżek jest $m\cdot(2^n-m)$. Pomiędzy $S$ i $V(Q_n)\backslash S$ jest więc co najmniej
+    $\frac{m\cdot(2^n-m)}{2^{n-1}}=2m-\frac{m^2}{2^{n-1}}\ge m$ krawędzi. 
+   \end{proof}
   \section{Własność ekspansji}
+   Hiperkostka posiada także mocniejszą własność zdefiniowaną i udowodnioną w tym podrozdziale.
    \begin{defi}\label{epsilon ekspansja wierzcholkowa}
     Graf $G$ posiada własność \emph{$\varepsilon$--ekspansji wierzchołkowej}, jeżeli dla każdego zbioru wierzchołków $S\subseteq V(G)$ takiego,
     że $|S|\le\frac{|V(G)|}{2}$ zachodzi $|N(S)|\ge\varepsilon\cdot|S|$
@@ -806,7 +823,7 @@ Instytut Informatyki}
     (możliwe jest to tylko dlatego, że $u$ i $v$ nie należą do jednej części dwudzielnej $Q_n$).
    \end{remark}
    
- \chapter{Ścieżka i cykl Hamiltona}
+ \chapter{Ścieżka i cykl Hamiltona}\label{Ham}
   \section{Kostka bez wadliwych wierzchołków}
    Pełna kostka $Q_n$ ($n\ge2$) jest grafem hamiltonowskim (posiadającym cykl Hamiltona)
    -- bardzo wiele różnych cykli Hamiltona można uzyskać już łącząc dwa cykle
@@ -980,7 +997,7 @@ Instytut Informatyki}
      że wybór liścia jest dowolny.
     \end{proof}
 
-  \chapter{Największa odległość grafowa}%TODO sprawdzić czy zawsze nazywam tak samo współrzędne (od 0 do n-1), w innych podrozdziałach też
+  \chapter{Wąż w pudełku}%TODO sprawdzić czy zawsze nazywam tak samo współrzędne (od 0 do n-1), w innych podrozdziałach też
    \begin{defi}\label{srednica grafu}
     \emph{Średnicą grafu} nazywamy największą odległość pomiędzy jego dwoma wierzchołkami $d(G)=\max\limits_{u,v\in V(G)}d(u,v)$.
    \end{defi}
@@ -1205,8 +1222,82 @@ Instytut Informatyki}
      \begin{center}
       \includegraphics[scale=0.37]{img/plot1.jpg}
      \end{center}
+   \section{Znane ograniczenia długości węży}
+    Problemem najdłuższej ściezki indukowanej i najdłuższego cyklu induowanego w hiperkostce zajmowali się już wcześniej inni badacze, nazywając
+    problemy odpowiednio "wąż w pudełku" (snake-in-a-box) i "zwój w pudełku" (coil-in-a-box) osiągając lepsze rezultaty.
+    Dla $n\le7$ wyniki otrzymane przeze mnie są optymalne, dla dalszych są znane lepsze (8-98,9-190,10-370,11-708,12-1357,13-2687).
+    Znane są również ograniczenia dolne i górne lepsze od tych oczywistych, czy opisanych przeze mnie w poprzednich podrozdziałach.
+    \subsection{Ograniczenia dolne}
+     Od kiedy zdefiniowany został problem pojwiały się coraz lepsze ograniczenia dolne
+     ($c\cdot2^{\frac{n}{2}}$,$(1.5)^{n}$,$c\cdot6^{\frac{n}{4}}$,$c\cdot(2.5)^{\frac{n}{2}}$), później długo dominowało ograniczenie z pracy \cite{Snake1}
+     Dające ograniczenie $\frac{7}{4}\frac{2^n}{n-1}$ (które jest już lepsze od mojego wynikającego z konstrukcji ścieżek Fibonacciego).\newline
+     Jeszcze lepsze ograniczenie wraz z konstrukcją ścieżki i cyklu pojawia się w pracy \cite{Snake2} (przedstawię szkic tego rozwiązania poniżej).
+     \begin{fact}
+      Zwój w pudełku można przerobić na węża w pudełku poprzez usunięcie dowolnego wierzchołka tracąc 2 na długości.
+     \end{fact}
+     \begin{theorem}\label{snake 9/64 2^n}
+      Dla $Q_n$, $n\ge7$ można skonstruować zwój w pudełku o długości $\frac{9}{64}\cdot2^n$
+     \end{theorem}
+     \begin{proof}(szkic konstrukcji i dowodu z pracy \cite{Snake2})
+      $Q_n$ dzielimy na kostki wymiaru $5$ otrzymując graf $Q_{n-5}\times Q_5$. W grafie $Q_{n-5}$ bierzemy cykl Hamiltona otrzymany indukcyjnie:
+      dla $n-5=2$ jedyny możliwy ($(0,0)\rightarrow(0,1)\rightarrow(1,1)\rightarrow(1,0)\rightarrow(0,0)$),
+      dalej dla otrzymania cyklu dla $Q_{m+1}$ bierzemy dwie kostki $Q_m$ z takimi cyklami i łączymy je usuwając krawędź, która wchodzi do wierzchołka
+      $(0,...,0)$ i łącząc te dwie ścieżki w jeden cykl w $Q_{m+1}$ (konstrukcja jak w rozdziale \ref{Ham}).
+      Kostki $Q_5$ występujące na tym cyklu można ponumerować startując od $(0,...,0)$ w kierunku $(0,...,0,1)$.\newline
+      Kolejnym krokiem jest zdefiniowanie ciągu $2^{n-5}$ ścieżek indukowanych w $Q_5$ (ponumerowanych według cyklu Hamiltona)
+      spełniających następujące własności:
+      \begin{itemize}
+       \item ścieżka $m$ kończy się tam, gdzie zaczyna się ścieżka $m+1 (mod 2^{n-5})$.
+       \item ścieżki z dwóch kostek $Q_5$ będących sąsiadami w $Q_{n-5}$, ale nie na cyklu Hamiltona nie zawierają wspólnych wierzchołków.
+       \item ścieżki o numerach $m=1$ lub $2(mod 4)$ mają długość $3$, zaś o numeracj $m=0$ lub $3(mod 4)$ długość $4$.
+      \end{itemize}
+      Ścieżki konstruowane są poprzez chodzenie po grafie G (widocznym na obrazku) zanurzonym w $Q_5$:
+      \begin{center}
+       \includegraphics[scale=1]{img/snake_G.jpg}
+      \end{center}
+      Zanurzenie jest zadane dla ściezki $b_1,...,a_1,...,b_2$ wraz z pośrednimi wierzchokami poprzez ścieżkę
+      $(0,0,0,0,0),(0,0,0,0,1),(0,0,0,1,1),(0,1,0,1,1),(0,1,0,1,0),(0,1,1,1,0),$\newline
+      $(1,1,1,1,0),(1,1,1,1,1)$, zaś dla pozostałych czterech
+      analogicznie po cyklicznej zamianie współrzędnych.
+      Ścieżkami długości $3$ są odpowiedniki $a_i\rightarrow b_1$ i $b_1\rightarrow a_j$, zaś ścieżek długości $4$ ścieżki
+      $a_j\rightarrow b_2$ i $b_2\rightarrow a_i$. Kolejne ścieżki tworzone są poprzez chodzenie w ten sposób po grafie $G$ z odpowiednim
+      wyborem jednej z 5 ścieżek kiedy startujemy w $b_i$.
+      Postępując w ten sposób otrzymujemy porządany zwój w pudełku (dowód drugiego warunku można znaleźć w pracy \cite{Snake2}).
+      Po połączeniu wszystkich tych ścieżek otrzymujemy cykl długości $(\frac{3+4}{2}+1)\cdot 2^{n-5}=\frac{9}{64}\cdot2^n$.
+     \end{proof} 
+     \begin{corollary}
+      Długość węża w pudełku $Q_n$ jest ograniczona z dołu przez $\frac{9}{64}\cdot 2^n-2$.
+     \end{corollary}
+    \subsection{Ograniczenie górne}
+     \begin{defi}\label{pseudowąż}
+      \emph{Pseudowężem} w pudełku nazwiemy dowolny indukowany podgraf hiperkostki, w którym stopień każdego wierzchołka jest nie większy niż 2. 
+     \end{defi}
+     Każdy wąż i każdy zwój jest pseudowężem (pseudowąż składa się ze zbioru węży, zwojów i wierzchołków izolowanych).
+     \begin{fact}
+      Obcięcie pseudowęża do części z jednej podkostki jest pseudowężem w tej podkostce (w całej hiperkostce też).
+     \end{fact}
+    \begin{theorem}
+     dla $n\ge5$ każdy dowolny pseudowąż (a więc i wąż) w $Q_n$ ma rozmiar co najwyżej $2^{n-1}$.
+    \end{theorem}
+    \begin{proof}
+     (Dowód za \cite{Snake1}).
+     Dla $n=4$ jest tylko jeden z dokładnością do automorfizmów kostki pseudowąż rozmiaru $9$
+     \begin{center}
+      \includegraphics[scale=0.4]{img/pseudoS_4.jpg}
+     \end{center}
+     Gdyby w $Q_5$ był pseudowąż rozmiaru $17$, to przy dowolnym podziale na dwie pseudokostki $Q_4$ w jednej z nich musiałby sie znajdować pseudowąż
+     rozmiaru co najmniej $9$, a więc ten z rysunku. W drugiej kostce wierzchołki odpowiadające tym z cyklu nie mogą zostać wybrane,
+     czyli w skład węża musiałby wchodzić wszystkie pozostałe, jednak taki graf nie byłby pseudowężem.\newline
+     Dalej dla $n\ge6$ indukcyjnie. Przy dowolnym podziale na dwie podkostki $Q_{n-1}$ w jednej z nich musiałby się znajdować pseudowąż rozmiaru co najmniej
+     $2^{n-2}+1$, co daje sprzeczność.
+    \end{proof}
+    \begin{remark}
+     W pracy \cite{Snake3} pojawiło się mocniejsze ograniczenie górne na długość węża w pudełku:
+     $2^{n-1}\cdot(1-\frac{1}{n^2-n+2})$ (dla $n\ge7$), które zostało później jeszcze ulepszone do\newline
+     $2^{n-1}\cdot(1-\frac{1}{20n-41})$ (dla $n\ge12$) w pracy \cite{Snake4}.
+    \end{remark}
 
-    
+
  
     %TODO sprobowac sprawdzic czy nie da sie opisac zbioru nieodwiedzanych przez dluga sciezke - ktory jest wielomianowy (rozdzial o dlugich sciezkach i cyklach)
   
@@ -1248,11 +1339,28 @@ Instytut Informatyki}
    \textit{In Proceedings of 2009 IEEE International Conference on Networking, Sensing and Control, Okayama, Japan,
    March 26-29, 2009, pp.626-630}
   
-   %------------------------------------------------------------pompowanie
-   
   \bibitem{NMCS} Tristan Cazenave,
    "Nested Monte-Carlo Search"
-   \textit{LAMSADE Universite Paris-Dauphine Paris, France}   
+   \textit{LAMSADE Universite Paris-Dauphine Paris, France}  
+  
+  \bibitem{Snake1} Ludwig Danzer and Victor Klee,
+   "Lengths of Snakes in Boxes",
+   \textit{Journal of combinatorial theory 2, 258-265 (1967)}
+
+  \bibitem{Snake2} J. Wojciechowski,
+   "A NEW LOWER BOUND FOR SNAKE-IN-THE-BOX CODES",
+   \textit{Combinatorica 9 (1) (1989) 91--99}
+  
+  \bibitem{Snake3}F. I. Solov'jeva ,
+   "Upper bound for the length of a cycle in an n-dimensional unit cube",
+   \textit{Methods of Diskrete Analiz 45 (1987)}
+
+  \bibitem{Snake4}Hunter S. Snevily ,
+   "The snake-in-the-box problem: A new upper bound",
+   \textit{Discrete Mathematics 133 (1994) 307-314}
+   
+   
+   %------------------------------------------------------------pompowanie 
    
   \bibitem{HHH} Frank Harary, John P. Hayes and Horng--Jyh Wu,
    "A survey of theory of hypercube graphs"
