@@ -12,9 +12,9 @@
 
 \nralbumu{320501}
 
-\title{Efektywne algorytmy generacji obiektów kombinatorycznych???}
+\title{Efektywne algorytmy kombinatoryczne na hiperkostce z wadliwymi wierzchołkami}
 
-\tytulang{Effective algorithms of combinatorial objects generation???}
+\tytulang{Effective combinatorical algorithms on a hypercube with faulty vertices}
 
 \kierunek{Informatyka}
 
@@ -53,6 +53,7 @@ Instytut Informatyki}
 %TODO część dwudzielna - jak coś należy do jednej części - wypada to jakoś inaczej nazywać
 %monopartite, bipartial,      mowa też o bipartycji U,V
 %TODO hamiltonian laceable? - jak przetłumaczyć
+%TODO coil przetłumaczone na zwój
 
 \tableofcontents%TODO podać, że overline coś to wektor, równy x_1,x_2,...,x_l plus może , overline0 to wektor z samych zer
 
@@ -62,6 +63,55 @@ Instytut Informatyki}
 
  \chapter*{Wprowadzenie}
  \addcontentsline{toc}{chapter}{Wprowadzenie}
+  Jedną z najbardziej popularnych i regularnych klas grafów, są hiperkostki -- grafy wierzchołków kostek $n$--wymiarowych,
+  które połączone są krawędziami odpowiadającymi krawędziom jednowymiarowym kostki.
+  Graf taki jest często wykorzystywany jako struktura sieci komputerowym, dzięki połączeniu cech względnie niskiej gęstości i dużej odporności na usterki
+  w dowolnych węzłach i połączeniach.
+  Badanie własności tych sieci z możliwymi usterkami jest jedną z motywacji do badania nowej klasy grafów -- hiperkostek z wadami, która obejmuje
+  hiperkostki, w których część wierzchołków i krawędzi jest oznaczona jako wadliwe lub usunięta
+  (zazwyczaj jest to ilość mała względem wielkości grafu w szczególności wielomianowa od wymiaru kostki).  
+  Pomimo, że grafy te są wciąż wykładniczo wielkie w stosunku do wymiaru, to ze względu na wyjątkowe własności hiperkostki wiele standardowych
+  problemów grafowych można rozwiązać w czasie wielomianowym od tego wymiaru i ilości wad.
+  
+  Grafy te reprezentować można również jako zbiór wszystkich ciągów binarnych długości $n$,
+  z relacją krawędzi pomiędzy dwoma ciągami różniącymi się na jednym bicie.
+  Dzięki tej interpretacji chodzenie po grafie przydaje się do wielu algorytmów tekstowych. Dowolny cykl Hamiltona hiperkostki
+  daje kod Greya -- przyiterowanie po wszystkich możliwych słowach binarnych określonej długości jednocześnie zmieniając za każdym razem zaledwie jeden
+  bit.\newline
+  
+  
+  
+  
+  
+
+  
+
+  
+  
+  
+  
+  Niniejsza praca ma na celu przedstawienie ważniejszych własności wadliwych hiperkostek, części z najwazniejszych problemów grafowych
+  oraz znalezionych w literaturze algorytmów rozwiązujacych je w złożoności lepszej niż ta dla grafów bez specjalnej struktury.
+  
+  Praca składa się z pięciu rozdziałów. W pierwszym przedstawiam definicje obiektów używanych w pracy, oraz ważniejsze własności
+  hiperkostki z sporej części korzystam w późniejszych rozważaniach nad hiperkostkami z wadami.\newline
+  W rozdziale 2 rozpatrywany jest problem spójności w hiperkostce z usuniętymi wierzchołkami, który jest niezwykle istotny dla sieci komputerowych
+  z tą strukturą, w której pewne komputery mogą ulec awarii. Przedstawione są tam dwa algorytmy rozwiązujące problem w czasie wielomianowym od wymiaru kostki $n$
+  i liczności zbioru wierzchołków wadliwych $F$ -- algorytm korzystający z własności $\varepsilon$--ekspansji wierzchołkowej w czasie $O(|F|^2\cdot n^{3.5})$,
+  oraz drugi korzystający z lokalnej spójności w czasie $O(|F|\cdot n^3)$. Wymieniam tam również kilka problemów pobocznych rozwiązywanych przez te algorytmy.\newline
+  W kolejnym rozdziale wprowadzam problem bardzo długich (wielkości powyżej $2^n-2|F|-4$) ścieżek oraz cykli oraz par ścieżek występujących w wadliwych hiperkostkach.
+  Przedstawiam tam kilka twierdzeń dających proste warunki wystarczające na ich istnienie w grafie. 
+  Posiadanie tych właściwości pozwala na uzycie algorytmów wykorzystujących chodzenie po hiperkostce na prawie całym grafie.\newline
+  W czwartym rozdziale przedstawiam kilka wyników teoretycznych na temat istnienia cyklów Hamiltona i hamiltonowskiej wiązalności w hiperkostkach z usuniętymi
+  wierzchołkami. Następnie naszkicowuje dowody hamiltonowskiej wiązalności dla wadliwych hiperkostek dla zbiorów wad indukujących w hiperkostce
+  podgrafy o specjalnych strukturach (hiperkostka, ścieżka, cykl, drzewo).\newline
+  W ostatnim rozdziale rozpatruje problem możliwie najdłuższej ścieżki indukowanej w hiperkostce (hiperkostka z usuniętymi wierzchołkami, która jest ścieżką)
+  nazywany w literaturze wężem w pudełku. Przedstawiam tam własną konstrukcję ścieżek, które dla hiperkostki wymiaru $n$ mają rozmiar równy $n+1$
+  wyrazowi ciągu Fibonacciego oraz wyniki eksperymentalne dla $n\le34$ (czyli dla większej ilości niż w większości prac).
+  Pod koniec rozdziału wymieniam też znalezioną w literaturze, trudniejszą lecz dającą lepsze rezultaty konstrukcję długiego węża oraz 
+  ograniczenia górne.
+
+  
   
  \chapter{Własności hiperkostki}
   \section{Podstawowe definicje}
@@ -206,7 +256,7 @@ Instytut Informatyki}
     2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$\newline
     Dla $n=2m+1,k=m+1$ $\sum_{i=0}^{m}{2m+1\choose i}=2^{2m}=
     2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$ (jedyna nieostra nierówność)\newline
-   \end{proof}
+   \end{proof}%TODO dodać o automorfizmach kostki
   \section{Własność podziałowa}%TODO zdefiniować kierunek krawędzi wcześniej i usunąć później żeby nie było powtórek
    \begin{theorem}\label{wlasnosc podzialowa}
     Dla dowolnego podziału wierzchołków na dwa zbiory : $S\in V(G)$ i $V(Q_n)\backslash S$
@@ -1140,7 +1190,7 @@ Instytut Informatyki}
      W tym wypadku sprawdzanie jest trywialnie proste (w czasie potrzebnym na odczytanie nazwy wierzchołka),
      jednak złożoność pamięicowa w przypadku NMCS poziomu $0$ przeważa nad złożonością czasową samego algorytmu.
      W przypadku małych $n$ nie jest to jednak złe rozwiązanie, ponieważ ze względu na liczne optymalizacje tablic binarnych jest to najszybsze rozwiązanie.
-     Trzecią (pośrednią) metodą jest użycie jako struktury drzewa prefiksowego lub tablicy hashującej uzyskując podobnie do tablicy binarnej
+     Trzecią (pośrednią) metodą jest użycie jako struktury drzewa prefiksowego lub tablicy hashującej uzyskując podobnie do tablicy binarnej%TODO min 2^n,n\cdot|P|, ale w sumie gorzej
      złożoność $O(n)$ na odczytanie i wstawienie wierzchołka jednocześnie potrzebując jedynie $O(n^{1.5}\cdot|P|)$ lub $O(n\cdot|P|)$ pamięci w zależności od użytej struktury.
      
      W przypadku użycia struktury zapamiętującej sąsiadów wierzchołków ze ścieżki należy jeszcze zwrócić uwagę na zmienianie jej stanu przy wchodzeniu
@@ -1268,7 +1318,7 @@ Instytut Informatyki}
      \begin{corollary}
       Długość węża w pudełku $Q_n$ jest ograniczona z dołu przez $\frac{9}{64}\cdot 2^n-2$.
      \end{corollary}
-    \subsection{Ograniczenie górne}
+    \subsection{Ograniczenia górne}
      \begin{defi}\label{pseudowąż}
       \emph{Pseudowężem} w pudełku nazwiemy dowolny indukowany podgraf hiperkostki, w którym stopień każdego wierzchołka jest nie większy niż 2. 
      \end{defi}
