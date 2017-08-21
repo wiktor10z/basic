@@ -79,17 +79,6 @@ Instytut Informatyki}
   daje kod Greya -- przyiterowanie po wszystkich możliwych słowach binarnych określonej długości jednocześnie zmieniając za każdym razem zaledwie jeden
   bit.\newline
   
-  
-  
-  
-  
-
-  
-
-  
-  
-  
-  
   Niniejsza praca ma na celu przedstawienie ważniejszych własności wadliwych hiperkostek, części z najwazniejszych problemów grafowych
   oraz znalezionych w literaturze algorytmów rozwiązujacych je w złożoności lepszej niż ta dla grafów bez specjalnej struktury.
   
@@ -350,7 +339,110 @@ Instytut Informatyki}
     \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
     Dla przypadków $n\le6$ można ręcznie sprawdzić wszystkie $2^{n-1}$ przypadków, aby również otrzymać oszacowanie $\frac{1}{\sqrt{\pi n}}$.
    \end{proof}
-   
+  \section{Inne problemy}
+   \subsection{Automorfizmy}
+    \begin{fact}
+     Hiperkostka $Q_n$ ma dokładnie $2^n\cdot n!$ automorfizmów -- na $n!$ sposobów można dokonać permutacji współrzędnych, zaś na $2^n$ sposobów
+     zanegować część współrzędnych lub równoważnie wybrać który wierzchołek otrzyma współrzędne $(0,...,0)$.
+    \end{fact}
+    Oznacza to, że przy dowolnych rozważaniach w których wyróżniamy dwa wierzchołki odległe o $k$, możemy założyć że pierwszy z nich ma współrzędne $(0,...,0)$
+    zaś drugi $(0,..,0,1,..,1)$ (gdzie jedynek jest $k$), jeżeli tylko zamienimy odpowiednio współrzędne innych wierzchołków -- w tym wadliwych.
+   \subsection{Kolorowanie}
+    Dla hiperkostki problemy kolorowania są trywialne:
+    
+    Jako graf dwudzielny hiperkostka jest dwukolorowalna wierzchołkowo. Po usunięciu części wierzchołków ilość potrzebnych kolorów może się tylko zmniejszyć,
+    jedynym grafem jednokolorowalnym jest graf bez krawędzi.
+ 
+    $n$ kolorowanie krawędziowe $Q_n$ można uzyskać kolorując krawędzie według numeru kierunku, jaki przyjmują, jest to jednocześnie jedyne takie kolorowanie.
+    Z twierdzenia Vizinga dla grafu dwudzielnego ilość potrzebnych kolorów jest równa stopniowi grafu, a to można sprawdzić w czasie liniowym od ilości
+    usuniętych wierzchołków (musi być ich co najmniej $\frac{2^n}{n}$, aby każdy wierzchołek stracił sąsiada).
+   \subsection{Ilość drzew rozpinających}
+    \begin{defi}
+     Macierz Laplace'a grafu $G$, o $n$ wierzchołkach, to macierz $[a_{i,j}]_{i,j\in[n]}$, taka że\newline
+     $a_{i,i}=deg(v_i)$, $a_{i,j}=-1\cdot [(v_i,v_j)\in E(G)]$ (dla $i\neq j$).
+    \end{defi}
+    \begin{theorem}\label{Kirchhoff}
+     (Kirchhoffa)\newline
+     Dla spójnego grafu o $n$ wierzchołkach ilość drzew ropinających jest równa $\frac{1}{n}\cdot\lambda_1\cdot\lambda_2\cdot...\cdot\lambda_{n-1}$,
+     gdzie $\lambda_1,\lambda_2,...,\lambda_{n-1}$ to niezerowe wartości własne jego macierzy Laplace'a (z krotnościami).
+    \end{theorem}
+    \begin{lemma}
+     Wartościami własnymi $Q_n$ są liczby $2i$ dla $i\in[n+1]$, z krotnością ${n\choose i}$.
+    \end{lemma}
+    \begin{proof}
+     Dowód indukcyjny -- dla $n=1$ macierz
+     $\left|\begin{array}{cc}
+      1&-1\\
+      -1&1\\
+     \end{array}\right|$
+     ma wartości własne $0$ i $2$ z ortogonalnymi wektorami własnymi $[1,1]$ i $[1,-1]$.\newline
+     Mając macierz Laplace'a $A_n$ grafu $Q_n$ macierz $A_{n+1}$ dla $Q_{n+1}$ jest równa
+     $\left|\begin{array}{cc}
+      A_n+I_{2^n}&-I_{2^n}\\
+      -I_{2^n}&A_n+I_{2^n}\\
+     \end{array}\right|$.
+     Niech $v$ będzie wektorem własnym macierzy $A_n$ dla wartości własnej $\lambda$. Wtedy:\newline
+     $A_{n+1}\cdot
+     \left|\begin{array}{c}
+      v\\
+      v\\
+     \end{array}\right|
+     =
+     \left|\begin{array}{cc}
+      A_n+I_{2^n}&-I_{2^n}\\
+      -I_{2^n}&A_n+I_{2^n}\\
+     \end{array}\right|
+     \cdot
+     \left|\begin{array}{c}
+      v\\
+      v\\
+     \end{array}\right|
+     =
+     \left|\begin{array}{c}
+      \lambda\cdot v+v-v\\
+      \lambda\cdot v+v-v\\
+     \end{array}\right|
+     =\lambda\cdot
+     \left|\begin{array}{c}
+      v\\
+      v\\
+     \end{array}\right|
+     $\newline
+     $A_{n+1}\cdot
+     \left|\begin{array}{c}
+      v\\
+      -v\\
+     \end{array}\right|
+     =
+     \left|\begin{array}{cc}
+      A_n+I_{2^n}&-I_{2^n}\\
+      -I_{2^n}&A_n+I_{2^n}\\
+     \end{array}\right|
+     \cdot
+     \left|\begin{array}{c}
+      v\\
+      -v\\
+     \end{array}\right|
+     =
+     \left|\begin{array}{c}
+      \lambda\cdot v+v+v\\
+      -\lambda\cdot v-v-v\\
+     \end{array}\right|
+     =(\lambda+2)\cdot
+     \left|\begin{array}{c}
+      v\\
+      -v\\
+     \end{array}\right|
+     $.\newline
+     Ponieważ wszystkie $2^n$ wektorów własnych z poprzedniego kroku były ortogonalne, to otrzymane teraz $2^{n+1}$ również takie będzie.
+     Stąd dla wartości własnej $2i$ macierzy $A_{n+1}$ otrzymujemy ${n\choose i}+{n\choose i-1}={n+1\choose i}$ ortogonalnych wektorów własnych.
+    \end{proof}
+
+
+    
+   %TODO automorfizmy
+   %TODO kolorowanie
+   %TODO ilość drzew rozpinających
    
  \chapter{Spójność wadliwej hiperkostki}
   \textbf{Ten rozdział jest napisany w większości na podstawie \cite{DFGKR}.}
@@ -1047,7 +1139,7 @@ Instytut Informatyki}
      że wybór liścia jest dowolny.
     \end{proof}
 
-  \chapter{Wąż w pudełku}%TODO sprawdzić czy zawsze nazywam tak samo współrzędne (od 0 do n-1), w innych podrozdziałach też
+  \chapter{Maksymalna ścieżka indukowana}%TODO sprawdzić czy zawsze nazywam tak samo współrzędne (od 0 do n-1), w innych podrozdziałach też
    \begin{defi}\label{srednica grafu}
     \emph{Średnicą grafu} nazywamy największą odległość pomiędzy jego dwoma wierzchołkami $d(G)=\max\limits_{u,v\in V(G)}d(u,v)$.
    \end{defi}
