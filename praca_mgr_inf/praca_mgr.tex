@@ -6,7 +6,9 @@
 \usepackage{amsthm}
 \usepackage[pdftex]{graphicx}
 \usepackage{multicol}
+\usepackage{enumitem}
 \usepackage{hyperref}
+\usepackage{wrapfig}
 
 \author{Wiktor Zuba}
 
@@ -34,9 +36,9 @@ Instytut Informatyki}
 
 \keywords{???}
 
-\newtheorem{defi}{Definicja}[section] %TODO może wprowadzić nową rzecz - oznaczenie np. dla [n], czy u\Delta v
-\newtheorem{theorem}{Twierdzenie}
-\newtheorem{conjecture}{Przypuszczenie}
+\newtheorem{theorem}{Twierdzenie}[chapter]
+\newtheorem{defi}[theorem]{Definicja} %TODO może wprowadzić nową rzecz - oznaczenie np. dla [n], czy u\Delta v
+\newtheorem{conjecture}[theorem]{Przypuszczenie}
 \newtheorem{lemma}[theorem]{Lemat}
 \newtheorem{remark}[theorem]{Uwaga}
 \newtheorem{fact}[theorem]{Fakt}
@@ -50,12 +52,11 @@ Instytut Informatyki}
 ???
 \end{abstract}
 
-%TODO część dwudzielna - jak coś należy do jednej części - wypada to jakoś inaczej nazywać
-%monopartite, bipartial,      mowa też o bipartycji U,V
-%TODO hamiltonian laceable? - jak przetłumaczyć
-%TODO coil przetłumaczone na zwój
+%TODO zdefiniowanie genusu jako sfera z uszami
+%TODO csnake i coil tłumaczenie zmienić
 
-\tableofcontents%TODO podać, że overline coś to wektor, równy x_1,x_2,...,x_l plus może , overline0 to wektor z samych zer
+\tableofcontents%TODO podać, że overline coś to wektor, równy x_1,x_2,...,x_l plus może , overline0 to wektor z samych zer - używane
+%TODO u\Delta v
 
 
 
@@ -245,7 +246,23 @@ Instytut Informatyki}
     2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$\newline
     Dla $n=2m+1,k=m+1$ $\sum_{i=0}^{m}{2m+1\choose i}=2^{2m}=
     2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$ (jedyna nieostra nierówność)\newline
-   \end{proof}%TODO dodać o automorfizmach kostki
+   \end{proof}
+   \begin{lemma}\label{sum of log}
+    $2^n(\log_2(n)-2)\le\sum_{i=1}^{n}{n\choose i}\log_2(i)\le 2^n(\log_2(n)-\frac{1}{2})$ (dla dostatecznie dużych n).
+   \end{lemma}    
+   \begin{proof}
+    Dla $n=2k+1$ dzielę sumę na $\sum_{i=1}^{k}{n\choose i}\log_2(i)+\sum_{i=k+1}^{n}{n\choose i}\log_2(i)$.\newline
+    $\sum_{i=k+1}^{n}{n\choose i}=2^{n-1}\Rightarrow 2^{n-1}(\log_2{n}-1)\le\sum_{i=k+1}^{n}{n\choose i}\log_2(i)\le2^{n-1}\log_2{n}$.\newline
+    $\sum_{i=1}^{k}\log_2(i)=\log_2(k!)$(ze wzoru Stirlinga) $\ge k\log_2(k)-k\log_2(e)-\frac{1}{2}(\log_2(2\pi)+\log_2(k))
+    \ge k(\log_2(k+\frac{1}{2})-2)$ (dla $k>7$) =$k(\log_2(n)-3)$\newline
+    Dla $i\le k$ ${n\choose i}\le{n\choose i+1}$, $\log_2(i)<\log_2(i+1)$, więc
+    $2^{n-1}(\log_2(n)-2)\le(\sum_{i=1}^{k}{n\choose i})\cdot(\frac{1}{k}\sum_{i=1}^{k}log_2(i))\le\sum_{i=1}^{k}{n\choose i}\log_2(i)
+    \le\log_2(k+\frac{1}{2})\cdot(\sum_{i=1}^{k}{n\choose i})=2^{n-1}(\log_2(n)-1)$. Po połączeniu daje to:\newline
+    $2^n(\log_2(n)-2)\le\sum_{i=1}^{n}{n\choose i}\log_2(i)\le2^n(\log_2(n)-\frac{1}{2})$.\newline
+    Dla parzystego $n$ po wyłączeniu wyrazu środkowego można analogicznie szacować części przed i po tym wyrazie
+    (po podstawieniu $2^n-{n\choose \frac{n}{2}}$ zamiast $2^n$), zaś srodkowy wyraz jest równy ${n\choose \frac{n}{2}}(\log_2(n)-1)$, a więc pomiędzy
+    ${n\choose \frac{n}{2}}(\log_2(n)-2)$ i ${n\choose \frac{n}{2}}(\log_2(n)-\frac{1}{2})$, co kończy dowód.
+   \end{proof}
   \section{Własność podziałowa}%TODO zdefiniować kierunek krawędzi wcześniej i usunąć później żeby nie było powtórek
    \begin{theorem}\label{wlasnosc podzialowa}
     Dla dowolnego podziału wierzchołków na dwa zbiory : $S\in V(G)$ i $V(Q_n)\backslash S$
@@ -339,7 +356,7 @@ Instytut Informatyki}
     \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
     Dla przypadków $n\le6$ można ręcznie sprawdzić wszystkie $2^{n-1}$ przypadków, aby również otrzymać oszacowanie $\frac{1}{\sqrt{\pi n}}$.
    \end{proof}
-  \section{Inne problemy}
+  \section{Inne własności}
    \subsection{Automorfizmy}
     \begin{fact}
      Hiperkostka $Q_n$ ma dokładnie $2^n\cdot n!$ automorfizmów -- na $n!$ sposobów można dokonać permutacji współrzędnych, zaś na $2^n$ sposobów
@@ -437,23 +454,55 @@ Instytut Informatyki}
      Ponieważ wszystkie $2^n$ wektorów własnych z poprzedniego kroku były ortogonalne, to otrzymane teraz $2^{n+1}$ również takie będzie.
      Stąd dla wartości własnej $2i$ macierzy $A_{n+1}$ otrzymujemy ${n\choose i}+{n\choose i-1}={n+1\choose i}$ ortogonalnych wektorów własnych.
     \end{proof}
-
-
-    
-   %TODO automorfizmy
-   %TODO kolorowanie
-   %TODO ilość drzew rozpinających
+    \begin{remark}
+     Korzystając z twierdzenia Kirchhoffa, $Q_n$ ma $\frac{1}{2^n}\prod_{i=1}^{n}(2i)^{{n\choose i}}$ drzew rozpinających.
+    \end{remark}
+    \noindent
+    Macierz Laplace'a grafu pełnego o $n$ wierzchołkach jest równa $n\cdot I_n-J_n$ (gdzie $J_n$, to macierz $n\times n$ złożona z samych $1$), więc 
+    ma wartość własną $n$ ($n-1$)-krotną (+ $0$ jednokrotną).\newline
+    Macierz Laplace'a grafu pełnego dwudzielnego, w którym każda częśc dwudzielna ma po $n$ wierzchołków jest równa
+    $
+     \left|\begin{array}{cc}
+      nI_n&-J_n\\
+      -J_n&nI_n\\
+     \end{array}\right|
+    $, więc ma wartośc własną $n$ ($2n-2$)-krotną i $2n$ jednokrotną (+ $0$ jednokrotną).\newline
+   Jeśli więc porówna się logarytmy ilości drzew rozpinających tych trzech grafów o tej samej liczbie wierzchołków, to wychodzi:\newline
+   $\log_2(t(K_{2^n}))=n(2^n-2)$\newline
+   $\log_2(t(K_{2^{n-1},2^{n-1}}))=(n-1)(2^n-2)$\newline
+   $\log(t(Q_n))=2^n-n-1+\sum_{i=1}^{n}{n\choose i}\log(i)\approx (\log_2(n))2^n$ (na podstawie lematu \ref{sum of log}).
+   \subsection{Rysowanie na płaszczyźnie}
+    \begin{wrapfigure}{1}{0.3\textwidth}
+     \includegraphics[scale=0.4]{img/Q3_planar.jpg}\includegraphics[scale=0.4]{img/Q4_not_planar.jpg}
+    \end{wrapfigure}
+   $Q_n$ jest grafem planarnym, jedynie dla $n\le3$.\newline
+   Dla $n=4$ na płaszczyźnie powstaje minimum $8$ przecięć krawędzi,
+   jest ona jednak grafem toroidalnym (daje się narysować na powierzchni torusa bez przecięć).\newline
+   Ogólnie $Q_n$ ma genus równy ${\gamma(Q_n)=(n-4)2^{n-3}+1}$\newline (\cite{HHH})-- oznacza to, że kostkę taką daje się
+   narysować bez przecięć na sferze z tyloma "uszami".\newline
+   
+   Każda hiperkostka jest grafem jednostkowej odległości -- można go narysować tak, żeby każda krawędź miała tę samą długość euklidesową.
+   Rysunek taki można łatwo dostać indukcyjnie -- malując dwie kopie rysunku $Q_{n-1}$ o tej własności w odległości $1$ w dowolnym kierunku
+   (ponieważ kierunków jest continuum wiele zawsze można wybrać taki, by żadne dwa wierzchołki się nie pokrywały).
+   Rysunki takie stają się jednak coraz gęstsze, jako że  trzeba zmieścić $2^n$ wierzchołków i $n2^{n-1}$ krawędzi na kole o średnicy $n$
+   (największa odległość w hiperkostce $Q_n$), przez co stają się nieczytelne dla dużych $n$.\newline
+   \includegraphics[scale=1]{img/unitary_1.jpg}
+   \includegraphics[scale=1]{img/unitary_2.jpg}
+   \includegraphics[scale=1]{img/unitary_3.jpg}
+   \includegraphics[scale=1]{img/unitary_4.jpg}
+   \includegraphics[scale=1]{img/unitary_5_1.jpg}
    
  \chapter{Spójność wadliwej hiperkostki}
   \textbf{Ten rozdział jest napisany w większości na podstawie \cite{DFGKR}.}
   \begin{remark}\label{spojnosc przy usunietych}
    Aby zbadać spójność grafu $G-F$ dla spójnego grafu $G$ wystarczy sprawdzić czy wciąż istnieje ścieżka pomiędzy dowolnymi dwoma wierzchołkami,
-   które oryginalnym grafie sąsiadowały z jakimś spośród usuniętych wierzchołków (wszystkie takie wierzchołki należą do jedenj spójnej składowej).
+   które oryginalnym grafie sąsiadowały z jakimś spośród usuniętych wierzchołków (czy wszystkie takie wierzchołki należą do jednej spójnej składowej).
   \end{remark}
   \begin{proof}
    Aby udowodnić spójność trzeba pokazać, że istnieje ścieżka pomiędzy dowolnymi dwoma wierzchołkami, jednak skoro w oryginalnym grafie taka ścieżka istniała,
-   to w nowym grafie jedyną przeszkodą jest to, że na tej ścieżce mogły występować wierzchołki, które zostały usunięte. Taką scieżkę można naprawić wstawiając
-   w miejsca od pierwszego do ostatniego wystąpienia wierzchołka usuniętego ścieżkę pomiędzy odpowiednimi ich sąsiadami istniejącą w pomniejszonym grafie.
+   to w nowym grafie jedyną przeszkodą jest to, że mogły na niej występować wierzchołki, które zostały usunięte. 
+   Scieżkę taką można naprawić -- przed pierwszym odwiedzeniem i po ostatnim odwiedzeniu wierzchołka wadliwego odwiedzani są jacyś ich sąsiedzi --
+   wystarczy ten fragment ścieżki zastąpić ścieżką między tymi dwoma sąsiadami, która istnieje w wadliwym grafie.
   \end{proof}
   \section{Podejście ekspansywne}\label{podejscie ekspansywne}
    \begin{theorem}\label{Spójność ekspansywna}
@@ -478,14 +527,14 @@ Instytut Informatyki}
     Może być tylko jedna składowa główna.
    \end{fact}
    \begin{proof}
-    (Lematu)\newline
-    Weźmy spójną składową $S$ grafu $G-F$ ($N_{G-F}(S)=0$), jeżeli $S\le\frac{|V(G)|}{2}$, to z własności $\varepsilon$--ekspansji wierzchołkowej grafu $G$
-    $|N_G(S)|\ge\varepsilon\cdot|S|$ (gdzie $S$ jest teraz traktowane jako podzbiór wierzchołków grafu $G$). Gdyby zachodziło $|S|>\frac{|F|}{\varepsilon}$,
-    to mielibyśmy $|N_G(S)|>\frac{\varepsilon\cdot|F|}{\varepsilon}=|F|$, co daje sprzeczność ponieważ aby w grafie $G-F$ to sąsiedztwo było puste z grafu
+    (Lematu \ref{klasyfikacja skladowych})\newline
+    Weźmy spójną składową $S$ grafu $G-F$ ($N_{G-F}(S)=\emptyset$), jeżeli $S\le\frac{|V(G)|}{2}$, to z własności $\varepsilon$--ekspansji wierzchołkowej grafu $G$
+    zachodzi $|N_G(S)|\ge\varepsilon\cdot|S|$ (gdzie $S$ jest teraz traktowane jako podzbiór wierzchołków grafu $G$). Gdyby zachodziło $|S|>\frac{|F|}{\varepsilon}$,
+    to mielibyśmy $|N_G(S)|>\frac{\varepsilon\cdot|F|}{\varepsilon}=|F|$, co daje sprzeczność ponieważ aby w grafie $G-F$ sąsiedztwo to było puste z grafu
     $G$ trzeba usunąć co najmniej $N_G(S)$ wierzchołków.
    \end{proof}
    \begin{proof}
-    (Twierdzenia)\newline
+    (Twierdzenia \ref{Spójność ekspansywna})\newline
     Chcemy sprawdzić, czy wszyscy sąsiedzi wierzchołków usuniętych należą do tej samej spójnej składowej. Na podstawie lematu \ref{klasyfikacja skladowych},
     jeśli składowa zawierająca taki wierzchołek jest większa niż $\frac{|F|}{\varepsilon}$, to jest to składowa główna.
     Jeżeli wszystkie takie wierzchołki spełniają ten warunek, to $G-F$ jest spójny.
@@ -494,12 +543,12 @@ Instytut Informatyki}
     $\frac{|F|}{\varepsilon}$ wierzchołków.\newline
     Algorytm liniowego przeszukiwania grafowego uruchamiany jest co najwyżej $|F|\cdot\Delta$ razy.
     Za każdym razem przeglądamy co najwyżej $\frac{|F|}{\varepsilon}$ wierzchołków.
-    Dla każdego przeglądanego wierzchołka sprawdzamy co najwyżej $\Delta$ sąsiadów, a odpowiedź wyroczni zajmuje $O(log(|V(G)|))$ czasu.
+    Dla każdego przeglądanego wierzchołka sprawdzamy co najwyżej $\Delta$ sąsiadów, a przeczytanie odpowiedzi wyroczni zajmuje $O(log(|V(G)|))$ czasu.
     Daje to złożoność z tezy twierdzenia.
    \end{proof}
    \begin{corollary}\label{ekspansywna spojnosc dla kostki}
     Ponieważ zgodnie z twierdzeniem \ref{ekspansja kostki} hiperkostka $Q_n$ posiada własność\newline
-    $\frac{1}{\sqrt{\pi n}}$--ekspansji wierzchołkowej,
+    $\frac{1}{\sqrt{\pi n}}$--ekspansji wierzchołkowej
     oraz można znaleźć wszystkich sąsiadów wierzchołka w czasie liniowym od ich ilości powyższy algorytm testuje spójność wadliwej hiperkostki w czasie
     ${O(|F|^2\cdot n^{3.5})}$ (wyrażonego w ilości operacji arytmetycznych).
    \end{corollary}
@@ -514,10 +563,10 @@ Instytut Informatyki}
     W algorytmie wykorzystywana jest sturktura $T$ z operacjami
     \begin{itemize}
      \item $Insert(v,T)$ wstawiającą wierzchołek $v$ do struktury $T$
-     \item $Retrieve(v,T)$ zwracająca binarną informacje o obecności wierzchołka $v$ w strukturze $T$
+     \item $Retrieve(v,T)$ zwracająca informacje o obecności wierzchołka $v$ w strukturze $T$
     \end{itemize}
     które wymagają $O(n)$ czasu na wykonanie (jak w uwadze \ref{prawdziwa zlozoność ekspansywnej}).\newline
-    Przeszukiwanie grafowe odbywa się przy pomocy funkcji o pseudokodzie:\newline\newline
+    Przeszukiwanie grafowe odbywa się przy pomocy funkcji rekurencyjnej o pseudokodzie:\newline
     \hspace*{0pt}$DFS(v)\{$\newline
     \hspace*{16pt}	$counter++;$\newline
     \hspace*{16pt}	$Insert(v,T);$\newline
@@ -555,17 +604,17 @@ Instytut Informatyki}
     \begin{remark}\label{dwie struktury T}
      Można użyć dodatkowej struktury $T$ w której przechowywane są wszystkie wierzchołki z poprzednich wywołań $DFS(v)$ z funkcji głównej.
      Wtedy przy kolejnych użyciach $DFS(v)$ można sprawdzać, czy wierzchołek nie był już wcześniej w jakiejś składowej (można wtedy od razu zwrócić $TRUE$).
-     Teoretycznie może to zwiększyć słożoność dwukrotnie, jednak w praktyce będzie to dużo szybsze
+     Teoretycznie może to zwiększyć złożoność dwukrotnie, jednak w praktyce będzie to dużo szybsze
      (już nawet z tego wzgledu, że albo inni sąsiedzi tego samego $f$ są oddaleni o 2, albo na drodze staje inny wierzchołek z $F$),
      w szczególności przy użyciu bardziej wyszukanych kolejności przeszukiwania (np. próba dojścia do wierzchołka $\overline{0}$).
     \end{remark}
      
-  \section{Redukcja przy pomocy transformacji ścieżek}\label{spojnosc 2}
+  \section{Redukcja do lokalnej spójności przy pomocy transformacji ścieżek}\label{spojnosc 2}
    Algorytm przedstawiony w poprzednim podrozdziale jest dowodem na to, że testowanie spójności wadliwej hiperkostki może być zrobione wielomianowo
    ze względu na ilość wad i wymiar hiperkostki. Algorytm ten wykorzystuje jednak bardzo płytko potencjał tak regularnego grafu.
    W tym podrozdziale przedstawię algorytm, który dzięki głębszemu wykorzystaniu własności hiperkostki otrzymuje lepsze rezultaty złożonościowe.
    \begin{defi}\label{podgrafy kostki}
-    Na potrzeby tego podrozdziału definiuję ze pracą \cite{DFGKR} dla $F\subseteq V(Q_n)$\newline
+    Na potrzeby tego podrozdziału definiuję za pracą \cite{DFGKR} dla $F\subseteq V(Q_n)$\newline
     podgraf $G(F)=(A\cup B\cup F,E)$ grafu $Q_n$,
     gdzie $A=N(F),\quad B=N(A)\backslash F,\newline E=\{uv\in E(Q_n):u\in A\cup F\}$ (podgraf zawierający wierzchołki w odległości $\le 2$ od wierzchołków wadliwych,
     plus krawędzie w których jeden z końców jest wadliwy lub z takim sąsiaduje).
@@ -573,6 +622,7 @@ Instytut Informatyki}
    \begin{theorem}\label{spojnosc z lokalnej spojnosci}
     Dla $F\subseteq V(Q_n)$ graf $Q_n-F$ jest spójny wtedy i tylko wtedy gdy dla każdej $C$ -- spójnej składowej $Q_n^2[F]$ spójny jest graf $G(C)-C$.
    \end{theorem}
+   Na potrzeby dowodu twierdzenia zdefiniuję kilka obiektów i operacji.
   \subsection{Transformacje ścieżek w hiperkostce}
    \begin{defi}\label{sekwencja tranzycji}
      Dla ścieżki $W=(v_0,v_1,...,v_n)$ (z możliwymi powtórzeniami) w hiperkostce \emph{sekwencją tranzycji} nazywamy ciąg $\tau=(d_1,d_2,...,d_n)$,
@@ -583,6 +633,7 @@ Instytut Informatyki}
      $u\Delta v=\{i\in[n]:\#(\tau,i)$ nieparzyste$\}$,
      gdzie $\#(\tau,i)$ to ilość wystąpień $i$ w sekwencji $\tau$.
     \end{fact}
+    \noindent
     Dla $\tau$ -- sekwencji tranzycji $uv$--ścieżki $W$ definiujemy trzy operacje:
     \begin{itemize}
      \item $swap(\tau_1,i,j,\tau_2)=(\tau_1,j,i,\tau_2)$\quad dla $\tau=(\tau_1,i,j,\tau_2)$
@@ -595,7 +646,8 @@ Instytut Informatyki}
      Dwie ścieżki, których sekwencje tranzycji $\tau,\rho$ spełniają $\forall_{i\in[n]}\#(\tau,i)=\#(\rho,i)$ nazywamy \emph{równoważnymi}.
     \end{defi}
     \begin{remark}\label{przeksztalcanie sciezek}
-     Dla dowolnych dwóch $uv$--ścieżek w $Q_n$ istnieje sekwencja operacji $swap,insert,delete$ (w tej kolejności bez przeplotów),
+     Dla dowolnych dwóch $uv$--ścieżek w $Q_n$ istnieje sekwencja operacji\newline
+     $swap, insert, delete$ (w tej kolejności, bez przeplotów),
      która przemiania sekwencję tranzycji pierwszej w sekwencję tranzycji drugiej.
     \end{remark}
     \begin{proof}
@@ -618,38 +670,38 @@ Instytut Informatyki}
      (przypadki przy końcach ścieżki można "dopełnić" zwykłymi wierzchołkami do przypadków ze środka ponieważ wierzchołki końcowe nie są wadliwe).
      \begin{multicols}{3}
       \begin{center}
-       \includegraphics[scale=1]{img/Q_swap_l1.jpg}
+       \includegraphics[scale=0.94]{img/Q_swap_l1.jpg}
        -- wierzchołek zwykły\newline
-       \includegraphics[scale=1]{img/Q_swap_l4.jpg}
+       \includegraphics[scale=0.94]{img/Q_swap_l4.jpg}
        -- krawędź ścieżki\newline
       \end{center}
       \begin{center}
-       \includegraphics[scale=1]{img/Q_swap_l2.jpg}
+       \includegraphics[scale=0.94]{img/Q_swap_l2.jpg}
        -- wierzchołek wadliwy\newline
-       \includegraphics[scale=1]{img/Q_swap_l5.jpg}
+       \includegraphics[scale=0.94]{img/Q_swap_l5.jpg}
        -- krawędź spoza ścieżki\newline
       \end{center}
       \begin{center}
-       \includegraphics[scale=1]{img/Q_swap_l3.jpg}
+       \includegraphics[scale=0.94]{img/Q_swap_l3.jpg}
        -- port\newline
-       \includegraphics[scale=1]{img/Q_swap_l6.jpg}
+       \includegraphics[scale=0.94]{img/Q_swap_l6.jpg}
        -- nieistotna reszta ścieżki\newline
       \end{center}
      \end{multicols}
      \noindent
-     \includegraphics[scale=1]{img/Q_swap_1.jpg}\newline\newline
-     \includegraphics[scale=1]{img/Q_swap_2.jpg}\newline\newline
-     \includegraphics[scale=1]{img/Q_swap_3.jpg}\newline\newline
-     \includegraphics[scale=1]{img/Q_swap_4.jpg}\newline\newline
-     \includegraphics[scale=1]{img/Q_swap_5.jpg}\newline\newline
-     \includegraphics[scale=1]{img/Q_swap_6.jpg}\newline\newline
-     \includegraphics[scale=1]{img/Q_swap_7.jpg}\newline\newline
+     \includegraphics[scale=0.94]{img/Q_swap_1.jpg}\newline\newline
+     \includegraphics[scale=0.94]{img/Q_swap_2.jpg}\newline\newline
+     \includegraphics[scale=0.94]{img/Q_swap_3.jpg}\newline\newline
+     \includegraphics[scale=0.94]{img/Q_swap_4.jpg}\newline\newline
+     \includegraphics[scale=0.94]{img/Q_swap_5.jpg}\newline\newline
+     \includegraphics[scale=0.94]{img/Q_swap_6.jpg}\newline\newline
+     \includegraphics[scale=0.94]{img/Q_swap_7.jpg}\newline\newline
      Wszystkie rozrysowane tu wierzchołki należą do $G(F)$, a rozrysowane części niewadliwe tworzą podgraf spójny, dlatego też wszystkie te zmiany odbywają się w
      jednej spójnej składowej $G(F)-F$. Za każdym razem ilość portów zmienia się o $0$ lub $2$, a więc parzystość pozostaje bez zmian.
     \end{proof}
    \subsection{Dowód twierdzenia o lokalnej spójności}
     \begin{lemma}\label{Q_n-F spojne => G(F)-F spojne (1 skladowa)}
-     Niech $F\subseteq V(Q_n)$ takie, że $G(F)$ jest spójne. Jeśli $Q_n-F$ jest spójne, to $G(F)-F$ również.
+     Niech $F\subseteq V(Q_n)$ będzie takie, że $G(F)$ jest spójne. Jeśli $Q_n-F$ jest spójne, to $G(F)-F$ również.
     \end{lemma}
     \begin{proof}
      Załóżmy przeciwnie -- istnieją wierzchołki $u,v\in A\cup B=V(G(F)-F)$ dla których istnieje ścieżka $P$ w $Q_n-F$, ale nie ma takiej w  $G(F)-F$.
@@ -659,49 +711,54 @@ Instytut Informatyki}
      ścieżki te mogą być napompowane w wierzchokach $x$ i $y$ odpowidnio sekwencjami operacji $insert$.\newline
      Ponieważ $x$ jest oddalone od $F$ dodane do ścieżki $P$ wierzchołki nie uczynią z zadnego wystąpienia $x$ portu i same również nie staną się portami.
      Ponieważ $y$ należy do $F$ dodane do ścieżki $R$ wierzchołki będą miały dokładnie dwóch sąsiadów z $F$ (tego samego dwukrotnie), a więc nie będą portami.\newline
-     Oznacza to, że uzyskane ścieżki równoważne mają tyle samo portów we wszystkich spójnych składowych $G(F)-F$ co odpowiadające im nieprzekształcone
-     a na podstawie lematów \ref{przeksztalcanie sciezek} i \ref{parzystosc portow swap} ich parzystości między sobą się zgadzają (czyli zgadzają się dla $P$ i $R$).
-     Na ścieżce $P$ nie ma żadnych portów ponieważ nie występuje w niej żaden wierzchołek wadliwy,
-     daje to sprzeczność ponieważ dla spójnych składowych $G(F)-F$ w której występują
-     $u$ i $v$ ścieżka $R$ ma nieparzyste ilości portów (np. można dobrać taką ścieżkę, która wchodzi do/opuszcza składowe co najwyżej raz).
+     Oznacza to, że uzyskane ścieżki równoważne mają tyle samo portów we wszystkich spójnych składowych $G(F)-F$ co odpowiadające im nieprzekształcone.
+     Na podstawie lematów \ref{przeksztalcanie sciezek} i \ref{parzystosc portow swap} ich parzystości  się zgadzają (czyli zgadzają się również dla $P$ i $R$).
+     Na ścieżce $P$ nie ma żadnych portów ponieważ nie występuje w niej żaden wierzchołek wadliwy.
+     Ścieżka $R$ w składowych $G(F)-F$ w których występują $u$ i $v$ ma nieparzyste ilości portów
+     (np. można jako $R$ dobrać taką ścieżkę, która wchodzi do/opuszcza składowe co najwyżej raz), co daje sprzeczność.
     \end{proof}
     \begin{corollary}\label{Q_n-F spojne => Q_n^2[F]-F spojne (1 skladowa)}
      Dla $F\subseteq V(Q_n)$ takiego, że $Q_n^2[F]$ jest spójne ze spójności $Q_n-F$ wynika spójność $G(F)-F$.
     \end{corollary}
     \begin{proof}
-     Jeśli dwa wierzchołki $Q_n^2[F]$ są połączone, to w oryginalnym grafie musiały być w odległości $\le 2$, a więc w $G(F)$ muszą być połączone
-     albo bezpośrednio albo poprzez pojedynczy wierzchołek z $A$, a więc graf $G(F)$ jest spójny co sprawia,
-     że spełnione są założenia lematu.
+     Jeśli dwa wierzchołki $Q_n^2[F]$ są połączone krawędzią, to w oryginalnym grafie musiały być w odległości $\le 2$, a więc w $G(F)$ muszą być połączone
+     albo bezpośrednią krawędzią albo poprzez pojedynczy wierzchołek ze zbioru $A$, a więc graf $G(F)$ jest spójny co sprawia,
+     że spełnione są założenia lematu \ref{Q_n-F spojne => G(F)-F spojne (1 skladowa)}.
     \end{proof}
     \begin{lemma}\label{Q_n^2[F]-F spojne => Q_n-F spojne}
-     Niech $F\subseteq V(Q_n)$ taki, że $G(C)-C$ jest spójne dla kazdej $C$ spójnej składowej $Q_n^2[F]$. Wtedy $Q_n-F$ również jest spójny.
+     Niech $F\subseteq V(Q_n)$ będzie taki, że $G(C)-C$ jest spójne dla każdej $C$ -- spójnej składowej $Q_n^2[F]$. Wtedy $Q_n-F$ również jest spójny.
     \end{lemma}
     \begin{proof}
      Dla dowolnie wybranych dwóch wierzchołków $u,v\in V(Q_n-F)$ weźmy $W$ -- ścieżkę między nimi w pełnym $Q_n$. Jeśli $W$ nie zawiera wadliwego wierzchołka,
      to jest poprawną ścieżką w $Q_n-F$. W przeciwnym przypadku znajdujemy na tej ścieżce pierwsze wystąpienie wierzchołka wadliwego.
-     Poprzedni wierzchołek na ścieżce oraz pierwszy kolejny z poza zbioru $F$ są dwoma niewadliwymi wierzchołkami należącymi do $G(C)$, gdzie $C$
+     Poprzedni wierzchołek na ścieżce oraz pierwszy kolejny spoza zbioru $F$ są dwoma niewadliwymi wierzchołkami należącymi do $G(C)$, gdzie $C$
      jest spójną składową $Q_n^2[F]$ (oddalone o 1 od wadliwych wierzchołków, które są połączone ścieżką samych wadliwych wierzchołków).
+     
      W $G(C)$ nie ma wadliwych wierzchołków spoza $C$, ponieważ oznaczałoby to, że taki wierzchołek jest oddalony o $\le 2$ od pewnego wierzchołka z $C$,
      a więc byłby z nim połączony w $Q_n^2$, dlatego też ścieżka ze spójnego z założenia $G(C)-C$ nie zawiera wadliwego wierzchołka.
-     Wystarczy więc wadliwą część ścieżki $W$ zastąpić odpowiednią ścieżką z $G(C)-C$ aby otrzymać poprawną ścieżkę w $Q_n-F$.
-    \end{proof}
+     
+     Wystarczy więc tę wadliwą część ścieżki $W$ zastąpić odpowiednią ścieżką z $G(C)-C$ aby zmniejszyć ilość wad na ścieżce.
+     Po być może kilkukrotnym powtórzeniu tej operacji otrzymujemy poprawną ścieżkę w $Q_n-F$.
+    \end{proof}\newpage
     \begin{proof}
-     (Twierdzenia \ref{spojnosc z lokalnej spojnosci})\newline
+     (Twierdzenia \ref{spojnosc z lokalnej spojnosci})
+     
      Lemat \ref{Q_n^2[F]-F spojne => Q_n-F spojne} jest implikacją w jedną stronę.
-     W drugą stronę dla spójnego $Q_n^2[F]$ jest dana wnioskiem \ref{Q_n-F spojne => Q_n^2[F]-F spojne (1 skladowa)}.
+     Implikacja w drugą stronę dla spójnego $Q_n^2[F]$ jest dana wnioskiem \ref{Q_n-F spojne => Q_n^2[F]-F spojne (1 skladowa)}.
      Wystarczy udowodnić, że nic nie psuje się w przypadku gdy $Q_n^2[F]$ ma więcej niż jedną spójną składową.
+     
      Dla $C$ -- spójnej składowej $Q_n^2[F]$ jeśli $Q_n-F$ jest spójne, to jest takie również $Q_n-C$
      (dla wierzchołków spoza $Q_n-F$ te same ścieżki są dobre, dla tych z  $F\backslash C$ dowolny sąsiad nalezy do $Q_n-F$, więc również łatwo zbudować ścieżkę),
      a więc spójne jest również $G(C)-C$ co kończy dowód.
     \end{proof}
    \subsection{Algorytm}
-    Stosując powyższe twierdzenie można uzyskać wielomianowy algorytm uzywając jedynie przeszukiwania grafowego
+    Stosując powyższe twierdzenie można uzyskać wielomianowy algorytm używając jedynie przeszukiwania grafowego
     podobnie jak w podrozdziale \ref{podejscie ekspansywne}. Można jednak uzyskać lepsze rezultaty używając dodatkowo struktury $Find$--$Union$ i sprawdzając
     spójności już w trakcie budowania podgrafów $G(C)-C$.\newline
     W algorytmie używane są:
-    \begin{itemize}
+    \begin{itemize}[noitemsep,topsep=4pt]
      \item struktura $Find$--$Union$ $D$ z operacjami:
-      \begin{itemize}
+      \begin{itemize}[noitemsep,topsep=0pt]
        \item $Make(v,D)$ tworzącą singleton $\{v\}$
        \item $Find(v,D)$ zwracającą wskaźnik na zbiór zawierający $v$
        \item $Union(u,v,D)$ łączącą zbior zawierający $u$ ze zbiorem zawierającym $v$
@@ -710,19 +767,21 @@ Instytut Informatyki}
       operacji $Make(v,D)$.
       Dodatkowo struktura zapewnia możliwość sprawdzenia, czy zawiera więcej niż jeden zbiór (wystarczy pojedynczy licznik inkrementowany przy
       $Make(v,D)$ i dekrementowany przy $Union(u,v,D)$).
-     \item strukturę $T$ do przechowywania informacji o niektórych wierzchołkach jak binarne drzewo prefiksowe lub hashmapa,
+      \vspace*{4pt}
+     \item strukturę $T$ do przechowywania informacji o niektórych wierzchołkach
+     (zaimplementowaną przy pomocy binarnego drzewa prefiksowego lub tablicy hashującej),
       przechowywującą dla wierzchołka $v_T$ informacje:
-      \begin{itemize}
+      \begin{itemize}[noitemsep,topsep=0pt]
        \item wskaźnik do wierzchołka $v$ w strukturze $D$
        \item informacje o wadliwości/braku wadliwości wierzchołka
-       \item binarną informacje o tym czy wierzchołek był odwiedzony i należy do $F\cup N(F)$
+       \item binarną informacje o tym czy wierzchołek należy do $F\cup N(F)$ i był już odwiedzony
       \end{itemize}
       wspierającą operacje:
-      \begin{itemize}
+      \begin{itemize}[noitemsep,topsep=0pt]
        \item $Insert(v,T)$ wstawiającą wierzchołek $v$ do struktury $T$ i zwracającą wskaźnik na $v_T$
        \item $Retrieve(v,T)$ zwracającą $v_T$ lub $NULL$ w przypadku gdy $v$ nie ma w strukturze
       \end{itemize}
-      które wymagają $O(n)$ czasu na wykonanie.
+      które wymagają czasu $O(n)$ na wykonanie.
     \end{itemize}
     
     Definiuję pomocniczą funkcję uzyskiwania wierzchołków ze struktury $T$ i inicjalizowania w razie nieobecności:\newline\newline
@@ -737,8 +796,8 @@ Instytut Informatyki}
     \hspace*{16pt}	return$(v_T);$\newline
     \hspace*{0pt}$\}$\newline
     
-    Najistotniejszą częścią algorytmu jest procedura (czasami dla wielu wierzchołków z $F$) $DFS(f)$ znajdująca spójne składowe $G(C)-C$,
-    dla $C$ spójnej składowej $Q_n^2[F]$ zawierającej wadliwy wierzchołek $f$, o następującym pseudokodzie:\newline\newline    
+    Najistotniejszą częścią algorytmu jest procedura $DFS(f)$ znajdująca spójne składowe $G(C)-C$,
+    dla $C$ -- spójnej składowej $Q_n^2[F]$ zawierającej wadliwy wierzchołek $f$, o następującym pseudokodzie:\newline\newline    
     \hspace*{0pt}$DFS(f)\{$\newline
     \hspace*{16pt}	foreach$(u\in N(f))\{$\newline
     \hspace*{32pt}		$u_T=Retrieve2(u,T);$\newline
@@ -748,17 +807,18 @@ Instytut Informatyki}
     \hspace*{64pt}				foreach$(v\in N(u))\{$\newline
     \hspace*{80pt}					$v_T=Retrieve2(v,T);$\newline
     \hspace*{80pt}					if$(v_T.healthy)\{$\newline
-    \hspace*{96pt}						if$(Find(u,D)\neq Find(v,D))\quad\backslash\backslash$ krawędź $uv$ należy do $G(C)-C$\newline
+    \hspace*{96pt}						if$(Find(u,D)\neq Find(v,D))\quad Union(u,v,D);\quad\backslash\backslash uv\in E(G(C)-C)$\newline
     \hspace*{80pt}					$\}$else if$(v_T.visited==FALSE)\{$\newline
     \hspace*{96pt}						$v_T.visited=TRUE;$\newline
-    \hspace*{96pt}						$DFS(v);\quad\backslash\backslash$ wadliwy wierzchołek należący do $C$\newline
+    \hspace*{96pt}						$DFS(v);\quad\backslash\backslash$ wadliwy wierzchołek należący do $C$ (oddalony od $f$ o 2)\newline
     \hspace*{80pt}					$\}$\newline
     \hspace*{64pt}				$\}$\newline
-    \hspace*{48pt}			$\}$else$\quad DFS(u);\quad\backslash\backslash$ wadliwy wierzchołek należący do $C$\newline
+    \hspace*{48pt}			$\}$else$\quad DFS(u);\quad\backslash\backslash$ wadliwy wierzchołek należący do $C$ (oddalony od $f$ o 1)\newline
     \hspace*{32pt}		$\}$\newline
     \hspace*{16pt}	$\}$\newline
     \hspace*{0pt}$\}$\newline
     
+    \noindent
     Powyższa prodedura uruchamiana jest z funkcji głównej:\newline\newline
     \hspace*{0pt}$Conectivity(n,F)\{$\newline
     \hspace*{16pt}	$T=empty\_structureT();$\newline
@@ -777,23 +837,24 @@ Instytut Informatyki}
     \hspace*{32pt}		$\}$\newline
     \hspace*{16pt}	$\}$\newline
     \hspace*{16pt}	return$(TRUE);$\newline
-    \hspace*{0pt}$\}$
+    \hspace*{0pt}$\}$\newline
    \subsection{Analiza złożoności}
     \begin{corollary}\label{zlozonosc lokalnej spojnosci}
      Algorytm ma pesymistyczną złożoność czasową i pamięciową $O(|F|\cdot n^3)$.
     \end{corollary}
     \begin{proof}
-     Dla kazdego wierzchołka z $F$ każdy sąsiad jest przeglądany po jeden raz, dla każdego wierzchołka nalezącego do $N(F)$ również przeglądani są wszyscy sąsiedzi
-     po razie. Przeglądnięcie jedengo wierzchołka (znalezienie odpowiedniego wierzchołka w $T$ i $D$) zajmuje $O(n)$,
+     Dla każdego wierzchołka z $F$ każdy sąsiad jest przeglądany po jeden raz.
+     Dla każdego wierzchołka należącego do $N(F)$ również przeglądani są wszyscy sąsiedzi
+     po razie. Przeglądnięcie jednego wierzchołka (znalezienie odpowiedniego wierzchołka w $T$ i $D$) zajmuje $O(n)$,
      ustawienie właściwości w $D$ zajmuje stały czas po posiadaniu dowiązania do odpowiedniego wierzchołka -- daje to złożoność tej części $O(|F|\cdot n^3)$.\newline
-     Operacja $Make(v,D)$ używana jest dla każdego wierzchołka z $G(C)-C$ po razie dla kazdego $C$
-     (moze być użyta więcej niż raz dla wierzchołków oddalonych o 2 od $F$ i występujących w różnych $G(C)$).
-     W przypadku $Find(v,D)$ i $Union(u,v,D)$ uruchamiane są one maksymalnie odpowiednio dwa i jeden raz dla kazdego z sąsiadów wierzchołków $N(F)$
+     Operacja $Make(v,D)$ używana jest dla każdego wierzchołka z $G(C)-C$ po razie dla każdego $C$
+     (może być użyta więcej niż raz dla wierzchołków oddalonych o 2 od $F$ i występujących w różnych $G(C)$).
+     W przypadku $Find(v,D)$ i $Union(u,v,D)$ uruchamiane są one maksymalnie odpowiednio dwa i jeden raz dla każdego z sąsiadów wierzchołków $N(F)$
      -- daje to złożoność $O(|F|\cdot n^2\log(n))$.\newline
      Preprocessing i Postprocessing (tworzenie i usuwanie struktur $T$ i $D$)
      może być zrobione w czasie liniowym od ich wielkości (w przypadku $D$ i hashmapy można trzymać dodatkowo nieuporządkowaną listę dowiązań do wszystkich
      elementów). W przypadku struktury $T$ wielkość tą można ograniczyć przez $O(|F|\cdot n^3)$ przy użyciu drzewa prefiksowego
-     (lub $O(|F|\cdot n^2)$ przy użyciu hashmapy, która nie pozwala jednak uzyskać odpowiedniej złożoności przy pesmistycznym scenariuszu),
+     (lub $O(|F|\cdot n^2)$ przy użyciu hashmapy, która nie pozwala jednak uzyskać odpowiedniej złożoności czasowej przy pesmistycznym scenariuszu),
      zaś w przypadku struktur $D$ łącznie $O(|F|\cdot n^2)$.
     \end{proof}
   \section{Wnioski i zastosowania}
@@ -807,6 +868,7 @@ Instytut Informatyki}
      Kryterium istnienia cyklu Eulera jest to, że po pierwsze graf jest spójny, a po drugie z każdego wierzchołka wychodzi parzyście wiele krawędzi.
      Spójność można sprawdzić w czasie $O(|F|\cdot n^3)$ przy pomocy algorytmu z poprzedniego podrozdziału.
      Wierzchołek nie mający wadliwego sąsiada ma stopień $n$, wystarczy więc policzyć tylko parzystość dla tych którzy takiego sąsiada mają.
+     
      W czasie i pamięci $O(|F|\cdot n^2)$ można wstawić wszystkich niewadliwych sąsiadów wierzchołków wadliwych
      do drzewa prefiksowego zapamiętując w liściach krotność.
      Po wszystkim wystarczy dla $^2|n$ sprawdzić czy wszystkie wstawione wierzchołki mają krotność parzystą, zaś dla $^2\nmid n$ trzeba po pierwsze sprawdzić,
@@ -821,13 +883,18 @@ Instytut Informatyki}
     \begin{proof}
      Chcemy sprawdzić czy dwa wierzchołki należą do jednej spójnej składowej grafu $Q_n-F$. Zgodnie z lematem \ref{klasyfikacja skladowych}
      jeśli spójne składowe w których znajdują się te wierzchołki są większe niż $\frac{|F|}{\varepsilon}$, to są składową główną (a więc tą samą),
-     wystarczy więc z obu wierzchołków wystartować przeszukiwanie grafowe i zakończyć je jeśi zbada się tyle wierzchołków.
+     wystarczy więc z obu wierzchołków wystartować przeszukiwanie grafowe i zakończyć je kiedy zbada się tyle wierzchołków.
      Jeśli oba wyszukiwania zakończą się dzięki temu kryterium, lub jeśli zostanie napotkany ten drugi wierzchołek, to w $Q_n-F$ istnieje $uv$--ścieżka,
-     w przeciwnym przypadku nie. Tak przedstawiony algorytm działa dla dowolnego grafu (spójnego z którego usuwamy wierzchołki)
-     z odpowiednią wartością $\varepsilon$. W przypadku hiperkostki wystarczy sprawdzić sąsiadów $2\sqrt{\pi n}\cdot|F|$ wierzchołków (a każdy ma ich $n$),
-     podczas gdy każda taka operacja kosztuje $O(n)$, co daje koszt z twierdzenia.
+     w przeciwnym przypadku nie.
+     
+     Tak przedstawiony algorytm działa dla dowolnego grafu (spójnego z którego usuwamy wierzchołki)
+     z odpowiednią wartością $\varepsilon$. W przypadku hiperkostki wystarczy przeszukać $2\sqrt{\pi n}\cdot|F|$ wierzchołków,
+     plus krawędzi z nich wychodzące (każdy ma ich $n$),
+     podczas gdy każda taka operacja kosztuje $O(n)$, co daje złożoność z twierdzenia.
     \end{proof}    
    \subsection{Długość ścieżki między dwoma punktami}
+    Dzięki sprowadzeniu spójności do lokalnej spójności natychmiast zyskujemy konstrukcję ścieżki długości wielomianowej (od $n$ i $|F|$) pomiędzy dowolnymi
+    wierzchołkami w spójnej hiperkostce z wadami (choć da się uzyskać również ścieżki o wiele krótsze).
     \begin{fact}
      Dla spójnego grafu $Q_n-F$ pomiędzy każdymi dwoma wierzchołkami jest ścieżka długości nie większej niż $n+n^2\cdot|F|$.
     \end{fact}
@@ -899,11 +966,11 @@ Instytut Informatyki}
     \begin{itemize}
      \item Dla $|F|\le 2n-3$ co najwyżej jeden z wierzchołków jest otoczony przez $F$.
      \item Dla $|F|\le 2n-4$ i ustalonego nieotoczonego wierzchołka $u$ istnieje co najwyżej jeden wierzchołke $v$ taki, że $(u,v,F)$ jest zablokowana.
-     \item Dla $|F|\le 2n-5$ tylko jedna trójka $(u,v,F)$ moze być zablokowana, i to taka, że $uv\in E(Q_n-F)$.
+     \item Dla $|F|\le 2n-5$ tylko jedna trójka $(u,v,F)$ może być zablokowana, i to taka, że $uv\in E(Q_n-F)$.
     \end{itemize}
     i wykorzystując fakt, że w podkostkach poza kilkoma przypadkami istnieją odpowiednie długie kostki rozważa się dużą liczbę przypadków
     (rozbicie ze względu na należenie $u$ i $v$ do tej samej/różnej podkostki, bycia otoczonym/zablokowanym/wolnym w podkostce).
-    Dla kazdego z tych przypadków da się pokazać metodę łączenia długich ścieżek z podkostek.
+    Dla każdego z tych przypadków da się pokazać metodę łączenia długich ścieżek z podkostek.
    \end{proof}
    \begin{remark}\label{dluga sciezka 2n-3 za duzo}
     Dla $Q_n$, $F\subseteq V(Q_n)$, $|F|=2n-3$ teza twierdzenia \ref{tw o dlugich sciezkach} przestaje być prawdziwa.
@@ -923,7 +990,7 @@ Instytut Informatyki}
    \end{defi}
    \begin{lemma}\label{dlugi cykl - podzial kostki}
     Niech $F\subseteq V(Q_n)$ takie, że $|F|\ge 2n$ i niech $d=\lceil\frac{n^2}{2|F|-n-2}\rceil$.
-    Wtedy istnieje zbiór $D\subseteq[n],|D|=d$, taki że $|F_D(u)|\le d+1$ dla kazdego $u\in\{0,1\}^{n-d}$
+    Wtedy istnieje zbiór $D\subseteq[n],|D|=d$, taki że $|F_D(u)|\le d+1$ dla każdego $u\in\{0,1\}^{n-d}$
    \end{lemma}
    Lemat pochodzi z pracy \cite{Wie} i został zmodyfikowany do tej postaci w pracy \cite{FG} aby lepiej pasować do dowodu poniższego twierdzenia.
    \begin{theorem}\label{dlugi cykl - tw}
@@ -933,7 +1000,7 @@ Instytut Informatyki}
     (krótki szkic dowodu z pracy \cite{FG})\newline
     Na podstawie lematu \ref{dlugi cykl - podzial kostki} znajdujemy zbiór $D\subseteq[n]$, taki że $|F_D(u)|\le 2d-4$ dla każdego $u\in\{0,1\}^{n-d}$.
     Dla dowolnego cyklu Hamiltona $(u_0,u_1,...,u_{2^{n-d}}=u_0)$ w $Q_{n-d}$ dobieramy w kostce $Q_D{u_i}$ dwa nie wadliwe
-    wierzchołki $a_i$ oraz $b_i$, takie że $a_ib_{i+1}\in E(Q_n)$ dla kazdego $i\in[2^{n-d}]$ (modulo $2^{n-d}$),
+    wierzchołki $a_i$ oraz $b_i$, takie że $a_ib_{i+1}\in E(Q_n)$ dla każdego $i\in[2^{n-d}]$ (modulo $2^{n-d}$),
     oraz $(a_i,b_i,F_D(u^i))$ nie zablokowane (choć jest to nietrywialne to da sie takie dobrać).
     Na podstawie twierdzenia \ref{tw o dlugich sciezkach} wierzchołki $a_i$ i $b_i$ są łączone długimi ścieżkami dając cykl długości $\ge 2^n-2|F|$.
     Ograniczenie $|F|\le\frac{n^2}{10}+\frac{n}{2}+1$ potrzebne jest po to, aby $\lceil\frac{n^2}{2|F|-n-2}\rceil\ge5$ omijając złe przypadki z twierdzenia
@@ -1361,7 +1428,7 @@ Instytut Informatyki}
       \sqrt[n]{|P|+1}&1.78&1.78&1.79&1.79&1.79\\
       \hline
      \end{array}$\newline
-     \begin{center}
+     \begin{center}%TODO poprawić wykres
       \includegraphics[scale=0.37]{img/plot1.jpg}
      \end{center}
    \section{Znane ograniczenia długości węży}
@@ -1455,6 +1522,10 @@ Instytut Informatyki}
    "Optimal Numberings and Isoperimetric Problems on Graphs"
    \textit{JOURNAL OF COMBINATORIAL THEORY 1, 385-393 (1966)}
    
+  \bibitem{HHH} Frank Harary, John P. Hayes and Horng--Jyh Wu,
+   "A survey of theory of hypercube graphs"
+   \textit{Comput. Math. Applic. Vol. 15, No 4, pp. 277-289, 1988}
+   
   \bibitem{DFGKR} Tomas Dvorak, Jirı Fink, Petr Gregor, Vaclav Koubek and Tomasz Radzik,
    "Efficient connectivity testing of hypercubic networks with faults"
    
@@ -1503,10 +1574,6 @@ Instytut Informatyki}
    
    
    %------------------------------------------------------------pompowanie 
-   
-  \bibitem{HHH} Frank Harary, John P. Hayes and Horng--Jyh Wu,
-   "A survey of theory of hypercube graphs"
-   \textit{Comput. Math. Applic. Vol. 15, No 4, pp. 277-289, 1988}
    
   \bibitem{HL} Frank Harary, Marilynn Livingston,
    "Independent domination in hypercubes"
