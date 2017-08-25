@@ -905,9 +905,9 @@ Instytut Informatyki}
      co dowodzi tezy.
     \end{proof}
 
- \chapter{Długie ścieżki i cykle w grafie} %TODO jeśli wyłącze podrozdziały o poziom wyżej, to trzeba zmienić wewnętrzne odniesienia typu w poprzednim podrozdziale
+ \chapter{Długie ścieżki i cykle w grafie}
   W poprzednim rozdziale przedstawiony był przykład problemu na wadliwej hiperkostce, dla którego można było znaleźć rozwiązanie wielomianowe od $n$ i $|F|$.
-  W tym rozdzialę przedstawię kilka problemów, dla których samo przedstawienie wyników wymagało by wykładniczej pamięci,
+  W tym rozdziale przedstawię kilka problemów, dla których już przedstawienie wyników wymagało by wykładniczej pamięci,
   jednak samo rozstrzygnięcie czy rozwiązanie istnieje (sprawdzenie warunków twierdzenia) jest możliwe w czasie
   $O(|F|\cdot n)$ dla odpowiednio małych $|F|$ (wartości podane w sformułowaniach twierdzeń).
   W przypadku podwójnych ścieżek twierdzenie daje jedynie warunek wystarczający, dlatego algorytm otrzymany dzięki niemu nawet dla tych małych $|F|$ potrafi
@@ -925,8 +925,8 @@ Instytut Informatyki}
     (stąd długośc w definicji).
    \end{remark}
    \begin{proof}
-    Skoro $Q_n$ jest dwudzielna, to każda ścieżka musi odwiedzić tyle samo wierzchołków w obu częściach (plus jeden koniec), ponieważ w części z $u$ i $v$
-    odwiedza co najwyżej $2^{n-1}-|F|$, to w drugiej co najwyżej $2^{n-1}-|F|-1$ -- daje to długość $2^n-2|F|-2$.
+    Skoro $Q_n$ jest dwudzielna, to każda ścieżka musi odwiedzić prawie tyle samo wierzchołków w obu jej częściach (różnica nie większa niż $1$),
+    ponieważ w części z $u$ i $v$ odwiedza co najwyżej $2^{n-1}-|F|$, to w drugiej co najwyżej $2^{n-1}-|F|-1$ -- daje to długość $2^n-2|F|-2$.
    \end{proof}
    \begin{defi}\label{wierzcholek otoczony}
     Wierzchołek $v\in V(Q_n)$ jest \emph{otoczony} przez $F\subseteq V(Q_n)$ gdy $N(v)\subseteq F$ ($F$ zawiera wszystkich sąsiadów $v$).
@@ -937,12 +937,18 @@ Instytut Informatyki}
    \end{defi}
   \section{Długie ścieżki}
    \begin{theorem}\label{tw o dlugich sciezkach, male n}
-    Dla $Q_n$ i $F\subseteq V(Q_n)$, takich, że $2\le n \ge 5$ i $|F|\le 2n-4$ dla $u,v\in V(Q_n)\backslash F$ takich, że trójka $(u,v,F)$
+    Dla $Q_n$ i $F\subseteq V(Q_n)$, takich, że $2\le n \le 5$ i $|F|\le 2n-4$ dla $u,v\in V(Q_n)\backslash F$ takich, że trójka $(u,v,F)$
     nie jest zablokowana  w $Q_n$ długa $uv$--ścieżka bez wad nie istnieje tylko wtedy, gdy $n=4$ oraz istnieją takie $a,b\in V(Q_n)$,
     że $d(a,b)=4$  i $F\cup\{u,v,a,b\}$  jest dwudzielną częścią $Q_n$.
    \end{theorem}
    \begin{proof}%TODO może rozwinąć o ten przypadek szczególny.
     Łatwo rozpatrzyć wszystkie przypadki.
+    
+    Na wyróżnienie zasługują przypadki negatywne, które z dokładnością do automorfizmów kostki są dokładnie 2.
+    Rozpatruje je na obrazkach z zaznaczonymi wierzchołkami i uproszczoną ich wersją z pominiętymi wierzchołkami wadliwymi.\newline
+    \hspace*{100pt}\includegraphics[scale=0.7]{img/Q_4_niezablokowane_1.jpg}\newline
+    \hspace*{100pt}\includegraphics[scale=0.7]{img/Q_4_niezablokowane_2.jpg}\newline
+    Jak widać w obu przypadkach najdłuższa możliwa $uv$-ścieżka ma długość $4<16-2\cdot4-2$
    \end{proof}
    \begin{theorem}\label{tw o dlugich sciezkach}
     Dla $Q_n$ i $F\subseteq V(Q_n)$, takich  że  $n\ge 6$ i $|F|\le 2n-4$ dla każdych $u,v\in V(Q_n)\backslash F$ jeśli $(u,v,F)$ nie jest zablokowane w $Q_n$,
@@ -954,29 +960,33 @@ Instytut Informatyki}
     Podstawę indukcji stanowi twierdzenie \ref{tw o dlugich sciezkach, male n}.%TODO może prof. Rytter będzie wolał wyciąć ten długi fragment o 2n-6
     Dla $n\ge6$, $|F|\le 2n-4$ można podzielić $Q_n$ na dwie kostki $Q_{n-1}$ wybierając jedną z $n$ współrzędnych 
     i definiując podkostki $Q^0_{n-1}$ i $Q^1_{n-1}$ jako rozpięte przez wierzchołki mające na tej współrzędnej odpowiednio $0$ i $1$.
-    Dla $|F|\le 2n-5$ łatwo jest dobrać współrzędną tak, żeby każda z podkostek miała co najwyżyżej $2n-6=2(n-1)-4$ wadliwych wierzchołków
+    
+    Dla $|F|\le 2n-5$ łatwo jest dobrać współrzędną tak, żeby każda z podkostek miała co najwyżej $2n-6=2(n-1)-4$ wadliwych wierzchołków
     (wystarczy wybrać dowolne $f_1,f_2\in F$ i podzielić według jednej ze współrzędnych różniących ich ciągi binarne).
+    
     Dla $|F|=2n-4$ można rozpatrzyć macierz $|F|\times n$, w której w wierszach wypisane są ciągi binarne wszystkich wierzchołków wadliwych.
     Trzeba wybrać taką kolumnę, w której zarówno $0$ jak i $1$ jest co najmmniej po 2. Gdyby nie dało się dokonać takiego wyboru oznaczało by to, że
     w każdej kolumnie jest albo co najwyżej jedno $0$ albo co najwyżej jedna $1$, przez proste zanegowanie jednej współrzędnej w całej kostce
     (ta operacja nie zmienia nic poza numerowaniem) można uzyskać przypadek, że w każdej kolumnie jest co najwyżej jedna $1$. 
-    Ponieważ kolumn jest tylko $n$, zaś każda zawiera co najwyżej jedną $1$, to oznaczało by to, że może mieć tylko $n+1$ różnych wierszy
+    Ponieważ kolumn jest tylko $n$, zaś każda zawiera co najwyżej jedną $1$, to oznaczało by to, że macierz może mieć tylko $n+1$ różnych wierszy
     $\Rightarrow 2n-4=|F|\le n+1\Rightarrow n\le5$ (a więc ponieważ $n\ge 6$, to zawsze istnieje wybór współrzędnej).\newline
     Dalej przy użyciu lematów:
     \begin{itemize}
      \item Dla $|F|\le 2n-3$ co najwyżej jeden z wierzchołków jest otoczony przez $F$.
-     \item Dla $|F|\le 2n-4$ i ustalonego nieotoczonego wierzchołka $u$ istnieje co najwyżej jeden wierzchołke $v$ taki, że $(u,v,F)$ jest zablokowana.
-     \item Dla $|F|\le 2n-5$ tylko jedna trójka $(u,v,F)$ może być zablokowana, i to taka, że $uv\in E(Q_n-F)$.
+     \item Dla $|F|\le 2n-4$ i ustalonego nieotoczonego wierzchołka $u$ istnieje co najwyżej jeden wierzchołek $v$ taki, że $(u,v,F)$ jest zablokowana.
+     \item Dla $|F|\le 2n-5$ (nie otaczającego żadnego wierzchołka) tylko jedna trójka $(u,v,F)$ może być zablokowana, i to taka, że $uv\in E(Q_n-F)$.
     \end{itemize}
     i wykorzystując fakt, że w podkostkach poza kilkoma przypadkami istnieją odpowiednie długie kostki rozważa się dużą liczbę przypadków
     (rozbicie ze względu na należenie $u$ i $v$ do tej samej/różnej podkostki, bycia otoczonym/zablokowanym/wolnym w podkostce).
-    Dla każdego z tych przypadków da się pokazać metodę łączenia długich ścieżek z podkostek.
+    Dla każdego z tych przypadków da się pokazać metodę łączenia długich ścieżek z podkostek.\newline
+   \includegraphics[scale=0.5]{img/sciezka_laczenie1.jpg}\quad\quad\quad\quad
+   \includegraphics[scale=0.5]{img/sciezka_laczenie2.jpg}
    \end{proof}
    \begin{remark}\label{dluga sciezka 2n-3 za duzo}
     Dla $Q_n$, $F\subseteq V(Q_n)$, $|F|=2n-3$ teza twierdzenia \ref{tw o dlugich sciezkach} przestaje być prawdziwa.
    \end{remark}
    \begin{proof}
-   Dla każdego $n\ge 4$ istnieje po kilka przypadków w których $|F|=2n-3$, $(u,v,F)$ nie jest zablokowane, ale nie ma długiej $uv$--ścieżki bez wad.
+   Dla każdego $n\ge 4$ istnieje po kilka przypadków w których $|F|=2n-3$, $(u,v,F)$ nie jest zablokowane, ale nie ma długiej $uv$--ścieżki bez wad.\newline
    3 przykłady :\newline
    \includegraphics{img/Q_niezablokowane_1.jpg}\quad\quad\quad
    \includegraphics{img/Q_niezablokowane_2.jpg}\quad\quad\quad
@@ -999,12 +1009,12 @@ Instytut Informatyki}
    \begin{proof}
     (krótki szkic dowodu z pracy \cite{FG})\newline
     Na podstawie lematu \ref{dlugi cykl - podzial kostki} znajdujemy zbiór $D\subseteq[n]$, taki że $|F_D(u)|\le 2d-4$ dla każdego $u\in\{0,1\}^{n-d}$.
-    Dla dowolnego cyklu Hamiltona $(u_0,u_1,...,u_{2^{n-d}}=u_0)$ w $Q_{n-d}$ dobieramy w kostce $Q_D{u_i}$ dwa nie wadliwe
+    Dla dowolnego cyklu Hamiltona $(u_0,u_1,...,u_{2^{n-d}}=u_0)$ w $Q_{n-d}$ dobieramy w kostce $Q_D(u_i)$ dwa niewadliwe
     wierzchołki $a_i$ oraz $b_i$, takie że $a_ib_{i+1}\in E(Q_n)$ dla każdego $i\in[2^{n-d}]$ (modulo $2^{n-d}$),
     oraz $(a_i,b_i,F_D(u^i))$ nie zablokowane (choć jest to nietrywialne to da sie takie dobrać).
     Na podstawie twierdzenia \ref{tw o dlugich sciezkach} wierzchołki $a_i$ i $b_i$ są łączone długimi ścieżkami dając cykl długości $\ge 2^n-2|F|$.
-    Ograniczenie $|F|\le\frac{n^2}{10}+\frac{n}{2}+1$ potrzebne jest po to, aby $\lceil\frac{n^2}{2|F|-n-2}\rceil\ge5$ omijając złe przypadki z twierdzenia
-    \ref{tw o dlugich sciezkach, male n}.
+    Ograniczenie $|F|\le\frac{n^2}{10}+\frac{n}{2}+1$ potrzebne jest po to, aby $\lceil\frac{n^2}{2|F|-n-2}\rceil\ge5$ umożliwiając ominięcie złych
+    przypadków z twierdzenia \ref{tw o dlugich sciezkach, male n}.
    \end{proof}
   \section{Długie pary ścieżek}
    \begin{lemma}\label{zawsze dlugie sciezki}
@@ -1015,7 +1025,7 @@ Instytut Informatyki}
    \end{proof}
    \begin{theorem}\label{pary sciezek}
     Dla $F\subseteq V(Q_n)$, $F\le n-3$ niech $A$ i $B$ będą różnymi dwuelementowymi pozdbiorami $V(Q_n)-F$, takimi że $A\cup B$ nie należy do
-    jednej części dwudzielnej kostki. Wtedy istnieje para wierzchołkowo rozłącznych
+    jednej części dwudzielnej hiperkostki. Wtedy istnieje para wierzchołkowo rozłącznych
     ścieżek o łącznej długości $\ge 2^n-2|F|-3$ zaczynających się w wierzchołku z $A$ i kończących na wierzchołku z $B$.
    \end{theorem}
    \begin{proof}
