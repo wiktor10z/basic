@@ -53,12 +53,9 @@ Instytut Informatyki}
 \end{abstract}
 
 %TODO zdefiniowanie genusu jako sfera z uszami
-%TODO csnake i coil tłumaczenie zmienić
+%TODO snake i coil tłumaczenie zmienić
 
-\tableofcontents%TODO podać, że overline coś to wektor, równy x_1,x_2,...,x_l plus może , overline0 to wektor z samych zer - używane
-%TODO u\Delta v
-
-
+\tableofcontents
 
 
 
@@ -120,10 +117,16 @@ Instytut Informatyki}
     W przypadku pełnej hiperkostki
     bardzo łatwo jest określić długość najkrótszej ścieżki pomiedzy wierzchołkami --
     jest ona równa ilości pozycji na których różnią się ciągi tych wierzchołków.\newline
-    Hiperkostka jest grafem dwudzielnym, w którym jedną składową jest zbiór wierzchołków o ciągach z parzystą liczbą jedynek,
+    Hiperkostka jest grafem dwudzielnym, w którym jedną częścią jest zbiór wierzchołków o ciągach z parzystą liczbą jedynek,
     zaś drugą tych o ich nieparzystej liczbie.\newline
     Co więcej przy badaniu hiperkostek często dzieli się je na $n+1$ warstw, gdzie dla $i\in[n+1]$ $i$-tą warstwę stanowią te wierzchołki,
     których ciągi binarne mają dokładnie $i$ jedynek (warstwa zawiera zatem wierzchołki oddalone o $i$ od wierzchołka zerowego ($\overline{0}$)).
+    W tym ujęciu części dwudzielne składają się odpowiednio z parzystych i z nieparzystych warstw.
+    
+    \begin{defi}\label{kierunek krawędzi}
+     Ze względu na oczywistą interpretację hiperkostki jako punkty i odcinki w przestrzeni $n$--wymiarowej możemy mówić o \emph{kierunku}
+     krawędzi wychodzącej z wierzchołka, definiowanym jako numer pozycji (lub równoważnie współrzędnej), która ulega zmianie po przejściu przez tę krawędź.
+    \end{defi}
     \begin{defi}\label{delta wierzcholkow}
      Dla dwóch wierzchołków hiperkostki defininiujemy:
      $u\Delta v=\{i:u_i\neq v_i\}$, gdzie $(u_0,...u_{n-1})$ i $(v_0,...,v_{n-1})$ to ciagi binarne wierzchołków $u$ i $v$ odpowienio
@@ -136,7 +139,7 @@ Instytut Informatyki}
     \begin{center}
      \includegraphics[scale=0.6]{img/Q_4_klasyczne.jpg}
     \end{center}
-    \begin{defi}\label{numerowanie warstwowe}%TODO może n choose -1 nie jest tak bardzo standardowe
+    \begin{defi}\label{numerowanie warstwowe}
      \emph{Numerowaniem warstwowym} hiperkostki nazwiemy jej numerowanie w kolejności przeszukiwania grafu wszerz zaczynając od wierzchołka $\overline{0}$
      z wybieraniem sąsiadów w kolejności leksykograficznej.
     \end{defi}
@@ -168,8 +171,8 @@ Instytut Informatyki}
      Dla grafu $G$ oraz wierzchołka $v\in V(G)$ definiujemy \emph{sąsiedztwo wierzchołka} jako zbiór wierzchołków połączonych z nim krawędzią:
      $N(v)=\{u\in V(G):(u,v)\in E(G)\}$.
     \end{defi}
-    \begin{defi}\label{sasiedztwo zbioru wierzcholkow}%TODO może jakieś lepsze przetłumaczenie boundary
-     Dla grafu $G$ oraz zbioru wierzchołków $S\subseteq V(G)$ definiujemy \emph{sąsiedztwo zbioru wierzchołków} jako zbiór tych sąsiadów wierzchołków ze zbioru,
+    \begin{defi}\label{otoczenie zbioru wierzcholkow}
+     Dla grafu $G$ oraz zbioru wierzchołków $S\subseteq V(G)$ definiujemy \emph{otoczenie zbioru wierzchołków} jako zbiór tych sąsiadów wierzchołków ze zbioru,
      które same do tego zbioru nie należą: $N(S)=(\bigcup_{v\in S}N(v))\backslash S$
     \end{defi}
     \begin{defi}\label{wnetrze zbioru wierzcholkow}
@@ -191,11 +194,11 @@ Instytut Informatyki}
     \begin{defi}\label{graf z wadami}
      W grafie $G$ możemy wyróżnić niektóre wierzchołki (czasem również krawędzie) i oznaczyć jako wadliwe.
      Graf z niepustym takim wyróżnionym zbiorem wierzchołków wadliwych $F\subseteq V(G)$ nazywamy \emph{grafem z wadami} (lub \emph{grafem wadliwym})
-    \end{defi}%TODO może dodać wspomnienie, że wadliwy też nazywany usuniętym
+    \end{defi}
     Wadliwe wierzchołki (i/lub krawędzie) najczęściej traktowane są jako usunięte z grafu -- mówimy w tym przypadku o grafie $G-F$.
     Wyróżnianie wadliwych wierzchołków w grafie zamiast definiowania nowego grafu jest umotywowane głównie w przypadkach,
     gdy pełny graf łatwo zdefiniować i zapisać w pamięci małej względem jego rozmiaru (np. klika, hiperkostka, graf de Bruijna),
-    a zbiór wadliwych wierzchołków jest również mały.
+    a zbiór wadliwych wierzchołków jest również mały.%TODO szczególne własności sąsiadów usuniętych
   \section{Podstawy kombinatoryczne}
    %Wzor Stirlinga: $n!=\sqrt{2\pi n}(\frac{n}{e})^n e^{\lambda_n}$\quad $\frac{1}{12n+1}<\lambda_n<\frac{1}{12n}$\newline
    %${2m \choose m}=\frac{(2m)!}{m!\cdot m!}=
@@ -263,13 +266,13 @@ Instytut Informatyki}
     (po podstawieniu $2^n-{n\choose \frac{n}{2}}$ zamiast $2^n$), zaś srodkowy wyraz jest równy ${n\choose \frac{n}{2}}(\log_2(n)-1)$, a więc pomiędzy
     ${n\choose \frac{n}{2}}(\log_2(n)-2)$ i ${n\choose \frac{n}{2}}(\log_2(n)-\frac{1}{2})$, co kończy dowód.
    \end{proof}
-  \section{Własność podziałowa}%TODO zdefiniować kierunek krawędzi wcześniej i usunąć później żeby nie było powtórek
+  \section{Własność podziałowa}
    \begin{theorem}\label{wlasnosc podzialowa}
     Dla dowolnego podziału wierzchołków na dwa zbiory : $S\in V(G)$ i $V(Q_n)\backslash S$
     liczba krawędzi między tymi zbiorami jest conajmniej tak duża jak liczność mniejszego ze zbiorów:
     $|\{(u,v)\in E(Q_n):u\in S,v\in V(Q_n)\backslash S\}|\ge\min(|S|,|V(Q_n)\backslash S|)$.
    \end{theorem}
-   \begin{proof}%TODO dodać że dowód zaczerpnięty z olimpiady
+   \begin{proof}
     Załóżmy, że $m=|S|\le 2^{n-1}$.\newline
     Dla każdej pary $(u,v)$ wierzchołków hiperkostki wybieramy jedną $uv$--ścieżkę taką, że jest najkrótsza
     (krawędź każdego kierunku jest używana conajwyżej raz) oraz idąc od $u$ współrzędne kierunkowe krawędzi rosną.
@@ -285,11 +288,11 @@ Instytut Informatyki}
     Graf $G$ posiada własność \emph{$\varepsilon$--ekspansji wierzchołkowej}, jeżeli dla każdego zbioru wierzchołków $S\subseteq V(G)$ takiego,
     że $|S|\le\frac{|V(G)|}{2}$ zachodzi $|N(S)|\ge\varepsilon\cdot|S|$
    \end{defi}
-   \begin{lemma}
-    Zbiór pierwszych $l$ wierzchołków hiperkostki według numerowania warstwowego posiada maksymalne wnętrze wśród zbiorów wielkości $l$.  
-   \end{lemma}\label{HAR1}
+   \begin{lemma}\label{HAR1}
+    Zbiór $S_l$ -- pierwszych $l$ wierzchołków hiperkostki według numerowania warstwowego posiada maksymalne wnętrze wśród zbiorów wielkości $l$.  
+   \end{lemma}
    Jest to jeden z lematów dowodzonych w pracy \cite{HAR}.
-   \begin{lemma}\label{S->S_k}%TODO chyba niezdefionowane S_k
+   \begin{lemma}\label{S->S_k}
     Dla hiperkostki do udowodnienia własności $\varepsilon_n$--ekspansji wierzchołkowej wystarczy rozważyć zbiory $S$ postaci $S_k,k\le 2^{n-1}$.
    \end{lemma}
    \begin{proof}
@@ -311,22 +314,11 @@ Instytut Informatyki}
     więc $l<2^{2m-1}+{2m \choose m}\Rightarrow$ $S_l$ mieści się w piewszych $m+1$ warstwach plus tych wierzchołkach z warstwy $m+2$, które kończą się na $1$
     $\Rightarrow k\le2^{n-1}$.
    \end{proof}
-   \begin{corollary}\label{ograniczenie ekspansji}
-    Hiperkostka wymiaru $n$ nie posiada własności $\frac{2\sqrt{2}}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
-   \end{corollary}
-   \begin{proof}
-    Dla $n=2m+1$\newline
-    $\frac{|N(S_{2^{2m}})|}{|S_{2^{2m}}|}=\frac{{2m+1 \choose m+1}}{2^{2m}}=\frac{2^{2m+1}}{2^{2m}\sqrt{\pi(m+1)}}=\frac{2}{\sqrt{\pi(m+1)}}=
-    \frac{2}{\sqrt{\pi(\frac{n}{2}+\frac{1}{2})}}=\frac{2\sqrt{2}}{\sqrt{\pi(n+1)}}<\frac{2\sqrt{2}}{\sqrt{\pi n}}$.\newline
-    Dla $n=2m$
-    $\frac{|N(S_{2^{2m-1}})|}{|S_{2^{2m-1}}|}=\frac{{2m \choose m}}{2^{2m-1}}<\frac{2^{2m}}{2^{2m-1}\sqrt{\pi(m+1)}}=\frac{2}{\sqrt{\pi m}}=
-    \frac{2}{\sqrt{\pi\cdot\frac{n}{2}}}=\frac{2\sqrt{2}}{\sqrt{\pi n}}$.
-   \end{proof}
-   \begin{theorem}\label{ekspansja kostki}%TODO spróować wzmocnić do \frac{2}{\sqrt{\pi n}}
+   \begin{theorem}\label{ekspansja kostki}
     Hiperkostka $Q_n$ posiada własność $\frac{1}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
    \end{theorem}
    \begin{proof}
-    Jeśli $k=\sum_{i=0}^{r}{n\choose i}$ (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw), to%TODO podać oszacowanie na sum {n\choose i}
+    Jeśli $k=\sum_{i=0}^{r}{n\choose i}$ (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw), to
     $\frac{|N(S_k)|}{|S_k|}=\frac{{n\choose r+1}}{\sum_{i=0}^{r}{n \choose i}}>\frac{{n\choose r+1}{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}{n\choose r+1}}
     =\frac{{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}}>\frac{2^{n}}{2^{n-1}\sqrt{\pi (\lceil\frac{n}{2}\rceil+\frac{1}{2})}}=
     \frac{2}{\sqrt{\pi (\lceil\frac{n}{2}\rceil+\frac{1}{2})}}
@@ -356,14 +348,25 @@ Instytut Informatyki}
     \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
     Dla przypadków $n\le6$ można ręcznie sprawdzić wszystkie $2^{n-1}$ przypadków, aby również otrzymać oszacowanie $\frac{1}{\sqrt{\pi n}}$.
    \end{proof}
+   \begin{corollary}\label{ograniczenie ekspansji}
+    Hiperkostka wymiaru $n$ nie posiada własności $\frac{2\sqrt{2}}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
+   \end{corollary}
+   \begin{proof}
+    Dla $n=2m+1$\newline
+    $\frac{|N(S_{2^{2m}})|}{|S_{2^{2m}}|}=\frac{{2m+1 \choose m+1}}{2^{2m}}<\frac{2^{2m+1}}{2^{2m}\sqrt{\pi(m+1)}}=\frac{2}{\sqrt{\pi(m+1)}}=
+    \frac{2}{\sqrt{\pi(\frac{n}{2}+\frac{1}{2})}}=\frac{2\sqrt{2}}{\sqrt{\pi(n+1)}}<\frac{2\sqrt{2}}{\sqrt{\pi n}}$.\newline
+    Dla $n=2m$
+    $\frac{|N(S_{2^{2m-1}})|}{|S_{2^{2m-1}}|}=\frac{{2m-1 \choose m}+{2m-1\choose m}}{2^{2m-1}}=\frac{{2m \choose m}}{2^{2m-1}}<
+    \frac{2^{2m}}{2^{2m-1}\sqrt{\pi m}}=\frac{2}{\sqrt{\pi m}}=\frac{2}{\sqrt{\pi\cdot\frac{n}{2}}}=\frac{2\sqrt{2}}{\sqrt{\pi n}}$.
+   \end{proof}
   \section{Inne własności}
    \subsection{Automorfizmy}
     \begin{fact}
      Hiperkostka $Q_n$ ma dokładnie $2^n\cdot n!$ automorfizmów -- na $n!$ sposobów można dokonać permutacji współrzędnych, zaś na $2^n$ sposobów
      zanegować część współrzędnych lub równoważnie wybrać który wierzchołek otrzyma współrzędne $(0,...,0)$.
     \end{fact}
-    Oznacza to, że przy dowolnych rozważaniach w których wyróżniamy dwa wierzchołki odległe o $k$, możemy założyć że pierwszy z nich ma współrzędne $(0,...,0)$
-    zaś drugi $(0,..,0,1,..,1)$ (gdzie jedynek jest $k$), jeżeli tylko zamienimy odpowiednio współrzędne innych wierzchołków -- w tym wadliwych.
+    Oznacza to, że przy dowolnych rozważaniach w których wyróżniamy dwa wierzchołki odległe o $k$, możemy założyć że pierwszy z nich jest wierzchołkiem $\overline{0}$
+    zaś drugi ma współrzędne $(0,..,0,1,..,1)$ (gdzie jedynek jest $k$), jeżeli tylko zamienimy odpowiednio współrzędne innych wierzchołków -- w tym wadliwych.
    \subsection{Kolorowanie}
     Dla hiperkostki problemy kolorowania są trywialne:
     
@@ -530,7 +533,7 @@ Instytut Informatyki}
     (Lematu \ref{klasyfikacja skladowych})\newline
     Weźmy spójną składową $S$ grafu $G-F$ ($N_{G-F}(S)=\emptyset$), jeżeli $S\le\frac{|V(G)|}{2}$, to z własności $\varepsilon$--ekspansji wierzchołkowej grafu $G$
     zachodzi $|N_G(S)|\ge\varepsilon\cdot|S|$ (gdzie $S$ jest teraz traktowane jako podzbiór wierzchołków grafu $G$). Gdyby zachodziło $|S|>\frac{|F|}{\varepsilon}$,
-    to mielibyśmy $|N_G(S)|>\frac{\varepsilon\cdot|F|}{\varepsilon}=|F|$, co daje sprzeczność ponieważ aby w grafie $G-F$ sąsiedztwo to było puste z grafu
+    to mielibyśmy $|N_G(S)|>\frac{\varepsilon\cdot|F|}{\varepsilon}=|F|$, co daje sprzeczność ponieważ aby w grafie $G-F$ otoczenie to było puste z grafu
     $G$ trzeba usunąć co najmniej $N_G(S)$ wierzchołków.
    \end{proof}
    \begin{proof}
@@ -861,7 +864,7 @@ Instytut Informatyki}
    \subsection{Cykl Eulera}
     Mając dostępny efektywny algorytm badania spójności wysnułem następujący wniosek: 
  
-    \begin{theorem}\label{cykl Eulera}%TODO naprawić opisy po przeniesieniu i dodać, że sam to zrobiłem
+    \begin{theorem}\label{cykl Eulera}
      Dla $F\subseteq V(Q_n)$ można rozstrzygnąć, czy w $Q_n-F$ jest cykl Eulera w czasie $O(|F|\cdot n^3)$
     \end{theorem}
     \begin{proof}
@@ -941,7 +944,7 @@ Instytut Informatyki}
     nie jest zablokowana  w $Q_n$ długa $uv$--ścieżka bez wad nie istnieje tylko wtedy, gdy $n=4$ oraz istnieją takie $a,b\in V(Q_n)$,
     że $d(a,b)=4$  i $F\cup\{u,v,a,b\}$  jest dwudzielną częścią $Q_n$.
    \end{theorem}
-   \begin{proof}%TODO może rozwinąć o ten przypadek szczególny.
+   \begin{proof}
     Łatwo rozpatrzyć wszystkie przypadki.
     
     Na wyróżnienie zasługują przypadki negatywne, które z dokładnością do automorfizmów kostki są dokładnie 2.
@@ -957,9 +960,9 @@ Instytut Informatyki}
    \begin{proof}
     (krótki szkic dowodu z pracy \cite{FG})\newline
     Dowód oparty jest na indukcji po wymiarze.
-    Podstawę indukcji stanowi twierdzenie \ref{tw o dlugich sciezkach, male n}.%TODO może prof. Rytter będzie wolał wyciąć ten długi fragment o 2n-6
+    Podstawę indukcji stanowi twierdzenie \ref{tw o dlugich sciezkach, male n}.
     Dla $n\ge6$, $|F|\le 2n-4$ można podzielić $Q_n$ na dwie kostki $Q_{n-1}$ wybierając jedną z $n$ współrzędnych 
-    i definiując podkostki $Q^0_{n-1}$ i $Q^1_{n-1}$ jako rozpięte przez wierzchołki mające na tej współrzędnej odpowiednio $0$ i $1$.
+    i definiując podkostki $Q^0_{n-1}$ i $Q^1_{n-1}$ jako podgrafy indukowane przez wierzchołki mające na tej współrzędnej odpowiednio $0$ i $1$.
     
     Dla $|F|\le 2n-5$ łatwo jest dobrać współrzędną tak, żeby każda z podkostek miała co najwyżej $2n-6=2(n-1)-4$ wadliwych wierzchołków
     (wystarczy wybrać dowolne $f_1,f_2\in F$ i podzielić według jednej ze współrzędnych różniących ich ciągi binarne).
@@ -1044,39 +1047,42 @@ Instytut Informatyki}
    
  \chapter{Ścieżka i cykl Hamiltona}\label{Ham}
   \section{Kostka bez wadliwych wierzchołków}
+   \begin{center}
+    \includegraphics[scale=0.5]{img/Q4_hamilton.jpg}
+   \end{center}
    Pełna kostka $Q_n$ ($n\ge2$) jest grafem hamiltonowskim (posiadającym cykl Hamiltona)
    -- bardzo wiele różnych cykli Hamiltona można uzyskać już łącząc dwa cykle
    z podkostek $Q_{n-1}$ (wystarczy, że w dwóch takich cyklach jest taka sama krawędź).
-   %TODO łączna ilość cykli%
    Cykle hamiltona na hiperkostce mają również zastosowania praktyczne. Jednym z przykładów użycia takich cykli są kody Graya
-   -- ciągi wektorów binarnych określonej długości, które zawierają wyszytkie takie wektory, oraz posiadają tą własność,
-   że dwa sąsiednie wektory różnią się tylko na jednej pozycji. Kody te znajdują zastosowanie między innymi przy minimalizacji kodowania i obwodów binarnych,
+   -- ciągi wszystkich wektorów binarnych określonej długości (po dokładnie raz), których sąsiednie wyrazy różnią się na dokładnie jednym bicie.
+   Kody te znajdują zastosowanie między innymi przy efektywnej iteracji, minimalizacji kodowania i obwodów binarnych,
    oraz w algorytmach genetycznych i kodach korekcyjnych.\newline
    Pojawia się pytanie, czy po usunięciu kilku wierzchołków nadal da się zbudować takie cykle lub chociaż ścieżki Hamiltona.
   \section{Ogólne podejście do problemu}
-   W przypadku ogólnym sprawdzenie, czy graf posiada cykl Hamiltona jest problemem NP--zupełnym, dlatego przy dowolnym wyborze zbioru wierzchołków usuniętych
+   Sprawdzenie czy graf posiada cykl Hamiltona jest problemem NP--zupełnym, dlatego przy dowolnym wyborze zbioru wierzchołków usuniętych
    ciężko spodziewać się algorytmu w czasie $O(2^n)$, a co dopiero w $O(n^c)$. Jeśli jednak zbiór usuniętych wierzchołków
-   jest odpowiednio mały lub tworzy graf z jakiejś wąskiej klasy, to istnieją dowody istnienia takiego cyklu.
-   
+   jest odpowiednio mały lub tworzy graf z jakiejś wąskiej klasy, to istnieją dowody posiadania takiego cyklu przez wadliwą hiperkostkę.
    \begin{defi}\label{graf zbalansowany}
     Graf dwudzielny nazywamy \emph{zbalansowanym} jeśli jego dwie części dwudzielne mają ten sam rozmiar,
     zaś \emph{prawie zbalansowanym} jeśli ich rozmiary różnią się o 1.
    \end{defi}    
    
-   Hiperkostka jest grafem dwudzielnym, więc i po usunięciu części wierzchołków takim pozostanie,
-   jako że dowolny cykl w takim grafie odwiedza tyle samo wierzchołków w obu częściach dwudzielnych (z krotnościami),
+   Hiperkostka jest grafem dwudzielnym, więc i po usunięciu części wierzchołków takim pozostanie.
+   Jako że dowolny cykl w takim grafie odwiedza tyle samo wierzchołków w obu częściach dwudzielnych (z krotnościami),
    to podstawowym warunkiem koniecznym jest to, żeby z obu tych części usunąć dokładnie tyle samo wierzchołków.
    W przypadku ścieżki Hamiltona koniecznym jest żeby graf był zbalansowany lub prawie zbalansowany.
    
-   \begin{defi}\label{Hamiltonian lacable}%TODO
-    Graf dwudzielny (z częściami $U$ i $v$) nazywamy hamiltonowsko wiązalnym jeśli:
+   \begin{defi}\label{Hamiltonian lacable}
+    Graf dwudzielny (z częściami $U$ i $V$) nazywamy hamiltonowsko wiązalnym (Hamiltonian laceable) jeśli zachodzi jeden z warunków:
     \begin{itemize}
      \item jest zbalansowany i dla każdej pary $u\in U,v\in V$ istnieje ścieżka Hamiltona z $u$ do $v$.
-     \item jest prawie zbalansowany i dla każdej pary $u,u'\in U$ (gdzie $U$ to ta większ składowa) istniała ścieżka Hamiltona
-      z $u$ do $v$.
+     \item jest prawie zbalansowany i dla każdej pary $u,u'\in U$ (gdzie $U$ to ta większa składowa) istnieje ścieżka Hamiltona
+      z $u$ do $u'$.
     \end{itemize}
    \end{defi}
-   Jeśli graf jest zbalansowany i hamiltonowsko wiązalny, to istnieje w nim cykl Hamiltona (jeśli ma więcej niż 2 wierzchołki).\newline
+   \noindent
+   Jeśli graf jest zbalansowany i hamiltonowsko wiązalny, to istnieje w nim cykl Hamiltona (jeśli ma więcej niż 2 wierzchołki) -- wystarczy jako $u$ i $v$ wybrać
+   wierzchołki połączone krawędzią.\newline
    Hiperkostka jest grafem hamiltonowsko wiązalnym.\newline
 
    W 2001 Stephen Locke postawił hipotezę:
@@ -1088,7 +1094,7 @@ Instytut Informatyki}
    a w 2009 podane zostało ich uzupełnienie -- dowód indukcyjny po $n$ w pracy \cite{Locke}, który jednak po kilka przypadków granicznych odsyła
    do drugiej pracy, którą autorzy mają dopiero opublikować.
    
-  \section{Dowody dla szczególnych przypadków F}
+  \section{Szkice dowodów dla szczególnych przypadków}
    \begin{defi}\label{podgraf izometryczny}
     Podgraf H grafu G nazywamy \emph{izometrycznym} jeśli $d_H(u,v)=d_G(u,v)$ dla każdych $u,v\in V(H)$.
    \end{defi}
@@ -1107,43 +1113,49 @@ Instytut Informatyki}
      Pozostałe kostki łączymy parami, razem z cyklami (wystarczy wybrać taką samą krawędź w obu i dokonać "przepięcia") -- wszystkie tak samo.
      Cykl z wadliwej hiperkostki ma tylko jedną krawędź, której nie ma w innych cyklach -- można dokonać połączenia wadliwej $Q_{m+1}$ z całą i dalej aż
      do otrzymania $Q_n-F$ z cyklem Hamiltona.\newline
-     Dla $m=1$ postępujemy analogicznie, jednak po pierwszym kroku otrzymana $Q_2-Q_1$ nie ma cyklu a jedynie ścieżkę Hamiltona, jednak dalej $Q_3-Q_1$
-     posiada już cykl Hamiltona, który można przedłużyć na cykl Hamiltona na $Q_3$ zawierający tę krawędź z $Q_2-Q_1$. Dalej można postępować już tak samo
-     -- zawsze da się wybrać krawędź według której można dokonać "przepięcia".
+     Dla $m=1$ postępujemy analogicznie, jednak po pierwszym kroku otrzymana $Q_2-Q_1$ nie ma cyklu a jedynie ścieżkę Hamiltona. $Q_3-Q_1$
+     posiada już jednak cykl Hamiltona który można przedłużyć do cyklu Hamiltona na $Q_3$ zawierający tę krawędź z $Q_2-Q_1$.
+     Dalej można postępować już tak samo -- zawsze da się wybrać krawędź według której można dokonać "przepięcia".
     \end{proof}
-    Podobnym sposobem można otrzymać cykle dla $F$ równemu sumie kilku kostek ($m\ge2$), które nie są połączone (tak długo, jak jest ich na tyle mało,
+    Podobnym sposobem można otrzymać cykle dla $F$ równego sumie kilku kostek ($m\ge2$), które nie są połączone (tak długo, jak jest ich na tyle mało,
     aby dało się wybierać krawędzie do "przepięcia" -- to da się sprawdzić algorytmem wielomianowym od $n$ i $F$).\newline
    
    Poniżej przedstawię szkice dowodów twierdzeń dla innych szczególnych przypadków $F$ opisanych w pracy \cite{Pegr}.
-   Ze względu na liczność mało istotnie różniących się przypadków po obrazki i dokładne opisy wyborów wierzchołków,
-   które łączymy ścieżkami Hamiltona w podkostkach odsyłam to tejże pracy.
+   Ze względu na liczność mało istotnie różniących się przypadków po dokładne obrazki i opisy wyborów wierzchołków,
+   które łączymy ścieżkami Hamiltona w podkostkach odsyłam do tejże pracy.
    \subsection{Ścieżka izometryczna}
     \begin{fact}\label{sciezka izo - rozne kierunki}
      W ścieżce izometrycznej w $Q_n$ każda z krawdzi ma inny kierunek, a więc ścieżka taka może mieć długość co najwyżej $n$.
     \end{fact}
     \begin{proof}
-     Gdyby dwie krawędzie miały ten sam kierunek, to wierzchołki z początku pierwszej i końca drugiej można w $Q_n$ połączyć ścieżką o 2
-     (przesunięta ścieżka spomiędzy tych dwóch krawędzi).
+     Gdyby dwie krawędzie miały ten sam kierunek, to w $Q_n$ można by było połączyć początek i koniec ścieżki inną ścieżką, krótszą o 2
+     (krawędzi o tych samych kierunkach, oprócz tych dwóch powtarzających się).
     \end{proof}
-    \begin{theorem}\label{hamilton - sciezka, nieparz} %TODO zamienić graf rozpinany przez zbiór wierzchołków, na graf indukowany -- w innych miejscach pracy
+    \begin{theorem}\label{hamilton - sciezka, nieparz}
      Dla $F\subseteq V(Q_n)$ indukujacego ścieżkę izometryczną nieparzystej długości $Q_n-F$ jest hamiltonowsko wiązalna jeśli $n\ge4$.
     \end{theorem}
     \begin{proof}
-     Przypadek ścieżki długości $1$ indukcyjnie po $n$ -- dzielimy kostkę na dwie w kierunku $i$ -- innym niż ten krawędzi ścieżki usuniętej.
-     Jedna podkostka jest pełna, zaś w drugiej jest usunięta ścieżka. Jeśli wierzchołki $u$ i $v$ tóre chcemy połączyć należą do tej samej
-     podkostki, to łączymy je ścieżką Hamiltona w tej części na podstawie indukcji. Wybieramy dwa kolejne wierzchołki na tej ścieżce,
-     nie będące w $Q_n$ sąsiadami $F$ w kierunku $i$, i łączymy w drugiej części ścieżką Hamiltona ich sąsiadów w tym kierunku.\newline
-     Jeśli dwa wierzchołki są w różnych częściach, wystarczy wybrać dowolną parę wierzchołków, takich że: są sąsiadami w kierunku $i$, są rózne od
-     $u$ i $v$, oraz należą do innych dwuspójnych składowych niż wierzchołek $u$ lub $v$ z ich części
-     -- można wtedy znaleźć ścieżki Hamiltona w obu częściach pomiędzy wierzchołkami $u$ i $v$ oraz tymi wybranymi i je połączyć.\newline
+     Dla ścieżek długości większej niż $1$ zakładamy indukcyjnie hipotezę dla mniejszych kostek.
+     Dzielimy hiperkostkę na dwie względem kierunku drugiej krawędzi na ścieżce. W każdej podkostce znajduje się część ścieżki,
+     która jest izometryczną nieparzystą ścieżką, więc obydwie wadliwe podkostki są zbalansowane.
      
-     Dla ścieżki większej długości dzielimy hiperkostkę na dwie względem kierunku drugiej krawędzi na ścieżcę. W każdej podkostce znajduje się część ścieżki,
-     która jest izometryczną nieparzystą ścieżką. Ścieżkę Hamiltona uzyskujemy jak poprzednio -- przy rozbiciu na dwa przypadkii łączeniu ścieżek z podkostek.
+     Problem rozbijamy na dwa przypadki -- w pierwszym wierzchołki $u$ i $v$, które chcemy połączyć ścieżką Hamiltona znajdują się w różnych podkostkach.
+     Wystarczy wtedy wybrać parę wierzchołków odpowiadających sobie w podkostkach, o tych własnościach, że żaden nie jest wadliwy, są różne od $u$ i $v$, oraz
+     są w innych dwuspójnych częściach niż $u$ lub $v$ z ich podkostki. Ze względu na ilość wierzchołków zawsze da się znaleźć taką parę,
+     a z warunku indukcyjnego istnieją odpowiednie ścieżki Hamiltona w podkostkach.
+     
+     W przypadku gdy $u$ i $v$ wylądują w jednej podkostce, można je w niej połączyć ścieżką Hamiltona i w odpowiednim miejscu
+     (wzdłuż dowolnej krawędzi ścieżki Hamiltona, która istnieje w drugiej wadliwej podkostce) dopiąć ścieżkę Hamiltona z drugiej podkostki.
+     \begin{center}
+      \includegraphics[scale=0.75]{img/Q_hamilton_p1.jpg}\quad\quad\quad\quad
+      \includegraphics[scale=0.75]{img/Q_hamilton_p2.jpg}
+     \end{center}
+     Dla ścieżki długości $1$ dowód przebiega tak samo, z tym wyjątkiem, że w jednej podkostce ląduje cała ścieżka, zaś druga jest wolna od wad.
      Przypadek $n=4$ jest natomiast rozważany ręcznie
-     (tam są możliwe tylko 2 takie ścieżki z dokładnością do zmiany wierzchołka początkowego i permutacji współrzędnych).
+     (tam są możliwe tylko 2 takie ścieżki z dokładnością do automorfizmów kostki).
     \end{proof}
     \begin{theorem}\label{hamilton - sciezka, parz}
-     Dla $F\subseteq V(Q_n)$ indukujacego ścieżkę izometryczną parzystej długości ($\ge2$) $Q_n-F$ jest hamiltonowsko wiązalna jeśli $n\ge5$.
+     Dla $F\subseteq V(Q_n)$ indukujacego ścieżkę izometryczną parzystej długości $Q_n-F$ jest hamiltonowsko wiązalna jeśli $n\ge5$.
     \end{theorem}
     \begin{proof}
      Ponownie indukcynie po $n$, tym razem dzieląc kostkę w kierunku pierwszej krawędzi ścieżki -- zostawiając w pierwszej podkostce pojedynczy wadliwy wierzchołek,
@@ -1154,7 +1166,7 @@ Instytut Informatyki}
     \end{proof}
     \begin{remark}
      Na podstawie \cite{SCJY} prawdziwe jest mocniejsze stwierdzenie:\newline
-     Niech $P$ będzie ścieżką w długości $\le 2n-4$ w grafie $Q_n$, wtedy $Q_n-P$ jest hamiltonowsko wiązalna.
+     Niech $P$ będzie dowolną ścieżką długości $\le 2n-4$ w grafie $Q_n$, wtedy $Q_n-P$ jest hamiltonowsko wiązalna.
     \end{remark}
    \subsection{Cykl izometryczny}
     \begin{remark}\label{cykl izometryczny - drugie pol powtorka}
@@ -1170,25 +1182,28 @@ Instytut Informatyki}
      Niech $C$ będzie izometrycznym cyklem w $Q_n$ ($n\ge6$), o długości $2k$ podzielnej przez $4$, wtedy $Q_n-P$ jest hamiltonowsko wiązalna.
     \end{theorem}
     \begin{proof}
-     Zaczynamy od podzielenia hiperkostki na dwie w kierunku wyznaczonym przez pierwszą (dolowlnie wybraną) krawędź cyklu.
-     W obu kostkach znajduje się wadliwa izometryczna ścieżka długości nieparzystej, a więc z tiwerdzenia \ref{hamilton - sciezka, nieparz}
-     obie są hamiltonowsko wiązalne. Podobnie jak wcześniej wystarczy rozważyć dwa przypadki. Jeśli dwa wierzchołki $u$ i $v$
-     które chcemy połączyć ścieżką Hamiltona należą do różnych podkostek,
-     to wystarczy dobrać po jednym wierzchołku z podkostek, tak żeby te wierzchołki były sąsiadami, były różne od $u$ i $v$ i należały do odpowiednich
-     części dwuspójnych -- tworzymy ścieżki w podkostkach i łączymy je ze sobą. Jeśli zaś $u$ i $v$ należą do tej samej podkostki,
-     to wystarczy na ścieżce Hamiltona pomiędzy nimi wybrać dowolną krawędź, taką że sąsiedzi jej końców z drugiej hiperkostki nie są wadliwi --
-     pomiędzy tymi sąsiadami wyznaczamy ścieżkę w drugiej podkostce i "dopinamy" do ścieżki z pierwszej podkostki.
+     Zaczynamy od podzielenia hiperkostki na dwie w kierunku wyznaczonym przez pierwszą (dowolnie wybraną) krawędź cyklu.
+     W obu kostkach znajduje się wadliwa izometryczna ścieżka długości nieparzystej, a więc z twierdzenia \ref{hamilton - sciezka, nieparz}
+     obie są hamiltonowsko wiązalne. Podobnie jak wcześniej wystarczy rozważyć dwa przypadki w zależności od tego czy
+     $u$ i $v$ wpadają do różnych, czy do tej samej podkostki. W obu przypadkach parę wierzchołków do połączenia ścieżek, czy krawędź do podpięcia
+     cyklu wybieramy analogicznie jak w dowodzie twierdzenia \ref{hamilton - sciezka, nieparz}.
+     \begin{center}
+      \includegraphics[scale=0.75]{img/Q_hamilton_c1.jpg}\quad\quad\quad\quad
+      \includegraphics[scale=0.75]{img/Q_hamilton_c2.jpg}
+     \end{center}
     \end{proof}
    \subsection{Drzewo izometryczne}
     \begin{remark}\label{drzewo izo - kierunek tylko raz}
      W drzewie izometrycznym w $Q_n$ każda z krawędzi ma inny kierunek.
     \end{remark}
     \begin{proof}
-     W przeciwnym przypadku istnieją dwie krawędzie o tym samym kierunku -- w drzewie jest ściężka, która zawiera obie krawędzie, co daje sprzeczność z lematem
+     Załóżmy, że istnieją dwie krawędzie w tym samym kierunku. Wynika z tego, że w drzewie jest ścieżka,
+     która zawiera obie krawędzie, co daje sprzeczność z lematem
      \ref{sciezka izo - rozne kierunki} (w drzewie każde dwa wierzchołki są połączone tylko jedną ścieżką, więc nie ma innej krótszej).
     \end{proof}
     \begin{remark}\label{drzewo izo zbal - ma liść z V}
-     W niepustym drzewie zbalansowanym, lub prawie zbalansowanym z przewagą w części dwudzielnej $V$ jest liść zawarty w tej składowej.
+     Drzewo jest grafem dwudzielnym o częściach $U$ i $V$. Jeśli niepuste drzewo jest zbalansowane, lub prawie zbalansowane z przewagą w $V$,
+     to do $V$ należy pewien jego liść.
     \end{remark}
     \begin{proof}
      Nie wprost -- jeśli w drzewie każdy liść należy do dwudzielnej części $U$, to można wybrać dowolny wierzchołek z $v\in V$ jako korzeń.
@@ -1199,24 +1214,29 @@ Instytut Informatyki}
      Dla zbalansowanego drzewa $T$ izometrycznego w $Q_5$ graf $Q_5-T$ jest hamiltonowsko wiązalny.
     \end{lemma}
     Lemat można sprawdzić ręcznie lub komputerowo (są tylko dwa takie drzewa nie będące ścieżkami z dokładnością do umiejscowienia w kostce).
+     \begin{center}
+      \includegraphics[scale=0.5]{img/Q_hamilton_t1.jpg}\quad\quad\quad\quad
+      \includegraphics[scale=0.5]{img/Q_hamilton_t2.jpg}
+     \end{center}
     \begin{theorem}\label{Hamilton - drzewo izo}
      Dla $T$ zbalansowanego lub prawie zbalansowanego drzewa izometrycznego w $Q_n$ graf $Q_n-T$ jest hamiltonowsko wiązalny dla $n\ge5$
      (w przypadku zbalansowanego wystarczy $n\ge4$).
     \end{theorem}
     \begin{proof}
      Dowód przez indukcję po rozmiarze hiperkostki. Jako krok bazowy można traktować lemat \ref{Q_5-izo tree hamilton}, przypadek drzewa prawie zbalansowanego
-     (w $Q_5$ istnieje takie tylko jedno nie będące ścieżką) i zbalansowanego dla $n=4$ (tu są tylko ścieżki) można rozpatrzyć analogicznie dla tamtego przypadku.
+     (w $Q_5$ istnieje takie tylko jedno nie będące ścieżką) i zbalansowanego dla $n=4$ (tu są tylko ścieżki) można rozpatrzyć analogicznie do tamtego.
      W kroku indukcyjnym dla drzewa zbalansowanego korzystamy z wymiaru o $1$ mniejszego i drzewa prawie zbalansowanego 
-     zaś dla drzewa prawie zbalansowanego korzystamy z poprzedniego kroku dla drzewa zbalansowanego.
-     Dla drzewa prawie zbalansowanego na podstawie uwagi \ref{drzewo izo zbal - ma liść z V} wybieramy liść
-     z części dwudzielnej w której ma ono więcej wierzchołków i dzielimy hiperkostkę na dwie mniejsze według kierunku krawędzi drzewa
-     wchodzącej do tego wierzchołka. Otrzymujemy w ten sposób w jednej podkostce pojedynczy wadliwy wierzchołek (jak w dowodach poprzednich twierdzeń)
-     oraz w drugiej drzewo izometryczne zbalansowane. Jak we wcześniejszych dowodach w zależności od tego w których podkostkach znajdują się wierzchołki
-     które chcemy połączyć ścieżką Hamiltona tworzymy ścieżki w podkostkach i łączymy je. Dla drzewa zbalansowanego postępujemy analogicznie z tą różnicą,
-     że wybór liścia jest dowolny.
+     zaś dla drzewa prawie zbalansowanego korzystamy z drzewa zbalansowanego w kostce o mniejszym wymiarze.
+     Na podstawie uwagi \ref{drzewo izo zbal - ma liść z V} wybieramy liść z części dwudzielnej w której drzewo
+     ma co najmniej połowę wierzchołków i dzielimy mniejsze według kierunku krawędzi drzewa wchodzacej do tego wierzchołka.
+     Otrzymujemy w ten sposób w jednej podkostce pojedynczy wadliwy wierzchołek (jak w dowodach poprzednich twierdzeń)
+     oraz w drugiej izometryczne drzewo zbalansowane lub prawie zbalansowane.
+     
+     Jak we wcześniejszych dowodach rozpatrujemy przypadki w zależności od tego w których podkostkach znajdują się wierzchołki
+     które chcemy połączyć ścieżką Hamiltona, tworzymy odpowiednie ścieżki w podkostkach i łączymy je.
     \end{proof}
 
-  \chapter{Maksymalna ścieżka indukowana}%TODO sprawdzić czy zawsze nazywam tak samo współrzędne (od 0 do n-1), w innych podrozdziałach też
+  \chapter{Maksymalna ścieżka indukowana}
    \begin{defi}\label{srednica grafu}
     \emph{Średnicą grafu} nazywamy największą odległość pomiędzy jego dwoma wierzchołkami $d(G)=\max\limits_{u,v\in V(G)}d(u,v)$.
    \end{defi}
@@ -1246,8 +1266,8 @@ Instytut Informatyki}
      (gdzie $F_n$ to $n$-ty wyraz ciągu Fibonacciego: $F_0=F_1=1$), która jest podgrafem indukowanym hiperkostki.
      Co więcej prefiks długości $F_{n}$ jest takim ciągiem dla $n-1$ (po odrzuceniu ostatniej współrzędnej wektorów).
     \end{theorem}
-    \begin{proof}%TODO nazywam ścieżkę P_n - a to oznaczenie ścieżki o długości n
-     Na potrzeby dowodu nazwę taką ścieżkę $P_n$.
+    \begin{proof}
+     Na potrzeby dowodu nazwę taką ścieżkę $S_n$.
      Dowód tradycyjnie przez indukcję po wymiarze -- dla $n\in\{0,1,2,3,4\}$ konstrukcja jest widoczna na rysunkach:\newline
      \hspace*{0pt}\includegraphics[scale=0.6]{img/Q0_long_path.jpg}
      \hspace*{12pt}\includegraphics[scale=0.6]{img/Q1_long_path.jpg}
@@ -1257,14 +1277,14 @@ Instytut Informatyki}
      Dla tak małych wymiarów jest to jedyny z dokładnością do wyboru punktu początkowego i przepermutowania współrzędnych sposób uzyskania ścieżki tej długości.
      Już na tych przypadkach widać, że ścieżka tak powstała wygląda identycznie od początku i od końca
      (przy zamianie punktów początkowego i końcowego oraz przepermutowaniu współrzędnych). Dodatkowo widać też,
-     że tylko 3 podkostki $Q_{n-2}$ zawierają wybrane do ścieżki wierzchołki, dokładniej pierwsza podkostka zawiera $P_{n-2}$, druga $P_{n-3}$
-     i trzecia znów $P_{n-2}$ (znów "z dokładnością").\newline
-     Konstrukcja indukcyjna $P_n$ przebiega następująco:\newline
-     Startuję od $P_{n-1}$, który nie używa tylko współrzędne od $0$ do $n-2$, kolejnym wierzchołkiem w ciągu będzie sąsiad aktualnie ostatniego w kierunku
-     $n-1$. Mam dane już ponad pół kostki, jeśli więc chcę uzyskać $P_n$ takie samo od początku jak i od końca wystarczy znaleźć odpowiednnią permutację.
+     że tylko 3 podkostki $Q_{n-2}$ zawierają wybrane do ścieżki wierzchołki, dokładniej pierwsza podkostka zawiera $S_{n-2}$, druga $S_{n-3}$
+     i trzecia znów $S_{n-2}$ (znów "z dokładnością").\newline
+     Konstrukcja indukcyjna $S_n$ przebiega następująco:\newline
+     Startuję od $S_{n-1}$, który nie używa tylko współrzędne od $0$ do $n-2$, kolejnym wierzchołkiem w ciągu będzie sąsiad aktualnie ostatniego w kierunku
+     $n-1$. Mam dane już ponad pół kostki, jeśli więc chcę uzyskać $S_n$ takie samo od początku jak i od końca wystarczy znaleźć odpowiednnią permutację.
      Co do tej nowej części mamy pewną dowolność przy wyborze permutacji, jednak musi się ona zgadzać na tej środkowej części
-     ($P_{n-2}$ zaczynające się po krawędzi w kierunku $n-3$, a kończące przed dostawioną $n-2$ -- te współrzędne zostaną ze sobą zamienione w permutacji
-     i w całej ścieżce $P_n$ krawędzie w tych kierunkach występują tylko po razie). Z kroku indukcyjnego $P_{n-2}$ jest symetryczne w ten sposób,
+     ($S_{n-2}$ zaczynające się po krawędzi w kierunku $n-3$, a kończące przed dostawioną $n-2$ -- te współrzędne zostaną ze sobą zamienione w permutacji
+     i w całej ścieżce $S_n$ krawędzie w tych kierunkach występują tylko po razie). Z kroku indukcyjnego $S_{n-2}$ jest symetryczne w ten sposób,
      więc istnieje odpowiednia permutacja na kierunkach w niej używanych, wystarczcy więc ją rozszerzyć od tą zamianę $n-1$ z $n-2$
      (i formalnie dowolnie uzupełnić o kierunki w niej nie występujące, choć tak na prawdę takich nie ma).
      Z konstrukcji wynika, że zbudowana tak ścieżka posiada własność: dowolne dwa wierzchołki ze ścieżki są sąsiadami w hiperkostce
@@ -1296,10 +1316,10 @@ Instytut Informatyki}
      Ma ona długość 13, jest więc o 1 dłuższa od ścieżki otrzymanej na podstawie twierdzenia \ref{co najmniej fibo}
     \end{remark}
     Aby znaleźć możliwie najdłuższe ścieżki dla większych $n$ przeprowadziłem eksperymenty przy pomocy komputera.
-    Wyszukiwanie ścieżek prowadziłem startując od wierzchołka $(0,...,0)$ i dobierając do istniejącej ścieżki nowy wierzchołek,
+    Wyszukiwanie ścieżek prowadziłem startując od wierzchołka $\overline{0}$ i dobierając do istniejącej ścieżki nowy wierzchołek,
     który jest sąsiadem aktualnego końca i nie jest sąsiadem żadnego poprzedniego, aż do momentu, gdy taki wybór nie jest możliwy 
     -- w ten sposób otrzymuje "grę". Znalezienie wszystkich możliwych ścieżek otrzymywalnych w ten sposób
-    (a są to wszystkie takie poprawne ścieżki, które zaczynają się w wierzchołku $(0,...,0)$) otrzymywane jest poprzez przejrzenie
+    (a są to wszystkie takie poprawne ścieżki, które zaczynają się w wierzchołku $\overline{0}$) otrzymywane jest poprzez przejrzenie
     drzewa gry, której wierzchołkami są ścieżki, zaś ścieżki w przodkach tego wierzchołka są jej prefiksami.
     Drzewo tej gry ma maksymalny stopień rozgałęzienia równy $n$, zaś głębokość $|P|$.\newline
     Daje to złożoność algotyrmu przeglądającego wszystkie ściężki mocno pesymistycznie ograniczoną przez $O(n^{|P|})$. Nawet po zastosowaniu
@@ -1461,8 +1481,8 @@ Instytut Informatyki}
       $Q_n$ dzielimy na kostki wymiaru $5$ otrzymując graf $Q_{n-5}\times Q_5$. W grafie $Q_{n-5}$ bierzemy cykl Hamiltona otrzymany indukcyjnie:
       dla $n-5=2$ jedyny możliwy ($(0,0)\rightarrow(0,1)\rightarrow(1,1)\rightarrow(1,0)\rightarrow(0,0)$),
       dalej dla otrzymania cyklu dla $Q_{m+1}$ bierzemy dwie kostki $Q_m$ z takimi cyklami i łączymy je usuwając krawędź, która wchodzi do wierzchołka
-      $(0,...,0)$ i łącząc te dwie ścieżki w jeden cykl w $Q_{m+1}$ (konstrukcja jak w rozdziale \ref{Ham}).
-      Kostki $Q_5$ występujące na tym cyklu można ponumerować startując od $(0,...,0)$ w kierunku $(0,...,0,1)$.\newline
+      $\overline{0}$ i łącząc te dwie ścieżki w jeden cykl w $Q_{m+1}$ (konstrukcja jak w rozdziale \ref{Ham}).
+      Kostki $Q_5$ występujące na tym cyklu można ponumerować startując od $\overline{0}$ w kierunku $(0,...,0,1)$.\newline
       Kolejnym krokiem jest zdefiniowanie ciągu $2^{n-5}$ ścieżek indukowanych w $Q_5$ (ponumerowanych według cyklu Hamiltona)
       spełniających następujące własności:
       \begin{itemize}
@@ -1517,29 +1537,25 @@ Instytut Informatyki}
     \end{remark}
 
 
- 
-    %TODO sprobowac sprawdzic czy nie da sie opisac zbioru nieodwiedzanych przez dluga sciezke - ktory jest wielomianowy (rozdzial o dlugich sciezkach i cyklach)
-  
-  
-\begin{thebibliography}{99}%TODO dziwne litery , upcase?
-\addcontentsline{toc}{chapter}{Bibliografia}
+\begin{thebibliography}{99}
+\addcontentsline{toc}{chapter}{Bibliografia}%TODO usunąć niepasujące
 
-  \bibitem{LPV} L. Lovasz, J. Pelikan and K. Vesztergombi.
-   "Discrete Mathematics, Elementary and Beyond."
+  \bibitem{LPV} L. Lov\'{a}sz, J. Pelik\'{a}n and K. Vesztergombi.
+   "Discrete Mathematics: Elementary and Beyond."
    \textit{Undergraduate Texts in Mathematics. New York: Springer, first edition, 2003}   
 
-  \bibitem{HAR} L. H. HARPER,
+  \bibitem{HAR} L. H. Harper,
    "Optimal Numberings and Isoperimetric Problems on Graphs"
-   \textit{JOURNAL OF COMBINATORIAL THEORY 1, 385-393 (1966)}
+   \textit{Journal of Combinatorial Theory 1, 385-393 (1966)}
    
   \bibitem{HHH} Frank Harary, John P. Hayes and Horng--Jyh Wu,
-   "A survey of theory of hypercube graphs"
+   "A survey of the theory of hypercube graphs"
    \textit{Comput. Math. Applic. Vol. 15, No 4, pp. 277-289, 1988}
    
-  \bibitem{DFGKR} Tomas Dvorak, Jirı Fink, Petr Gregor, Vaclav Koubek and Tomasz Radzik,
+  \bibitem{DFGKR} Tom\'{a}\v{s} Dvo\v{r}\'{a}k, Ji\v{r}\'{\i} Fink, Petr Gregor, V\'{a}clav Koubek and Tomasz Radzik,
    "Efficient connectivity testing of hypercubic networks with faults"
    
-  \bibitem{FG} Jirı Fink and Petr Gregor,
+  \bibitem{FG} Ji\v{r}\'{\i} Fink and Petr Gregor,
    "Long paths and cycles in hypercubes with faulty vertices"
    
   \bibitem{Wie} G. Wiener,
@@ -1547,17 +1563,17 @@ Instytut Informatyki}
    \textit{In Proceedings of European Conferenc on Combinatorics, Graph Theory and Applications (EuroComb 2007), volume 29 of
    Electronic Notes in Discrete Mathematics, pages 491–495, 2007.}
    
-  \bibitem{FG2} Jirı Fink and Petr Gregor,
+  \bibitem{FG2} Ji\v{r}\'{\i} Fink and Petr Gregor,
    "Long pairs of paths in faulty hypercubes"
   
-  \bibitem{Locke} Nelson Casenada and Ivan S. Gotchev,
+  \bibitem{Locke} Nelson Casta\~{n}eda and Ivan S. Gotchev,
    "Proof of Locke's Conjecture, I"
 
-  \bibitem{Pegr} David Pegrimek,
+  \bibitem{Pegr} David P\v{e}g\v{r}\'{\i}mek,
    "Hamiltonian cycles in hypercubes with removed vertices",
-   \textit{Prague 2013}
+   \textit{Charles University, Prague 2013}
   
-  \bibitem{SCJY}Sun, Chao-Ming and Jou, Yue-Dar,
+  \bibitem{SCJY} Sun, Chao-Ming and Jou, Yue-Dar,
    "Hamiltonian laceability of hypercubes with some faulty elements",
    \textit{In Proceedings of 2009 IEEE International Conference on Networking, Sensing and Control, Okayama, Japan,
    March 26-29, 2009, pp.626-630}
@@ -1571,14 +1587,14 @@ Instytut Informatyki}
    \textit{Journal of combinatorial theory 2, 258-265 (1967)}
 
   \bibitem{Snake2} J. Wojciechowski,
-   "A NEW LOWER BOUND FOR SNAKE-IN-THE-BOX CODES",
+   "A new lower bound for Snake-in-the-Box Codes",
    \textit{Combinatorica 9 (1) (1989) 91--99}
   
-  \bibitem{Snake3}F. I. Solov'jeva ,
+  \bibitem{Snake3} F. I. Solov'jeva ,
    "Upper bound for the length of a cycle in an n-dimensional unit cube",
    \textit{Methods of Diskrete Analiz 45 (1987)}
 
-  \bibitem{Snake4}Hunter S. Snevily ,
+  \bibitem{Snake4} Hunter S. Snevily ,
    "The snake-in-the-box problem: A new upper bound",
    \textit{Discrete Mathematics 133 (1994) 307-314}
    
@@ -1592,20 +1608,13 @@ Instytut Informatyki}
   \bibitem{RS} Wojciech Rytter $\&$ Bartosz Szreder,
    "Wprowadzenie do kombinatoryki algorytmicznej"
    
-  \bibitem{Knuth} DONALD E. KNUTH,
+  \bibitem{Knuth} Donald E. Knuth,
    "Generating All Tuples and Permutations"
-   \textit{THE ART OF COMPUTER PROGRAMMING VOLUME 4, FASCICLE 2}
+   \textit{The Art of Computer Programming volume 4, fascicle 2}
   
-  \bibitem{Ruskey} FRANK RUSKEY,
+  \bibitem{Ruskey} Frank Ruskey,
    "Combinatorial Generation"
    \textit{Working Version, October 1, 2003}
-
-  \bibitem{SW} Tibor Szabo, Emo Weltz,
-   "Unique Sink Orientations of Cubes"
-   
-  \bibitem{Wong} Chi Him Wong,
-   "Novel universal cycle constructions for a variety of combinatorial objects"
-   \textit{Guelph, Ontario, Canada, April, 2015}
    
 \end{thebibliography}
 
