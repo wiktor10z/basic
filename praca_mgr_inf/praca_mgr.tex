@@ -37,7 +37,7 @@ Instytut Informatyki}
 \keywords{???}
 
 \newtheorem{theorem}{Twierdzenie}[chapter]
-\newtheorem{defi}[theorem]{Definicja} %TODO może wprowadzić nową rzecz - oznaczenie np. dla [n], czy u\Delta v
+\newtheorem{defi}[theorem]{Definicja}
 \newtheorem{conjecture}[theorem]{Przypuszczenie}
 \newtheorem{lemma}[theorem]{Lemat}
 \newtheorem{remark}[theorem]{Uwaga}
@@ -1245,7 +1245,7 @@ Instytut Informatyki}
    Graf ten posiada również tę przyjemną własność, że przy losowym usuwaniu wierzchołków odległości pomiędzy nieusuniętymi wierzchołkami rzadko się zwiększają
    (w szczególności dla wierzchołków bardziej oddalonych).
    Przy intencjonalnym usuwaniu aby zwiększyć odległość pomiędzy dowolnymi dwoma wierzchołkami potrzeba usunąć co najmniej dwa wierzchołki
-   (w przypadku dowolnych wierzhcołków oddalonych o 2), zaś aby zwiększyć średnicę grafu należy usunąć co najmniej $n-1$ wierzchołków
+   (w przypadku dowolnych wierzchołków oddalonych o 2), zaś aby zwiększyć średnicę grafu należy usunąć co najmniej $n-1$ wierzchołków
    (wszystkich prócz jednego sąsiadów dowolnie wybranego wierzchołka).
    Aby uzyskać średnicę $n+2$ należy usunąć $2n-3$ wierzchołków
    (na przykład sąsiedzi wierzchołków numer $1$ i $2$ oprócz $4$ i siebie nawzajem przy numerowaniu klasycznym),
@@ -1254,15 +1254,16 @@ Instytut Informatyki}
    Zainspirowany tym postawiłem sobie pytanie jaką największą średnicę można uzyskać w ten sposób pozostawiając graf spójnym.
    Średnicę spójnego grafu $Q_n-F$ wyznacza najkrótsza ścieżka między pewnymi dwoma wierzchołkami, jeśli więc dla jakiegoś grafu uda się uzyskać
    taką maksymalną średnicę, to można wybrać tę ścieżkę i odrzucić wszystkie wierzchołki spoza niej (nie zmniejszając średnicy).
-   Oznacza, to że to maksimum po wszystkich grafach $Q_n-F$ jest uzyskiwane dla grafu będącego ścieżką.
+   Oznacza, to że maksimum po wszystkich grafach $Q_n-F$ jest uzyskiwane dla grafu będącego ścieżką indukowaną.
+   
    Ścieżka taka ma tę własność, że ciągi binarne sąsiadujących w niej wierzchołków różnią się na dokładnie jednej pozycji,
    natomiast dla dowolnych dwóch nie będących sąsiadami ciągi te muszą się różnić na co najmniej dwóch pozycjach.
-   Wyjściowy problem został więc zredukowany (okazał się równoważny) do problemu:\newline
-   Znajdź najdłuższy ciąg wektorów binarnych długości $n$,
+   Wyjściowy problem jest więc również równoważny problemowi:\newline
+   Znajdź najdłuższy ciąg wektorów binarnych długości $n$, taki
    że każde dwa sąsiednie wektory różnią się na co najmniej jednej pozycji, zaś każde dwa inne na co najmniej dwóch.
    \section{Ścieżka Fibonacciego}
     \begin{theorem}\label{co najmniej fibo}
-     Dla danego $n$ istnieje prosty algorytm konstruujący ciąg wektorów reprezentujący ścieżkę długości $F_{n+1}$,
+     Dla danego $n$ istnieje prosty algorytm konstruujący ciąg wektorów reprezentujący ścieżkę długości $F_{n+1}-1$,
      (gdzie $F_n$ to $n$-ty wyraz ciągu Fibonacciego: $F_0=F_1=1$), która jest podgrafem indukowanym hiperkostki.
      Co więcej prefiks długości $F_{n}$ jest takim ciągiem dla $n-1$ (po odrzuceniu ostatniej współrzędnej wektorów).
     \end{theorem}
@@ -1274,19 +1275,19 @@ Instytut Informatyki}
      \hspace*{12pt}\includegraphics[scale=0.6]{img/Q2_long_path.jpg}
      \hspace*{12pt}\includegraphics[scale=0.6]{img/Q3_long_path.jpg}
      \hspace*{12pt}\includegraphics[scale=0.6]{img/Q4_long_path.jpg}\newline
-     Dla tak małych wymiarów jest to jedyny z dokładnością do wyboru punktu początkowego i przepermutowania współrzędnych sposób uzyskania ścieżki tej długości.
+     Dla tak małych wymiarów jest to jedyny z dokładnością do automorfizmów hiperkostki sposób uzyskania ścieżki tej długości.
      Już na tych przypadkach widać, że ścieżka tak powstała wygląda identycznie od początku i od końca
-     (przy zamianie punktów początkowego i końcowego oraz przepermutowaniu współrzędnych). Dodatkowo widać też,
+     (po zamianie punktów początkowego z końcowym oraz przepermutowaniu współrzędnych). Dodatkowo widać też,
      że tylko 3 podkostki $Q_{n-2}$ zawierają wybrane do ścieżki wierzchołki, dokładniej pierwsza podkostka zawiera $S_{n-2}$, druga $S_{n-3}$
-     i trzecia znów $S_{n-2}$ (znów "z dokładnością").\newline
+     i trzecia znów $S_{n-2}$ (znów z dokładnością do automorfizmów).\newline
      Konstrukcja indukcyjna $S_n$ przebiega następująco:\newline
-     Startuję od $S_{n-1}$, który nie używa tylko współrzędne od $0$ do $n-2$, kolejnym wierzchołkiem w ciągu będzie sąsiad aktualnie ostatniego w kierunku
-     $n-1$. Mam dane już ponad pół kostki, jeśli więc chcę uzyskać $S_n$ takie samo od początku jak i od końca wystarczy znaleźć odpowiednnią permutację.
+     Startuję od $S_{n-1}$, który używa tylko współrzędne od $0$ do $n-2$, kolejnym wierzchołkiem w ciągu będzie sąsiad aktualnie ostatniego w kierunku
+     $n-1$. Mam dane już ponad pół ścieżki, jeśli więc chcę uzyskać $S_n$ takie samo od początku jak i od końca wystarczy znaleźć odpowiednią permutację.
      Co do tej nowej części mamy pewną dowolność przy wyborze permutacji, jednak musi się ona zgadzać na tej środkowej części
      ($S_{n-2}$ zaczynające się po krawędzi w kierunku $n-3$, a kończące przed dostawioną $n-2$ -- te współrzędne zostaną ze sobą zamienione w permutacji
      i w całej ścieżce $S_n$ krawędzie w tych kierunkach występują tylko po razie). Z kroku indukcyjnego $S_{n-2}$ jest symetryczne w ten sposób,
-     więc istnieje odpowiednia permutacja na kierunkach w niej używanych, wystarczcy więc ją rozszerzyć od tą zamianę $n-1$ z $n-2$
-     (i formalnie dowolnie uzupełnić o kierunki w niej nie występujące, choć tak na prawdę takich nie ma).
+     więc istnieje odpowiednia permutacja na kierunkach w niej używanych, wystarczy więc ją rozszerzyć o tą zamianę $n-1$ z $n-2$
+     (permutacja jest już w pełni zadana, bo to $S_{n-2}$ używa wszystkie pierwsze $n-2$ kierunki).
      Z konstrukcji wynika, że zbudowana tak ścieżka posiada własność: dowolne dwa wierzchołki ze ścieżki są sąsiadami w hiperkostce
      tylko wtedy gdy są sąsiadami na ścieżce wewnątrz trzech swoich części. Pomiędzy pierwszą i drugą częścią własność ta jest spełniona z kroku indukcyjnego,
      zaś pomiędzy trzecią i drugą jest tak samo z symetrii. Pozostają części pierwsza i trzecia, ale skoro są one całkowicie zanurzone w dwóch podkostkach,
@@ -1298,7 +1299,7 @@ Instytut Informatyki}
     \end{corollary}
    \section{Wyniki eksperymentalne}
     \begin{remark}\label{da sie dluzsze}
-     Dla wymiarów większych niż $4$ da się otrzymać ścieżki jeszcze dłuższe -- dla $n=5$ najdłuższa możliwą ścieżką jest:\newline
+     Dla wymiarów większych niż $4$ da się otrzymać ścieżki jeszcze dłuższe -- dla $n=5$ najdłuższą możliwą ścieżką jest:\newline
      00000
      00001
      00011
@@ -1320,24 +1321,24 @@ Instytut Informatyki}
     który jest sąsiadem aktualnego końca i nie jest sąsiadem żadnego poprzedniego, aż do momentu, gdy taki wybór nie jest możliwy 
     -- w ten sposób otrzymuje "grę". Znalezienie wszystkich możliwych ścieżek otrzymywalnych w ten sposób
     (a są to wszystkie takie poprawne ścieżki, które zaczynają się w wierzchołku $\overline{0}$) otrzymywane jest poprzez przejrzenie
-    drzewa gry, której wierzchołkami są ścieżki, zaś ścieżki w przodkach tego wierzchołka są jej prefiksami.
-    Drzewo tej gry ma maksymalny stopień rozgałęzienia równy $n$, zaś głębokość $|P|$.\newline
-    Daje to złożoność algotyrmu przeglądającego wszystkie ściężki mocno pesymistycznie ograniczoną przez $O(n^{|P|})$. Nawet po zastosowaniu
+    drzewa gry, której wierzchołkami są ścieżki. Dla dowolnego wierzchołka drzewa ścieżki w przodkach tego wierzchołka są prefiksami ścieżki
+    przez niego przechowywanej. Drzewo tej gry ma maksymalny stopień rozgałęzienia równy $n$, zaś głębokość $|P|$.\newline
+    Daje to złożoność algorytmu przeglądającego wszystkie ścieżki mocno pesymistycznie ograniczoną przez $O(n^{|P|})$. Nawet po zastosowaniu
     różnych usprawnień, algorytm dokładny szybko staje się zbyt wolny, dlatego dla $n\ge7$ musiałem skorzystać z metod losowych.
     \subsection{NMCS}
-     Aby otrzymać pewną ścieżke, która posiada tę właśność, że nie da się jej już wydłużyć do innej poprawnej można przeprowadzić zejście po drzewie
+     Aby otrzymać pewną ścieżkę, która posiada tę właśność, że nie da się jej już wydłużyć do innej poprawnej można przeprowadzić zejście po drzewie
      od korzenia do liścia poprzez losowe wybieranie jednego z dzieci za każdym razem, gdy taki wybór jest możliwy.\newline
-     Przeprowadzając odpowiedno dużo takich losowych zejść po drzewie i wybierając najdłuższą ścieżkę ze znalezionych możemy uzyskać już w miarę dobry
+     Przeprowadzając odpowiednio dużo takich losowych zejść po drzewie i wybierając najdłuższą ścieżkę ze znalezionych możemy uzyskać już w miarę dobry
      wynik, istnieją jednak metody, które pozwalają na lepsze ukierunkowanie losowości.\newline
      Jedną z takich metod jest przeszukiwanie Monte Carlo polegające na tym, że mając dany stan gry (aktualną ścieżkę) dla każdego możliwego ruchu
      (wyboru kolejnego wierzchołka) szacujemy jego wartość poprzez uruchomienie przeszukiwania losowego w tym kierunku i następnie wybranie najlepszego z nich.
-     Metoda ta jest wykorzystywana głównie w przeypadkach gier w tym takich, w których gracz ma tylko częściowy wpływ na rozgrywkę (istnieje przeciwnik),
+     Metoda ta jest wykorzystywana głównie w przypadkach gier, w tym takich w których gracz ma tylko częściowy wpływ na rozgrywkę (istnieje przeciwnik),
      jednak w przypadku szukania możliwie długiej ścieżki również się sprawdza.
      
      Rozszerzenie tej metody zostało zaprezentowane w pracy \cite{NMCS} zwane Nested Monte Carlo Search, polegające na tym, że do oszacowania
      wartości możliwych ruchów zamiast zwykłych przeszukiwań losowych używamy zwykłego przeszukiwania Monte Carlo.
      Dokładniej metoda ta zakłada, że tworząc rozwiązanie przy pomocy NMCS z poziomem $k$ używamy do wyboru ruchu NMCS z poziomem $k-1$ i tak dalej rekurencyjnie
-     aż do poziomu $0$, który oznacza przeszukiwanie losowe. Można to przedstawić następującym pseudokodem:\newline\newline%TODO znów zadbać, żey strona się nie łamała brzydko
+     aż do poziomu $0$, który oznacza przeszukiwanie losowe. Można to przedstawić następującym pseudokodem:\newline
      \hspace*{0pt}$NMCS(v,level)\{$\newline
      \hspace*{16pt}	while$(TRUE)\{$\newline
      \hspace*{32pt}		$val.push\_back(v);$\newline
@@ -1353,17 +1354,17 @@ Instytut Informatyki}
      \hspace*{80pt}					$move=u;$\newline
      \hspace*{64pt}				$\}$\newline
      \hspace*{48pt}			$\}$\newline
-     \hspace*{48pt}			$v=u;$\newline
+     \hspace*{48pt}			$v=move;$\newline
      \hspace*{32pt}		$\}$\newline
      \hspace*{16pt}	$\}$\newline
      \hspace*{0pt}$\}$
     \subsection{Uwagi praktyczne}
      Ze względu na ogromną różnicę w złożoności algorytmu $NMCS$ w zależności od użytego poziomu można wprowadzić lekką modyfikację -- w przypadku,
-     gdy wyższy poziom jest zbyt kosztowny, zaś niższy za słaby zamiast uruchamiać program z niższym poziomem wiele razy można poszerzyć przeszukiwanie.
+     gdy wyższy poziom jest zbyt kosztowny, zaś niższy za słaby zamiast uruchamiać program z niskim poziomem wiele razy można poszerzyć przeszukiwanie.
      Poszerzenie takie można łatwo uzyskać uruchamiając dla każdego dziecka symulację poziomu niżej nie raz a $T$ razy
-     (plus uruchomienie algorytmu najwyższego pozmiou tyle razy).
+     (plus uruchomienie algorytmu najwyższego poziomu tyle razy).
      
-     Mając na uwadze algorytm z tą modyfikacją można oszacować pesymistyczną złożoność algorytmu dla szukania długiej izolowanej ścieżki w hiperkostce
+     Mając na uwadze algorytm z tą modyfikacją można oszacować pesymistyczną złożoność algorytmu dla szukania długiej indukowanej ścieżki w hiperkostce
      w zależności od wymiaru $n$,poziomu $L$, liczby razy przy sprawdzaniu dzieci $T$ oraz oczekiwanej długości maksymalnej ścieżki $|P|$.
      Złożoność ta jest wyrażona poprzez równanie rekurencyjne:\newline
      $NMCS(n,0,T,|P|)=n\cdot T\cdot |P|$\newline
@@ -1371,16 +1372,17 @@ Instytut Informatyki}
      Które daje rozwiązanie:\newline
      $NMCS(n,L,T,|P|)=O(T^{L+1}\cdot n^{L+1}\cdot|P|^{L+1})$     
      
-     W przypadku szukania izolowanej ściezki w hiperkostce nalezy jeszcze doliczyć czas i pamięć potrzebne na sprawdzanie czy nowo wybrany (wylosowany)
+     W przypadku szukania indukowanej ściezki w hiperkostce nalezy jeszcze doliczyć czas i pamięć potrzebne na sprawdzanie czy nowo wybrany (wylosowany)
      wierzchołek nie jest sąsiadem jednego z wierzchołków z początku ścieżki.
      
-     Jedną z możliwych metod jest za każdym razem przeiterowanie po aktualnej ściężce i porównanie ciągów binarnych, daje to jednak złożoność
-     czasową rzędu $n |P|$. Drugą metodą jest zapamiętywanie wszystkich sąsiadów wierzchołków ze ścieżki (plus ich samych) w tablicy binarnej rozmiaru $2^n$.
-     W tym wypadku sprawdzanie jest trywialnie proste (w czasie potrzebnym na odczytanie nazwy wierzchołka),
-     jednak złożoność pamięicowa w przypadku NMCS poziomu $0$ przeważa nad złożonością czasową samego algorytmu.
-     W przypadku małych $n$ nie jest to jednak złe rozwiązanie, ponieważ ze względu na liczne optymalizacje tablic binarnych jest to najszybsze rozwiązanie.
-     Trzecią (pośrednią) metodą jest użycie jako struktury drzewa prefiksowego lub tablicy hashującej uzyskując podobnie do tablicy binarnej%TODO min 2^n,n\cdot|P|, ale w sumie gorzej
-     złożoność $O(n)$ na odczytanie i wstawienie wierzchołka jednocześnie potrzebując jedynie $O(n^{1.5}\cdot|P|)$ lub $O(n\cdot|P|)$ pamięci w zależności od użytej struktury.
+     Jedną z możliwych metod jest za każdym razem przeiterowanie po aktualnej ścieżce i porównanie ciągów binarnych, daje to jednak złożoność
+     czasową rzędu $n\cdot |P|$. Drugą metodą jest podobnie jak w algorytmach z poprzednich rozdziałów użycie jako struktury przechowującej wszystkich sąsiadów
+     wierzchołków ze ścieżki drzewa prefiksowego lub tablicy hashującej. W ten sposób otrzymujemy czas $O(n)$ na odczytanie i wstawienie wierzchołka,
+     potrzebując $O(\min(n^{1.5}\cdot|P|,2^n))$ lub $O(\min(n\cdot|P|,2^n))$ pamięci w zależności od użytej struktury.
+     Możliwe jest też o wiele prostsze rozwiązanie -- przechowywanie tych sąsiadów w tablicy binarnej wielkości $2^n$.
+     Rozwiązanie to o ile nie lepsze asymptotycznie (ten sam czas i niemniejsza pamięć),
+     ze względu na wnioskowaną z testów dużą długość $P$ (porównywalna z $\frac{2^n}{n}$) nie jest też gorsze,
+     a łatwiejsze do zoptymalizowania i uzyskania istotnie mniejszych stałych.
      
      W przypadku użycia struktury zapamiętującej sąsiadów wierzchołków ze ścieżki należy jeszcze zwrócić uwagę na zmienianie jej stanu przy wchodzeniu
      i wracaniu z niższych poziomów wywołania. Można albo za każdym razem pamiętać wszystkie wstawione wierzchołki i przy zwracaniu wyniku
@@ -1389,13 +1391,13 @@ Instytut Informatyki}
      zastępować starą wersję z tamtego poziomu kopią z poziomu o 1 wyżej.
      
      Mając to na uwadze można zaprogramować algorytm tak, aby miał złożoności czasową $O(T^{L+1}\cdot n^{L+2}\cdot|P|^{L+1})$
-     i pamięciową $O(L\cdot n\cdot |P|)$.\newline
+     i pamięciową $O(L\cdot \min(n\cdot |P|,2^n))$.\newline
      
      Przeszukiwanie można dodatkowo zawęzić jeśli program weźmie pod uwagę, że kierunki, które nie pojawiły się jeszcze na ścieżce są równoważne
      (wystarczy pamiętać liczbę oznaczającą ilość kierunków już użytych i nie używać kierunków większych niż ta liczba + 1).
      W ten sposób ustalone są pierwsze 3 ruchy ($1\rightarrow2\rightarrow4\rightarrow8$ przy numerowaniu klasycznym),
      zaś na czwarty są tylko dwie możliwości ($8\rightarrow7,8\rightarrow17$). Daje to duże przyśpieszenie przy małych przypadkach,
-     jednak przy większych nie ma już większego znaczenia.
+     jednak przy większych traci na znaczeniu.
     \subsection{Uzyskane wartości}
      Przy pomocy komputera i przedstawonych wyżej algorytmów przeprowadziłem przeszukiwanie w celu znalezienia możliwie najdłuższej takiej ścieżki.
      W przypadku $n\le6$ przy pomocy pełnego przeszukiwania, a dalej NMCS z 4 poziomami dla $n=7$, 3 dla $n=8$, 2 dla $9\le n\le12$ i 1 dla $13\le n\le18$
@@ -1458,24 +1460,25 @@ Instytut Informatyki}
       \sqrt[n]{|P|+1}&1.78&1.78&1.79&1.79&1.79\\
       \hline
      \end{array}$\newline
-     \begin{center}%TODO poprawić wykres
-      \includegraphics[scale=0.37]{img/plot1.jpg}
+     \begin{center}
+      \includegraphics[scale=0.55]{img/plot1.jpg}
      \end{center}
    \section{Znane ograniczenia długości węży}
-    Problemem najdłuższej ściezki indukowanej i najdłuższego cyklu induowanego w hiperkostce zajmowali się już wcześniej inni badacze, nazywając
-    problemy odpowiednio "wąż w pudełku" (snake-in-a-box) i "zwój w pudełku" (coil-in-a-box) osiągając lepsze rezultaty.
-    Dla $n\le7$ wyniki otrzymane przeze mnie są optymalne, dla dalszych są znane lepsze (8-98,9-190,10-370,11-708,12-1357,13-2687).
-    Znane są również ograniczenia dolne i górne lepsze od tych oczywistych, czy opisanych przeze mnie w poprzednich podrozdziałach.
+    Problemem najdłuższej ściezki indukowanej i najdłuższego cyklu indukowanego w hiperkostce zajmowali się już wcześniej inni badacze, nazywając
+    problemy odpowiednio "wąż w pudełku" (snake-in-a-box) i "zwój w pudełku" (coil-in-a-box) i osiągając lepsze rezultaty.\newline
+    Dla $n\le7$ wyniki otrzymane przeze mnie są optymalne, jednak dla dalszych są znane lepsze\newline
+    (8-98,9-190,10-370,11-708,12-1357,13-2687).
+    Znane są również ograniczenia dolne i górne lepsze od tych oczywistych, oraz tych opisanych przeze mnie w poprzednich podrozdziałach.
     \subsection{Ograniczenia dolne}
      Od kiedy zdefiniowany został problem pojwiały się coraz lepsze ograniczenia dolne
      ($c\cdot2^{\frac{n}{2}}$,$(1.5)^{n}$,$c\cdot6^{\frac{n}{4}}$,$c\cdot(2.5)^{\frac{n}{2}}$), później długo dominowało ograniczenie z pracy \cite{Snake1}
      Dające ograniczenie $\frac{7}{4}\frac{2^n}{n-1}$ (które jest już lepsze od mojego wynikającego z konstrukcji ścieżek Fibonacciego).\newline
      Jeszcze lepsze ograniczenie wraz z konstrukcją ścieżki i cyklu pojawia się w pracy \cite{Snake2} (przedstawię szkic tego rozwiązania poniżej).
      \begin{fact}
-      Zwój w pudełku można przerobić na węża w pudełku poprzez usunięcie dowolnego wierzchołka tracąc 2 na długości.
+      Cykl można przerobić na ścieżkę poprzez usunięcie dowolnego wierzchołka tracąc 2 na długości.
      \end{fact}
      \begin{theorem}\label{snake 9/64 2^n}
-      Dla $Q_n$, $n\ge7$ można skonstruować zwój w pudełku o długości $\frac{9}{64}\cdot2^n$
+      Dla $Q_n$, $n\ge7$ można skonstruować cykl indukowany o długości $\frac{9}{64}\cdot2^n$
      \end{theorem}
      \begin{proof}(szkic konstrukcji i dowodu z pracy \cite{Snake2})
       $Q_n$ dzielimy na kostki wymiaru $5$ otrzymując graf $Q_{n-5}\times Q_5$. W grafie $Q_{n-5}$ bierzemy cykl Hamiltona otrzymany indukcyjnie:
@@ -1486,18 +1489,18 @@ Instytut Informatyki}
       Kolejnym krokiem jest zdefiniowanie ciągu $2^{n-5}$ ścieżek indukowanych w $Q_5$ (ponumerowanych według cyklu Hamiltona)
       spełniających następujące własności:
       \begin{itemize}
-       \item ścieżka $m$ kończy się tam, gdzie zaczyna się ścieżka $m+1 (mod 2^{n-5})$.
+       \item ścieżka $m$ kończy się tam, gdzie zaczyna się ścieżka $m+1 (\mod 2^{n-5})$ i jest to jedyny ich wspólny wierzchołek.
        \item ścieżki z dwóch kostek $Q_5$ będących sąsiadami w $Q_{n-5}$, ale nie na cyklu Hamiltona nie zawierają wspólnych wierzchołków.
-       \item ścieżki o numerach $m=1$ lub $2(mod 4)$ mają długość $3$, zaś o numeracj $m=0$ lub $3(mod 4)$ długość $4$.
+       \item ścieżki o numerach $m=1$ lub $2(\mod 4)$ mają długość $3$, zaś o numeracj $m=0$ lub $3(\mod 4)$ długość $4$.
       \end{itemize}
       Ścieżki konstruowane są poprzez chodzenie po grafie G (widocznym na obrazku) zanurzonym w $Q_5$:
       \begin{center}
        \includegraphics[scale=1]{img/snake_G.jpg}
       \end{center}
-      Zanurzenie jest zadane dla ściezki $b_1,...,a_1,...,b_2$ wraz z pośrednimi wierzchokami poprzez ścieżkę
-      $(0,0,0,0,0),(0,0,0,0,1),(0,0,0,1,1),(0,1,0,1,1),(0,1,0,1,0),(0,1,1,1,0),$\newline
-      $(1,1,1,1,0),(1,1,1,1,1)$, zaś dla pozostałych czterech
-      analogicznie po cyklicznej zamianie współrzędnych.
+      Zanurzenie jest zadane dla ścieżki $b_1..a_1...b_2$ wraz z pośrednimi wierzchołkami poprzez ścieżkę
+      $(0,0,0,0,0),(0,0,0,0,1),(0,0,0,1,1),(0,1,0,1,1),(0,1,0,1,0),(0,1,1,1,0),(1,1,1,1,0),$\newline
+      $(1,1,1,1,1)$, zaś dla pozostałych czterech analogicznie po cyklicznej zamianie współrzędnych\newline
+      ($a_1=(0,1,0,1,1),a_2=(1,0,1,0,1),a_3=(1,1,0,1,0),a_4=(0,1,1,0,1),a_5=(1,0,1,1,0)$).
       Ścieżkami długości $3$ są odpowiedniki $a_i\rightarrow b_1$ i $b_1\rightarrow a_j$, zaś ścieżek długości $4$ ścieżki
       $a_j\rightarrow b_2$ i $b_2\rightarrow a_i$. Kolejne ścieżki tworzone są poprzez chodzenie w ten sposób po grafie $G$ z odpowiednim
       wyborem jednej z 5 ścieżek kiedy startujemy w $b_i$.
@@ -1505,13 +1508,13 @@ Instytut Informatyki}
       Po połączeniu wszystkich tych ścieżek otrzymujemy cykl długości $(\frac{3+4}{2}+1)\cdot 2^{n-5}=\frac{9}{64}\cdot2^n$.
      \end{proof} 
      \begin{corollary}
-      Długość węża w pudełku $Q_n$ jest ograniczona z dołu przez $\frac{9}{64}\cdot 2^n-2$.
+      Długość maksymalnej ściezki indukowanej w $Q_n$ jest ograniczona z dołu przez $\frac{9}{64}\cdot 2^n-2$.
      \end{corollary}
     \subsection{Ograniczenia górne}
      \begin{defi}\label{pseudowąż}
-      \emph{Pseudowężem} w pudełku nazwiemy dowolny indukowany podgraf hiperkostki, w którym stopień każdego wierzchołka jest nie większy niż 2. 
+      \emph{Pseudowężem} nazwiemy dowolny indukowany podgraf hiperkostki, w którym stopień każdego wierzchołka jest nie większy niż 2. 
      \end{defi}
-     Każdy wąż i każdy zwój jest pseudowężem (pseudowąż składa się ze zbioru węży, zwojów i wierzchołków izolowanych).
+     Każdy wąż i każdy zwój jest pseudowężem (pseudowąż składa się ze zbioru indukowanych ścieżek i cykli oraz wierzchołków izolowanych).
      \begin{fact}
       Obcięcie pseudowęża do części z jednej podkostki jest pseudowężem w tej podkostce (w całej hiperkostce też).
      \end{fact}
@@ -1520,11 +1523,11 @@ Instytut Informatyki}
     \end{theorem}
     \begin{proof}
      (Dowód za \cite{Snake1}).
-     Dla $n=4$ jest tylko jeden z dokładnością do automorfizmów kostki pseudowąż rozmiaru $9$
+     Dla $n=4$ jest tylko jeden z dokładnością do automorfizmów kostki pseudowąż rozmiaru $9$ (większych nie ma).
      \begin{center}
       \includegraphics[scale=0.4]{img/pseudoS_4.jpg}
      \end{center}
-     Gdyby w $Q_5$ był pseudowąż rozmiaru $17$, to przy dowolnym podziale na dwie pseudokostki $Q_4$ w jednej z nich musiałby sie znajdować pseudowąż
+     Gdyby w $Q_5$ był pseudowąż rozmiaru $17$, to przy dowolnym podziale na dwie podkostki $Q_4$ w jednej z nich musiałby sie znajdować pseudowąż
      rozmiaru co najmniej $9$, a więc ten z rysunku. W drugiej kostce wierzchołki odpowiadające tym z cyklu nie mogą zostać wybrane,
      czyli w skład węża musiałby wchodzić wszystkie pozostałe, jednak taki graf nie byłby pseudowężem.\newline
      Dalej dla $n\ge6$ indukcyjnie. Przy dowolnym podziale na dwie podkostki $Q_{n-1}$ w jednej z nich musiałby się znajdować pseudowąż rozmiaru co najmniej
