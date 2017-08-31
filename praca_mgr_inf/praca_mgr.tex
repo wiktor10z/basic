@@ -117,11 +117,12 @@ oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ogranicz
   
   W czwartym rozdziale przedstawiam kilka wyników teoretycznych na temat istnienia cyklów Hamiltona i hamiltonowskiej wiązalności w hiperkostkach z usuniętymi
   wierzchołkami. Następnie naszkicowuje dowody hamiltonowskości dla wadliwych hiperkostek ze zbiorami wad indukującymi w hiperkostce
-  podgrafy o specjalnych strukturach (mniejsza hiperkostka, ścieżka, cykl, drzewo).\newline
+  podgrafy o specjalnych strukturach (mniejsza hiperkostka, ścieżka, cykl, drzewo).
+  
   W ostatnim rozdziale rozpatruje problem możliwie najdłuższej ścieżki indukowanej w hiperkostce (hiperkostka z usuniętymi wierzchołkami, która jest ścieżką)
   nazywany w literaturze wężem w pudełku. Przedstawiam tam własną konstrukcję ścieżek, które dla hiperkostki wymiaru $n$ mają rozmiar równy $n+1$
   wyrazowi ciągu Fibonacciego oraz wyniki eksperymentalne dla $n\le34$ (czyli dla większej ilości niż w większości prac).
-  Pod koniec rozdziału wymieniam też znalezioną w literaturze, trudniejszą, lecz dającą lepsze rezultaty konstrukcję długiego węża oraz 
+  Pod koniec rozdziału wymieniam też znalezioną w literaturze, trudniejszą, lecz dającą lepsze rezultaty konstrukcję długiego węża oraz
   ograniczenia górne.
 
   
@@ -147,7 +148,7 @@ oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ogranicz
     zaś drugą tych o ich nieparzystej liczbie.\newline
     Co więcej przy badaniu hiperkostek często dzieli się je na $n+1$ warstw, gdzie dla $i\in[n+1]$ $i$-tą warstwę stanowią te wierzchołki,
     których ciągi binarne mają dokładnie $i$ jedynek (warstwa zawiera zatem wierzchołki oddalone o $i$ od wierzchołka zerowego ($\overline{0}$)).
-    W tym ujęciu części dwudzielne składają się z odpowiednio parzystych i nieparzystych warstw.
+    W tym ujęciu części dwudzielne składają się odpowiednio z parzystych i z nieparzystych warstw.
     
     \begin{defi}\label{kierunek krawędzi}
      Ze względu na oczywistą interpretację hiperkostki, jako punkty i odcinki w przestrzeni $n$--wymiarowej możemy mówić o \emph{kierunku}
@@ -699,35 +700,35 @@ oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ogranicz
      (przypadki przy końcach ścieżki można "dopełnić" zwykłymi wierzchołkami do przypadków ze środka, ponieważ wierzchołki końcowe nie są wadliwe).
      \begin{multicols}{3}
       \begin{center}
-       \includegraphics[scale=0.94]{img/Q_swap_l1.jpg}
+       \includegraphics[scale=0.75]{img/Q_swap_l1.jpg}
        -- wierzchołek zwykły\newline
-       \includegraphics[scale=0.94]{img/Q_swap_l4.jpg}
+       \includegraphics[scale=0.75]{img/Q_swap_l4.jpg}
        -- krawędź ścieżki\newline
       \end{center}
       \begin{center}
-       \includegraphics[scale=0.94]{img/Q_swap_l2.jpg}
+       \includegraphics[scale=0.75]{img/Q_swap_l2.jpg}
        -- wierzchołek wadliwy\newline
-       \includegraphics[scale=0.94]{img/Q_swap_l5.jpg}
+       \includegraphics[scale=0.75]{img/Q_swap_l5.jpg}
        -- krawędź spoza ścieżki\newline
       \end{center}
       \begin{center}
-       \includegraphics[scale=0.94]{img/Q_swap_l3.jpg}
+       \includegraphics[scale=0.75]{img/Q_swap_l3.jpg}
        -- port\newline
-       \includegraphics[scale=0.94]{img/Q_swap_l6.jpg}
+       \includegraphics[scale=0.75]{img/Q_swap_l6.jpg}
        -- nieistotna reszta ścieżki\newline
       \end{center}
      \end{multicols}
      \noindent
-     \includegraphics[scale=0.94]{img/Q_swap_1.jpg}\newline\newline
-     \includegraphics[scale=0.94]{img/Q_swap_2.jpg}\newline\newline
-     \includegraphics[scale=0.94]{img/Q_swap_3.jpg}\newline\newline
-     \includegraphics[scale=0.94]{img/Q_swap_4.jpg}\newline\newline
-     \includegraphics[scale=0.94]{img/Q_swap_5.jpg}\newline\newline
-     \includegraphics[scale=0.94]{img/Q_swap_6.jpg}\newline\newline
-     \includegraphics[scale=0.94]{img/Q_swap_7.jpg}\newline\newline
+     \hspace*{30pt}\includegraphics[scale=0.75]{img/Q_swap_1.jpg}\newline\newline
+     \hspace*{30pt}\includegraphics[scale=0.75]{img/Q_swap_2.jpg}\newline\newline
+     \hspace*{30pt}\includegraphics[scale=0.75]{img/Q_swap_3.jpg}\newline\newline
+     \hspace*{30pt}\includegraphics[scale=0.75]{img/Q_swap_4.jpg}\newline\newline
+     \hspace*{30pt}\includegraphics[scale=0.75]{img/Q_swap_5.jpg}\newline\newline
+     \hspace*{30pt}\includegraphics[scale=0.75]{img/Q_swap_6.jpg}\newline\newline
+     \hspace*{30pt}\includegraphics[scale=0.75]{img/Q_swap_7.jpg}\newline\newline
      Wszystkie rozrysowane tu wierzchołki należą do $G(F)$, a rozrysowane części niewadliwe tworzą podgraf spójny, dlatego też wszystkie te zmiany odbywają się w
      jednej spójnej składowej $G(F)-F$. Za każdym razem ilość portów zmienia się o $0$ lub $2$, a więc parzystość pozostaje bez zmian.
-    \end{proof}
+    \end{proof}\newpage
    \subsection{Dowód twierdzenia o lokalnej spójności}
     \begin{lemma}\label{Q_n-F spojne => G(F)-F spojne (1 skladowa)}
      Niech $F\subseteq V(Q_n)$ będzie takie, że $G(F)$ jest spójne. Jeśli $Q_n-F$ jest spójne, to $G(F)-F$ również.
@@ -1631,7 +1632,6 @@ oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ogranicz
    "The snake-in-the-box problem: A new upper bound",
    \textit{Discrete Mathematics 133 (1994) 307-314}
    
-   
    %------------------------------------------------------------pompowanie 
    
   \bibitem{HL} Frank Harary, Marilynn Livingston,
@@ -1644,7 +1644,6 @@ oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ogranicz
   \bibitem{Knuth} Donald E. Knuth,
    "Generating All Tuples and Permutations"
    \textit{The Art of Computer Programming volume 4, fascicle 2}
-  
    
 \end{thebibliography}
 
