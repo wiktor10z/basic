@@ -9,6 +9,7 @@
 \usepackage{enumitem}
 \usepackage{hyperref}
 \usepackage{wrapfig}
+\usepackage{setspace}
 
 \author{Wiktor Zuba}
 
@@ -32,9 +33,11 @@ Instytut Informatyki}
 
 
 \klasyfikacja{
-???
+ Mathematics of computing\\
+ Discrete mathematics\\
+ Graph theory\\
+ Graph algorithms\\
 }
- %TODO klasyfikacja
  %05--XX Combinatorics\\
  %05Cxx Graph theory\\
  %05C85 Graph algorithms\\
@@ -64,16 +67,16 @@ Instytut Informatyki}
 \maketitle
 
 \begin{abstract}
-W pracy przedstawiono bardzo popularną i użyteczną klasę grafów, jaką są hiperkostki $n$-wymiarowe. Przedstawiono w niej również mniej regularną jednak
-ogólniejszą klasę nazwaną hiperkostkami z wadliwymi wierzchołkami, powstałą przy usuwaniu z normalnego grafu pewnej niewielkiej liczby wierzchołków.
-Dzięki niezwykle regularnej strukturze takich obiektów możliwe jest rozwiązywanie wielu problemów grafowych w sposób istotnie lepszy i szybszy niż
-użycie algorytmów działających na dowolnych grafach.
-W pracy zawarty jest głównie przegląd ważniejszych rezultatów z literatury takich jak:
-spójność (w czasie logarytmicznym od wielkości grafu), posiadanie bardzo długich ścieżek, hamiltonowskość
-oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ograniczenia i własne eksperymenty).
+W pracy przedstawiono bardzo popularną i użyteczną klasę grafów, jaką są hiperkostki $n$-wymiarowe, jak również mniej regularną jednak
+ogólniejszą klasę nazwaną hiperkostkami z wadliwymi wierzchołkami, powstałą po usunięciu z oryginalnego grafu pewnej niewielkiej liczby wierzchołków.
+Dzięki niezwykle regularnej strukturze takich obiektów możliwe jest rozwiązywanie wielu problemów grafowych lepiej i istotnie szybciej niż w przypadu ogólnym.\newline
+W pracy zawarty jest głównie przegląd ważniejszych rezultatów z literatury takich jak:\newline
+Spójność -- dwa różne algorytmy działające w czasie wielomianowym od wymiaru i ilości wad.\newline
+Długie ścieżki -- dowody istnienia w grafie ścieżek i cykli zajmujących prawie cały graf
+przy odpowiednio małych zbiorach wad.\newline
+Hamiltonowskość -- sformułowanie ogólnych wyników, oraz dowody dla szczególnych przypadków.\newline
+Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyniki eksperymentalne oraz ograniczenia znalezione w literaturze.
 \end{abstract}
-
-%TODO zdefiniowanie genusu jako sfera z uszami
 
 \tableofcontents
 
@@ -239,60 +242,71 @@ oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ogranicz
    %i $\frac{2^{2m+1}}{\sqrt{\pi (m+2)}}<{2m+1 \choose m}={2m+1 \choose m+1}<\frac{2^{2m+1}}{\sqrt{\pi m}}$\newline
    %Lub w krotszym zapisie:
    %$\frac{2^n}{\sqrt{\pi(\lfloor\frac{n}{2}\rfloor}+2)}<{n\choose \lfloor\frac{n}{2}\rfloor}<\frac{2^n}{\sqrt{\pi\cdot\lfloor\frac{n}{2}\rfloor}}$
-   ${2n \choose n}=\frac{2^{2n}\Gamma(n+\frac{1}{2})}{\sqrt{\pi}\Gamma(n+1)}$,\quad\quad
-   ${2n+1 \choose n}={2n+1 \choose n+1}=\frac{2^{2n+1}\Gamma(n+\frac{3}{2})}{\sqrt{\pi}\Gamma(n+2)}$\newline
-   $\Gamma(z)=\int\limits_{0}^{\infty}x^{z-1}e^{-x}dx$\quad
-   dla $n\in\mathbb{N}$ $\Gamma(n)=(n-1)!$,\newline
-   ogólniej dla $x\in\mathbb{R},x>1$ $\frac{\Gamma(x+1)}{\Gamma(x)}=x$,\quad\quad
-   $\frac{\Gamma(x+\frac{1}{2})}{\Gamma(x)}<\frac{\Gamma(x+1)}{\Gamma(x+\frac{1}{2})}\Rightarrow
-   \sqrt{x-\frac{1}{2}}<\frac{\Gamma(x+\frac{1}{2})}{\Gamma(x)}<\sqrt{x}$\newline
-   Daje to ograniczenia:
-   $\frac{2^{2n}}{\sqrt{\pi(n+\frac{1}{2})}}<{2n\choose n}<\frac{2^{2n}}{\sqrt{\pi n}}$,\quad\quad
-   $\frac{2^{2n+1}}{\sqrt{\pi(n+\frac{3}{2})}}<{2n+1\choose n}={2n+1\choose n+1}<\frac{2^{2n+1}}{\sqrt{\pi(n+1)}}$\newline
-   Lub równoważnie:
-   $\frac{2^n}{\sqrt{\pi(\lceil\frac{n}{2}\rceil+\frac{1}{2})}}<{n\choose\lfloor\frac{n}{2}\rfloor}
-   ={n\choose\lceil\frac{n}{2}\rceil}<\frac{2^n}{\sqrt{\pi\lceil\frac{n}{2}\rceil}}$
-   \begin{lemma}\label{binomial sum upper bound}
-    Dla $k\le\lfloor\frac{n+1}{2}\rfloor$ zachodzi ograniczenie $\sum_{i=0}^{k-1}{n\choose i}\le2^{n-1}\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$
-   \end{lemma}
-   \begin{proof}
-    (Uogólnienie dowodu z podobnego lematu dla $n=2m,k<m$ z \cite{LPV})\newline% Lemma3.8.2
-    Załóżmy najpierw, że $k<\lfloor\frac{n}{2}\rfloor$\newline
-    Zdefiniujmy $c=\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}<1,t=\lfloor\frac{n}{2}\rfloor-k,$
-    $A=\sum_{i=0}^{k-1}{n\choose i}, B=\sum_{i=k}^{\lfloor\frac{n}{2}\rfloor-1}{n\choose i}$\newline
-    $\forall_{1\le i\le k}$ $\frac{{n\choose k-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i}}<\frac{{n\choose k-i+1}}{{n\choose \lfloor\frac{n}{2}\rfloor-i+1}}$
-    $\Leftrightarrow \frac{k-c+1}{n-k+c}<\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lceil\frac{n}{2}\rceil+c}$,\newline
-    co wynika z szeregu prostych nierówności $\frac{k-c+1}{n-k+c}\le\frac{k-c+1}{k+c+1}
-    <\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lfloor\frac{n}{2}\rfloor+c+1}\le\frac{\lfloor\frac{n}{2}\rfloor-c+1}{\lceil\frac{n}{2}\rceil+c}$)\newline
-    Daje nam to ograniczenia $\forall_{1\le i\le k}$ $\frac{{n\choose k-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i}}<c$.\newline
-    Suma ostatnich $t$ wyrazów szeregu $A$ jest majoryzowana przez $c\cdot B$, wcześniejszych $t$ przez $c$ razy suma ostatnich $t$ (a więc przez $c^2\cdot B$).
-    Daje nam to oszacowanie $A<(c+c^2+c^3+...+c^{\lfloor\frac{k}{t}\rfloor})\cdot B<(c+c^2+c^3+...)\cdot B=\frac{c}{1-c}\cdot B$.
-    Jednocześnie $A+B=\sum_{i=0}^{\lfloor\frac{n}{2}\rfloor-1}{n\choose i}<2^{n-1}$.
-    $A=c\cdot A+(1-c)\cdot A=c(A+\frac{1-c}{c}A)<c\cdot(A+B)<c\cdot 2^{n-1}$.\newline
-    Pozostaje udowodnić przypadki większych $k$:\newline
-    Dla $n=2m,k=m$ $\sum_{i=0}^{m-1}{2m\choose i}=2^{2m-1}-\frac{1}{2}{2m\choose m}<2^{2m-1}=
-    2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$\newline
-    Dla $n=2m+1,k=m$ $\sum_{i=0}^{m-1}{2m+1\choose i}=2^{2m}-{2m+1\choose m}<2^{2m}=
-    2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$\newline
-    Dla $n=2m+1,k=m+1$ $\sum_{i=0}^{m}{2m+1\choose i}=2^{2m}=
-    2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$ (jedyna nieostra nierówność)\newline
-   \end{proof}
-   \begin{lemma}\label{sum of log}
-    $2^n(\log_2(n)-2)\le\sum_{i=1}^{n}{n\choose i}\log_2(i)\le 2^n(\log_2(n)-\frac{1}{2})$ (dla dostatecznie dużych n).
-   \end{lemma}    
-   \begin{proof}
-    Dla $n=2k+1$ dzielę sumę na $\sum_{i=1}^{k}{n\choose i}\log_2(i)+\sum_{i=k+1}^{n}{n\choose i}\log_2(i)$.\newline
-    $\sum_{i=k+1}^{n}{n\choose i}=2^{n-1}\Rightarrow 2^{n-1}(\log_2{n}-1)\le\sum_{i=k+1}^{n}{n\choose i}\log_2(i)\le2^{n-1}\log_2{n}$.\newline
-    $\sum_{i=1}^{k}\log_2(i)=\log_2(k!)$(ze wzoru Stirlinga) $\ge k\log_2(k)-k\log_2(e)-\frac{1}{2}(\log_2(2\pi)+\log_2(k))
-    \ge k(\log_2(k+\frac{1}{2})-2)$ (dla $k>7$) =$k(\log_2(n)-3)$\newline
-    Dla $i\le k$ ${n\choose i}\le{n\choose i+1}$, $\log_2(i)<\log_2(i+1)$, więc
-    $2^{n-1}(\log_2(n)-3)\le(\sum_{i=1}^{k}{n\choose i})\cdot(\frac{1}{k}\sum_{i=1}^{k}log_2(i))\le\sum_{i=1}^{k}{n\choose i}\log_2(i)
-    \le(\sum_{i=1}^{k}{n\choose i})\cdot\log_2(k+\frac{1}{2})=2^{n-1}(\log_2(n)-1)$. Po połączeniu daje to:\newline
-    $2^n(\log_2(n)-2)\le\sum_{i=1}^{n}{n\choose i}\log_2(i)\le2^n(\log_2(n)-\frac{1}{2})$.\newline
-    Dla parzystego $n$ po wyłączeniu wyrazu środkowego można analogicznie szacować części przed i po tym wyrazie
-    (po podstawieniu $2^n-{n\choose \frac{n}{2}}$ zamiast $2^n$), zaś srodkowy wyraz jest równy ${n\choose \frac{n}{2}}(\log_2(n)-1)$, a więc leży pomiędzy
-    ${n\choose \frac{n}{2}}(\log_2(n)-2)$ i ${n\choose \frac{n}{2}}(\log_2(n)-\frac{1}{2})$, co kończy dowód.
-   \end{proof}
+   \vspace*{-10pt}
+   \begin{spacing}{2}
+    ${2n \choose n}=\frac{2^{2n}\Gamma(n+\frac{1}{2})}{\sqrt{\pi}\Gamma(n+1)}$,\quad\quad
+    ${2n+1 \choose n}={2n+1 \choose n+1}=\frac{2^{2n+1}\Gamma(n+\frac{3}{2})}{\sqrt{\pi}\Gamma(n+2)}$\newline
+    $\Gamma(z)=\int\limits_{0}^{\infty}x^{z-1}e^{-x}dx$\quad
+    dla $n\in\mathbb{N}$ $\Gamma(n)=(n-1)!$,\newline
+    ogólniej dla $x\in\mathbb{R},x>1$ $\frac{\Gamma(x+1)}{\Gamma(x)}=x$,\quad\quad
+    $\frac{\Gamma(x+\frac{1}{2})}{\Gamma(x)}<\frac{\Gamma(x+1)}{\Gamma(x+\frac{1}{2})}\Rightarrow
+    \sqrt{x-\frac{1}{2}}<\frac{\Gamma(x+\frac{1}{2})}{\Gamma(x)}<\sqrt{x}$\newline
+    Daje to ograniczenia:
+    $\frac{2^{2n}}{\sqrt{\pi(n+\frac{1}{2})}}<{2n\choose n}<\frac{2^{2n}}{\sqrt{\pi n}}$,\quad\quad
+    $\frac{2^{2n+1}}{\sqrt{\pi(n+\frac{3}{2})}}<{2n+1\choose n}={2n+1\choose n+1}<\frac{2^{2n+1}}{\sqrt{\pi(n+1)}}$\newline
+    Lub równoważnie:
+    $\frac{2^n}{\sqrt{\pi(\lceil\frac{n}{2}\rceil+\frac{1}{2})}}<{n\choose\lfloor\frac{n}{2}\rfloor}
+    ={n\choose\lceil\frac{n}{2}\rceil}<\frac{2^n}{\sqrt{\pi\lceil\frac{n}{2}\rceil}}$
+   \end{spacing}
+   \vspace*{-10pt}
+   \begin{spacing}{1.7}
+    \begin{lemma}\label{binomial sum upper bound}
+     Dla $k\le\lfloor\frac{n+1}{2}\rfloor$ zachodzi ograniczenie $\sum_{i=0}^{k-1}{n\choose i}\le2^{n-1}\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$
+    \end{lemma}
+    \begin{proof}
+     (Uogólnienie dowodu z podobnego lematu dla $n=2m,k<m$ z \cite{LPV})\vspace*{-10pt}\newline% Lemma3.8.2
+     Załóżmy najpierw, że $k<\lfloor\frac{n}{2}\rfloor$\newline
+     Zdefiniujmy $c=\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}<1,t=\lfloor\frac{n}{2}\rfloor-k,$
+     $A=\sum_{i=0}^{k-1}{n\choose i}, B=\sum_{i=k}^{\lfloor\frac{n}{2}\rfloor-1}{n\choose i}$\newpage
+     \noindent
+     $\forall_{1\le i\le k}$ $\frac{{n\choose k-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i}}<\frac{{n\choose k-i+1}}{{n\choose \lfloor\frac{n}{2}\rfloor-i+1}}$
+     $\Leftrightarrow$ $\frac{{n\choose k-i}}{{n\choose k-i+1}}<\frac{{n\choose \lfloor\frac{n}{2}\rfloor-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i+1}}$
+     $\Leftrightarrow \frac{k-i+1}{n-k+i}<\frac{\lfloor\frac{n}{2}\rfloor-i+1}{\lceil\frac{n}{2}\rceil+i}$\newline
+     (a ostatnie wynika z szeregu prostych nierówności: $\frac{k-i+1}{n-k+i}\le\frac{k-i+1}{k+i+1}
+     <\frac{\lfloor\frac{n}{2}\rfloor-i+1}{\lfloor\frac{n}{2}\rfloor+i+1}\le\frac{\lfloor\frac{n}{2}\rfloor-i+1}{\lceil\frac{n}{2}\rceil+i}$)\newline
+     Daje nam to ograniczenia $\forall_{1\le i\le k}$ $\frac{{n\choose k-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i}}<c$.\newline
+     Suma ostatnich $t$ wyrazów szeregu $A$ jest majoryzowana przez $c\cdot B$, wcześniejszych $t$ przez $c$ razy suma ostatnich $t$ (a więc przez $c^2\cdot B$).
+     Daje nam to oszacowanie $A<(c+c^2+c^3+...+c^{\lfloor\frac{k}{t}\rfloor})\cdot B<(c+c^2+c^3+...)\cdot B=\frac{c}{1-c}\cdot B$.
+     Jednocześnie $A+B=\sum_{i=0}^{\lfloor\frac{n}{2}\rfloor-1}{n\choose i}<2^{n-1}$.
+     $A=c\cdot A+(1-c)\cdot A=c(A+\frac{1-c}{c}A)<c\cdot(A+B)<c\cdot 2^{n-1}$.\newline
+     Pozostaje udowodnić przypadki większych $k$:\newline
+     Dla $n=2m,k=m$ $\sum_{i=0}^{m-1}{2m\choose i}=2^{2m-1}-\frac{1}{2}{2m\choose m}<2^{2m-1}=
+     2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$\newline
+     Dla $n=2m+1,k=m$ $\sum_{i=0}^{m-1}{2m+1\choose i}=2^{2m}-{2m+1\choose m}<2^{2m}=
+     2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$\newline
+     Dla $n=2m+1,k=m+1$ $\sum_{i=0}^{m}{2m+1\choose i}=2^{2m}=
+     2^{n-1}\cdot\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$ (jedyna nieostra nierówność)\newline
+    \end{proof}
+    \vspace*{-25pt}
+    \begin{lemma}\label{sum of log}
+     $2^n(\log_2(n)-2)\le\sum_{i=1}^{n}{n\choose i}\log_2(i)\le 2^n(\log_2(n)-\frac{1}{2})$ (dla dostatecznie dużych n).
+    \end{lemma}
+    \vspace*{-20pt}
+    \begin{proof}
+     Dla $n=2k+1$ dzielę sumę na $\sum_{i=1}^{k}{n\choose i}\log_2(i)+\sum_{i=k+1}^{n}{n\choose i}\log_2(i)$.\newline
+     $\sum_{i=k+1}^{n}{n\choose i}=2^{n-1}\Rightarrow 2^{n-1}(\log_2{n}-1)\le\sum_{i=k+1}^{n}{n\choose i}\log_2(i)\le2^{n-1}\log_2{n}$.\newline
+     $\sum_{i=1}^{k}\log_2(i)=\log_2(k!)$(ze wzoru Stirlinga) $\ge k\log_2(k)-k\log_2(e)-\frac{1}{2}(\log_2(2\pi)+\log_2(k))
+     \ge k(\log_2(k+\frac{1}{2})-2)$ (dla $k>7$) =$k(\log_2(n)-3)$\newline
+     Dla $i\le k$ ${n\choose i}\le{n\choose i+1}$, $\log_2(i)<\log_2(i+1)$, więc
+     $2^{n-1}(\log_2(n)-3)\le(\sum_{i=1}^{k}{n\choose i})\cdot(\frac{1}{k}\sum_{i=1}^{k}log_2(i))\le\sum_{i=1}^{k}{n\choose i}\log_2(i)
+     \le(\sum_{i=1}^{k}{n\choose i})\cdot\log_2(k+\frac{1}{2})=2^{n-1}(\log_2(n)-1)$. Po połączeniu daje to:\newline
+     $2^n(\log_2(n)-2)\le\sum_{i=1}^{n}{n\choose i}\log_2(i)\le2^n(\log_2(n)-\frac{1}{2})$.\newline
+     Dla parzystego $n$ po wyłączeniu wyrazu środkowego można analogicznie szacować części przed i po tym wyrazie
+     (po podstawieniu $2^n-{n\choose \frac{n}{2}}$ zamiast $2^n$), zaś srodkowy wyraz jest równy ${n\choose \frac{n}{2}}(\log_2(n)-1)$, a więc leży pomiędzy
+     ${n\choose \frac{n}{2}}(\log_2(n)-2)$ i ${n\choose \frac{n}{2}}(\log_2(n)-\frac{1}{2})$, co kończy dowód.
+    \end{proof}
+   \end{spacing}
+   \vspace*{-20pt}
   \section{Własność podziałowa}
    \begin{theorem}\label{wlasnosc podzialowa}
     Dla dowolnego podziału wierzchołków na dwa zbiory : $S\in V(G)$ i $V(Q_n)\backslash S$
@@ -310,82 +324,90 @@ oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ogranicz
     $\frac{m\cdot(2^n-m)}{2^{n-1}}=2m-\frac{m^2}{2^{n-1}}\ge m$ krawędzi. 
    \end{proof}
   \section{Własność ekspansji}
-   Hiperkostka posiada także mocniejszą (z punktu widzenia zastosowań) własność zdefiniowaną i udowodnioną w tym podrozdziale.
-   \begin{defi}\label{epsilon ekspansja wierzcholkowa}
-    Graf $G$ posiada własność \emph{$\varepsilon$--ekspansji wierzchołkowej}, jeżeli dla każdego zbioru wierzchołków $S\subseteq V(G)$ takiego,
-    że $|S|\le\frac{|V(G)|}{2}$ zachodzi $|N(S)|\ge\varepsilon\cdot|S|$
-   \end{defi}
-   \begin{lemma}\label{HAR1}
-    Zbiór $S_l$ -- pierwszych $l$ wierzchołków hiperkostki według numerowania warstwowego posiada maksymalne wnętrze wśród zbiorów wielkości $l$.  
-   \end{lemma}
-   Jest to jeden z lematów dowodzonych w pracy \cite{HAR}.
-   \begin{lemma}\label{S->S_k}
-    Dla hiperkostki do udowodnienia własności $\varepsilon_n$--ekspansji wierzchołkowej wystarczy rozważyć zbiory $S$ postaci $S_k,k\le 2^{n-1}$.
-   \end{lemma}
-   \begin{proof}
-    Weźmy dowolne $S\subseteq V(G),$ $l=|S|+|N(S)|$ z Lematu \ref{HAR1} wynika, że
-    $\frac{|N(S)|}{|S|}=\frac{|N(S)|+|S|}{|S|}-1\ge\frac{|S_l|}{|In(S_l)|}-1=\frac{|S_l\backslash In(S_l)|}{|In(S_l)|}\ge\frac{|N(In(S_l))|}{|In(S_l)|}$.
-    Z definicji $S_l$ wynika, że $In(S_l)=S_k$ dla $k=|In(S_l)|$.\newline
-    Pozostaje udowodnić, że wystarczy rozważyć te $S_k$, że $k\le2^{n-1}$\newline
-    Dla $l=|N(S)|+|S|\ge(\varepsilon_n+1)\cdot 2^{n-1}$ mamy $|S|>2^{n-1}$ lub $|N(S)|\ge\varepsilon_n\cdot|S|$, wystarczy więc rozważyć przypadek
-    $l<(\varepsilon_n+1)\cdot 2^{n-1}$.\newline
-    Dla $n=2m+1$ weźmy $k=2^{n-1}=\sum_{i=0}^{m}{2m+1 \choose i}$, wtedy $S_k$ = pełne $m+1$ pierwszych warstw i $N(S_k)$ = warstwa $m+1$.
-    Przykład ten pokazuje, że $\varepsilon_n\le\frac{{2m+1 \choose m+1}}{2^{2m}}$,
-    więc $l<2^{2m}+{2m+1 \choose m+1}\Rightarrow$ $S_l$ mieści się w pierwszych $m+2$ warstwach
-    $\Rightarrow$ $S_k=In(S_l)$ mieści się w pierwszych $m+1$ warstwach $\Rightarrow k\le 2^{2m}=2^{n-1}$.\newline
-    Dla $n=2m$ weźmy $k=2^{n-1}=\sum_{i=0}^{m-1}{2m \choose i}+\frac{1}{2}{2m\choose m}$, wtedy $S_k$ = pełne $m$ pierwszych warstw + połowa środkowej.
-    W środkowej warstwie pierwsze ${2m-1\choose m-1}=\frac{1}{2}{2m \choose m}$ wierzchołków to dokładnie te, których ciągi binarne kończą się na $1$.
-    Wtedy też $S_k\cup N(S_k)$ to dokładnie pełne $m+1$ pierwszych warstw plus te wierzchołki z warstwy $m+2$, których ciągi binarne kończą się na $1$
-    $\Rightarrow |N(S_k)|={2m-1\choose m}+{2m-1\choose m}={2m-1\choose m-1}+{2m-1 \choose m}={2m\choose m}$.
-    Przykład ten pokazuje, że $\varepsilon_n\le\frac{{2m \choose m}}{2^{2m-1}}$,
-    więc $l<2^{2m-1}+{2m \choose m}\Rightarrow$ $S_l$ mieści się w pierwszych $m+1$ warstwach plus tych wierzchołkach z warstwy $m+2$, które kończą się na $1$
-    $\Rightarrow k\le2^{n-1}$.
-   \end{proof}
-   \begin{theorem}\label{ekspansja kostki}
-    Hiperkostka $Q_n$ posiada własność $\frac{1}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
-   \end{theorem}
-   \begin{proof}
-    Jeśli $k=\sum_{i=0}^{r}{n\choose i}$ (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw), to
-    $\frac{|N(S_k)|}{|S_k|}=\frac{{n\choose r+1}}{\sum_{i=0}^{r}{n \choose i}}\ge\frac{{n\choose r+1}{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}{n\choose r+1}}
-    =\frac{{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}}>\frac{2^{n}}{2^{n-1}\sqrt{\pi (\lceil\frac{n}{2}\rceil+\frac{1}{2})}}=
-    \frac{2}{\sqrt{\pi (\lceil\frac{n}{2}\rceil+\frac{1}{2})}}
-    \ge\frac{2\sqrt{2}}{\sqrt{\pi (n+\frac{3}{2})}}\ge\frac{2}{\sqrt{\pi n}}$ (dla $n\ge2$).\newline
-    ($n=2m+1,r=m$ rozważone w \ref{S->S_k})\newline
-    Jeśli $k=\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}$
-    (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw plus te wierzchołki z warstwy $r+1$, których ciągi binarne kończą się na $1$).\newline
-    $|N(S_k)\cup S_k|=\sum_{i=0}^{r+1}{n\choose i}+{n-1 \choose r+1}\Rightarrow |N(S_k)|=2\cdot{n-1\choose r+1}$\newline
-    $\frac{|N(S_k)|}{|S_k|}=\frac{2\cdot{n-1 \choose r+1}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}>
-    \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}\cdot{n\choose r+1}+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}=
-    \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}\cdot({n-1\choose r}+{n-1\choose r+1})+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}>\newline
-    \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n}\cdot{n-1\choose r+1}+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}=
-    \left(\frac{2^{n-1}}{{n\choose\lfloor\frac{n}{2}\rfloor}}+\frac{{n-1\choose r}}{2\cdot{n-1\choose r+1}}\right)^{-1}>
-    \left(\frac{\sqrt{\pi(n+\frac{3}{2})}}{2\sqrt{2}}+\frac{1}{2}\right)^{-1}=\frac{2\sqrt{2}}{\sqrt{\pi(n+\frac{3}{2})}+\sqrt{2}}>\frac{2}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
-    W pozostałych przypadkach można łatwo otrzymać sporo słabsze ograniczenie wiedząc tylko, że dodanie wierzchołka do $S$ zmniejszy $N(S)$ o co najwyżej $1$.\newpage
-    Weźmy teraz $\sum_{i=0}^{r}{n\choose i}<k<\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}$\newline
-    $\frac{|N(S_k)|}{|S_k|}>\frac{{n\choose r+1}-{n-1\choose r}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}=
-    \frac{{n-1\choose r+1}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}\ge
-    \frac{\frac{1}{2}{n \choose r+1}}{\sum_{i=0}^{r}{n\choose i}+\frac{1}{2}{n \choose r+1}}\ge
-    \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
-    Analogicznie dla $\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}<k<\sum_{i=0}^{r+1}{n\choose i}$\newline
-    $\frac{|N(S_k)|}{|S_k|}>\frac{2{n-1\choose r+1}-{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}=
-    \frac{{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}>
-    \frac{{n-1\choose r+1}}{2^{n-1}\frac{{n\choose r+1}}{{n\choose\lfloor\frac{n}{2}\rfloor}}+{n\choose r+1}}\ge
-    \frac{{n\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{(2^{n-1}+{n\choose\lfloor\frac{n}{2}\rfloor}){n\choose r+1}}=
-    \frac{{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}+{n\choose\lfloor\frac{n}{2}\rfloor}}>
-    \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
-    Dla przypadków $n\le6$ można ręcznie sprawdzić wszystkie $2^{n-1}$ przypadków, aby również otrzymać oszacowanie $\frac{1}{\sqrt{\pi n}}$.
-   \end{proof}
-   \begin{corollary}\label{ograniczenie ekspansji}
-    Hiperkostka wymiaru $n$ nie posiada własności $\frac{2\sqrt{2}}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
-   \end{corollary}
-   \begin{proof}
-    Dla $n=2m+1$\newline
-    $\frac{|N(S_{2^{2m}})|}{|S_{2^{2m}}|}=\frac{{2m+1 \choose m+1}}{2^{2m}}<\frac{2^{2m+1}}{2^{2m}\sqrt{\pi(m+1)}}=\frac{2}{\sqrt{\pi(m+1)}}=
-    \frac{2}{\sqrt{\pi(\frac{n}{2}+\frac{1}{2})}}=\frac{2\sqrt{2}}{\sqrt{\pi(n+1)}}<\frac{2\sqrt{2}}{\sqrt{\pi n}}$.\newline
-    Dla $n=2m$
-    $\frac{|N(S_{2^{2m-1}})|}{|S_{2^{2m-1}}|}=\frac{{2m-1 \choose m}+{2m-1\choose m}}{2^{2m-1}}=\frac{{2m \choose m}}{2^{2m-1}}<
-    \frac{2^{2m}}{2^{2m-1}\sqrt{\pi m}}=\frac{2}{\sqrt{\pi m}}=\frac{2}{\sqrt{\pi\cdot\frac{n}{2}}}=\frac{2\sqrt{2}}{\sqrt{\pi n}}$.
-   \end{proof}
+   \begin{spacing}{1.3}
+    Hiperkostka posiada także mocniejszą (z punktu widzenia zastosowań) własność zdefiniowaną i udowodnioną w tym podrozdziale.
+    \begin{defi}\label{epsilon ekspansja wierzcholkowa}
+     Graf $G$ posiada własność \emph{$\varepsilon$--ekspansji wierzchołkowej}, jeżeli dla każdego zbioru wierzchołków $S\subseteq V(G)$ takiego,
+     że $|S|\le\frac{|V(G)|}{2}$ zachodzi $|N(S)|\ge\varepsilon\cdot|S|$
+    \end{defi}
+    \begin{lemma}\label{HAR1}
+     Zbiór $S_l$ -- pierwszych $l$ wierzchołków hiperkostki według numerowania warstwowego posiada maksymalne wnętrze wśród zbiorów wielkości $l$.  
+    \end{lemma}
+    Jest to jeden z lematów dowodzonych w pracy \cite{HAR}.
+    \begin{lemma}\label{S->S_k}
+     Dla hiperkostki do udowodnienia własności $\varepsilon_n$--ekspansji wierzchołkowej wystarczy rozważyć zbiory $S$ postaci $S_k,k\le 2^{n-1}$.
+    \end{lemma}
+   \end{spacing}
+   \vspace*{-20pt}
+   \begin{spacing}{1.7}
+    \begin{proof}
+     Weźmy dowolne $S\subseteq V(G),$ $l=|S|+|N(S)|$ z Lematu \ref{HAR1} wynika, że
+     $\frac{|N(S)|}{|S|}=\frac{|N(S)|+|S|}{|S|}-1\ge\frac{|S_l|}{|In(S_l)|}-1=\frac{|S_l\backslash In(S_l)|}{|In(S_l)|}\ge\frac{|N(In(S_l))|}{|In(S_l)|}$.
+     Z definicji $S_l$ wynika, że $In(S_l)=S_k$ dla $k=|In(S_l)|$.\newline
+     Pozostaje udowodnić, że wystarczy rozważyć te $S_k$, że $k\le2^{n-1}$\newline
+     Dla $l=|N(S)|+|S|\ge(\varepsilon_n+1)\cdot 2^{n-1}$ mamy $|S|>2^{n-1}$ lub $|N(S)|\ge\varepsilon_n\cdot|S|$, wystarczy więc rozważyć przypadek
+     $l<(\varepsilon_n+1)\cdot 2^{n-1}$.\newline
+     Dla $n=2m+1$ weźmy $k=2^{n-1}=\sum_{i=0}^{m}{2m+1 \choose i}$, wtedy $S_k$ = pełne $m+1$ pierwszych warstw i $N(S_k)$ = warstwa $m+1$.
+     Przykład ten pokazuje, że $\varepsilon_n\le\frac{{2m+1 \choose m+1}}{2^{2m}}$,
+     więc $l<2^{2m}+{2m+1 \choose m+1}\Rightarrow$ $S_l$ mieści się w pierwszych $m+2$ warstwach
+     $\Rightarrow$ $S_k=In(S_l)$ mieści się w pierwszych $m+1$ warstwach $\Rightarrow k\le 2^{2m}=2^{n-1}$.\newline
+     Dla $n=2m$ weźmy $k=2^{n-1}=\sum_{i=0}^{m-1}{2m \choose i}+\frac{1}{2}{2m\choose m}$, wtedy $S_k$ = pełne $m$ pierwszych warstw + połowa środkowej.
+     W środkowej warstwie pierwsze ${2m-1\choose m-1}=\frac{1}{2}{2m \choose m}$ wierzchołków to dokładnie te, których ciągi binarne kończą się na $1$.
+     Wtedy też $S_k\cup N(S_k)$ to dokładnie pełne $m+1$ pierwszych warstw plus te wierzchołki z warstwy $m+2$, których ciągi binarne kończą się na $1$
+     $\Rightarrow |N(S_k)|={2m-1\choose m}+{2m-1\choose m}={2m-1\choose m-1}+{2m-1 \choose m}={2m\choose m}$.
+     Przykład ten pokazuje, że $\varepsilon_n\le\frac{{2m \choose m}}{2^{2m-1}}$,
+     więc $l<2^{2m-1}+{2m \choose m}\Rightarrow$ $S_l$ mieści się w pierwszych $m+1$ warstwach plus tych wierzchołkach z warstwy $m+2$, które kończą się na $1$
+     $\Rightarrow k\le2^{n-1}$.
+    \end{proof}
+    \begin{theorem}\label{ekspansja kostki}
+     Hiperkostka $Q_n$ posiada własność $\frac{1}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
+    \end{theorem}
+    \vspace*{-15pt}
+    \begin{proof}
+     Jeśli $k=\sum_{i=0}^{r}{n\choose i}$ (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw), to
+     $\frac{|N(S_k)|}{|S_k|}=\frac{{n\choose r+1}}{\sum_{i=0}^{r}{n \choose i}}\ge\frac{{n\choose r+1}{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}{n\choose r+1}}
+     =\frac{{n\choose \lfloor\frac{n}{2}\rfloor}}{2^{n-1}}>\frac{2^{n}}{2^{n-1}\sqrt{\pi (\lceil\frac{n}{2}\rceil+\frac{1}{2})}}=
+     \frac{2}{\sqrt{\pi (\lceil\frac{n}{2}\rceil+\frac{1}{2})}}
+     \ge\frac{2\sqrt{2}}{\sqrt{\pi (n+\frac{3}{2})}}\ge\frac{2}{\sqrt{\pi n}}$ (dla $n\ge2$).\newline
+     ($n=2m+1,r=m$ rozważone w \ref{S->S_k})\newline
+     Jeśli $k=\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}$
+     (pełne $r+1\le\lfloor\frac{n}{2}\rfloor+1$ warstw plus te wierzchołki z warstwy $r+1$, których ciągi binarne kończą się na $1$).\newline
+     $|N(S_k)\cup S_k|=\sum_{i=0}^{r+1}{n\choose i}+{n-1 \choose r+1}\Rightarrow |N(S_k)|=2\cdot{n-1\choose r+1}$\newline
+     $\frac{|N(S_k)|}{|S_k|}=\frac{2\cdot{n-1 \choose r+1}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}>
+     \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}\cdot{n\choose r+1}+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}=
+     \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}\cdot({n-1\choose r}+{n-1\choose r+1})+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}>\newline
+     \frac{2\cdot{n-1\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n}\cdot{n-1\choose r+1}+{n-1\choose r}\cdot{n\choose\lfloor\frac{n}{2}\rfloor}}=
+     \left(\frac{2^{n-1}}{{n\choose\lfloor\frac{n}{2}\rfloor}}+\frac{{n-1\choose r}}{2\cdot{n-1\choose r+1}}\right)^{-1}>
+     \left(\frac{\sqrt{\pi(n+\frac{3}{2})}}{2\sqrt{2}}+\frac{1}{2}\right)^{-1}=\frac{2\sqrt{2}}{\sqrt{\pi(n+\frac{3}{2})}+\sqrt{2}}>\frac{2}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
+     W pozostałych przypadkach można łatwo otrzymać sporo słabsze ograniczenie wiedząc tylko, że dodanie wierzchołka do $S$ zmniejszy $N(S)$ o co najwyżej $1$.\newline
+     Weźmy teraz $\sum_{i=0}^{r}{n\choose i}<k<\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}$\newline
+     $\frac{|N(S_k)|}{|S_k|}>\frac{{n\choose r+1}-{n-1\choose r}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}=
+     \frac{{n-1\choose r+1}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}\ge
+     \frac{\frac{1}{2}{n \choose r+1}}{\sum_{i=0}^{r}{n\choose i}+\frac{1}{2}{n \choose r+1}}\ge
+     \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
+     Analogicznie dla $\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}<k<\sum_{i=0}^{r+1}{n\choose i}$\newline
+     $\frac{|N(S_k)|}{|S_k|}>\frac{2{n-1\choose r+1}-{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}=
+     \frac{{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}>
+     \frac{{n-1\choose r+1}}{2^{n-1}\frac{{n\choose r+1}}{{n\choose\lfloor\frac{n}{2}\rfloor}}+{n\choose r+1}}\ge
+     \frac{{n\choose r+1}{n\choose\lfloor\frac{n}{2}\rfloor}}{(2^{n-1}+{n\choose\lfloor\frac{n}{2}\rfloor}){n\choose r+1}}=
+     \frac{{n\choose\lfloor\frac{n}{2}\rfloor}}{2^{n-1}+{n\choose\lfloor\frac{n}{2}\rfloor}}>
+     \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
+     Dla przypadków $n\le6$ można ręcznie sprawdzić wszystkie $2^{n-1}$ przypadków, aby również otrzymać oszacowanie $\frac{1}{\sqrt{\pi n}}$.
+    \end{proof}
+    \vspace*{-20pt}
+    \begin{corollary}\label{ograniczenie ekspansji}
+     Hiperkostka wymiaru $n$ nie posiada własności $\frac{2\sqrt{2}}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
+    \end{corollary}
+    \vspace*{-20pt}
+    \begin{proof}
+     Dla $n=2m+1$\newline
+     $\frac{|N(S_{2^{2m}})|}{|S_{2^{2m}}|}=\frac{{2m+1 \choose m+1}}{2^{2m}}<\frac{2^{2m+1}}{2^{2m}\sqrt{\pi(m+1)}}=\frac{2}{\sqrt{\pi(m+1)}}=
+     \frac{2}{\sqrt{\pi(\frac{n}{2}+\frac{1}{2})}}=\frac{2\sqrt{2}}{\sqrt{\pi(n+1)}}<\frac{2\sqrt{2}}{\sqrt{\pi n}}$.\newline
+     Dla $n=2m$
+     $\frac{|N(S_{2^{2m-1}})|}{|S_{2^{2m-1}}|}=\frac{{2m-1 \choose m}+{2m-1\choose m}}{2^{2m-1}}=\frac{{2m \choose m}}{2^{2m-1}}<
+     \frac{2^{2m}}{2^{2m-1}\sqrt{\pi m}}=\frac{2}{\sqrt{\pi m}}=\frac{2}{\sqrt{\pi\cdot\frac{n}{2}}}=\frac{2\sqrt{2}}{\sqrt{\pi n}}$.
+    \end{proof}
+   \end{spacing}
   \section{Inne własności}
    \subsection{Automorfizmy}
     \begin{fact}
@@ -509,7 +531,7 @@ oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ogranicz
    Dla $n=4$ na płaszczyźnie powstaje minimum $8$ przecięć krawędzi,
    jest ona jednak grafem toroidalnym (daje się narysować na powierzchni torusa bez przecięć).\newline
    Ogólnie $Q_n$ ma genus równy ${\gamma(Q_n)=(n-4)2^{n-3}+1}$\newline (\cite{HHH})-- oznacza to, że kostkę taką daje się
-   narysować bez przecięć na sferze z tyloma "uszami".\newline\newpage
+   narysować bez przecięć na sferze z tyloma "uszami".\newline
    
    Każda hiperkostka jest grafem jednostkowej odległości -- można go narysować tak, żeby każda krawędź miała tę samą długość euklidesową.
    Rysunek taki można łatwo dostać indukcyjnie -- malując dwie kopie rysunku $Q_{n-1}$ o tej własności w odległości $1$ w dowolnym kierunku
@@ -1568,7 +1590,7 @@ oraz najdłuższa ścieżka indukowana (konstrukcje długich ścieżek, ogranicz
 
 
 \begin{thebibliography}{99}
-\addcontentsline{toc}{chapter}{Bibliografia}%TODO usunąć niepasujące
+\addcontentsline{toc}{chapter}{Bibliografia}
 
   \bibitem{Ruskey} Frank Ruskey,
    "Combinatorial Generation"
