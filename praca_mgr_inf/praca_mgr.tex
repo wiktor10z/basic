@@ -55,27 +55,31 @@ Instytut Informatyki}
 \keywords{hiperkostka, wadliwe wierzchołki, graf z wadami, spójność, długie ścieżki, cykl Hamiltona, ścieżka indukowana, wąż w pudełku}
 
 \newtheorem{theorem}{Twierdzenie}[chapter]
+\newtheorem{note}[theorem]{Notacja}
 \newtheorem{defi}[theorem]{Definicja}
 \newtheorem{conjecture}[theorem]{Przypuszczenie}
 \newtheorem{lemma}[theorem]{Lemat}
 \newtheorem{remark}[theorem]{Uwaga}
+\newtheorem{observation}[theorem]{Obserwacja}
 \newtheorem{fact}[theorem]{Fakt}
 \newtheorem{corollary}[theorem]{Wniosek}
+\newtheorem{claim}[theorem]{Stwierdzenie}
 
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-W pracy przedstawiono bardzo popularną i użyteczną klasę grafów, jaką są hiperkostki $n$-wymiarowe, jak również mniej regularną jednak
-ogólniejszą klasę nazwaną hiperkostkami z wadliwymi wierzchołkami, powstałą po usunięciu z oryginalnego grafu pewnej niewielkiej liczby wierzchołków.
-Dzięki niezwykle regularnej strukturze takich obiektów możliwe jest rozwiązywanie wielu problemów grafowych lepiej i istotnie szybciej niż w przypadu ogólnym.\newline
-W pracy zawarty jest głównie przegląd ważniejszych rezultatów z literatury związanych z problemami takimi jak:\newline
-Spójność -- dwa różne algorytmy działające w czasie wielomianowym od wymiaru i ilości wad.\newline
-Długie ścieżki -- dowody istnienia w grafie ścieżek i cykli zajmujących prawie cały graf
-przy odpowiednio małych zbiorach wad.\newline
-Hamiltonowskość -- sformułowanie ogólnych wyników, oraz dowody dla szczególnych przypadków.\newline
-Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyniki eksperymentalne oraz ograniczenia znalezione w literaturze.
+W pracy przedstawiono bardzo popularną i użyteczną klasę grafów, jaką są hiperkostki n- wymiarowe,
+jak również mniej regularną jednak ogólniejszą klasę nazwaną hiperkostkami z wadliwymi wierzchołkami,
+powstałą po usunięciu z oryginalnego grafu pewnej niewielkiej liczby wierzchołków. Dzięki niezwykle
+regularnej strukturze takich obiektów możliwe jest rozwiązywanie wielu problemów grafowych lepiej i istotnie
+szybciej niż w przypadku ogólnym. W pracy zawarte jest streszczenie ważniejszych wyników z literatury oraz własne wnioski i rezultaty.
+W  pracy opisałem głównie cztery grupy problemów: Badanie spójności,
+w tym przedstawienie dwóch różnych algorytmów sprawdzających ją w czasie wielomianowym od wymiaru i ilości wad.
+Istnienie w grafie długich cykli i ścieżek (zajmujących prawie cały graf) przy odpowiednio małych zbiorach wad.
+Hamiltonowskość w szczególnych przypadkach i sformułowanie wyników ogólnych.
+Własne konstrukcje możliwie najdłuższych ścieżek indukowanych, wyniki eksperymentalne oraz  ograniczenia znalezione w literaturze.
 \end{abstract}
 
 \tableofcontents
@@ -114,10 +118,11 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
   i liczności zbioru wierzchołków wadliwych $F$ -- algorytm korzystający z własności $\varepsilon$--ekspansji wierzchołkowej w czasie $O(|F|^2\cdot n^{3.5})$,
   oraz drugi korzystający z lokalnej spójności w czasie $O(|F|\cdot n^3)$. Wymieniam tam również kilka problemów pobocznych rozwiązywanych przez te algorytmy.
   
-  W kolejnym rozdziale wprowadzam problem bardzo długich (wielkości powyżej $2^n-2|F|-4$) ścieżek oraz cykli oraz par ścieżek występujących w wadliwych hiperkostkach.
+  W kolejnym rozdziale wprowadzam problem bardzo długich (wielkości powyżej $2^n-2|F|-4$) ścieżek, cykli oraz par ścieżek występujących w wadliwych hiperkostkach.
   Przedstawiam tam kilka twierdzeń dających proste warunki wystarczające na ich istnienie w grafie.
-  Posiadanie tych właściwości pozwala na użycie algorytmów wykorzystujących chodzenie po hiperkostce na prawie całym grafie, bez potrzeby wprowadzania drastycznych modyfikacji.
-  
+  Spełnianie tych warunków pozwala na odwiedzenie prawie całego grafu poruszając się wyłącznie po ścieżce bez powtórzeń,
+  a więc pozwala na przeniesienie wielu algorytmów ze zwykłej hiperkostki bez potrzeby dokonywania drastycznych modyfikacji.
+
   W czwartym rozdziale przedstawiam kilka wyników teoretycznych na temat istnienia cyklów Hamiltona i hamiltonowskiej wiązalności w hiperkostkach z usuniętymi
   wierzchołkami. Następnie naszkicowuje dowody hamiltonowskości dla wadliwych hiperkostek ze zbiorami wad indukującymi w hiperkostce
   podgrafy o specjalnych strukturach (mniejsza hiperkostka, ścieżka, cykl, drzewo).
@@ -132,13 +137,13 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
   
  \chapter{Własności hiperkostki}
   \section{Podstawowe definicje}
-   \begin{defi}\label{[n]}
+   \begin{note}\label{[n]}
     Dla $n\in\mathbb{N}$\quad $[n]=\{0,...,n-1\}$ (zbiór pierwszych $n$ liczb naturalnych).
-   \end{defi}
+   \end{note}
    \subsection{Hiperkostka}
     \begin{defi}\label{hiperkostka}
      \emph{Hiperkostką wymiaru $n$ ($Q_n$)} nazwiemy graf, w którym każdy wierzchołek odpowiada ciągowi binarnemu długości $n$,
-     zaś krawędzią połączone są te wierzchołki, których ciągi binarne różnią się na dokładnie jednej pozycji.\newline
+     zaś krawędzią połączone są te wierzchołki, których ciągi binarne różnią się na dokładnie jednej pozycji (rysunek).\newline
      $V(Q_n)=\{(v_{n-1},...,v_{0}):v_i\in\{0,1\}\}, E(Q_n)=\{(u,v):\sum_{i}|u_i-v_i|=1\}$
     \end{defi}
     \begin{center}
@@ -157,32 +162,32 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      Ze względu na oczywistą interpretację hiperkostki, jako punkty i odcinki w przestrzeni $n$--wymiarowej możemy mówić o \emph{kierunku}
      krawędzi wychodzącej z wierzchołka, definiowanym, jako numer pozycji (lub równoważnie współrzędnej), która ulega zmianie po przejściu przez tę krawędź.
     \end{defi}
-    \begin{defi}\label{delta wierzcholkow}
+    \begin{note}\label{delta wierzcholkow}
      Dla dwóch wierzchołków hiperkostki definiujemy:
      $u\Delta v=\{i:u_i\neq v_i\}$, gdzie $(u_{n-1},...,u_{0})$ i $(v_{n-1},...,v_{0})$ to ciągi binarne wierzchołków $u$ i $v$ odpowiednio
      ($|u\Delta v|$ wyznacza odległość wierzchołków w hiperkostce).
-    \end{defi}
+    \end{note}
     \begin{defi}\label{numerowanie klasyczne}
      \emph{Numerowaniem klasycznym (naturalnym)} hiperkostki nazwiemy takie numerowanie $\varphi:V(Q_n)\rightarrow\{1,...,|V(Q_n)|\}$ jej wierzchołków, że
-     $\varphi(v)=1+\sum_{i}v_i\cdot2^i$
+     $\varphi(v)=1+\sum_{i}v_i\cdot2^i$ (rysunek).
     \end{defi}
     \begin{center}
      \includegraphics[scale=0.6]{img/Q_4_klasyczne.jpg}
     \end{center}
     \begin{defi}\label{numerowanie warstwowe}
      \emph{Numerowaniem warstwowym} hiperkostki nazwiemy jej numerowanie w kolejności przeszukiwania grafu wszerz zaczynając od wierzchołka $\overline{0}$
-     z wybieraniem sąsiadów w kolejności leksykograficznej.
+     z wybieraniem sąsiadów w kolejności leksykograficznej (rysunek).
     \end{defi}
     \begin{center}
     \includegraphics[scale=0.6]{img/Q_4_warstwowe.jpg}
    \end{center}   
-    \begin{remark}\label{numerowanie warstwowe 2}
-     Jest to takie numerowanie $\varphi:V(Q_n)\rightarrow\{1,...,|V(Q_n)|\}$ jej wierzchołków,
+    \begin{observation}\label{numerowanie warstwowe 2}
+     Numerowanie warstwowe to takie numerowanie $\varphi:V(Q_n)\rightarrow\{1,...,|V(Q_n)|\}$ wierzchołków hiperkostki,
      że wierzchołki z $i$-tej warstwy otrzymują numery od $\sum_{j=0}^{i-1}{n\choose j}+1$ do $\sum_{j=0}^{i}{n\choose j}$.
      W obrębie jednej warstwy numery przyznawane są przeciwnie do kolejności leksykograficznej na odwróconych słowach.
      $\varphi(v)>\varphi(u)\Leftrightarrow (\sum_{i=0}^n v_i>\sum_{i=0}^n u_i)
      \vee((\sum_{i=0}^n v_i=\sum_{i=0}^n u_i)\wedge(\sum_{i=0}^n2^{n-i}v_i<\sum_{i=0}^n2^{n-i}u_i))$
-    \end{remark}
+    \end{observation}
     \begin{proof}
      Indukcyjnie po warstwach.\newline
      Dla warstw $0$ i $n$ oczywiste.\newline
@@ -201,10 +206,12 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      Dla grafu $G$ oraz wierzchołka $v\in V(G)$ definiujemy \emph{sąsiedztwo wierzchołka}, jako zbiór wierzchołków połączonych z nim krawędzią:
      $N(v)=\{u\in V(G):(u,v)\in E(G)\}$.
     \end{defi}
+    \vspace*{5pt}
     \begin{defi}\label{otoczenie zbioru wierzcholkow}
      Dla grafu $G$ oraz zbioru wierzchołków $S\subseteq V(G)$ definiujemy \emph{otoczenie zbioru wierzchołków}, jako zbiór tych sąsiadów wierzchołków ze zbioru,
      które same do tego zbioru nie należą: $N(S)=(\bigcup_{v\in S}N(v))\backslash S$
     \end{defi}
+    \vspace*{5pt}
     \begin{defi}\label{wnetrze zbioru wierzcholkow}
      Dla grafu $G$ oraz zbioru wierzchołków $S\subseteq V(G)$ definiujemy \emph{wnętrze zbioru wierzchołków}, jako zbiór tych wierzchołków z $S$,
      których wszyscy sąsiedzi również należą do tego zbioru: $In(S)=\{v\in S:N(v)\subseteq S\}$
@@ -213,18 +220,19 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     \begin{defi}\label{podgraf indukowany}
      Dla danego $V\subseteq V(G)$\quad $G[V]=(V,\{uv\in E(G):u,v\in V\})$ oznacza \emph{podgraf indukowany} przez podzbiór wierzchołków $V$.
     \end{defi}
+    \vspace*{2pt}
     \begin{defi}\label{roznica grafow}
      Dla danego $V\subseteq V(G)$\quad $G-V=G[V(G)\backslash V]$ oznacza \emph{graf $G$ z usuniętymi wierzchołkami $V$}.
     \end{defi}
+    \vspace*{2pt}
     \begin{defi}\label{kwadrat grafu}
      Dla danego grafu $G$\newline $G^2=(V(G),E(G)\cup\{uv:\exists_{w\in V(G)}uw\in E(G)\cap wv\in E(G)\})$
      oznacza \emph{kwadrat grafu}, czyli graf z dodanymi krawędziami między wierzchołkami oddalonymi o co najwyżej 2.
     \end{defi}
    \subsection{Graf z wadami}
-    \begin{defi}\label{graf z wadami}
-     W grafie $G$ możemy wyróżnić niektóre wierzchołki (czasem również krawędzie) i oznaczyć jako wadliwe.
-     Graf z niepustym takim wyróżnionym zbiorem wierzchołków wadliwych $F\subseteq V(G)$ nazywamy \emph{grafem z wadami} (lub \emph{grafem wadliwym}).
-    \end{defi}
+    W grafie $G$ możemy wyróżnić niektóre wierzchołki (czasem również krawędzie) i oznaczyć jako wadliwe.
+    Graf z niepustym takim wyróżnionym zbiorem wierzchołków wadliwych $F\subseteq V(G)$ nazywamy \emph{grafem z wadami} (lub \emph{grafem wadliwym}).
+    
     Wadliwe wierzchołki (i/lub krawędzie) najczęściej traktowane są, jako usunięte z grafu -- mówimy w tym przypadku o grafie $G-F$.
     Wyróżnianie wadliwych wierzchołków w grafie zamiast definiowania nowego grafu jest umotywowane głównie w przypadkach,
     gdy pełny graf łatwo zdefiniować i zapisać w pamięci małej względem jego rozmiaru (np. klika, hiperkostka, graf de Bruijna),
@@ -242,8 +250,10 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
    %i $\frac{2^{2m+1}}{\sqrt{\pi (m+2)}}<{2m+1 \choose m}={2m+1 \choose m+1}<\frac{2^{2m+1}}{\sqrt{\pi m}}$\newline
    %Lub w krotszym zapisie:
    %$\frac{2^n}{\sqrt{\pi(\lfloor\frac{n}{2}\rfloor}+2)}<{n\choose \lfloor\frac{n}{2}\rfloor}<\frac{2^n}{\sqrt{\pi\cdot\lfloor\frac{n}{2}\rfloor}}$
-   \vspace*{-10pt}
+   Poniżej dowodzę kilka równań i nierówności kombinatorycznych używanych w dalszej części pracy.\newline
+   \vspace*{-20pt}    
    \begin{spacing}{2}
+   \noindent
     ${2n \choose n}=\frac{2^{2n}\Gamma(n+\frac{1}{2})}{\sqrt{\pi}\Gamma(n+1)}$,\quad\quad
     ${2n+1 \choose n}={2n+1 \choose n+1}=\frac{2^{2n+1}\Gamma(n+\frac{3}{2})}{\sqrt{\pi}\Gamma(n+2)}$\newline
     $\Gamma(z)=\int\limits_{0}^{\infty}x^{z-1}e^{-x}dx$\quad
@@ -258,7 +268,6 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     $\frac{2^n}{\sqrt{\pi(\lceil\frac{n}{2}\rceil+\frac{1}{2})}}<{n\choose\lfloor\frac{n}{2}\rfloor}
     ={n\choose\lceil\frac{n}{2}\rceil}<\frac{2^n}{\sqrt{\pi\lceil\frac{n}{2}\rceil}}$
    \end{spacing}
-   \vspace*{-10pt}
    \begin{spacing}{1.7}
     \begin{lemma}\label{binomial sum upper bound}
      Dla $k\le\lfloor\frac{n+1}{2}\rfloor$ zachodzi ograniczenie $\sum_{i=0}^{k-1}{n\choose i}\le2^{n-1}\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}$
@@ -267,7 +276,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      (Uogólnienie dowodu z podobnego lematu dla $n=2m,k<m$ z \cite{LPV})\vspace*{-10pt}\newline% Lemma3.8.2
      Załóżmy najpierw, że $k<\lfloor\frac{n}{2}\rfloor$\newline
      Zdefiniujmy $c=\frac{{n\choose k}}{{n\choose \lfloor\frac{n}{2}\rfloor}}<1,t=\lfloor\frac{n}{2}\rfloor-k,$
-     $A=\sum_{i=0}^{k-1}{n\choose i}, B=\sum_{i=k}^{\lfloor\frac{n}{2}\rfloor-1}{n\choose i}$\newpage
+     $A=\sum_{i=0}^{k-1}{n\choose i}, B=\sum_{i=k}^{\lfloor\frac{n}{2}\rfloor-1}{n\choose i}$\newline
      \noindent
      $\forall_{1\le i\le k}$ $\frac{{n\choose k-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i}}<\frac{{n\choose k-i+1}}{{n\choose \lfloor\frac{n}{2}\rfloor-i+1}}$
      $\Leftrightarrow$ $\frac{{n\choose k-i}}{{n\choose k-i+1}}<\frac{{n\choose \lfloor\frac{n}{2}\rfloor-i}}{{n\choose \lfloor\frac{n}{2}\rfloor-i+1}}$
@@ -289,11 +298,12 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     \end{proof}
     \vspace*{-25pt}
     \begin{lemma}\label{sum of log}
-     $2^n(\log_2(n)-2)\le\sum_{i=1}^{n}{n\choose i}\log_2(i)\le 2^n(\log_2(n)-\frac{1}{2})$ (dla dostatecznie dużych n).
+     $2^n(\log_2(n)-2)\le\sum_{i=1}^{n}{n\choose i}\log_2(i)\le 2^n(\log_2(n)-\frac{1}{2})$ (dla $n>16$).
     \end{lemma}
     \vspace*{-20pt}
     \begin{proof}
-     Dla $n=2k+1$ dzielę sumę na $\sum_{i=1}^{k}{n\choose i}\log_2(i)+\sum_{i=k+1}^{n}{n\choose i}\log_2(i)$.\newline
+     Przypadek $n=2k+1$:\newline
+     Dzielę sumę na $\sum_{i=1}^{k}{n\choose i}\log_2(i)+\sum_{i=k+1}^{n}{n\choose i}\log_2(i)$.\newline
      $\sum_{i=k+1}^{n}{n\choose i}=2^{n-1}\Rightarrow 2^{n-1}(\log_2{n}-1)\le\sum_{i=k+1}^{n}{n\choose i}\log_2(i)\le2^{n-1}\log_2{n}$.\newline
      $\sum_{i=1}^{k}\log_2(i)=\log_2(k!)$(ze wzoru Stirlinga) $\ge k\log_2(k)-k\log_2(e)-\frac{1}{2}(\log_2(2\pi)+\log_2(k))
      \ge k(\log_2(k+\frac{1}{2})-2)$ (dla $k>7$) =$k(\log_2(n)-3)$\newline
@@ -301,13 +311,15 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      $2^{n-1}(\log_2(n)-3)\le(\sum_{i=1}^{k}{n\choose i})\cdot(\frac{1}{k}\sum_{i=1}^{k}log_2(i))\le\sum_{i=1}^{k}{n\choose i}\log_2(i)
      \le(\sum_{i=1}^{k}{n\choose i})\cdot\log_2(k+\frac{1}{2})=2^{n-1}(\log_2(n)-1)$. Po połączeniu daje to:\newline
      $2^n(\log_2(n)-2)\le\sum_{i=1}^{n}{n\choose i}\log_2(i)\le2^n(\log_2(n)-\frac{1}{2})$.\newline
-     Dla parzystego $n$ po wyłączeniu wyrazu środkowego można analogicznie szacować części przed i po tym wyrazie
+     Przypadek parzystego $n$:\newline
+     Po wyłączeniu wyrazu środkowego można analogicznie szacować części przed i po tym wyrazie
      (po podstawieniu $2^n-{n\choose \frac{n}{2}}$ zamiast $2^n$), zaś srodkowy wyraz jest równy ${n\choose \frac{n}{2}}(\log_2(n)-1)$, a więc leży pomiędzy
      ${n\choose \frac{n}{2}}(\log_2(n)-2)$ i ${n\choose \frac{n}{2}}(\log_2(n)-\frac{1}{2})$, co kończy dowód.
     \end{proof}
    \end{spacing}
    \vspace*{-20pt}
   \section{Własność podziałowa}
+   Zanim udowodnie mocną własność hiperkostki używaną w następnym rozdziale, zacznę od słabszej jednak o prostszym dowodzie.
    \begin{theorem}\label{wlasnosc podzialowa}
     Dla dowolnego podziału wierzchołków na dwa zbiory : $S\in V(G)$ i $V(Q_n)\backslash S$
     liczba krawędzi między tymi zbiorami jest co najmniej tak duża jak liczność mniejszego ze zbiorów:
@@ -323,17 +335,21 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     zaś wszystkich takich ścieżek jest $m\cdot(2^n-m)$. Pomiędzy $S$ i $V(Q_n)\backslash S$ jest więc co najmniej
     $\frac{m\cdot(2^n-m)}{2^{n-1}}=2m-\frac{m^2}{2^{n-1}}\ge m$ krawędzi. 
    \end{proof}
-  \section{Własność ekspansji}
+  \section{Własność ekspansji}\label{ekspansja podrozdzial}
    \begin{spacing}{1.3}
     Hiperkostka posiada także mocniejszą (z punktu widzenia zastosowań) własność zdefiniowaną i udowodnioną w tym podrozdziale.
     \begin{defi}\label{epsilon ekspansja wierzcholkowa}
      Graf $G$ posiada własność \emph{$\varepsilon$--ekspansji wierzchołkowej}, jeżeli dla każdego zbioru wierzchołków $S\subseteq V(G)$ takiego,
      że $|S|\le\frac{|V(G)|}{2}$ zachodzi $|N(S)|\ge\varepsilon\cdot|S|$
     \end{defi}
+    W pracy \cite{DFGKR} w dowodzie działania algorytmu testowania spójności wykorzystywane jest posiadanie przez hiperkostkę $Q_n$ własności
+    $\frac{c}{\sqrt{n}}$--ekspansji wierzchołkowej, dla pewnej stałej $c$. Poniżej przedstawiam własne dowody mające na celu pokazanie możliwie dokładnej wartości
+    $c$ dla otrzymania jak najlepszych rezultatów.
+    
+    W dowodzie własności $\varepsilon$--ekspancji dla hiperkostki wykorzystywany jest poniższy lemat o bardzo technicznym dowodzie, który można znaleźć w pracy \cite{HAR}.
     \begin{lemma}\label{HAR1}
      Zbiór $S_l$ -- pierwszych $l$ wierzchołków hiperkostki według numerowania warstwowego posiada maksymalne wnętrze wśród zbiorów wielkości $l$.  
     \end{lemma}
-    Jest to jeden z lematów dowodzonych w pracy \cite{HAR}.
     \begin{lemma}\label{S->S_k}
      Dla hiperkostki do udowodnienia własności $\varepsilon_n$--ekspansji wierzchołkowej wystarczy rozważyć zbiory $S$ postaci $S_k,k\le 2^{n-1}$.
     \end{lemma}
@@ -384,7 +400,8 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      $\frac{|N(S_k)|}{|S_k|}>\frac{{n\choose r+1}-{n-1\choose r}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}=
      \frac{{n-1\choose r+1}}{\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}}\ge
      \frac{\frac{1}{2}{n \choose r+1}}{\sum_{i=0}^{r}{n\choose i}+\frac{1}{2}{n \choose r+1}}\ge
-     \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newline
+     \left(\frac{\sqrt{\pi (n+\frac{3}{2})}}{\sqrt{2}}+1\right)^{-1}>\frac{1}{\sqrt{\pi n}}$ (dla $n\ge 7$).\newpage
+     \noindent
      Analogicznie dla $\sum_{i=0}^{r}{n\choose i}+{n-1 \choose r}<k<\sum_{i=0}^{r+1}{n\choose i}$\newline
      $\frac{|N(S_k)|}{|S_k|}>\frac{2{n-1\choose r+1}-{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}=
      \frac{{n-1\choose r+1}}{\sum_{i=0}^{r+1}{n\choose i}}>
@@ -400,25 +417,29 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     \end{corollary}
     \vspace*{-20pt}
     \begin{proof}
-     Dla $n=2m+1$\newline
+     Dla $n=2m+1$:\newline
      $\frac{|N(S_{2^{2m}})|}{|S_{2^{2m}}|}=\frac{{2m+1 \choose m+1}}{2^{2m}}<\frac{2^{2m+1}}{2^{2m}\sqrt{\pi(m+1)}}=\frac{2}{\sqrt{\pi(m+1)}}=
      \frac{2}{\sqrt{\pi(\frac{n}{2}+\frac{1}{2})}}=\frac{2\sqrt{2}}{\sqrt{\pi(n+1)}}<\frac{2\sqrt{2}}{\sqrt{\pi n}}$.\newline
-     Dla $n=2m$
+     Dla $n=2m$:\newline
      $\frac{|N(S_{2^{2m-1}})|}{|S_{2^{2m-1}}|}=\frac{{2m-1 \choose m}+{2m-1\choose m}}{2^{2m-1}}=\frac{{2m \choose m}}{2^{2m-1}}<
      \frac{2^{2m}}{2^{2m-1}\sqrt{\pi m}}=\frac{2}{\sqrt{\pi m}}=\frac{2}{\sqrt{\pi\cdot\frac{n}{2}}}=\frac{2\sqrt{2}}{\sqrt{\pi n}}$.
     \end{proof}
    \end{spacing}
+   \vspace{-20pt}
   \section{Inne własności}
    \subsection{Automorfizmy}
-    \begin{fact}
-     Hiperkostka $Q_n$ ma dokładnie $2^n\cdot n!$ automorfizmów -- na $n!$ sposobów można dokonać permutacji współrzędnych, zaś na $2^n$ sposobów
-     zanegować część współrzędnych lub równoważnie wybrać, który wierzchołek otrzyma współrzędne $(0,...,0)$.
+    \begin{fact}$ $\\
+    \vspace{-20pt}
+     \begin{itemize}
+      \item Hiperkostka $Q_n$ ma dokładnie $2^n\cdot n!$ automorfizmów.
+      \item Automorfizmy te można uzyskać poprzez permutację współrzędnych na $n!$ sposobów oraz wybranie na $2^n$ sposobów
+       zanegowania części współrzędnych lub równoważnie -- wybrania, który wierzchołek otrzyma współrzędne $(0,...,0)$.
+     \end{itemize}
     \end{fact}
     Oznacza to, że przy dowolnych rozważaniach, w których wyróżniamy dwa wierzchołki odległe o $k$, możemy założyć, że pierwszy z nich jest wierzchołkiem $\overline{0}$
     zaś drugi ma współrzędne $(0,..,0,1,..,1)$ (gdzie jedynek jest $k$), jeżeli tylko zamienimy odpowiednio współrzędne innych wierzchołków -- w tym wadliwych.
    \subsection{Kolorowanie}
-    Dla hiperkostki problemy kolorowania są trywialne:
-    
+   
     Jako graf dwudzielny hiperkostka jest dwukolorowalna wierzchołkowo. Po usunięciu części wierzchołków ilość potrzebnych kolorów może się tylko zmniejszyć,
     jednak jedynym grafem jednokolorowalnym jest graf bez krawędzi.
  
@@ -426,17 +447,20 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     Z twierdzenia Vizinga dla grafu dwudzielnego ilość potrzebnych kolorów jest równa stopniowi grafu, a to można sprawdzić w czasie liniowym od ilości
     usuniętych wierzchołków (dodatkowo musi być ich co najmniej $\frac{2^n}{n}$, aby każdy wierzchołek stracił sąsiada).
    \subsection{Ilość drzew rozpinających}
+    \vspace{5pt}
     \begin{defi}
      Macierz Laplace'a grafu $G$, o $n$ wierzchołkach, to macierz $[a_{i,j}]_{i,j\in[n]}$, taka że:\quad
-     $a_{i,i}=deg(v_i)$, $a_{i,j}=-1\cdot [(v_i,v_j)\in E(G)]$ (dla $i\neq j$).
+     $a_{i,i}=deg(v_i)$, $a_{i,j}=-1\cdot [(v_i,v_j)\in E(G)]$ (dla $i\neq j$)\quad(Oznaczenie $L(G)$)
     \end{defi}
+    \vspace{5pt}
     \begin{theorem}\label{Kirchhoff}
      (Kirchhoffa)\newline
      Dla spójnego grafu o $n$ wierzchołkach ilość drzew rozpinających jest równa $\frac{1}{n}\cdot\lambda_1\cdot\lambda_2\cdot...\cdot\lambda_{n-1}$,
      gdzie $\lambda_1,\lambda_2,...,\lambda_{n-1}$ to niezerowe wartości własne jego macierzy Laplace'a (z krotnościami).
     \end{theorem}
+    \vspace{5pt}
     \begin{lemma}
-     Wartościami własnymi macierzy Laplace'a $Q_n$ są liczby $2i$ dla $i\in[n+1]$, z krotnością ${n\choose i}$.
+     Wartościami własnymi $L(Q_n)$ są liczby $2i$ dla $i\in[n+1]$, z krotnością ${n\choose i}$.
     \end{lemma}
     \begin{proof}
      Indukcyjnie -- dla $n=1$ macierz
@@ -445,12 +469,12 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
       -1&1\\
      \end{array}\right|$
      ma wartości własne $0$ i $2$ z ortogonalnymi wektorami własnymi $[1,1]$ i $[1,-1]$.\newline
-     Mając macierz Laplace'a $A_n$ grafu $Q_n$ macierz $A_{n+1}$ dla $Q_{n+1}$ jest równa
+     Mając macierz $A_n=L(Q_n)$  macierz $A_{n+1}$ jest równa
      $\left|\begin{array}{cc}
       A_n+I_{2^n}&-I_{2^n}\\
       -I_{2^n}&A_n+I_{2^n}\\
-     \end{array}\right|$.
-     Niech $v$ będzie wektorem własnym macierzy $A_n$ dla wartości własnej $\lambda$. Wtedy:\newline
+     \end{array}\right|$.\newline
+     Niech $v$ będzie wektorem własnym macierzy $A_n$ dla wartości własnej $\lambda$. Wtedy:\newline\newline
      $A_{n+1}\cdot
      \left|\begin{array}{c}
       v\\
@@ -476,7 +500,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
       v\\
       v\\
      \end{array}\right|
-     $\newline
+     $\newline\newline\newline
      $A_{n+1}\cdot
      \left|\begin{array}{c}
       v\\
@@ -502,13 +526,14 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
       v\\
       -v\\
      \end{array}\right|
-     $.\newline
+     $.\newline\newline
      Ponieważ wszystkie $2^n$ wektorów własnych z poprzedniego kroku były ortogonalne, to otrzymane teraz $2^{n+1}$ również takie będzie.
      Stąd dla wartości własnej $2i$ macierzy $A_{n+1}$ otrzymujemy ${n\choose i}+{n\choose i-1}={n+1\choose i}$ ortogonalnych wektorów własnych.
     \end{proof}
-    \begin{remark}
+    \vspace{5pt}
+    \begin{corollary}
      Korzystając z twierdzenia Kirchhoffa, $Q_n$ ma $\frac{1}{2^n}\prod_{i=1}^{n}(2i)^{{n\choose i}}$ drzew rozpinających.
-    \end{remark}
+    \end{corollary}
     \noindent
     Macierz Laplace'a grafu pełnego o $n$ wierzchołkach jest równa $n\cdot I_n-J_n$ (gdzie $J_n$, to macierz $n\times n$ złożona z samych $1$), więc 
     ma wartość własną $n$ ($n-1$)-krotną (+ $0$ jednokrotną).\newline
@@ -519,19 +544,22 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
       -J_n&nI_n\\
      \end{array}\right|
     $, więc ma wartość własną $n$ ($2n-2$)-krotną i $2n$ jednokrotną (+ $0$ jednokrotną).\newline
-   Jeśli więc porówna się logarytmy ilości drzew rozpinających tych trzech grafów o tej samej liczbie wierzchołków, to wychodzi:\newline
+   Jeśli więc porówna się logarytmy ilości drzew rozpinających ($t(G)$) tych trzech grafów o tej samej liczbie wierzchołków, to wychodzi:\newline
    $\log_2(t(K_{2^n}))=n(2^n-2)$\newline
    $\log_2(t(K_{2^{n-1},2^{n-1}}))=(n-1)(2^n-2)$\newline
-   $\log(t(Q_n))=2^n-n-1+\sum_{i=1}^{n}{n\choose i}\log(i)\approx (\log_2(n))2^n$ (na podstawie lematu \ref{sum of log}).
+   $\log(t(Q_n))=2^n-n-1+\sum_{i=1}^{n}{n\choose i}\log(i)\approx (\log_2(n))2^n$ (na podstawie lematu \ref{sum of log}).\newpage
    \subsection{Rysowanie na płaszczyźnie}
-    \begin{wrapfigure}{1}{0.3\textwidth}
-     \includegraphics[scale=0.4]{img/Q3_planar.jpg}\includegraphics[scale=0.4]{img/Q4_not_planar.jpg}
-    \end{wrapfigure}
+    %\begin{wrapfigure}{1}{0.3\textwidth}
+     %\includegraphics[scale=0.4]{img/Q3_planar.jpg}\includegraphics[scale=0.4]{img/Q4_not_planar.jpg}
+    %\end{wrapfigure}
    $Q_n$ jest grafem planarnym, jedynie dla $n\le3$.\newline
    Dla $n=4$ na płaszczyźnie powstaje minimum $8$ przecięć krawędzi,
-   jest ona jednak grafem toroidalnym (daje się narysować na powierzchni torusa bez przecięć).\newline
-   Ogólnie $Q_n$ ma genus równy ${\gamma(Q_n)=(n-4)2^{n-3}+1}$\newline (\cite{HHH})-- oznacza to, że kostkę taką daje się
-   narysować bez przecięć na sferze z tyloma "uszami".\newline
+   jest ona jednak grafem toroidalnym (daje się narysować na powierzchni torusa bez przecięć). Oba przypadki są zilustrowane poniżej.
+   \begin{center}
+    \includegraphics[scale=0.6]{img/Q3_planar.jpg}\includegraphics[scale=0.6]{img/Q4_not_planar.jpg}
+   \end{center}
+   Ogólnie $Q_n$ ma genus (liczba całkowita charakteryzująca rozmaitość topologiczną równa liczbie otworów w rozmaitości, na której daje się narysować graf bez przecięć)\newline
+   równy ${\gamma(Q_n)=(n-4)2^{n-3}+1}$ (na podstawie \cite{HHH}).\newline
    
    Każda hiperkostka jest grafem jednostkowej odległości -- można go narysować tak, żeby każda krawędź miała tę samą długość euklidesową.
    Rysunek taki można łatwo dostać indukcyjnie -- malując dwie kopie rysunku $Q_{n-1}$ o tej własności w odległości $1$ w dowolnym kierunku
@@ -542,14 +570,15 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
    \includegraphics[scale=1]{img/unitary_2.jpg}
    \includegraphics[scale=1]{img/unitary_3.jpg}
    \includegraphics[scale=1]{img/unitary_4.jpg}
-   \includegraphics[scale=1]{img/unitary_5_1.jpg}
+   \includegraphics[scale=1]{img/unitary_5_1.jpg}\newline
+   (Rysunki grafów jednostkowej odległości dla $n\le 5$.)
    
  \chapter{Spójność wadliwej hiperkostki}
   \textbf{Ten rozdział jest napisany w większości na podstawie \cite{DFGKR}.}
-  \begin{remark}\label{spojnosc przy usunietych}
-   Aby zbadać spójność grafu $G-F$ dla spójnego grafu $G$ wystarczy sprawdzić czy wciąż istnieje ścieżka pomiędzy dowolnymi dwoma wierzchołkami,
+  \begin{observation}\label{spojnosc przy usunietych}
+   Badanie spójności grafu $G-F$ dla spójnego grafu $G$ wystarczy ograniczyć do sprawdzienia czy wciąż istnieje ścieżka pomiędzy dowolnymi dwoma wierzchołkami,
    które oryginalnym grafie sąsiadowały z jakimś spośród usuniętych wierzchołków (czy wszystkie takie wierzchołki należą do jednej spójnej składowej).
-  \end{remark}
+  \end{observation}
   \begin{proof}
    Aby udowodnić spójność trzeba pokazać, że istnieje ścieżka pomiędzy dowolnymi dwoma wierzchołkami, jednak skoro w oryginalnym grafie taka ścieżka istniała,
    to w nowym grafie jedyną przeszkodą jest to, że mogły na niej występować wierzchołki, które zostały usunięte. 
@@ -557,37 +586,37 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
    wystarczy ten fragment ścieżki zastąpić ścieżką między tymi dwoma sąsiadami, która istnieje w wadliwym grafie.
   \end{proof}
   \section{Podejście ekspansywne}\label{podejscie ekspansywne}
+   Poniżej przedstawie algorytm testowania spójności bazujący na własności $\varepsilon$--ekspansji wierzchołkowej
+   udowodnionej przeze mnie dla hiperkostki w podrozdziale \ref{ekspansja podrozdzial}.
    \begin{theorem}\label{Spójność ekspansywna}
     Niech graf $G$ posiada własność $\varepsilon$--ekspansji wierzchołkowej z $\varepsilon>0$ i maksymalny stopień wierzchołka $\Delta$,
     oraz dana jest wyrocznia zwracająca dla danego wierzchołka listę jego sąsiadów.
     Wtedy istnieje algorytm, który otrzymuje na wejściu zbiór $F\subseteq V(G)$ oraz $\varepsilon$
     i testuje spójność $G-F$ w czasie $O\left(\frac{|F|^2\cdot\Delta^2\cdot\log(|V(G)|)}{\varepsilon}\right)$
    \end{theorem}
-   \begin{lemma}\label{klasyfikacja skladowych}
+   \begin{proof}
+   \begin{claim}\label{klasyfikacja skladowych}
     Spójna składowa $S\subseteq V(G)\backslash F$ grafu $G-F$ jest jednego z dwóch typów:
     \begin{itemize}
      \item główna -- $|S|>\frac{|V(G)|}{2}$
      \item mała -- $|S|\le\frac{|F|}{\varepsilon}$
     \end{itemize}
-   \end{lemma}
-   \begin{remark}\label{klasyfikacja skladowych 2}
-    Co prawda dla dużego $|F|$ i małego $\varepsilon$ może być tak, że składowa jest jednocześnie główna i mała, jednak po pierwsze jest to przypadek mało
-    interesujący, gdyż wtedy zwykłe przeszukiwanie grafu spełnia tezę twierdzenia, a po drugie przypadek ten nie psuje w żaden sposób otrzymywanego algorytmu.
-    W lemacie istotne jest to, że w grafie nie ma składowych średnich wielkości.
-   \end{remark}
-   \begin{fact}\label{jedna glowna skladowa}
-    Może być tylko jedna składowa główna.
-   \end{fact}
-   \begin{proof}
-    (Lematu \ref{klasyfikacja skladowych})\newline
+   \end{claim}
+   
+   \begin{proof} Stwierdzenia:\newline
     Weźmy spójną składową $S$ grafu $G-F$ ($N_{G-F}(S)=\emptyset$), jeżeli $S\le\frac{|V(G)|}{2}$, to z własności $\varepsilon$--ekspansji wierzchołkowej grafu $G$
     zachodzi $|N_G(S)|\ge\varepsilon\cdot|S|$ (gdzie $S$ jest teraz traktowane, jako podzbiór wierzchołków grafu $G$). Gdyby zachodziło $|S|>\frac{|F|}{\varepsilon}$,
     to mielibyśmy $|N_G(S)|>\frac{\varepsilon\cdot|F|}{\varepsilon}=|F|$, co daje sprzeczność, ponieważ aby w grafie $G-F$ otoczenie to było puste z grafu
     $G$ trzeba usunąć co najmniej $N_G(S)$ wierzchołków.
    \end{proof}
-   \begin{proof}
-    (Twierdzenia \ref{Spójność ekspansywna})\newline
-    Chcemy sprawdzić, czy wszyscy sąsiedzi wierzchołków usuniętych należą do tej samej spójnej składowej. Na podstawie lematu \ref{klasyfikacja skladowych},
+   
+    Może być tylko jedna składowa główna.
+    Co prawda dla dużego $|F|$ i małego $\varepsilon$ może być tak, że składowa jest jednocześnie główna i mała, jednak po pierwsze jest to przypadek mało
+    interesujący, gdyż wtedy zwykłe przeszukiwanie grafu spełnia tezę twierdzenia, a po drugie przypadek ten nie psuje w żaden sposób otrzymywanego algorytmu.
+    W stwierdzeniu istotne jest to, że w grafie nie ma składowych średnich wielkości.\newline
+    
+    Kontynuując dowód twierdzenia
+    chcemy sprawdzić, czy wszyscy sąsiedzi wierzchołków usuniętych należą do tej samej spójnej składowej. Na podstawie lematu \ref{klasyfikacja skladowych},
     jeśli składowa zawierająca taki wierzchołek jest większa niż $\frac{|F|}{\varepsilon}$, to jest to składowa główna.
     Jeżeli wszystkie takie wierzchołki spełniają ten warunek, to $G-F$ jest spójny.
     Jeżeli natomiast, któraś z tych składowych okaże się mała, to $G-F$ nie jest spójny.\newline
@@ -599,75 +628,67 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     Daje to złożoność z tezy twierdzenia.
    \end{proof}
    \begin{corollary}\label{ekspansywna spojnosc dla kostki}
-    Ponieważ zgodnie z twierdzeniem \ref{ekspansja kostki} hiperkostka $Q_n$ posiada własność\newline
-    $\frac{1}{\sqrt{\pi n}}$--ekspansji wierzchołkowej
-    oraz można znaleźć wszystkich sąsiadów wierzchołka w czasie liniowym od ich ilości powyższy algorytm testuje spójność wadliwej hiperkostki w czasie
+    Zgodnie z twierdzeniem \ref{ekspansja kostki} hiperkostka $Q_n$ posiada własność
+    $\frac{1}{\sqrt{\pi n}}$--ekspansji wierzchołkowej.
+    Ponieważ można w niej znaleźć wszystkich sąsiadów wierzchołka w czasie liniowym od ich ilości powyższy algorytm testuje spójność wadliwej hiperkostki w czasie
     ${O(|F|^2\cdot n^{3.5})}$ (wyrażonego w ilości operacji arytmetycznych).
    \end{corollary}
-   \begin{remark}\label{prawdziwa zlozoność ekspansywnej}
     Ze względu na długość zapisu identyfikatora wierzchołka liniową od wymiaru hiperkostki nie da się przeprowadzać operacji na wierzchołkach w czasie szybszym niż
     $n$. To dolne ograniczenie jest osiągalne przy przechowywaniu przejrzanych wierzchołków w hashmapie
     (czas oczekiwany operacji $O(n)$, złożoność pamięciowa całej struktury $O(n^{0.5}|F|)$),
     lub w drzewie prefiksowym (czas pesymistyczny operacji $O(n)$, złożoność pamięciowa całej struktury $O(n^{1.5}|F|)$).
     Pozwala to w łatwy sposób uzyskać efektywną wyrocznię, a więc i algorytm o złożoności z wniosku.
-   \end{remark}
    \subsection{pseudokod i uwagi}
     W algorytmie wykorzystywana jest struktura $T$ z operacjami
-    \begin{itemize}
+    \begin{itemize}[noitemsep,topsep=4pt]
      \item $Insert(v,T)$ wstawiającą wierzchołek $v$ do struktury $T$
-     \item $Retrieve(v,T)$ zwracająca informacje o obecności wierzchołka $v$ w strukturze $T$
+     \item $Retrieve(v,T)$ zwracająca binarną informacje o obecności wierzchołka $v$ w strukturze $T$
+     (w ogólniejszych rozważaniach również dowiązanie do tego wierzchołka)
     \end{itemize}
-    które wymagają $O(n)$ czasu na wykonanie (jak w uwadze \ref{prawdziwa zlozoność ekspansywnej}).\newline
-    Przeszukiwanie grafowe odbywa się przy pomocy funkcji rekurencyjnej o pseudokodzie:\newline
-    \hspace*{0pt}$DFS(v)\{$\newline
-    \hspace*{16pt}	$counter++;$\newline
-    \hspace*{16pt}	$Insert(v,T);$\newline
-    \hspace*{16pt}	if$(counter\ge size)\quad $return$(TRUE);$\newline
-    \hspace*{16pt}	foreach$(u\in N(v))\{$\newline
-    \hspace*{32pt}		if$(Retrieve(u,T)==FALSE)\{$\newline
-    \hspace*{48pt}			if$(DFS(u))\quad $return$(TRUE);$\newline
-    \hspace*{32pt}		$\}$\newline
-    \hspace*{16pt}	$\}$\newline
-    \hspace*{16pt}	return$(FALSE);$\newline
-    \hspace*{0pt}$\}$\newline  
+    które wymagają $O(n)$ czasu na wykonanie (aby uzyskać złożoność z wniosku \ref{ekspansywna spojnosc dla kostki}).\newline
+    Przeszukiwanie grafowe odbywa się przy pomocy funkcji rekurencyjnej o pseudokodzie:\newline\newline
+    \hspace*{100pt}$DFS(v)\{$\newline
+    \hspace*{116pt}	$counter++;$\newline
+    \hspace*{116pt}	$Insert(v,T);$\newline
+    \hspace*{116pt}	if$(counter\ge size)\quad $return$(TRUE);$\newline
+    \hspace*{116pt}	foreach$(u\in N(v))$\newline
+    \hspace*{132pt}		if$(Retrieve(u,T)==FALSE)$\newline
+    \hspace*{148pt}			if$(DFS(u))\quad $return$(TRUE);$\newline
+    \hspace*{116pt}	return$(FALSE);$\newline
+    \hspace*{100pt}$\}$\newline
     Spójność sprawdzana jest przy pomocy funkcji głównej o pseudokodzie:\newline\newline
-    \hspace*{0pt}$Conectivity(n,F)\{$\newline
-    \hspace*{16pt}	$T2=empty\_structureT();$\newline
-    \hspace*{16pt}	$counter=0;$\newline
-    \hspace*{16pt}	foreach$(f\in F)\{$\newline
-    \hspace*{32pt}		$Insert(f,T2);$\newline
-    \hspace*{32pt}		$counter++;$\newline
-    \hspace*{16pt}	$\}$\newline
-    \hspace*{16pt}	$size=sqrt(\pi*n)*counter;$\newline
-    \hspace*{16pt}	foreach$(f\in F)\{$\newline
-    \hspace*{32pt}		foreach$(v\in N(f))\{$\newline
-    \hspace*{48pt}			if$(Retrieve(v,T2)==FALSE)\{$\newline
-    \hspace*{64pt}				$counter=0;$\newline
-    \hspace*{64pt}				$T=T2;$\newline
-    \hspace*{64pt}				if$(DFS(v)==FALSE)\quad $return$(FALSE);$\newline
-    \hspace*{48pt}			$\}$\newline
-    \hspace*{32pt}		$\}$\newline
-    \hspace*{16pt}	$\}$\newline
-    \hspace*{16pt}	return$(TRUE);$\newline
-    \hspace*{0pt}$\}$\newline
-    \begin{remark}\label{przeszukiwanie N(v)}
+    \hspace*{100pt}$Conectivity(n,F)\{$\newline
+    \hspace*{116pt}	$T2=empty\_structureT();$\newline
+    \hspace*{116pt}	$counter=0;$\newline
+    \hspace*{116pt}	foreach$(f\in F)$\newline
+    \hspace*{132pt}		$Insert(f,T2);$\newline
+    \hspace*{132pt}		$counter++;$\newline
+    \hspace*{116pt}	$size=sqrt(\pi*n)*counter;$\newline
+    \hspace*{116pt}	foreach$(f\in F)$\newline
+    \hspace*{132pt}		foreach$(v\in N(f))$\newline
+    \hspace*{148pt}			if$(Retrieve(v,T2)==FALSE)$\newline
+    \hspace*{164pt}				$counter=0;$\newline
+    \hspace*{164pt}				$T=T2;$\newline
+    \hspace*{164pt}				if$(DFS(v)==FALSE)\quad $return$(FALSE);$\newline
+    \hspace*{116pt}	return$(TRUE);$\newline
+    \hspace*{100pt}$\}$\newline
+    
      Aby przeiterować po $N(v)$ wystarczy przeiterować się po współrzędnych uzyskując sąsiada poprzez zanegowanie tej współrzędnej w zapisie binarnym $v$.
-    \end{remark}
-    \begin{remark}\label{dwie struktury T}
+     
      Można użyć dodatkowej struktury $T$, w której przechowywane są wszystkie wierzchołki z poprzednich wywołań $DFS(v)$ z funkcji głównej.
      Wtedy przy kolejnych użyciach $DFS(v)$ można sprawdzać, czy wierzchołek nie był już wcześniej w jakiejś składowej (można wtedy od razu zwrócić $TRUE$).
      Teoretycznie może to zwiększyć złożoność dwukrotnie, jednak w praktyce będzie to dużo szybsze
      (już nawet z tego względu, że albo inni sąsiedzi tego samego $f$ są oddaleni o 2, albo na drodze staje inny wierzchołek z $F$),
      w szczególności przy użyciu bardziej wyszukanych kolejności przeszukiwania (np. próba dojścia do wierzchołka $\overline{0}$).
-    \end{remark}
      
   \section{Redukcja do lokalnej spójności przy pomocy transformacji ścieżek}\label{spojnosc 2}
    Algorytm przedstawiony w poprzednim podrozdziale jest dowodem na to, że testowanie spójności wadliwej hiperkostki może być zrobione wielomianowo
    ze względu na ilość wad i wymiar hiperkostki. Algorytm ten wykorzystuje jednak bardzo płytko potencjał tak regularnego grafu.
    W tym podrozdziale przedstawię algorytm, który dzięki głębszemu wykorzystaniu własności hiperkostki otrzymuje lepsze rezultaty złożonościowe.
+   
+   Używane w podrozdziale ścieżki w przeciwieństwie do reszty pracy mogą zawierać powtórzenia. 
    \begin{defi}\label{podgrafy kostki}
-    Na potrzeby tego podrozdziału definiuję za pracą \cite{DFGKR} dla $F\subseteq V(Q_n)$\newline
-    podgraf $G(F)=(A\cup B\cup F,E)$ grafu $Q_n$,
+    Dla $F\subseteq V(Q_n)$ definiuję (za pracą \cite{DFGKR}) pomocniczy podgraf $Q_n$.\newline Niech $G(F)=(A\cup B\cup F,E)$,
     gdzie $A=N(F),\quad B=N(A)\backslash F,\newline E=\{uv\in E(Q_n):u\in A\cup F\}$ (podgraf zawierający wierzchołki w odległości $\le 2$ od wierzchołków wadliwych,
     plus krawędzie w których jeden z końców jest wadliwy lub z takim sąsiaduje).
    \end{defi}
@@ -681,7 +702,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      gdzie $d_i$ jest współrzędną, na której różnią się ciągi binarne wierzchołków $v_{i-1}$ i $v_i$.
     \end{defi}
     \begin{fact}\label{sekwencja tranzycji - parzystość}
-     $\tau$ jest sekwencją tranzycji pewnej $uv$--ścieżki w $Q_n$ wtedy i tylko wtedy, gdy\newline
+     $\tau$ jest sekwencją tranzycji pewnej $uv$--ścieżki z powtórzeniami w $Q_n$ wtedy i tylko wtedy, gdy:\newline
      $u\Delta v=\{i\in[n]:\#(\tau,i)$ nieparzyste$\}$,
      gdzie $\#(\tau,i)$ to ilość wystąpień $i$ w sekwencji $\tau$.
     \end{fact}
@@ -697,18 +718,19 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     \begin{defi}\label{sciezki rownowazne}
      Dwie ścieżki, których sekwencje tranzycji $\tau,\rho$ spełniają $\forall_{i\in[n]}\#(\tau,i)=\#(\rho,i)$ nazywamy \emph{równoważnymi}.
     \end{defi}
-    \begin{remark}\label{przeksztalcanie sciezek}
+    \begin{fact}\label{przeksztalcanie sciezek}
      Dla dowolnych dwóch $uv$--ścieżek w $Q_n$ istnieje sekwencja operacji\newline
      $swap, insert, delete$ (w tej kolejności, bez przeplotów),
      która przemienia sekwencję tranzycji pierwszej w sekwencję tranzycji drugiej.
-    \end{remark}
+    \end{fact}
     \begin{proof}
      Jeśli dwie ścieżki są równoważne, to można jedną przekształcić w drugą przy pomocy samych operacji $swap$.\newline
      W przypadku, gdy sekwencje mają różne liczności wystąpień współrzędnych, to można je doprowadzić do takich $\tau',\rho'$,
      że $\forall_{i\in[n]}\#(\tau',i)=\#(\rho',i)$ przy pomocy samych operacji $insert$ (używanych w dowolnie wybranych wierzchołkach).
     \end{proof}
+    Na potrzeby dowodu twierdzenia \ref{spojnosc z lokalnej spojnosci} wprowadzam definicję:
     \begin{defi}\label{port}
-     Na potrzeby dowodu twierdzenia \ref{spojnosc z lokalnej spojnosci} dla $uv$--ścieżki $W=(w_0,w_1,...,w_k)$ (gdzie $w_0=u,w_k=v$) wierzchołek
+     Dla $uv$--ścieżki $W=(w_0,w_1,...,w_k)$ (gdzie $w_0=u,w_k=v$) wierzchołek
      $w_i$ nazywamy portem, jeśli nie jest wierzchołkiem wadliwym, ale dokładnie jeden z jego sąsiadów w ścieżce należy do $F$ (port musi więc należeć do $A$).
     \end{defi}
     W przypadku tej definicji należy rozróżnić przeplatające się pojęcia wierzchołka grafu i jego wystąpienia na ścieżce --
@@ -751,7 +773,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      Wszystkie rozrysowane tu wierzchołki należą do $G(F)$, a rozrysowane części niewadliwe tworzą podgraf spójny, dlatego też wszystkie te zmiany odbywają się w
      jednej spójnej składowej $G(F)-F$. Za każdym razem ilość portów zmienia się o $0$ lub $2$, a więc parzystość pozostaje bez zmian.
     \end{proof}\newpage
-   \subsection{Dowód twierdzenia o lokalnej spójności}
+   \subsection{Dowód twierdzenia \ref{spojnosc z lokalnej spojnosci} o lokalnej spójności}
     \begin{lemma}\label{Q_n-F spojne => G(F)-F spojne (1 skladowa)}
      Niech $F\subseteq V(Q_n)$ będzie takie, że $G(F)$ jest spójne. Jeśli $Q_n-F$ jest spójne, to $G(F)-F$ również.
     \end{lemma}
@@ -792,9 +814,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      Wystarczy więc tę wadliwą część ścieżki $W$ zastąpić odpowiednią ścieżką z $G(C)-C$, aby zmniejszyć ilość wad na ścieżce.
      Po być może kilkukrotnym powtórzeniu tej operacji otrzymujemy poprawną ścieżkę w $Q_n-F$.
     \end{proof}\newpage
-    \begin{proof}
-     (Twierdzenia \ref{spojnosc z lokalnej spojnosci})
-     
+    \subsubsection{Właściwa część dowodu}
      Lemat \ref{Q_n^2[F]-F spojne => Q_n-F spojne} jest implikacją w jedną stronę.
      Implikacja w drugą stronę dla spójnego $Q_n^2[F]$ jest dana wnioskiem \ref{Q_n-F spojne => Q_n^2[F]-F spojne (1 skladowa)}.
      Wystarczy udowodnić, że nic nie psuje się w przypadku, gdy $Q_n^2[F]$ ma więcej niż jedną spójną składową.
@@ -802,7 +822,6 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      Dla $C$ -- spójnej składowej $Q_n^2[F]$ jeśli $Q_n-F$ jest spójne, to jest takie również $Q_n-C$
      (dla wierzchołków spoza $Q_n-F$ te same ścieżki są dobre, dla tych z  $F\backslash C$ dowolny sąsiad należy do $Q_n-F$, więc również łatwo zbudować ścieżkę),
      a więc spójne jest również $G(C)-C$, co kończy dowód.
-    \end{proof}
    \subsection{Algorytm}
     Stosując powyższe twierdzenie można uzyskać wielomianowy algorytm używając jedynie przeszukiwania grafowego
     podobnie jak w podrozdziale \ref{podejscie ekspansywne}. Można jednak uzyskać lepsze rezultaty używając dodatkowo struktury $Find$--$Union$ i sprawdzając
@@ -837,59 +856,51 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     \end{itemize}
     
     Definiuję pomocniczą funkcję uzyskiwania wierzchołków ze struktury $T$ i inicjalizowania w razie nieobecności:\newline\newline
-    \hspace*{0pt}$Retrieve2(v,T)\{$\newline
-    \hspace*{16pt}	$v_T=Retrieve(v,T);$\newline
-    \hspace*{16pt}	if$(v_T==NULL)\{$\newline
-    \hspace*{32pt}		$v_T=Insert(v,T);$\newline
-    \hspace*{32pt}		$v_T.healthy=TRUE;$\newline
-    \hspace*{32pt}		$v_T.visited=FALSE;$\newline
-    \hspace*{32pt}		$Make(v,D);$\newline
-    \hspace*{16pt}	$\}$\newline
-    \hspace*{16pt}	return$(v_T);$\newline
-    \hspace*{0pt}$\}$\newline
+    \hspace*{100pt}$Retrieve1(v,T)\{$\newline
+    \hspace*{116pt}	$v_T=Retrieve(v,T);$\newline
+    \hspace*{116pt}	if$(v_T==NULL)$\newline
+    \hspace*{132pt}		$v_T=Insert(v,T);$\newline
+    \hspace*{132pt}		$v_T.healthy=TRUE;$\newline
+    \hspace*{132pt}		$v_T.visited=FALSE;$\newline
+    \hspace*{132pt}		$Make(v,D);$\newline
+    \hspace*{116pt}	return$(v_T);$\newline
+    \hspace*{100pt}$\}$\newline
     
     Najistotniejszą częścią algorytmu jest procedura $DFS(f)$ znajdująca spójne składowe $G(C)-C$,
     dla $C$ -- spójnej składowej $Q_n^2[F]$ zawierającej wadliwy wierzchołek $f$, o następującym pseudokodzie:\newline\newline    
     \hspace*{0pt}$DFS(f)\{$\newline
-    \hspace*{16pt}	foreach$(u\in N(f))\{$\newline
-    \hspace*{32pt}		$u_T=Retrieve2(u,T);$\newline
-    \hspace*{32pt}		if$(u_T.visited==FALSE)\{$\newline
+    \hspace*{16pt}	foreach$(u\in N(f))$\newline
+    \hspace*{32pt}		$u_T=Retrieve1(u,T);$\newline
+    \hspace*{32pt}		if$(u_T.visited==FALSE)$\newline
     \hspace*{48pt}			$u_T.visited=TRUE;$\newline
-    \hspace*{48pt}			if$(u_T.healthy)\{$\newline
-    \hspace*{64pt}				foreach$(v\in N(u))\{$\newline
-    \hspace*{80pt}					$v_T=Retrieve2(v,T);$\newline
+    \hspace*{48pt}			if$(u_T.healthy)$\newline
+    \hspace*{64pt}				foreach$(v\in N(u))$\newline
+    \hspace*{80pt}					$v_T=Retrieve1(v,T);$\newline
     \hspace*{80pt}					if$(v_T.healthy)\{$\newline
     \hspace*{96pt}						if$(Find(u,D)\neq Find(v,D))\quad Union(u,v,D);\quad\backslash\backslash uv\in E(G(C)-C)$\newline
-    \hspace*{80pt}					$\}$else if$(v_T.visited==FALSE)\{$\newline
+    \hspace*{80pt}					else if$(v_T.visited==FALSE)$\newline
     \hspace*{96pt}						$v_T.visited=TRUE;$\newline
     \hspace*{96pt}						$DFS(v);\quad\backslash\backslash$ wadliwy wierzchołek należący do $C$ (oddalony od $f$ o 2)\newline
-    \hspace*{80pt}					$\}$\newline
-    \hspace*{64pt}				$\}$\newline
-    \hspace*{48pt}			$\}$else$\quad DFS(u);\quad\backslash\backslash$ wadliwy wierzchołek należący do $C$ (oddalony od $f$ o 1)\newline
-    \hspace*{32pt}		$\}$\newline
-    \hspace*{16pt}	$\}$\newline
+    \hspace*{48pt}			else$\quad DFS(u);\quad\backslash\backslash$ wadliwy wierzchołek należący do $C$ (oddalony od $f$ o 1)\newline
     \hspace*{0pt}$\}$\newline
     
     \noindent
     Powyższa prodedura uruchamiana jest z funkcji głównej:\newline\newline
-    \hspace*{0pt}$Conectivity(n,F)\{$\newline
-    \hspace*{16pt}	$T=empty\_structureT();$\newline
-    \hspace*{16pt}	foreach$(f\in F)\{$\newline
-    \hspace*{32pt}		$f_T=Insert(f,T);$\newline
-    \hspace*{32pt}		$f_T.healthy=FALSE;$\newline
-    \hspace*{32pt}		$f_T.visited=FALSE;$\newline
-    \hspace*{16pt}	$\}$\newline
-    \hspace*{16pt}	foreach$(f\in F)\{$\newline
-    \hspace*{32pt}		$f_T=Retrieve(f,T);$\newline
-    \hspace*{32pt}		if$(f_T.visited==FALSE)\{$\newline
-    \hspace*{48pt}			$f_T.visited=TRUE;$\newline
-    \hspace*{48pt}			$D=empty\_structureD();$\newline
-    \hspace*{48pt}			$DFS(f);$\newline
-    \hspace*{48pt}			if$(D.counter>1)\quad return(FALSE);$\newline
-    \hspace*{32pt}		$\}$\newline
-    \hspace*{16pt}	$\}$\newline
-    \hspace*{16pt}	return$(TRUE);$\newline
-    \hspace*{0pt}$\}$\newline
+    \hspace*{100pt}$Conectivity(n,F)\{$\newline
+    \hspace*{116pt}	$T=empty\_structureT();$\newline
+    \hspace*{116pt}	foreach$(f\in F)$\newline
+    \hspace*{132pt}		$f_T=Insert(f,T);$\newline
+    \hspace*{132pt}		$f_T.healthy=FALSE;$\newline
+    \hspace*{132pt}		$f_T.visited=FALSE;$\newline
+    \hspace*{116pt}	foreach$(f\in F)$\newline
+    \hspace*{132pt}		$f_T=Retrieve(f,T);$\newline
+    \hspace*{132pt}		if$(f_T.visited==FALSE)$\newline
+    \hspace*{148pt}			$f_T.visited=TRUE;$\newline
+    \hspace*{148pt}			$D=empty\_structureD();$\newline
+    \hspace*{148pt}			$DFS(f);$\newline
+    \hspace*{148pt}			if$(D.counter>1)\quad return(FALSE);$\newline
+    \hspace*{116pt}	return$(TRUE);$\newline
+    \hspace*{100pt}$\}$\newline
    \subsection{Analiza złożoności}
     \begin{corollary}\label{zlozonosc lokalnej spojnosci}
      Algorytm ma pesymistyczną złożoność czasową i pamięciową $O(|F|\cdot n^3)$.
@@ -972,10 +983,10 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
    \begin{defi}\label{dlugi cykl}
     Wolny od wad cykl bez powtórzeń w hiperkostce $Q_n$ z wadami ze zbioru $F\subseteq V(Q_n)$ nazwiemy długim, jeśli ma długość co najmniej $2^n-2|F|$.
    \end{defi}
-   \begin{remark}\label{dluga sciezka- nie da sie dluzszej}
+   \begin{observation}\label{dluga sciezka- nie da sie dluzszej}
     Dla $F\cup\{u,v\}$ należącego do jednej dwudzielnej części $Q_n$ nie da się skonstruować $uv$--ścieżki wolnej od wad o długości większej niż $2^n-2|F|-2$
     (stąd długość w definicji).
-   \end{remark}
+   \end{observation}
    \begin{proof}
     Skoro $Q_n$ jest dwudzielna, to każda ścieżka musi odwiedzić prawie tyle samo wierzchołków w obu jej częściach (różnica nie większa niż $1$),
     ponieważ w części z $u$ i $v$ odwiedza co najwyżej $2^{n-1}-|F|$, to w drugiej co najwyżej $2^{n-1}-|F|-1$ -- daje to długość $2^n-2|F|-2$.
@@ -989,15 +1000,15 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
    \end{defi}
   \section{Długie ścieżki}
    \begin{theorem}\label{tw o dlugich sciezkach, male n}
-    Dla $Q_n$ i $F\subseteq V(Q_n)$, takich, że $2\le n \le 5$ i $|F|\le 2n-4$ dla $u,v\in V(Q_n)\backslash F$ takich, że trójka $(u,v,F)$
-    nie jest zablokowana  w $Q_n$ długa $uv$--ścieżka bez wad nie istnieje tylko wtedy, gdy $n=4$ oraz istnieją takie $a,b\in V(Q_n)$,
+    Niech $F\subseteq V(Q_n)$, $2\le n \le 5$ i $|F|\le 2n-4$ oraz $u,v\in V(Q_n)\backslash F$ takie, że trójka $(u,v,F)$
+    nie jest zablokowana w $Q_n$. Długa $uv$--ścieżka bez wad nie istnieje tylko wtedy, gdy $n=4$ oraz istnieją takie $a,b\in V(Q_n)$,
     że $d(a,b)=4$  i $F\cup\{u,v,a,b\}$  jest dwudzielną częścią $Q_n$.
    \end{theorem}
    \begin{proof}
     Łatwo rozpatrzyć wszystkie przypadki.
     
     Na wyróżnienie zasługują przypadki negatywne, które z dokładnością do automorfizmów kostki są dokładnie 2.
-    Rozpatruje je na obrazkach z zaznaczonymi wierzchołkami i uproszczoną ich wersją z pominiętymi wierzchołkami wadliwymi.\newline
+    Rozpatruje je na obrazkach z zaznaczonymi wierzchołkami i uproszczoną ich wersją z pominiętymi wierzchołkami wadliwymi.\newline\newline
     \hspace*{100pt}\includegraphics[scale=0.7]{img/Q_4_niezablokowane_1.jpg}\newline
     \hspace*{100pt}\includegraphics[scale=0.7]{img/Q_4_niezablokowane_2.jpg}\newline
     Jak widać w obu przypadkach najdłuższa możliwa $uv$-ścieżka ma długość $4<16-2\cdot4-2$
@@ -1022,7 +1033,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     (ta operacja nie zmienia nic poza numerowaniem) można uzyskać przypadek, że w każdej kolumnie jest co najwyżej jedna $1$. 
     Ponieważ kolumn jest tylko $n$, zaś każda zawiera co najwyżej jedną $1$, to oznaczałoby to, że macierz może mieć tylko $n+1$ różnych wierszy
     $\Rightarrow 2n-4=|F|\le n+1\Rightarrow n\le5$ (a więc ponieważ $n\ge 6$, to zawsze istnieje wybór współrzędnej).\newline
-    Dalej przy użyciu lematów:
+    Dowód kończymy przyużyciu lematów:
     \begin{itemize}
      \item Dla $|F|\le 2n-3$ co najwyżej jeden z wierzchołków jest otoczony przez $F$.
      \item Dla $|F|\le 2n-4$ i ustalonego nieotoczonego wierzchołka $u$ istnieje co najwyżej jeden wierzchołek $v$ taki, że $(u,v,F)$ jest zablokowana.
@@ -1030,13 +1041,14 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     \end{itemize}
     i wykorzystując fakt, że w podkostkach poza kilkoma przypadkami istnieją odpowiednie długie kostki rozważa się dużą liczbę przypadków
     (rozbicie ze względu na należenie $u$ i $v$ do tej samej/różnej podkostki, bycia otoczonym/zablokowanym/wolnym w podkostce).
-    Dla każdego z tych przypadków da się pokazać metodę łączenia długich ścieżek z podkostek.\newline
+    Dla każdego z tych przypadków da się pokazać metodę łączenia długich ścieżek z podkostek.
+   \end{proof}   
    \includegraphics[scale=0.5]{img/sciezka_laczenie1.jpg}\quad\quad\quad\quad
-   \includegraphics[scale=0.5]{img/sciezka_laczenie2.jpg}
-   \end{proof}
-   \begin{remark}\label{dluga sciezka 2n-3 za duzo}
+   \includegraphics[scale=0.5]{img/sciezka_laczenie2.jpg}\newline
+   (Rysunek ilustruje dwa najpopularniejsze przypadki występujące przy łączeniu ścieżek z podkostek.)\newline
+   \begin{observation}\label{dluga sciezka 2n-3 za duzo}
     Dla $Q_n$, $F\subseteq V(Q_n)$, $|F|=2n-3$ teza twierdzenia \ref{tw o dlugich sciezkach} przestaje być prawdziwa.
-   \end{remark}
+   \end{observation}
    \begin{proof}
    Dla każdego $n\ge 4$ istnieje po kilka przypadków, w których $|F|=2n-3$, $(u,v,F)$ nie jest zablokowane, ale nie ma długiej $uv$--ścieżki bez wad.\newline
    3 przykłady :\newline
@@ -1044,17 +1056,21 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
    \includegraphics{img/Q_niezablokowane_2.jpg}\quad\quad\quad
    \includegraphics{img/Q_niezablokowane_3.jpg}
    \end{proof}
+   \vspace*{30pt}
   \section{Długie cykle}
    \begin{defi}\label{przekrój kostki}
     Dla zbioru $D\subseteq[n], d=|D|$ oraz $u\in\{0,1\}^{n-d}$ definiujemy kostkę $Q_D(u)$ jako $d$ wymiarową podkostkę $Q_n$, której współrzędne spoza $D$
     są ustalone przez wektor $u$. Definiujemy również $V_D(u)=\{(u,v)_D:v\in\{0,1\}^d\}$ (wierzchołki z oryginalnej kostki wzięte do $Q_D(u)$), oraz
     $F_D(u)=F\cap V_D(u)$.
    \end{defi}
+   \vspace*{10pt}
    \begin{lemma}\label{dlugi cykl - podzial kostki}
     Niech $F\subseteq V(Q_n)$ takie, że $|F|\ge 2n$ i niech $d=\lceil\frac{n^2}{2|F|-n-2}\rceil$.
     Wtedy istnieje zbiór $D\subseteq[n],|D|=d$, taki że $|F_D(u)|\le d+1$ dla każdego $u\in\{0,1\}^{n-d}$.
    \end{lemma}
+   \vspace*{10pt}
    Lemat pochodzi z pracy \cite{Wie} i został zmodyfikowany do tej postaci w pracy \cite{FG} aby lepiej pasować do dowodu poniższego twierdzenia.
+   \vspace*{10pt}
    \begin{theorem}\label{dlugi cykl - tw}
     Dla $n\ge15$ i $F\subseteq V(Q_n)$, takiego że $|F|\le\frac{n^2}{10}+\frac{n}{2}+1$ istnieje długi cykl bez wad.
    \end{theorem}
@@ -1087,21 +1103,20 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
     Dalej rozpatrywane jest dużo przypadków w zależności od podziału wierzchołków z $A$ i $B$ na dwie podkostki i w każdym z możliwych przypadków łączy się
     podwójne i pojedyncze ścieżki istniejące na mocy indukcji i twierdzenia \ref{tw o dlugich sciezkach}.
    \end{proof}
-   \begin{remark}\label{a cap B=(u)}
     Jeśli $A=\{u,w\}, B=\{v,w\}$, to jedna ze ścieżek musi mieć długość $0$ i być zaczepiona w wierzchołku $w$.
     Twierdzenie \ref{pary sciezek} daje wtedy $uv$-ścieżkę
     wolną od wad długości $2^n-2|F|-3=2^n-2|F\cup\{w\}|-1$, a więc o jeden dłuższą niż w twierdzeniu \ref{tw o dlugich sciezkach}
     (możliwe jest to tylko dlatego, że $u$ i $v$ nie należą do jednej części dwudzielnej $Q_n$).
-   \end{remark}
    
  \chapter{Ścieżka i cykl Hamiltona}\label{Ham}
   \section{Kostka bez wadliwych wierzchołków}
-   \begin{center}
-    \includegraphics[scale=0.5]{img/Q4_hamilton.jpg}
-   \end{center}
+
    Pełna kostka $Q_n$ ($n\ge2$) jest grafem hamiltonowskim (posiadającym cykl Hamiltona)
    -- bardzo wiele różnych cykli Hamiltona można uzyskać już łącząc dwa cykle
    z podkostek $Q_{n-1}$ (wystarczy, że w dwóch takich cyklach jest taka sama krawędź).
+   \begin{center}
+    \includegraphics[scale=0.5]{img/Q4_hamilton.jpg}
+   \end{center}
    Cykle Hamiltona na hiperkostce mają również zastosowania praktyczne. Jednym z przykładów użycia takich cykli są kody Graya
    -- ciągi wszystkich wektorów binarnych określonej długości (po dokładnie raz), których sąsiednie wyrazy różnią się na dokładnie jednym bicie.
    Kody te znajdują zastosowanie między innymi przy efektywnej iteracji, minimalizacji kodowania i obwodów binarnych,
@@ -1199,6 +1214,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
       \includegraphics[scale=0.75]{img/Q_hamilton_p1.jpg}\quad\quad\quad\quad
       \includegraphics[scale=0.75]{img/Q_hamilton_p2.jpg}
      \end{center}
+     (Rysunek przedstawia oba przypadki występujące w dowodzie.)\newline
      Dla ścieżki długości $1$ dowód przebiega tak samo, z tym wyjątkiem, że w jednej podkostce ląduje cała ścieżka, zaś druga jest wolna od wad.
      Przypadek $n=4$ jest natomiast rozważany ręcznie
      (tam są możliwe tylko 2 takie ścieżki z dokładnością do automorfizmów kostki).
@@ -1213,14 +1229,12 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      Dla każdego z tych przypadków ponownie łatwo wybrać odpowiednie ścieżki w podkostkach i połączyć je tak, aby uzyskać ścieżki Hamiltona w
      $Q_n-F$ od $u$ do $u'$ (szczegóły z obrazkami można zobaczyć w pracy \cite{Pegr}).
     \end{proof}
-    \begin{remark}
      Na podstawie \cite{SCJY} prawdziwe jest mocniejsze stwierdzenie:\newline
-     Niech $P$ będzie dowolną ścieżką długości $\le 2n-4$ w grafie $Q_n$, wtedy $Q_n-P$ jest hamiltonowsko wiązalna.
-    \end{remark}
+     Niech $P$ będzie dowolną ścieżką długości $\le 2n-4$ w grafie $Q_n$, wtedy wadliwa hiperkostka  $Q_n-P$ jest hamiltonowsko wiązalna.
    \subsection{Cykl izometryczny}
-    \begin{remark}\label{cykl izometryczny - drugie pol powtorka}
+    \begin{fact}\label{cykl izometryczny - drugie pol powtorka}
      W cyklu izometrycznym na hiperkostce każdy kierunek krawędzi występuje dokładnie 2 razy, w antypodycznych krawędziach cyklu.
-    \end{remark}
+    \end{fact}
     \begin{proof}
      Każdy kierunek krawędzi musi się pojawić na dowolnym cyklu w hiperkostce parzystą ilość razy. Dla cyklu długości $2k$
      weźmy dwa wystąpienia tego samego kierunku, oddalone od siebie na cyklu o minimalną liczbę krawędzi. Dostajemy ścieżkę długości $l$ zaczynającą
@@ -1228,7 +1242,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      inną ścieżkę długości $l-2$ łączącą te same końce. Z izometryczności $l-2\ge min(l,2k-l)$, zaś z minimalności $l-2\le 2k-l\Rightarrow l-1=k$.
     \end{proof}
     \begin{theorem}\label{hamilton - cykl, parz}
-     Niech $C$ będzie izometrycznym cyklem w $Q_n$ ($n\ge6$), o długości $2k$ podzielnej przez $4$, wtedy $Q_n-P$ jest hamiltonowsko wiązalna.
+     Niech $C$ będzie izometrycznym cyklem w $Q_n$ ($n\ge6$), o długości $2k$ podzielnej przez $4$, wtedy graf $Q_n-P$ jest hamiltonowsko wiązalny.
     \end{theorem}
     \begin{proof}
      Zaczynamy od podzielenia hiperkostki na dwie w kierunku wyznaczonym przez pierwszą (dowolnie wybraną) krawędź cyklu.
@@ -1236,24 +1250,25 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      obie są hamiltonowsko wiązalne. Podobnie jak wcześniej wystarczy rozważyć dwa przypadki w zależności od tego czy
      $u$ i $v$ wpadają do różnych, czy do tej samej podkostki. W obu przypadkach parę wierzchołków do połączenia ścieżek, czy krawędź do podpięcia
      cyklu wybieramy analogicznie jak w dowodzie twierdzenia \ref{hamilton - sciezka, nieparz}.
-     \begin{center}
-      \includegraphics[scale=0.75]{img/Q_hamilton_c1.jpg}\quad\quad\quad\quad
-      \includegraphics[scale=0.75]{img/Q_hamilton_c2.jpg}
-     \end{center}
-    \end{proof}
+    \end{proof}     
+    \begin{center}
+     \includegraphics[scale=0.75]{img/Q_hamilton_c1.jpg}\quad\quad\quad\quad
+     \includegraphics[scale=0.75]{img/Q_hamilton_c2.jpg}
+    \end{center}
+    (Rysunek przedstawia oba przypadki występujące w dowodzie.)\newline
    \subsection{Drzewo izometryczne}
-    \begin{remark}\label{drzewo izo - kierunek tylko raz}
+    \begin{fact}\label{drzewo izo - kierunek tylko raz}
      W drzewie izometrycznym w $Q_n$ każda z krawędzi ma inny kierunek.
-    \end{remark}
+    \end{fact}
     \begin{proof}
      Załóżmy, że istnieją dwie krawędzie w tym samym kierunku. Wynika z tego, że w drzewie jest ścieżka,
      która zawiera obie krawędzie, co daje sprzeczność z lematem
      \ref{sciezka izo - rozne kierunki} (w drzewie każde dwa wierzchołki są połączone tylko jedną ścieżką, więc nie ma innej krótszej).
     \end{proof}
-    \begin{remark}\label{drzewo izo zbal - ma liść z V}
+    \begin{observation}\label{drzewo izo zbal - ma liść z V}
      Drzewo jest grafem dwudzielnym o częściach $U$ i $V$. Jeśli niepuste drzewo jest zbalansowane, lub prawie zbalansowane z przewagą w $V$,
      to do $V$ należy pewien jego liść.
-    \end{remark}
+    \end{observation}
     \begin{proof}
      Nie wprost -- jeśli w drzewie każdy liść należy do dwudzielnej części $U$, to można wybrać dowolny wierzchołek z $v\in V$ jako korzeń.
      Usunięcie dowolnej gałęzi bez rozwidleń (od ostatniego rozwidlenia do liścia) nie produkuje nowych liści, może też pogorszyć balans jedynie
@@ -1268,7 +1283,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
       \includegraphics[scale=0.5]{img/Q_hamilton_t2.jpg}
      \end{center}
     \begin{theorem}\label{Hamilton - drzewo izo}
-     Dla $T$ zbalansowanego lub prawie zbalansowanego drzewa izometrycznego w $Q_n$ graf $Q_n-T$ jest hamiltonowsko wiązalny dla $n\ge5$
+     Niech $T$ będzie zbalansowanym lub prawie zbalansowanym drzewem izometrycznym w $Q_n$. Graf $Q_n-T$ jest hamiltonowsko wiązalny dla $n\ge5$
      (w przypadku zbalansowanego wystarczy $n\ge4$).
     \end{theorem}
     \begin{proof}
@@ -1276,7 +1291,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      (w $Q_5$ istnieje takie tylko jedno niebędące ścieżką) i zbalansowanego dla $n=4$ (tu są tylko ścieżki) można rozpatrzyć analogicznie do tamtego.
      W kroku indukcyjnym dla drzewa zbalansowanego korzystamy z wymiaru o $1$ mniejszego i drzewa prawie zbalansowanego 
      zaś dla drzewa prawie zbalansowanego korzystamy z drzewa zbalansowanego w kostce o mniejszym wymiarze.
-     Na podstawie uwagi \ref{drzewo izo zbal - ma liść z V} wybieramy liść z części dwudzielnej, w której drzewo
+     Na podstawie obserwacji \ref{drzewo izo zbal - ma liść z V} wybieramy liść z części dwudzielnej, w której drzewo
      ma co najmniej połowę wierzchołków i dzielimy mniejsze według kierunku krawędzi drzewa wchodzącej do tego wierzchołka.
      Otrzymujemy w ten sposób w jednej podkostce pojedynczy wadliwy wierzchołek (jak w dowodach poprzednich twierdzeń)
      oraz w drugiej izometryczne drzewo zbalansowane lub prawie zbalansowane.
@@ -1311,8 +1326,10 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
    Znajdź najdłuższy ciąg wektorów binarnych długości $n$, taki
    że każde dwa sąsiednie wektory różnią się na co najmniej jednej pozycji, zaś każde dwa inne na co najmniej dwóch.
    \section{Ścieżka Fibonacciego}
+    W tym podrozdziale przedstawię własną, bardzo prostą w użyciu i wygodną w implementacji
+    (w porównaniu z konstrukcjami spotykanymi w innych pracach) konstrukcję wykładniczo długiej ścieżki indukowanej.\newpage
     \begin{theorem}\label{co najmniej fibo}
-     Dla danego $n$ istnieje prosty algorytm konstruujący ciąg wektorów reprezentujący ścieżkę długości $F_{n+1}-1$,
+     Dla danego $n$ istnieje algorytm konstruujący ciąg wektorów reprezentujący ścieżkę długości $F_{n+1}-1$,
      (gdzie $F_n$ to $n$-ty wyraz ciągu Fibonacciego: $F_0=F_1=1$), która jest podgrafem indukowanym hiperkostki.
      Co więcej prefiks długości $F_{n}$ jest takim ciągiem dla $n-1$ (po odrzuceniu ostatniej współrzędnej wektorów).
     \end{theorem}
@@ -1342,12 +1359,10 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      zaś pomiędzy trzecią i drugą jest tak samo z symetrii. Pozostają części pierwsza i trzecia, ale skoro są one całkowicie zanurzone w dwóch podkostkach,
      które nie mają między sobą krawędzi, to warunek ten jest również spełniony w tym przypadku.
     \end{proof}
-    \begin{corollary}\label{fibo -> wykladniczy}
-     Jako, że ciąg Fibonacciego rośnie w tempie wykładniczym -- ilość użytych wierzchołków wynosi
+     Ciąg Fibonacciego rośnie w tempie wykładniczym, oznacza to, że ilość użytych wierzchołków w tak skonstruowanej wynosi
      $\frac{1}{\sqrt{5}}((\frac{1+\sqrt{5}}{2})^{n+1}-(\frac{1-\sqrt{5}}{2})^{n+1})\approx \frac{(1.62)^{n+1}}{\sqrt{5}}=\Omega(1.61^n)$, przy wielkości kostki $2^n$.
-    \end{corollary}
    \section{Wyniki eksperymentalne}
-    \begin{remark}\label{da sie dluzsze}
+    \begin{observation}\label{da sie dluzsze}
      Dla wymiarów większych niż $4$ da się otrzymać ścieżki jeszcze dłuższe -- dla $n=5$ najdłuższą możliwą ścieżką jest:\newline
      00000
      00001
@@ -1364,17 +1379,18 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      10010
      10110.\newline
      Ma ona długość 13, jest więc o 1 dłuższa od ścieżki otrzymanej na podstawie twierdzenia \ref{co najmniej fibo}
-    \end{remark}
+    \end{observation}
     Aby znaleźć możliwie najdłuższe ścieżki dla większych $n$ przeprowadziłem eksperymenty przy pomocy komputera.
     Wyszukiwanie ścieżek prowadziłem startując od wierzchołka $\overline{0}$ i dobierając do istniejącej ścieżki nowy wierzchołek,
     który jest sąsiadem aktualnego końca i nie jest sąsiadem żadnego poprzedniego, aż do momentu, gdy taki wybór nie jest możliwy 
     -- w ten sposób otrzymuje "grę". Znalezienie wszystkich możliwych ścieżek otrzymywalnych w ten sposób
     (a są to wszystkie takie poprawne ścieżki, które zaczynają się w wierzchołku $\overline{0}$) otrzymywane jest poprzez przejrzenie
     drzewa gry, której wierzchołkami są ścieżki. Dla dowolnego wierzchołka drzewa ścieżki w przodkach tego wierzchołka są prefiksami ścieżki
-    przez niego przechowywanej. Drzewo tej gry ma maksymalny stopień rozgałęzienia równy $n$, zaś głębokość $|P|$.\newline
+    przez niego przechowywanej. Drzewo tej gry ma maksymalny stopień rozgałęzienia równy $n$, zaś głębokość $|P|$.
     Daje to złożoność algorytmu przeglądającego wszystkie ścieżki mocno pesymistycznie ograniczoną przez $O(n^{|P|})$. Nawet po zastosowaniu
     różnych usprawnień, algorytm dokładny szybko staje się zbyt wolny, dlatego dla $n\ge7$ musiałem skorzystać z metod losowych.
-    \subsection{NMCS}
+    \vspace*{-20pt}
+    \subsection{Nested Monte Carlo Search (NMCS)}
      Aby otrzymać pewną ścieżkę, która posiada tę własność, że nie da się jej już wydłużyć do innej poprawnej można przeprowadzić zejście po drzewie
      od korzenia do liścia poprzez losowe wybieranie jednego z dzieci za każdym razem, gdy taki wybór jest możliwy.\newline
      Przeprowadzając odpowiednio dużo takich losowych zejść po drzewie i wybierając najdłuższą ścieżkę ze znalezionych możemy uzyskać już w miarę dobry
@@ -1387,26 +1403,22 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      Rozszerzenie tej metody zostało zaprezentowane w pracy \cite{NMCS} zwane Nested Monte Carlo Search, polegające na tym, że do oszacowania
      wartości możliwych ruchów zamiast zwykłych przeszukiwań losowych używamy zwykłego przeszukiwania Monte Carlo.
      Dokładniej metoda ta zakłada, że tworząc rozwiązanie przy pomocy NMCS z poziomem $k$ używamy do wyboru ruchu NMCS z poziomem $k-1$ i tak dalej rekurencyjnie
-     aż do poziomu $0$, który oznacza przeszukiwanie losowe. Można to przedstawić następującym pseudokodem:\newline
-     \hspace*{0pt}$NMCS(v,level)\{$\newline
-     \hspace*{16pt}	while$(TRUE)\{$\newline
-     \hspace*{32pt}		$val.push\_back(v);$\newline
-     \hspace*{32pt}		if$(|v.children|==0)$ return $val;$\newline
-     \hspace*{32pt}		if$(level==0)\{$\newline
-     \hspace*{48pt}			$v=random(v.children);$\newline
-     \hspace*{32pt}		$\}$else$\{$\newline
-     \hspace*{48pt}			$best=-1;$\newline    
-     \hspace*{48pt}			foreach$(u\in v.children)\{$\newline
-     \hspace*{64pt}				$val2=NMCS(u,level-1);$\newline
-     \hspace*{64pt}				if$(value(val2)>best)\{$\newline
-     \hspace*{80pt}					$best=value(val2);$\newline
-     \hspace*{80pt}					$move=u;$\newline
-     \hspace*{64pt}				$\}$\newline
-     \hspace*{48pt}			$\}$\newline
-     \hspace*{48pt}			$v=move;$\newline
-     \hspace*{32pt}		$\}$\newline
-     \hspace*{16pt}	$\}$\newline
-     \hspace*{0pt}$\}$
+     aż do poziomu $0$, który oznacza przeszukiwanie losowe. Można to przedstawić następującym pseudokodem:\newline\newline
+     \hspace*{100pt}$NMCS(v,level)\{$\newline
+     \hspace*{116pt}	while$(TRUE)$\newline
+     \hspace*{132pt}		$val.push\_back(v);$\newline
+     \hspace*{132pt}		if$(|v.children|==0)$ return $val;$\newline
+     \hspace*{132pt}		if$(level==0)$\newline
+     \hspace*{148pt}			$v=random(v.children);$\newline
+     \hspace*{132pt}		else\newline
+     \hspace*{148pt}			$best=-1;$\newline    
+     \hspace*{148pt}			foreach$(u\in v.children)$\newline
+     \hspace*{164pt}				$val2=NMCS(u,level-1);$\newline
+     \hspace*{164pt}				if$(value(val2)>best)$\newline
+     \hspace*{180pt}					$best=value(val2);$\newline
+     \hspace*{180pt}					$move=u;$\newline
+     \hspace*{148pt}			$v=move;$\newline
+     \hspace*{100pt}$\}$
     \subsection{Uwagi praktyczne}
      Ze względu na ogromną różnicę w złożoności algorytmu $NMCS$ w zależności od użytego poziomu można wprowadzić lekką modyfikację -- w przypadku,
      gdy wyższy poziom jest zbyt kosztowny, zaś niższy za słaby zamiast uruchamiać program z niskim poziomem wiele razy można poszerzyć przeszukiwanie.
@@ -1449,7 +1461,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      jednak przy większych traci na znaczeniu.
     \subsection{Uzyskane wartości}
      Przy pomocy komputera i przedstawionych wyżej algorytmów przeprowadziłem przeszukiwanie w celu znalezienia możliwie najdłuższej takiej ścieżki.
-     W przypadku $n\le6$ przy pomocy pełnego przeszukiwania, a dalej NMCS z 4 poziomami dla $n=7$, 3 dla $n=8$, 2 dla $9\le n\le12$ i 1 dla $13\le n\le18$
+     W przypadku $n\le6$ przy pomocy przeszukiwania dokładnego, a dalej NMCS z 4 poziomami dla $n=7$, 3 dla $n=8$, 2 dla $9\le n\le12$ i 1 dla $13\le n\le18$
      z ilością wywołań niższego poziomu takich żeby podobny był czas dla wszystkich $n$. Dalej użyłem zwykłego błądzenia losowego i wybierania najdłuższej
      uzyskanej tak ścieżki (ilość przeszukiwań znów dostosowana do tego czasu).
      Program użyty do takiego przeszukiwania wraz z zapisami ścieżek dla mniejszych $n$ (dla większych brak ze względu na wielkość plików)
@@ -1512,6 +1524,9 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      \begin{center}
       \includegraphics[scale=0.55]{img/plot1.jpg}
      \end{center}
+     Na podstawie tabelki i wykresu można zauważyć, że pomimo spadającej jakości wyników (w szczególny sposób widoczej przy zmianie poziomu NMCS) pierwiastek
+     $n$--tego stopnia z wyniku ma tendencję wzrostową, co nasuwa wniosek, że dla optymalnych wyników ciąg takich pierwiastków zbiega do 2. 
+     Widać również, że dla większych $n$ ścieżka Fibonacciego  osiąga już bardzo słabe wyniki.
    \section{Znane ograniczenia długości węży}
     Problemem najdłuższej ścieżki indukowanej i najdłuższego cyklu indukowanego w hiperkostce zajmowali się już wcześniej inni badacze, nazywając
     problemy odpowiednio "wąż w pudełku" (snake-in-a-box) i "zwój w pudełku" (coil-in-a-box) i osiągając lepsze rezultaty.\newline
@@ -1541,7 +1556,7 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
        \item ścieżka $m$ kończy się tam, gdzie zaczyna się ścieżka $m+1 (\mod 2^{n-5})$ i jest to jedyny ich wspólny wierzchołek.
        \item ścieżki z dwóch kostek $Q_5$ będących sąsiadami w $Q_{n-5}$, ale nie na cyklu Hamiltona nie zawierają wspólnych wierzchołków.
        \item ścieżki o numerach $m=1$ lub $2(\mod 4)$ mają długość $3$, zaś o numeracji $m=0$ lub $3(\mod 4)$ długość $4$.
-      \end{itemize}
+      \end{itemize}\newpage
       Ścieżki konstruowane są poprzez chodzenie po grafie G (widocznym na obrazku) zanurzonym w $Q_5$:
       \begin{center}
        \includegraphics[scale=1]{img/snake_G.jpg}
@@ -1582,11 +1597,11 @@ Najdłuższa ścieżka indukowana -- własna konstrukcja długiej ścieżki, wyn
      Dalej dla $n\ge6$ indukcyjnie. Przy dowolnym podziale na dwie podkostki $Q_{n-1}$ w jednej z nich musiałby się znajdować pseudowąż rozmiaru co najmniej
      $2^{n-2}+1$, co daje sprzeczność.
     \end{proof}
-    \begin{remark}
+    \begin{observation}
      W pracy \cite{Snake3} pojawiło się mocniejsze ograniczenie górne na długość węża w pudełku:
      $2^{n-1}\cdot(1-\frac{1}{n^2-n+2})$ (dla $n\ge7$), które zostało później jeszcze ulepszone do\newline
      $2^{n-1}\cdot(1-\frac{1}{20n-41})$ (dla $n\ge12$) w pracy \cite{Snake4}.
-    \end{remark}
+    \end{observation}
 
 
 \begin{thebibliography}{99}
