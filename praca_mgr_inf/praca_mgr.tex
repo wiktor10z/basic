@@ -21,7 +21,7 @@
 
 \kierunek{Informatyka}
 
-\opiekun{prof. Wojciech Rytter\\
+\opiekun{prof. dra hab. Wojciecha Ryttera\\
 Instytut Informatyki}
 
 \date{September 2017}
@@ -638,7 +638,7 @@ Własne konstrukcje możliwie najdłuższych ścieżek indukowanych, wyniki eksp
     (czas oczekiwany operacji $O(n)$, złożoność pamięciowa całej struktury $O(n^{0.5}|F|)$),
     lub w drzewie prefiksowym (czas pesymistyczny operacji $O(n)$, złożoność pamięciowa całej struktury $O(n^{1.5}|F|)$).
     Pozwala to w łatwy sposób uzyskać efektywną wyrocznię, a więc i algorytm o złożoności z wniosku.
-   \subsection{pseudokod i uwagi}
+   \subsection{Pseudokod i uwagi}
     W algorytmie wykorzystywana jest struktura $T$ z operacjami
     \begin{itemize}[noitemsep,topsep=4pt]
      \item $Insert(v,T)$ wstawiającą wierzchołek $v$ do struktury $T$
@@ -1316,7 +1316,8 @@ Własne konstrukcje możliwie najdłuższych ścieżek indukowanych, wyniki eksp
    dalej jednak pojawia się coraz więcej możliwości usuwania wierzchołków i ciężko wybrać najlepszą.
     
    Zainspirowany tym postawiłem sobie pytanie, jaką największą średnicę można uzyskać w ten sposób pozostawiając graf spójnym.
-   Średnicę spójnego grafu $Q_n-F$ wyznacza najkrótsza ścieżka między pewnymi dwoma wierzchołkami, jeśli więc dla jakiegoś grafu uda się uzyskać
+   Średnicę spójnego grafu $Q_n-F$ jest wyznaczona przez pewne dwa wierzchołki tego grafu oraz najkrótszą ścieżkę między nimi,
+   jeśli więc dla jakiegoś grafu uda się uzyskać
    taką maksymalną średnicę, to można wybrać tę ścieżkę i odrzucić wszystkie wierzchołki spoza niej (nie zmniejszając średnicy).
    Oznacza, to że maksimum po wszystkich grafach $Q_n-F$ jest uzyskiwane dla grafu będącego ścieżką indukowaną.
    
@@ -1602,7 +1603,19 @@ Własne konstrukcje możliwie najdłuższych ścieżek indukowanych, wyniki eksp
      $2^{n-1}\cdot(1-\frac{1}{n^2-n+2})$ (dla $n\ge7$), które zostało później jeszcze ulepszone do\newline
      $2^{n-1}\cdot(1-\frac{1}{20n-41})$ (dla $n\ge12$) w pracy \cite{Snake4}.
     \end{observation}
+    \vspace*{30pt}
 
+    Przedstawiona tu konstrukcja długiej ścieżki z pracy \cite{Snake2} uzyskuje co prawda lepsze wyniki dla dużych $n$, jednak dla małych (do $10$)
+    ścieżka Fibonacciego ma widoczną przewagę. Największą zaletą mojej konstrukcji jest jednak bardzo łatwa generacja i widoczne własności kombinatoryczne. 
+    W konstrukcji ścieżek długości $\frac{9}{64}\cdot2^n$ pojawia się miejsce w którym trzeba wybrać którą z pięciu możliwości wybrać i o ile da się udowodnić,
+    że taki wybór jest zawsze możliwy, o tyle dokonanie go jest już nietrywialne i trudne obliczeniowo. Wyniki eksperymentalne dla małych $n$ obrazują również,
+    że obie konstrukcje mocno odstają od tego co rzeczywiście można uzyskać, dla większych wymiarów jednak przeszukiwanie grafu jest zbyt kosztowne.
+    Zaletą metody prowadzenia eksperymentu przyjętej przeze mnie jest dosyć duża skalowalność, stąd możliwość podania wyników aż do $34$
+    (w innych pracach takie wyniki urywają się znacznie wcześniej).
+    Dzięki możliwości rozproszenia tej metody (wyszukiwanie rozpoczęte w sąsiadach wierzchołka rozwijanego niezależnie) można przypuszczać,
+    że przy użyciu większej ilości silniejszych maszyn wyniki te można jeszcze polepszyć.
+    
+    
 
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Bibliografia}
