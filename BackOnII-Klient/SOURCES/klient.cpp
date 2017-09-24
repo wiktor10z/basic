@@ -141,10 +141,6 @@ else\n\
 	echo \"Nie obsługiwany system operacyjny\"\n\
 fi";
 
-const char* download_script="\
-	sudo sshpass -p \"B7yHa2nQ4\" sftp wz320501@students.mimuw.edu.pl:/home/dokstud/wz320501/public_html/backon/usluga2 .\n\
-	sudo mv usluga2 usluga\
-";	
 
 
 void send_TCP_message(string message);
@@ -333,13 +329,14 @@ string software_audit(int Sl3){
 }
 
 
-
-
-
-
-
-
-
+string update_script(string address, string password){
+	string script="\
+sudo sshpass -p \""+password+"\" sftp -o StrictHostKeyChecking=no "+address+" ./usluga2\n\
+sudo mv usluga2 usluga\
+";
+return script;
+}
+//wz320501@students.mimuw.edu.pl:/home/dokstud/wz320501/public_html/backon/usluga4
 
 
 int common_start(){
@@ -361,6 +358,7 @@ int common_start(){
 
 int klient(){//TODO dodać obsługę rozłączenia serwera
 	char login[1000],password[1000],hostname[HOST_NAME_MAX],service_password[PASSWORD_LEN];			//TODO zapytać o te długości
+	char update_address[1000],update_password[1000];			//TODO zapytać o te długości
 	pair<string,int> ret_message;
 	int fresh_start;
 	fscanf(glob_file,"%s",SERVER_NAME);
@@ -414,7 +412,7 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	gethostname(hostname,HOST_NAME_MAX);					//TODO to powinno być jednoznaczne, więc może jakiś hostid zamiast hostname
 	if(FAST_DEBUG){
 		strcpy(login,"ADMINISTRATOR");
-		strcpy(password,"admin");		
+		strcpy(password,"admin");	
 	}else{
 		//poznanie loginu i hasła
 		printf("login: ");
@@ -425,6 +423,10 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 		printf("hasło: ");
 		scanf("%s",password);
 	}
+	printf("adres aktualizacji - użytkownik@komputer:adres_pliku_usluga : "); //TODO usunąć
+	scanf("%s",update_address);//TODO usunąć
+	printf("hasło tego użytkownika: "); //TODO usunąć
+	scanf("%s",update_password);//TODO usunąć
 	unsigned char *plaintext=(unsigned char *)password;
 	unsigned char ciphertext[128];
 	int ciphertext_len=encrypt(plaintext,strlen((char *)plaintext),key,iv,ciphertext);
@@ -462,11 +464,14 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	fprintf(glob_file,"%s\n",PORT);
 	fprintf(glob_file,"%s\n",login);
 	fprintf(glob_file,"%s\n",str1.c_str());
+	fprintf(glob_file,"%s\n",update_address);//TODO usunąć
+	fprintf(glob_file,"%s\n",update_password);//TODO usunąć
 	return 0;
 }
 
 int usluga(){
 	char login[1000],hostname[HOST_NAME_MAX],service_password[PASSWORD_LEN];
+	char update_address[1000],update_password[1000]; //TODO usunąć
 	pair<string,int> ret_message;
 	fscanf(glob_file,"%s",SERVER_NAME);						// wczytanie dodatkowej linijki roboczej "xxx"
 	fscanf(glob_file,"%s",SERVER_NAME);						//TODO weryfikacja poprawności pliku
@@ -477,6 +482,8 @@ int usluga(){
 	fscanf(glob_file,"%s",PORT);
 	fscanf(glob_file,"%s",login);
 	fscanf(glob_file,"%s",service_password);
+	fscanf(glob_file,"%s",update_address);//TODO usunąć
+	fscanf(glob_file,"%s",update_password);//TODO usunąć
 	connect_TCP();
 	gethostname(hostname,HOST_NAME_MAX);
 	unsigned char ciphertext[128];
@@ -506,7 +513,8 @@ int usluga(){
 			send_TCP_message(AS_message);
 		}else if(ret_message.first.find("RK|")==0){
 			cout << "instrukcja aktualizacji"<<endl;
-			system(download_script);
+			cout << update_script(update_address,update_password)<<endl;
+			system(update_script(update_address,update_password).c_str());
 			return 0;
 		}else if(ret_message.first!="OK\r\n"){
 			cerr<<time_string()<<"brak obsługi wiadomości: "<<ret_message.first<<endl;
