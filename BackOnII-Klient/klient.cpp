@@ -26,12 +26,17 @@
 
 #define PASSWORD_LEN 5	//TODO ustawić właściwe
 #define FAST_DEBUG 0
-#define VERSION "2.0.0.1"
+#ifndef PROGRAM_TYPE
+	#define PROGRAM_TYPE 0
+#endif
+#ifndef VERSION
+	#define VERSION "2.0.0.1"
+#endif
 
 //00010203040FFA9708090A0B0C0D0E0F0001020304050607
 //0901020304050607
 
-//TODO dokumnetacja (w szczególności licencja do biblioteki szyfrującej)
+//TODO dokumentacja (w szczególności licencja do biblioteki szyfrującej)
 //TODO sklejenie dwóch wiadomości przy czytaniu do wyczerpania źródła
 //TODO wygwiazdkowanie hasła
 //TODO usunięcie rzeczy testowych
@@ -61,7 +66,7 @@ static void catch_int (int sig) {
 */
 
 
-string get_system_output(char* cmd){
+string get_system_output(char* cmd){//oba? - TODO gdzie się to używa
 	int buff_size=100;
 	char* buff=new char[buff_size];
 	string str="";
@@ -110,74 +115,62 @@ string get_system_output(char* cmd){
 }
 
 
-const char* install_script="\
+const char * install_script( char* version){ //oba
+string script="\
 OS=$(lsb_release -si)\n\
 VER=$(lsb_release -sr)\n\
 if [ $OS = \"Ubuntu\" ]; then\n\
 		apt-get install cpuid\n\
-		mkdir -p /opt/BackOnII-Klient\n\
-		cp usluga /opt/BackOnII-Klient\n\
-		cp global_data /opt/BackOnII-Klient\n\
+		mkdir -p /opt/BackOnII-Klient_";
+		script=script+version+"\n\
+		cp usluga /opt/BackOnII-Klient_"+version+"\n\
+		cp global_data /opt/BackOnII-Klient_"+version+"\n\
 	if dpkg --compare-versions $VER \"gt\" \"14.10\" ; then\n\
-		cp service_script /opt/BackOnII-Klient\n\
-		cp -r BackOnII-Klient.service /etc/systemd/system/BackOnII-Klient.service\n\
-		systemctl enable BackOnII-Klient\n\
-		systemctl start BackOnII-Klient\n\
+		cp service_script /opt/BackOnII-Klient_"+version+"\n\
+		cp -r BackOnII-Klient_"+version+".service /etc/systemd/system/BackOnII-Klient_"+version+".service\n\
+		systemctl enable BackOnII-Klient_"+version+"\n\
+		systemctl start BackOnII-Klient_"+version+"\n\
 	else\n\
-		cp -r BackOnII-Klient.conf /etc/init/BackOnII-Klient.conf\n\
-		service BackOnII-Klient start\n\
+		cp -r BackOnII-Klient_"+version+".conf /etc/init/BackOnII-Klient_"+version+".conf\n\
+		service BackOnII-Klient_"+version+" start\n\
 	fi\n\
 else\n\
 	echo \"Nieobsługiwany system operacyjny\"\n\
 fi";
+return script.c_str();
+}
 
-const char* uninstall_script="\
+const char * uninstall_script( char* version){// oba
+string script="\
 OS=$(lsb_release -si)\n\
 VER=$(lsb_release -sr)\n\
 if [ $OS = \"Ubuntu\" ]; then\n\
 	if dpkg --compare-versions $VER \"gt\" \"14.10\" ; then\n\
-		systemctl stop BackOnII-Klient\n\
-		systemctl disable BackOnII-Klient\n\
+		systemctl stop BackOnII-Klient_";
+		script=script+version+"\n\
+		systemctl disable BackOnII-Klient_"+version+"\n\
 		rm /var/log/BackOnII-Klient.log\n\
 		rm /var/log/BackOnII-Klient-err.log\n\
-		rm -r /opt/BackOnII-Klient\n\
-		rm /etc/systemd/system/BackOnII-Klient.service\n\
+		rm -r /opt/BackOnII-Klient_"+version+"\n\
+		rm /etc/systemd/system/BackOnII-Klient_"+version+".service\n\
 	else\n\
-		service BackOnII-Klient stop\n\
+		service BackOnII-Klient_"+version+" stop\n\
 		rm /var/log/BackOnII-Klient.log\n\
 		rm /var/log/BackOnII-Klient-err.log\n\
-		rm -r /opt/BackOnII-Klient\n\
-		rm /etc/init/BackOnII-Klient.conf\n\
+		rm -r /opt/BackOnII-Klient_"+version+"\n\
+		rm /etc/init/BackOnII-Klient_"+version+".conf\n\
 	fi\n\
 else\n\
 	echo \"Nieobsługiwany system operacyjny\"\n\
 fi";
-
-const char* usluga_stop_script="\
-OS=$(lsb_release -si)\n\
-VER=$(lsb_release -sr)\n\
-if [ $OS = \"Ubuntu\" ]; then\n\
-	if dpkg --compare-versions $VER \"gt\" \"14.10\" ; then\n\
-		systemctl stop BackOnII-Klient\n\
-		systemctl disable BackOnII-Klient\n\
-	else\n\
-		service BackOnII-Klient stop\n\
-	fi\n\
-else\n\
-	echo \"Nieobsługiwany system operacyjny\"\n\
-fi";
-
-
-
-
-
-
+return script.c_str();
+}
 
 void send_TCP_message(string message);
 pair<string,int> receive_TCP();
 
 
-void connect_TCP(){
+void connect_TCP(){//oba
 	struct addrinfo addr_hintsTCP;
 	int err;
 	struct addrinfo *addr_result;
@@ -208,7 +201,7 @@ void connect_TCP(){
 	}
 }
 
-void reconnect_TCP(){
+void reconnect_TCP(){//oba
 	fprintf(stderr,"%sserver disconnected\n",time_string().c_str());	
 	connect_TCP();
 	send_TCP_message(login_message);
@@ -221,14 +214,14 @@ void reconnect_TCP(){
 	}
 }
 
-void send_TCP_message(string message){//TODO może trzeba będzie i tutaj sprawdzać rozłączenie serwera
+void send_TCP_message(string message){//TODO może trzeba będzie i tutaj sprawdzać rozłączenie serwera //oba
 	int lenTCP=message.length();
 	if(write(sockTCP,message.c_str(),lenTCP)!=lenTCP){
 		fprintf(stderr,"%smessage send error\n",time_string().c_str());
 	}
 }
 
-pair<string,int> receive_TCP(){//pierwszy argument to odczytana wiadomość,drugi 0 - wszystko ok 
+pair<string,int> receive_TCP(){//pierwszy argument to odczytana wiadomość,drugi 0 - wszystko ok //oba
 	ssize_t len;// 1 - w między czasie nastąpiło rozłączenie i ponowne połączenie - należy powtórzyć komunikację
 	char buffer[1000];//2 - 
 	memset(buffer, 0, sizeof(buffer));
@@ -245,8 +238,7 @@ pair<string,int> receive_TCP(){//pierwszy argument to odczytana wiadomość,drug
 }
 
 
-
-string extract_line(string str,const char* pattern){
+string extract_line(string str,const char* pattern){//oba? - TODO gdzie się to używa?
 	if(str.find(pattern)!=string::npos){
 		str=str.substr(str.find(pattern)+strlen(pattern));
 		str=str.substr(str.find_first_not_of(" "));
@@ -256,11 +248,11 @@ string extract_line(string str,const char* pattern){
 	}
 }
 
-string get_system_line(char* command,const char* pattern){
+string get_system_line(char* command,const char* pattern){//oba? - TODO gdzie sią to używa?
 	return extract_line(get_system_output(command),pattern);
 }
 
-string prod_name(string info){
+string prod_name(string info){//oba - na razie
 	string name3="???";
 	if(info.find("product:")!=string::npos){
 		string info1=info.substr(info.find("product:")+9);
@@ -276,7 +268,7 @@ string prod_name(string info){
 	return name3;
 }
 
-string software_info(){//można też zrobić z tego stały string obliczany przy włączeniu programu
+string software_info(){//można też zrobić z tego stały string obliczany przy włączeniu programu//oba - na razie
 	char hostname[HOST_NAME_MAX];
 	gethostname(hostname,HOST_NAME_MAX);
 	string host(hostname);
@@ -350,15 +342,14 @@ delete from KomponentyKomputera where NazwaKomputera='"+host+"';\r\n";
 	return soft_info;
 }
 
-
-string software_audit(int Sl3){
+string software_audit(int Sl3){//oba - na razie
 	string script=software_info();
 	string T64=Encode64(script,0);
 	string TMD5=md5_encode(script);
 	return "PAS|"+to_string(Sl3)+"|"+T64+"|"+TMD5+"\r\n";
 }
 
-void save_update_script(string script){
+void save_update_script(string script){//TODO tylko usluga
 	string decoded=Decode64(script,1);
 	cout << time_string() <<"zapisano skrypt aktualizujący"<<endl;
 	ofstream output("aktLinux.sh",ios::binary);
@@ -366,17 +357,7 @@ void save_update_script(string script){
 }
 
 
-string update_script(string address, string password){
-	string script="\
-sudo sshpass -p \""+password+"\" sftp -o StrictHostKeyChecking=no "+address+" ./usluga2\n\
-sudo mv usluga2 usluga\
-";
-return script;
-}
-//wz320501@students.mimuw.edu.pl:/home/dokstud/wz320501/public_html/backon/usluga4
-
-
-int common_start(){
+int common_start(){//oba
 	srand(time(NULL));
 	glob_file=fopen("global_data","r+");
 	if(glob_file==NULL){
@@ -396,7 +377,7 @@ int common_start(){
 int klient(){//TODO dodać obsługę rozłączenia serwera
 	char password[1000],hostname[HOST_NAME_MAX];			//TODO zapytać o te długości
 	//char update_address[1000],update_password[1000];			//TODO usunąć
-	pair<string,int> ret_message;
+	pair<string,int> ret_message;//TODO tylko klient
 	int fresh_start;
 	fscanf(glob_file,"%s",SERVER_NAME);
 	fresh_start=(strlen(SERVER_NAME)==0);
@@ -507,10 +488,12 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 }
 
 void update_confirmation(){//TODOTODO usuwanie aktLinux? (może być gdzie indziej więc może lepiej w nim samym) oraz robienie update tylko jak wersja się nie zgadza
-	char* str1=(char*)malloc(1000*sizeof(char));
-	if(fscanf(glob_file,"%s",str1)>0){
+	char* str1=(char*)malloc(1000*sizeof(char));//TODO tylko usługa
+	if(fscanf(glob_file,"%s",str1)>0){//TODOTODOTODO usunięcie poprzedniej wersji
 		string str2(str1);
 		if(str2!=VERSION){
+			//TODO str2=old version -> uninstall
+			uninstall_script((char *)str2.c_str());
 			fscanf(glob_file,"%s",str1);
 			fclose(glob_file);
 			glob_file=fopen("global_data","w");
@@ -536,7 +519,7 @@ void update_confirmation(){//TODOTODO usuwanie aktLinux? (może być gdzie indz
 }
 
 
-int usluga(){
+int usluga(){//TODO tylko usluga
 	char hostname[HOST_NAME_MAX];
 	//char update_address[1000],update_password[1000]; //TODO usunąć
 	pair<string,int> ret_message;
@@ -621,14 +604,6 @@ int usluga(){
 	return 0;
 }
 
-/*
-int update(string user, string password){
-	//string address=user+"@students.mimuw.edu.pl:/home/dokstud/wz320501/public_html/BackOnII.tar.gz";
-	//system(update_script(address,password).c_str());
-	cout << "update" <<endl;
-	return 0;
-}
-*/
 
 int main(int argc, char * argv[]){
 	int k;
@@ -641,9 +616,10 @@ int main(int argc, char * argv[]){
 		k=klient();
 		fclose(glob_file);		
 		if(k==0){
-			system(install_script);
+			system(install_script((char*)VERSION));
 		}else if(k==2){
-			system(uninstall_script);	//TODO może zmodyfikować plik glob		
+			system(uninstall_script((char*)VERSION));	//TODO może zmodyfikować plik glob
+			//cout << uninstall_script((char*)VERSION) <<endl; 
 		//}
 		}else if(k==3){				//TODO usunąć
 			cout<<software_info()<<endl;			//TODO usunąć

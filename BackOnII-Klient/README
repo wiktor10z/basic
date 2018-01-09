@@ -36,3 +36,17 @@ Pid usługi trafia do /var/run/BackOnII-Klient.pid
 do właściwych programów w C dołączyłem program service_script (obudowujący skrypt),
 ponieważ w nowszych wersjach Ubuntu serwis chciał uruchamiać plik wykonywalny a nie skrypt.
 (pewnie da się to zrobić lepiej, ale było to dla mnie najprostsze rozwiązanie)
+
+
+
+
+sudo apt-get install cpuid				?
+
+sudo apt-get install libcdio-utils					-> cd-drive
+
+
+
+
+
+
+
