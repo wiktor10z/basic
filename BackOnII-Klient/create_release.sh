@@ -1,5 +1,5 @@
-VERSION1='2.0.0.1'
-
+VERSION1='2.0.0.2'
+#TODO VERSION1 jako argument skryptu
 make VERSION="\"\\\"$VERSION1\\\"\""
 make clean
 
@@ -61,22 +61,22 @@ VER=\$(lsb_release -sr)
 if [ \$OS = \"Ubuntu\" ]; then
 	apt-get install cpuid
 	mkdir -p /opt/BackOnII-Klient_$VERSION1
-	cp BackOnII-Klient/usluga  /opt/BackOnII-Klient_$VERSION1
 	cp global_data /opt/BackOnII-Klient_$VERSION1
-	cp BackOnII-Klient/klient  /opt/BackOnII-Klient_$VERSION1
+	cp BackOnII-Klient_$VERSION1/usluga  /opt/BackOnII-Klient_$VERSION1
+	cp BackOnII-Klient_$VERSION1/klient  /opt/BackOnII-Klient_$VERSION1
 	if dpkg --compare-versions $VER \"gt\" \"14.10\" ; then
-		cp BackOnII-Klient/service_script /opt/BackOnII-Klient_$VERSION1
-		cp -r BackOnII-Klient/BackOnII-Klient_$VERSION1.service /etc/systemd/system/BackOnII-Klient_$VERSION1.service
+		cp BackOnII-Klient_$VERSION1/service_script /opt/BackOnII-Klient_$VERSION1
+		cp -r BackOnII-Klient_$VERSION1/BackOnII-Klient_$VERSION1.service /etc/systemd/system/BackOnII-Klient_$VERSION1.service
 		systemctl enable BackOnII-Klient_$VERSION1
 		systemctl start BackOnII-Klient_$VERSION1
 	else
-		cp -r BackOnII-Klient/BackOnII-Klient_$VERSION1.conf /etc/init/BackOnII-Klient_$VERSION1.conf
+		cp -r BackOnII-Klient_$VERSION1/BackOnII-Klient_$VERSION1.conf /etc/init/BackOnII-Klient_$VERSION1.conf
 		service BackOnII-Klient_$VERSION1 start
 	fi
 else
 	echo \"Nieobsługiwany system operacyjny\"
 fi
-rm -r BackOnII-Klient
+rm -r BackOnII-Klient_$VERSION1
 rm BackOnII-Klient_$VERSION1.tgz
 " > aktLinux.sh
 

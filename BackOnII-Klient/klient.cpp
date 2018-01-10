@@ -115,7 +115,7 @@ string get_system_output(char* cmd){//oba? - TODO gdzie się to używa
 }
 
 
-const char * install_script( char* version){ //oba
+string install_script( char* version){ //oba
 string script="\
 OS=$(lsb_release -si)\n\
 VER=$(lsb_release -sr)\n\
@@ -137,10 +137,10 @@ if [ $OS = \"Ubuntu\" ]; then\n\
 else\n\
 	echo \"Nieobsługiwany system operacyjny\"\n\
 fi";
-return script.c_str();
+return script;
 }
 
-const char * uninstall_script( char* version){// oba
+string uninstall_script( char* version){// oba
 string script="\
 OS=$(lsb_release -si)\n\
 VER=$(lsb_release -sr)\n\
@@ -163,7 +163,7 @@ if [ $OS = \"Ubuntu\" ]; then\n\
 else\n\
 	echo \"Nieobsługiwany system operacyjny\"\n\
 fi";
-return script.c_str();
+return script;
 }
 
 void send_TCP_message(string message);
@@ -482,8 +482,6 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	fprintf(glob_file,"%s\n",PORT);
 	fprintf(glob_file,"%s\n",login);
 	fprintf(glob_file,"%s\n",str1.c_str());
-	//fprintf(glob_file,"%s\n",update_address);//TODO usunąć
-	//fprintf(glob_file,"%s\n",update_password);//TODO usunąć
 	return 0;
 }
 
@@ -493,7 +491,7 @@ void update_confirmation(){//TODOTODO usuwanie aktLinux? (może być gdzie indz
 		string str2(str1);
 		if(str2!=VERSION){
 			//TODO str2=old version -> uninstall
-			uninstall_script((char *)str2.c_str());
+			system(uninstall_script((char *)str2.c_str()).c_str());
 			fscanf(glob_file,"%s",str1);
 			fclose(glob_file);
 			glob_file=fopen("global_data","w");
@@ -616,9 +614,11 @@ int main(int argc, char * argv[]){
 		k=klient();
 		fclose(glob_file);		
 		if(k==0){
-			system(install_script((char*)VERSION));
+			printf("tu powinien być skrypt,%s\n",VERSION);
+			printf("%s\n",install_script((char*)VERSION).c_str());
+			system(install_script((char*)VERSION).c_str());
 		}else if(k==2){
-			system(uninstall_script((char*)VERSION));	//TODO może zmodyfikować plik glob
+			system(uninstall_script((char*)"*").c_str());	//TODO może zmodyfikować plik glob
 			//cout << uninstall_script((char*)VERSION) <<endl; 
 		//}
 		}else if(k==3){				//TODO usunąć
