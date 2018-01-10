@@ -165,6 +165,7 @@ else\n\
 fi";
 return script;
 }
+//TODO zrobić uninstall_all
 
 void send_TCP_message(string message);
 pair<string,int> receive_TCP();
@@ -614,11 +615,9 @@ int main(int argc, char * argv[]){
 		k=klient();
 		fclose(glob_file);		
 		if(k==0){
-			printf("tu powinien być skrypt,%s\n",VERSION);
-			printf("%s\n",install_script((char*)VERSION).c_str());
 			system(install_script((char*)VERSION).c_str());
 		}else if(k==2){
-			system(uninstall_script((char*)"*").c_str());	//TODO może zmodyfikować plik glob
+			system(uninstall_script((char*)VERSION).c_str());	//TODO może zmodyfikować plik glob /TODO trzeba by jakoś to poprawić żeby usuwało wszystkie wersje
 			//cout << uninstall_script((char*)VERSION) <<endl; 
 		//}
 		}else if(k==3){				//TODO usunąć
