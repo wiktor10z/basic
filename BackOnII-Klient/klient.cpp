@@ -149,14 +149,10 @@ if [ $OS = \"Ubuntu\" ]; then\n\
 		systemctl stop BackOnII-Klient_";
 		script=script+version+"\n\
 		systemctl disable BackOnII-Klient_"+version+"\n\
-		rm /var/log/BackOnII-Klient.log\n\
-		rm /var/log/BackOnII-Klient-err.log\n\
 		rm -r /opt/BackOnII-Klient_"+version+"\n\
 		rm /etc/systemd/system/BackOnII-Klient_"+version+".service\n\
 	else\n\
 		service BackOnII-Klient_"+version+" stop\n\
-		rm /var/log/BackOnII-Klient.log\n\
-		rm /var/log/BackOnII-Klient-err.log\n\
 		rm -r /opt/BackOnII-Klient_"+version+"\n\
 		rm /etc/init/BackOnII-Klient_"+version+".conf\n\
 	fi\n\
@@ -165,6 +161,18 @@ else\n\
 fi";
 return script;
 }
+
+void uninstall_all(){//TODO może nie ma sensu usuwać dwa razy logów
+	string info=get_system_output((char*)"ls /opt/BackOnII-Klient_*");
+	while(info.find("BackOnII-Klient_")!=string::npos){
+		info=info.substr(info.find("BackOnII-Klient_")+16);
+		string info1=info.substr(0,info.find(":\n"));
+		system((char*) uninstall_script((char*)info1.c_str()).c_str());
+		cout << info1<<endl;
+	}
+	system("rm /var/log/BackOnII-Klient.log\n rm /var/log/BackOnII-Klient-err.log");
+}
+
 //TODO zrobić uninstall_all
 
 void send_TCP_message(string message);
@@ -617,7 +625,8 @@ int main(int argc, char * argv[]){
 		if(k==0){
 			system(install_script((char*)VERSION).c_str());
 		}else if(k==2){
-			system(uninstall_script((char*)VERSION).c_str());	//TODO może zmodyfikować plik glob /TODO trzeba by jakoś to poprawić żeby usuwało wszystkie wersje
+			uninstall_all();
+			//system(uninstall_script((char*)VERSION).c_str());	//TODO może zmodyfikować plik glob /TODO trzeba by jakoś to poprawić żeby usuwało wszystkie wersje
 			//cout << uninstall_script((char*)VERSION) <<endl; 
 		//}
 		}else if(k==3){				//TODO usunąć

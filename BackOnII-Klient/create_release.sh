@@ -55,7 +55,6 @@ tar -czvf BackOnII-Klient_$VERSION1.tgz BackOnII-Klient_$VERSION1
 echo "
 sudo sshpass -p "BackOnII" sftp -o StrictHostKeyChecking=no BackOnII@10.0.2.2:Klient/BackOnII-Klient_$VERSION1.tgz .
 tar -xzvf BackOnII-Klient_$VERSION1.tgz
-sleep 1
 OS=\$(lsb_release -si)
 VER=\$(lsb_release -sr)
 if [ \$OS = \"Ubuntu\" ]; then
