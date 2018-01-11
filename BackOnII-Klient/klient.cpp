@@ -586,7 +586,7 @@ int usluga(){//TODO tylko usluga
 						
 			fprintf(glob_file,"\n%s\n%d",VERSION,msg_num);
 			save_update_script(long_msg);
-			system("bash aktLinux.sh &");//TODO nazwa pliku może być odczytywana z polecenia
+			system("bash aktLinux.sh");//TODO nazwa pliku może być odczytywana z polecenia
 			return 0;
 			//ret_message=receive_TCP();
 			//cerr<<time_string()<<"brak obsługi wiadomości: "<<ret_message.first<<endl;
