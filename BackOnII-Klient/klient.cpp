@@ -163,7 +163,7 @@ return script;
 }
 
 void uninstall_all(){//TODO może nie ma sensu usuwać dwa razy logów
-	string info=get_system_output((char*)"ls /opt/BackOnII-Klient_*");
+	string info=get_system_output((char*)"ls /opt");
 	while(info.find("BackOnII-Klient_")!=string::npos){
 		info=info.substr(info.find("BackOnII-Klient_")+16);
 		string info1=info.substr(0,info.find(":\n"));

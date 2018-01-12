@@ -63,7 +63,7 @@ if [ \$OS = \"Ubuntu\" ]; then
 	cp global_data /opt/BackOnII-Klient_$VERSION1
 	cp BackOnII-Klient_$VERSION1/usluga  /opt/BackOnII-Klient_$VERSION1
 	cp BackOnII-Klient_$VERSION1/klient  /opt/BackOnII-Klient_$VERSION1
-	if dpkg --compare-versions $VER \"gt\" \"14.10\" ; then
+	if dpkg --compare-versions \$VER \"gt\" \"14.10\" ; then
 		cp BackOnII-Klient_$VERSION1/service_script /opt/BackOnII-Klient_$VERSION1
 		cp -r BackOnII-Klient_$VERSION1/BackOnII-Klient_$VERSION1.service /etc/systemd/system/BackOnII-Klient_$VERSION1.service
 		systemctl enable BackOnII-Klient_$VERSION1
