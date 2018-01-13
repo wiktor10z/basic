@@ -163,12 +163,12 @@ return script;
 }
 
 void uninstall_all(){//TODO może nie ma sensu usuwać dwa razy logów
-	string info=get_system_output((char*)"ls /opt");
+	string info=get_system_output((char*)"ls /opt -1");
 	while(info.find("BackOnII-Klient_")!=string::npos){
 		info=info.substr(info.find("BackOnII-Klient_")+16);
-		string info1=info.substr(0,info.find(":\n"));
+		string info1=info.substr(0,info.find("\n"));//TODOTODOTODO to moe nie by \n tylko spacja i bez : 
 		system((char*) uninstall_script((char*)info1.c_str()).c_str());
-		cout << info1<<endl;
+		cout << uninstall_script((char*)info1.c_str()) <<endl;
 	}
 	system("rm /var/log/BackOnII-Klient.log\n rm /var/log/BackOnII-Klient-err.log");
 }
@@ -500,7 +500,9 @@ void update_confirmation(){//TODOTODO usuwanie aktLinux? (może być gdzie indz
 		string str2(str1);
 		if(str2!=VERSION){
 			//TODO str2=old version -> uninstall
-			system(uninstall_script((char *)str2.c_str()).c_str());
+			system(uninstall_script((char *)str2.c_str()).c_str());//TODOTODOTODO chyba daje \n
+			FILE * testfile = fopen("/home/osboxes/test1.txt","w");
+			fprintf(testfile,"%s\n",uninstall_script((char *)str2.c_str()).c_str());
 			fscanf(glob_file,"%s",str1);
 			fclose(glob_file);
 			glob_file=fopen("global_data","w");
