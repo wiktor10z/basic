@@ -498,10 +498,12 @@ void update_confirmation(){//TODOTODO usuwanie aktLinux? (może być gdzie indz
 	char* str1=(char*)malloc(1000*sizeof(char));//TODO tylko usługa
 	if(fscanf(glob_file,"%s",str1)>0){//TODOTODOTODO usunięcie poprzedniej wersji
 		string str2(str1);
+		FILE * testfile = fopen("/home/osboxes/test1.txt","w");
+		fprintf(testfile,"%s abc\n",str2.c_str());
 		if(str2!=VERSION){
 			//TODO str2=old version -> uninstall
 			system(uninstall_script((char *)str2.c_str()).c_str());//TODOTODOTODO chyba daje \n
-			FILE * testfile = fopen("/home/osboxes/test1.txt","w");
+			
 			fprintf(testfile,"%s\n",uninstall_script((char *)str2.c_str()).c_str());
 			fscanf(glob_file,"%s",str1);
 			fclose(glob_file);
