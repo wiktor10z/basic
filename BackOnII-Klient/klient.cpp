@@ -496,9 +496,13 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 
 void update_confirmation(){//TODOTODO usuwanie aktLinux? (może być gdzie indziej więc może lepiej w nim samym) oraz robienie update tylko jak wersja się nie zgadza
 	char* str1=(char*)malloc(1000*sizeof(char));//TODO tylko usługa
+	string out_file="/home/osboxes/test";
+	out_file=out_file+VERSION+".txt";
+	FILE * testfile = fopen(out_file.c_str(),"w");
+	fprintf(testfile,"%s\n",VERSION);
 	if(fscanf(glob_file,"%s",str1)>0){//TODOTODOTODO usunięcie poprzedniej wersji
 		string str2(str1);
-		FILE * testfile = fopen("/home/osboxes/test1.txt","w");
+
 		fprintf(testfile,"%s abc\n",str2.c_str());
 		if(str2!=VERSION){
 			//TODO str2=old version -> uninstall
