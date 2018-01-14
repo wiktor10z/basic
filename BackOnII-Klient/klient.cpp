@@ -496,19 +496,11 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 
 void update_confirmation(){//TODOTODO usuwanie aktLinux? (może być gdzie indziej więc może lepiej w nim samym) oraz robienie update tylko jak wersja się nie zgadza
 	char* str1=(char*)malloc(1000*sizeof(char));//TODO tylko usługa
-	string out_file="/home/osboxes/test";
-	out_file=out_file+VERSION+".txt";
-	FILE * testfile = fopen(out_file.c_str(),"w");
-	fprintf(testfile,"%s\n",VERSION);
 	if(fscanf(glob_file,"%s",str1)>0){//TODOTODOTODO usunięcie poprzedniej wersji
 		string str2(str1);
-
-		fprintf(testfile,"%s abc\n",str2.c_str());
 		if(str2!=VERSION){
 			//TODO str2=old version -> uninstall
 			system(uninstall_script((char *)str2.c_str()).c_str());//TODOTODOTODO chyba daje \n
-			
-			fprintf(testfile,"%s\n",uninstall_script((char *)str2.c_str()).c_str());
 			fscanf(glob_file,"%s",str1);
 			fclose(glob_file);
 			glob_file=fopen("global_data","w");
@@ -593,6 +585,7 @@ int usluga(){//TODO tylko usluga
 			cout << msg_num<<endl;
 						
 			fprintf(glob_file,"\n%s\n%d",VERSION,msg_num);
+			fclose(glob_file);
 			save_update_script(long_msg);
 			system("bash aktLinux.sh");//TODO nazwa pliku może być odczytywana z polecenia
 			return 0;
