@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <iostream>
 #include <cstring>
+//#include <string>
 #include <cstdlib>
 //#include <pthread.h>
 #include <unistd.h>
@@ -38,7 +39,6 @@
 
 //TODO dokumentacja (w szczególności licencja do biblioteki szyfrującej)
 //TODO sklejenie dwóch wiadomości przy czytaniu do wyczerpania źródła
-//TODO wygwiazdkowanie hasła
 //TODO usunięcie rzeczy testowych
 //TODO czas miedzy hello z 10 do 30
 //TODO klucz szyfru - tutaj w global_data - plusy i minusy (w pliku łatwiej zmienić, jak tutaj to można tworzyć global_data od zera)
@@ -121,6 +121,7 @@ OS=$(lsb_release -si)\n\
 VER=$(lsb_release -sr)\n\
 if [ $OS = \"Ubuntu\" ]; then\n\
 		apt-get install cpuid\n\
+		apt-get install sshpass\n\
 		mkdir -p /opt/BackOnII-Klient_";
 		script=script+version+"\n\
 		cp usluga /opt/BackOnII-Klient_"+version+"\n\
@@ -168,7 +169,7 @@ void uninstall_all(){//TODO może nie ma sensu usuwać dwa razy logów
 		info=info.substr(info.find("BackOnII-Klient_")+16);
 		string info1=info.substr(0,info.find("\n"));//TODOTODOTODO to moe nie by \n tylko spacja i bez : 
 		system((char*) uninstall_script((char*)info1.c_str()).c_str());
-		cout << uninstall_script((char*)info1.c_str()) <<endl;
+		//cout << uninstall_script((char*)info1.c_str()) <<endl;
 	}
 	system("rm /var/log/BackOnII-Klient.log\n rm /var/log/BackOnII-Klient-err.log");
 }
@@ -384,8 +385,10 @@ int common_start(){//oba
 }
 
 int klient(){//TODO dodać obsługę rozłączenia serwera
-	char password[1000],hostname[HOST_NAME_MAX];			//TODO zapytać o te długości
+	//char password[1000],hostname[HOST_NAME_MAX];			//TODO zapytać o te długości
 	//char update_address[1000],update_password[1000];			//TODO usunąć
+	char hostname[HOST_NAME_MAX];
+	string password;
 	pair<string,int> ret_message;//TODO tylko klient
 	int fresh_start;
 	fscanf(glob_file,"%s",SERVER_NAME);
@@ -439,7 +442,8 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	gethostname(hostname,HOST_NAME_MAX);					//TODO to powinno być jednoznaczne, więc może jakiś hostid zamiast hostname
 	if(FAST_DEBUG){
 		strcpy(login,"ADMINISTRATOR");
-		strcpy(password,"admin");	
+		password="admin";
+		//strcpy(password,"admin");	
 	}else{
 		//poznanie loginu i hasła
 		printf("login: ");
@@ -447,14 +451,15 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 		for(uint i=0;i<strlen(login);++i){
 			login[i]=toupper(login[i]);
 		}
+		clean_stdin();
 		printf("hasło: ");
-		scanf("%s",password);
+		password=get_password();
 	}
 	//printf("adres aktualizacji - użytkownik@komputer:adres_pliku_usluga : "); //TODO usunąć
 	//scanf("%s",update_address);//TODO usunąć
 	//printf("hasło tego użytkownika: "); //TODO usunąć
 	//scanf("%s",update_password);//TODO usunąć
-	unsigned char *plaintext=(unsigned char *)password;
+	unsigned char *plaintext=(unsigned char *)(password.c_str());
 	unsigned char ciphertext[128];
 	int ciphertext_len=encrypt(plaintext,strlen((char *)plaintext),key,iv,ciphertext);
 	string message="Login|21|";	
@@ -463,7 +468,7 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	message+=to_hex(ciphertext,ciphertext_len)+"\r\n";
 	cout <<time_string() <<"sent message: "<<message<<endl;
 	login_message=message;
-	send_TCP_message(message);
+	send_TCP_message(message);//TODO zapytać 3 razy
 	if(receive_TCP().first!="OK\r\n"){
 		cerr<<time_string()<<"wrong login answer: "<<ret_message.first<<endl;
 		syserr("login communication failed");
@@ -587,7 +592,9 @@ int usluga(){//TODO tylko usluga
 			fprintf(glob_file,"\n%s\n%d",VERSION,msg_num);
 			fclose(glob_file);
 			save_update_script(long_msg);
-			system("bash aktLinux.sh");//TODO nazwa pliku może być odczytywana z polecenia
+			string akt_order="bash aktLinux.sh ";
+			akt_order=akt_order+SERVER_NAME;
+			system(akt_order.c_str());//TODO nazwa pliku może być odczytywana z polecenia
 			return 0;
 			//ret_message=receive_TCP();
 			//cerr<<time_string()<<"brak obsługi wiadomości: "<<ret_message.first<<endl;

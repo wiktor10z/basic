@@ -1,13 +1,19 @@
 #include <cstdio>
+#include <iostream>//TODO może zunifikować wypisywanie do jednej biblioteki standardowej
 #include <cstring>
+//#include <string>
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include <termios.h>
+#include <unistd.h>
 #include <openssl/md5.h>
 
 #include "basic_functions.h"
+
+
 
 using namespace std;
 
@@ -69,6 +75,37 @@ string random_password(int len){					//TODO zapytać o to jakiej długości, czy
 	}
 	return res;
 }
+
+int getch(){
+	int ch;
+	struct termios t_old, t_new;
+	tcgetattr(STDIN_FILENO, &t_old);
+	t_new = t_old;
+	t_new.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &t_new);
+	ch = getchar();
+	tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
+	return ch;
+}
+
+string get_password(bool show_asterisk){
+	string password;
+	unsigned char ch=0;
+	while((ch=getch())!=10){
+		if(ch==127){
+			if(password.length()!=0){
+				if(show_asterisk) cout <<"\b \b";
+				password.resize(password.length()-1);
+			}
+		}else{
+			password+=ch;
+			if(show_asterisk) cout <<'*';
+		}
+	}
+	cout <<endl;
+	return password;
+}
+
 
 
 string Codes64_1="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";

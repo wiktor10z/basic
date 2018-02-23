@@ -17,12 +17,15 @@ extern string time_string();
 
 extern string random_password(int len);
 
+extern string get_password(bool show_asterisk=true);
+
 
 extern string Encode64(string s, int file);
 
 extern string Decode64(string s, int file);
 
 extern string md5_encode(string s);
+
 
 
 #endif

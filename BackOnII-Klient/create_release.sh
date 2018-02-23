@@ -1,4 +1,9 @@
-VERSION1='2.0.0.2'
+VERSION1=$1
+if [ -z $VERSION1 ]
+then
+	VERSION1='2.0.0.1'
+fi
+
 #TODO VERSION1 jako argument skryptu
 make VERSION="\"\\\"$VERSION1\\\"\""
 make clean
@@ -52,8 +57,9 @@ cp README BackOnII-Klient_$VERSION1
 
 tar -czvf BackOnII-Klient_$VERSION1.tgz BackOnII-Klient_$VERSION1 
 
-echo "
-sudo sshpass -p "BackOnII" sftp -o StrictHostKeyChecking=no BackOnII@10.0.2.2:Klient/BackOnII-Klient_$VERSION1.tgz .
+echo "ADRES_IP=10.0.2.2
+ADRES_IP=\$1
+sudo sshpass -p "BackOnII" sftp -o StrictHostKeyChecking=no BackOnII@\$ADRES_IP:Klient/BackOnII-Klient_$VERSION1.tgz .
 tar -xzvf BackOnII-Klient_$VERSION1.tgz
 OS=\$(lsb_release -si)
 VER=\$(lsb_release -sr)
