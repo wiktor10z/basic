@@ -10,7 +10,7 @@
 //#include <csignal>
 #include <algorithm>
 
-#include <sys/wait.h>			//waitpid get_sys...
+//#include <sys/wait.h>			//waitpid get_sys...
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/sysinfo.h>
@@ -66,55 +66,6 @@ static void catch_int (int sig) {
 */
 
 
-string get_system_output(char* cmd){//oba? - TODO gdzie się to używa
-	int buff_size=100;
-	char* buff=new char[buff_size];
-	string str="";
-	int fd[2],old_fd[3];
-	pipe(fd);
-	old_fd[0]=dup(STDIN_FILENO);
-	old_fd[1]=dup(STDOUT_FILENO);
-	old_fd[2]=dup(STDERR_FILENO);
-	
-	int pid=fork();
-	switch(pid){
-		case 0:
-			close(fd[0]);
-			close(STDOUT_FILENO);
-			close(STDERR_FILENO);
-			dup2(fd[1],STDOUT_FILENO);
-			dup2(fd[1],STDERR_FILENO);
-			system(cmd);
-			close(fd[1]);
-			exit(0);
-			break;
-		case -1:
-			fprintf(stderr,"get_system_output/fork() error\n");
-			exit(1);
-		default:
-			close(fd[1]);
-			dup2(fd[0],STDIN_FILENO);
-			int rc=1;
-			while(rc>0){
-				rc=read(fd[0],buff,buff_size);
-				str.append(buff,rc);
-			}
-			waitpid(pid,NULL,0);
-			close(fd[0]);
-	}
-	
-	dup2(STDIN_FILENO,old_fd[0]);
-	dup2(STDOUT_FILENO,old_fd[1]);
-	dup2(STDERR_FILENO,old_fd[2]);
-	
-	if(str[str.length()-1]=='\n'){
-		return str.substr(0,str.length()-1);
-	}else{
-		return str;
-	}
-}
-
-
 string install_script( char* version){ //oba
 string script="\
 OS=$(lsb_release -si)\n\
@@ -163,18 +114,17 @@ fi";
 return script;
 }
 
-void uninstall_all(){//TODO może nie ma sensu usuwać dwa razy logów
+void uninstall_all(){//TODO tylko klient
 	string info=get_system_output((char*)"ls /opt -1");
 	while(info.find("BackOnII-Klient_")!=string::npos){
 		info=info.substr(info.find("BackOnII-Klient_")+16);
-		string info1=info.substr(0,info.find("\n"));//TODOTODOTODO to moe nie by \n tylko spacja i bez : 
+		string info1=info.substr(0,info.find("\n"));
 		system((char*) uninstall_script((char*)info1.c_str()).c_str());
 		//cout << uninstall_script((char*)info1.c_str()) <<endl;
 	}
 	system("rm /var/log/BackOnII-Klient.log\n rm /var/log/BackOnII-Klient-err.log");
 }
 
-//TODO zrobić uninstall_all
 
 void send_TCP_message(string message);
 pair<string,int> receive_TCP();
@@ -233,7 +183,7 @@ void send_TCP_message(string message){//TODO może trzeba będzie i tutaj sprawd
 
 pair<string,int> receive_TCP(){//pierwszy argument to odczytana wiadomość,drugi 0 - wszystko ok //oba
 	ssize_t len;// 1 - w między czasie nastąpiło rozłączenie i ponowne połączenie - należy powtórzyć komunikację
-	char buffer[1000];//2 - 
+	char buffer[1000];
 	memset(buffer, 0, sizeof(buffer));
 	len = read(sockTCP, buffer, sizeof(buffer)-1);
 	if(len==0){
@@ -245,21 +195,6 @@ pair<string,int> receive_TCP(){//pierwszy argument to odczytana wiadomość,drug
 	}
 	string ret(buffer);
 	return make_pair(ret,0);
-}
-
-
-string extract_line(string str,const char* pattern){//oba? - TODO gdzie się to używa?
-	if(str.find(pattern)!=string::npos){
-		str=str.substr(str.find(pattern)+strlen(pattern));
-		str=str.substr(str.find_first_not_of(" "));
-		return str.substr(0,str.find("\n"));
-	}else{
-		return "???";
-	}
-}
-
-string get_system_line(char* command,const char* pattern){//oba? - TODO gdzie sią to używa?
-	return extract_line(get_system_output(command),pattern);
 }
 
 string prod_name(string info){//oba - na razie
@@ -378,19 +313,20 @@ int common_start(){//oba
 	iv=(unsigned char *)malloc(8*sizeof(unsigned char));
 	SERVER_NAME=(char*)malloc(INET_ADDRSTRLEN*sizeof(char));
 	PORT=(char*)malloc(10*sizeof(char)); 
-	read_hex_from_file(glob_file,key);																//TODO weryfikacja poprawności pliku
+	read_hex_from_file(glob_file,key);													//TODO weryfikacja poprawności pliku
 	read_hex_from_file(glob_file,iv);
 	initialize_3des();
 	return 0;
 }
 
 int klient(){//TODO dodać obsługę rozłączenia serwera
-	//char password[1000],hostname[HOST_NAME_MAX];			//TODO zapytać o te długości
-	//char update_address[1000],update_password[1000];			//TODO usunąć
-	char hostname[HOST_NAME_MAX];
-	string password;
-	pair<string,int> ret_message;//TODO tylko klient
-	int fresh_start;
+	char hostname[HOST_NAME_MAX];		//TODO zapytać o tą długość
+	unsigned char *plaintext;
+	unsigned char ciphertext[128];	
+	string message, password;
+	int ciphertext_len, tries_count=0, fresh_start;
+	bool passed_login;
+	pair<string,int> ret_message;
 	fscanf(glob_file,"%s",SERVER_NAME);
 	fresh_start=(strlen(SERVER_NAME)==0);
 	if(!fresh_start){								//tak na prawdę sprawdzenie pustości linijki roboczej
@@ -438,39 +374,44 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 		sprintf(PORT,"%d",temp);
 	}
 
-	connect_TCP();
+	connect_TCP();							//TODO przerywanie w razie braku połączenia/ zapytanie o nowy adres???
 	gethostname(hostname,HOST_NAME_MAX);					//TODO to powinno być jednoznaczne, więc może jakiś hostid zamiast hostname
-	if(FAST_DEBUG){
-		strcpy(login,"ADMINISTRATOR");
-		password="admin";
-		//strcpy(password,"admin");	
-	}else{
-		//poznanie loginu i hasła
-		printf("login: ");
-		scanf("%s",login);
-		for(uint i=0;i<strlen(login);++i){
-			login[i]=toupper(login[i]);
+	passed_login=false;
+	while((tries_count<3) &&(!passed_login)){
+		if(FAST_DEBUG){
+			strcpy(login,"ADMINISTRATOR");
+			password="admin";
+			//strcpy(password,"admin");	
+		}else{
+			//poznanie loginu i hasła
+			printf("login: ");
+			scanf("%s",login);
+			for(uint i=0;i<strlen(login);++i){
+				login[i]=toupper(login[i]);
+			}
+			clean_stdin();
+			printf("hasło: ");
+			password=get_password();
 		}
-		clean_stdin();
-		printf("hasło: ");
-		password=get_password();
+		plaintext=(unsigned char *)(password.c_str());
+		ciphertext_len=encrypt(plaintext,strlen((char *)plaintext),key,iv,ciphertext);
+		message="Login|21|";	
+		message+=char_to_string((char*)hostname)+"|";
+		message+=char_to_string((char*)login)+"|";
+		message+=to_hex(ciphertext,ciphertext_len)+"\r\n";
+		cout <<time_string() <<"sent message: "<<message<<endl;
+		login_message=message;
+		send_TCP_message(message);
+		if(receive_TCP().first!="OK\r\n"){
+			cerr<<time_string()<<"wrong login answer: "<<ret_message.first<<endl;
+			printf("logowanie nie powiodło się, spróbuj ponownie\n");
+			//syserr("login communication failed");
+		}else{
+			passed_login=true;
+		}
+		tries_count++;
 	}
-	//printf("adres aktualizacji - użytkownik@komputer:adres_pliku_usluga : "); //TODO usunąć
-	//scanf("%s",update_address);//TODO usunąć
-	//printf("hasło tego użytkownika: "); //TODO usunąć
-	//scanf("%s",update_password);//TODO usunąć
-	unsigned char *plaintext=(unsigned char *)(password.c_str());
-	unsigned char ciphertext[128];
-	int ciphertext_len=encrypt(plaintext,strlen((char *)plaintext),key,iv,ciphertext);
-	string message="Login|21|";	
-	message+=char_to_string((char*)hostname)+"|";
-	message+=char_to_string((char*)login)+"|";
-	message+=to_hex(ciphertext,ciphertext_len)+"\r\n";
-	cout <<time_string() <<"sent message: "<<message<<endl;
-	login_message=message;
-	send_TCP_message(message);//TODO zapytać 3 razy
-	if(receive_TCP().first!="OK\r\n"){
-		cerr<<time_string()<<"wrong login answer: "<<ret_message.first<<endl;
+	if(tries_count==3){//i tak nic nie robi, bo serwer blokuj po 2 nieudanym
 		syserr("login communication failed");
 	}
 	string str1=random_password(PASSWORD_LEN);
@@ -499,13 +440,12 @@ int klient(){//TODO dodać obsługę rozłączenia serwera
 	return 0;
 }
 
-void update_confirmation(){//TODOTODO usuwanie aktLinux? (może być gdzie indziej więc może lepiej w nim samym) oraz robienie update tylko jak wersja się nie zgadza
-	char* str1=(char*)malloc(1000*sizeof(char));//TODO tylko usługa
-	if(fscanf(glob_file,"%s",str1)>0){//TODOTODOTODO usunięcie poprzedniej wersji
+void update_confirmation(){//TODO tylko usługa
+	char* str1=(char*)malloc(1000*sizeof(char));
+	if(fscanf(glob_file,"%s",str1)>0){
 		string str2(str1);
 		if(str2!=VERSION){
-			//TODO str2=old version -> uninstall
-			system(uninstall_script((char *)str2.c_str()).c_str());//TODOTODOTODO chyba daje \n
+			system(uninstall_script((char *)str2.c_str()).c_str());
 			fscanf(glob_file,"%s",str1);
 			fclose(glob_file);
 			glob_file=fopen("global_data","w");
@@ -533,7 +473,6 @@ void update_confirmation(){//TODOTODO usuwanie aktLinux? (może być gdzie indz
 
 int usluga(){//TODO tylko usluga
 	char hostname[HOST_NAME_MAX];
-	//char update_address[1000],update_password[1000]; //TODO usunąć
 	pair<string,int> ret_message;
 	fscanf(glob_file,"%s",SERVER_NAME);						// wczytanie dodatkowej linijki roboczej "xxx"
 	fscanf(glob_file,"%s",SERVER_NAME);						//TODO weryfikacja poprawności pliku
@@ -543,9 +482,7 @@ int usluga(){//TODO tylko usluga
 	}
 	fscanf(glob_file,"%s",PORT);
 	fscanf(glob_file,"%s",login);
-	fscanf(glob_file,"%s",service_password);
-	//fscanf(glob_file,"%s",update_address);//TODO usunąć
-	//fscanf(glob_file,"%s",update_password);//TODO usunąć	
+	fscanf(glob_file,"%s",service_password);	
 	connect_TCP();
 	gethostname(hostname,HOST_NAME_MAX);
 	unsigned char ciphertext[128];
@@ -598,12 +535,6 @@ int usluga(){//TODO tylko usluga
 			return 0;
 			//ret_message=receive_TCP();
 			//cerr<<time_string()<<"brak obsługi wiadomości: "<<ret_message.first<<endl;
-			
-		//}else if(ret_message.first.find("RK|")==0){
-		//	cout << "instrukcja aktualizacji"<<endl;
-		//	cout << update_script(update_address,update_password)<<endl;
-		//	system(update_script(update_address,update_password).c_str());
-		//	return 0;
 		}else if(ret_message.first!="OK\r\n"){
 			cerr<<time_string()<<"brak obsługi wiadomości: "<<ret_message.first<<endl;
 			int count;			
@@ -627,20 +558,15 @@ int main(int argc, char * argv[]){
 		k=usluga();
 		fclose(glob_file);
 		return k;
-	}else{ //if(PROGRAM_TYPE==0){
+	}else{
 		k=klient();
 		fclose(glob_file);		
 		if(k==0){
 			system(install_script((char*)VERSION).c_str());
 		}else if(k==2){
 			uninstall_all();
-			//system(uninstall_script((char*)VERSION).c_str());	//TODO może zmodyfikować plik glob /TODO trzeba by jakoś to poprawić żeby usuwało wszystkie wersje
-			//cout << uninstall_script((char*)VERSION) <<endl; 
-		//}
 		}else if(k==3){				//TODO usunąć
 			cout<<software_info()<<endl;			//TODO usunąć
-		}			//TODO usunąć
-	//}else{
-		//update(argv[1],argv[2]);
+		}
 	}
 }

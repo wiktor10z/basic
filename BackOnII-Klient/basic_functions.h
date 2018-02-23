@@ -19,6 +19,12 @@ extern string random_password(int len);
 
 extern string get_password(bool show_asterisk=true);
 
+extern string get_system_output(char* cmd);
+
+extern string extract_line(string str,const char* pattern);
+
+extern string get_system_line(char* command,const char* pattern);
+
 
 extern string Encode64(string s, int file);
 

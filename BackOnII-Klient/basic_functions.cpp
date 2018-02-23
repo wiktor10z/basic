@@ -9,11 +9,10 @@
 #include <iomanip>
 #include <termios.h>
 #include <unistd.h>
+#include <sys/wait.h>	
 #include <openssl/md5.h>
 
 #include "basic_functions.h"
-
-
 
 using namespace std;
 
@@ -54,8 +53,6 @@ void read_hex_from_file(FILE * file,unsigned char * dest){
 	temp_str=from_hex(temp_str);
 	copy(temp_str.begin(),temp_str.end(),dest);
 }
-
-
 
 string time_string(){
 	time_t rawtime;
@@ -106,6 +103,67 @@ string get_password(bool show_asterisk){
 	return password;
 }
 
+string get_system_output(char* cmd){
+	int buff_size=100;
+	char* buff=new char[buff_size];
+	string str="";
+	int fd[2],old_fd[3];
+	pipe(fd);
+	old_fd[0]=dup(STDIN_FILENO);
+	old_fd[1]=dup(STDOUT_FILENO);
+	old_fd[2]=dup(STDERR_FILENO);
+	
+	int pid=fork();
+	switch(pid){
+		case 0:
+			close(fd[0]);
+			close(STDOUT_FILENO);
+			close(STDERR_FILENO);
+			dup2(fd[1],STDOUT_FILENO);
+			dup2(fd[1],STDERR_FILENO);
+			system(cmd);
+			close(fd[1]);
+			exit(0);
+			break;
+		case -1:
+			fprintf(stderr,"get_system_output/fork() error\n");
+			exit(1);
+		default:
+			close(fd[1]);
+			dup2(fd[0],STDIN_FILENO);
+			int rc=1;
+			while(rc>0){
+				rc=read(fd[0],buff,buff_size);
+				str.append(buff,rc);
+			}
+			waitpid(pid,NULL,0);
+			close(fd[0]);
+	}
+	
+	dup2(STDIN_FILENO,old_fd[0]);
+	dup2(STDOUT_FILENO,old_fd[1]);
+	dup2(STDERR_FILENO,old_fd[2]);
+	
+	if(str[str.length()-1]=='\n'){
+		return str.substr(0,str.length()-1);
+	}else{
+		return str;
+	}
+}
+
+string extract_line(string str,const char* pattern){
+	if(str.find(pattern)!=string::npos){
+		str=str.substr(str.find(pattern)+strlen(pattern));
+		str=str.substr(str.find_first_not_of(" "));
+		return str.substr(0,str.find("\n"));
+	}else{
+		return "???";
+	}
+}
+
+string get_system_line(char* command,const char* pattern){
+	return extract_line(get_system_output(command),pattern);
+}
 
 
 string Codes64_1="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
